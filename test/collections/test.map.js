@@ -109,7 +109,7 @@ describe('#map', function() {
       };
     };
 
-    // async
+    // asyncjs
     timer.init().start();
     asyncjs.map(collection, iterator(result.asyncjs), function(err, res1) {
       if (err) {
@@ -119,7 +119,7 @@ describe('#map', function() {
       result.asyncjs.time = timer.diff();
       timer.init().start();
 
-      // asyncjs
+      // async
       async.map(collection, iterator(result.async), function(err, res2) {
         if (err) {
           return done(err);

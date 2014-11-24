@@ -122,12 +122,52 @@ describe('#each', function() {
         result.async.time = timer.diff();
 
         // order
-        assert.equal(result.async.sum, sum);
-        assert.equal(result.asyncjs.sum, sum);
+        assert.strictEqual(result.async.sum, sum);
+        assert.strictEqual(result.asyncjs.sum, sum);
         assert.ok(result.async.time < result.asyncjs.time);
 
         done();
       });
+    });
+
+  });
+
+  it('should cause error', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    var iterator = function(num, callback) {
+      setTimeout(function() {
+        order.push(num);
+        callback(num === 3);
+      }, num * 10);
+    };
+
+    async.each(collection, iterator, function(err) {
+      assert.ok(err);
+      assert.deepEqual(order, [1, 2, 3]);
+      done();
+    });
+
+  });
+
+  it('should break if respond equals false', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    var iterator = function(num, callback) {
+      setTimeout(function() {
+        order.push(num);
+        callback(null, num !== 3);
+      }, num * 10);
+    };
+
+    async.each(collection, iterator, function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, [1, 2, 3]);
+      done();
     });
 
   });
@@ -189,6 +229,46 @@ describe('#eachSeries', function() {
 
   });
 
+  it('should cause error', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    var iterator = function(num, callback) {
+      setTimeout(function() {
+        order.push(num);
+        callback(num === 3);
+      }, num * 10);
+    };
+
+    async.eachSeries(collection, iterator, function(err) {
+      assert.ok(err);
+      assert.deepEqual(order, [1, 3]);
+      done();
+    });
+
+  });
+
+  it('should break if respond equals false', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    var iterator = function(num, callback) {
+      setTimeout(function() {
+        order.push(num);
+        callback(null, num !== 3);
+      }, num * 10);
+    };
+
+    async.eachSeries(collection, iterator, function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, [1, 3]);
+      done();
+    });
+
+  });
+
 });
 
 describe('#eachLimit', function() {
@@ -244,6 +324,46 @@ describe('#eachLimit', function() {
       assert.deepEqual(order, [1, 4, 3]);
       done();
     }, Math);
+  });
+
+  it('should cause error', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    var iterator = function(num, callback) {
+      setTimeout(function() {
+        order.push(num);
+        callback(num === 3);
+      }, num * 10);
+    };
+
+    async.eachLimit(collection, 3, iterator, function(err) {
+      assert.ok(err);
+      assert.deepEqual(order, [1, 2, 3]);
+      done();
+    });
+
+  });
+
+  it('should break if respond equals false', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    var iterator = function(num, callback) {
+      setTimeout(function() {
+        order.push(num);
+        callback(null, num !== 3);
+      }, num * 10);
+    };
+
+    async.eachLimit(collection, 3, iterator, function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, [1, 2, 3]);
+      done();
+    });
+
   });
 
 });
