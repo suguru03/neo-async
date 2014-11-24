@@ -78,6 +78,25 @@ describe('#sortBy', function() {
 
   });
 
+  it('should cause error', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    var iterator = function(num, callback) {
+      setTimeout(function() {
+        order.push(num);
+        callback(num === 3, num);
+      }, num * 10);
+    };
+    async.sortBy(collection, iterator, function(err, res) {
+      assert.ok(err);
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, [1, 2, 3]);
+      done();
+    });
+
+  });
+
 });
 
 describe('#sortBySeries', function() {
@@ -136,6 +155,25 @@ describe('#sortBySeries', function() {
 
   });
 
+  it('should cause error', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    var iterator = function(num, callback) {
+      setTimeout(function() {
+        order.push(num);
+        callback(num === 3, num);
+      }, num * 10);
+    };
+    async.sortBySeries(collection, iterator, function(err, res) {
+      assert.ok(err);
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, [1, 3]);
+      done();
+    });
+
+  });
+
 });
 
 describe('#sortByLimit', function() {
@@ -191,6 +229,25 @@ describe('#sortByLimit', function() {
       assert.deepEqual(order, [1, 3, 4]);
       done();
     }, Math);
+  });
+
+  it('should cause error', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    var iterator = function(num, callback) {
+      setTimeout(function() {
+        order.push(num);
+        callback(num === 3, num);
+      }, num * 10);
+    };
+    async.sortByLimit(collection, 2, iterator, function(err, res) {
+      assert.ok(err);
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, [1, 3]);
+      done();
+    });
+
   });
 
 });

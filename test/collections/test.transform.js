@@ -41,13 +41,13 @@ describe('#transform', function() {
   it('should execute iterator by collection of array', function(done) {
 
     var order = [];
-    var collection = [1, 3, 2, 4];
+    var collection = [1, 5, 3, 2, 4];
     async.transform(collection, transformIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [1, 3]);
-      assert.deepEqual(order, [1, 2, 3, 4]);
+      assert.deepEqual(res, [1, 3, 5]);
+      assert.deepEqual(order, [1, 2, 3, 4, 5]);
       done();
     });
 
@@ -113,6 +113,27 @@ describe('#transform', function() {
     }, Math);
 
   });
+
+  it('should cause error', function(done) {
+
+    var order = [];
+    var collection = [1, 5, 3, 2, 4];
+    var iterator = function(memo, value, key, callback) {
+      setTimeout(function() {
+        memo.push(value);
+        order.push(value);
+        callback(value === 4);
+      }, value * 10);
+    };
+    async.transform(collection, iterator, function(err, res) {
+      assert.ok(err);
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, [1, 2, 3, 4]);
+      done();
+    });
+
+  });
+
 });
 
 describe('#transformSeries', function() {
@@ -191,6 +212,27 @@ describe('#transformSeries', function() {
     }, Math);
 
   });
+
+  it('should cause error', function(done) {
+
+    var order = [];
+    var collection = [1, 5, 3, 2, 4];
+    var iterator = function(memo, value, key, callback) {
+      setTimeout(function() {
+        memo.push(value);
+        order.push(value);
+        callback(value === 4);
+      }, value * 10);
+    };
+    async.transformSeries(collection, iterator, function(err, res) {
+      assert.ok(err);
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, [1, 5, 3, 2, 4]);
+      done();
+    });
+
+  });
+
 });
 
 describe('#transformLimit', function() {
@@ -271,6 +313,26 @@ describe('#transformLimit', function() {
       assert.deepEqual(order, [1, 4, 3]);
       done();
     }, Math);
+
+  });
+
+  it('should cause error', function(done) {
+
+    var order = [];
+    var collection = [1, 5, 3, 2, 4];
+    var iterator = function(memo, value, key, callback) {
+      setTimeout(function() {
+        memo.push(value);
+        order.push(value);
+        callback(value === 3);
+      }, value * 10);
+    };
+    async.transformLimit(collection, 3, iterator, function(err, res) {
+      assert.ok(err);
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, [1, 3]);
+      done();
+    });
 
   });
 

@@ -29,7 +29,7 @@ describe('#detect', function() {
     var order = [];
     var collection = [1, 3, 2, 4];
     async.detect(collection, detectIterator(order), function(res) {
-      assert.deepEqual(res, 1);
+      assert.strictEqual(res, 1);
       assert.deepEqual(order, [1]);
       done();
     });
@@ -45,7 +45,7 @@ describe('#detect', function() {
       c: 2
     };
     async.detect(collection, detectIterator(order), function(res) {
-      assert.deepEqual(res, 3);
+      assert.strictEqual(res, 3);
       assert.deepEqual(order, [2, 3]);
       done();
     });
@@ -62,7 +62,7 @@ describe('#detect', function() {
     };
 
     async.detect(collection, detectIterator(order), function(res) {
-      assert.deepEqual(res, 1.1);
+      assert.strictEqual(res, 1.1);
       assert.deepEqual(order, [1]);
       done();
     }, Math);
@@ -77,7 +77,7 @@ describe('#detectSeries', function() {
     var order = [];
     var collection = [1, 3, 2, 4];
     async.detectSeries(collection, detectIterator(order), function(res) {
-      assert.deepEqual(res, 1);
+      assert.strictEqual(res, 1);
       assert.deepEqual(order, [1]);
       done();
     });
@@ -93,7 +93,7 @@ describe('#detectSeries', function() {
       c: 2
     };
     async.detectSeries(collection, detectIterator(order), function(res) {
-      assert.deepEqual(res, 5);
+      assert.strictEqual(res, 5);
       assert.deepEqual(order, [5]);
       done();
     });
@@ -110,7 +110,7 @@ describe('#detectSeries', function() {
     };
 
     async.detectSeries(collection, detectIterator(order), function(res) {
-      assert.deepEqual(res, 1.1);
+      assert.strictEqual(res, 1.1);
       assert.deepEqual(order, [1]);
       done();
     }, Math);
@@ -126,7 +126,7 @@ describe('#detectLimit', function() {
     var collection = [2, 3, 1];
 
     async.detectLimit(collection, 2, detectIterator(order), function(res) {
-      assert.deepEqual(res, 3);
+      assert.strictEqual(res, 3);
       assert.deepEqual(order, [2, 3]);
       done();
     });
@@ -144,7 +144,7 @@ describe('#detectLimit', function() {
       e: 1
     };
     async.detectLimit(collection, 3, detectIterator(order), function(res) {
-      assert.deepEqual(res, 1);
+      assert.strictEqual(res, 1);
       assert.deepEqual(order, [1]);
       done();
     });
@@ -161,7 +161,7 @@ describe('#detectLimit', function() {
     };
 
     async.detectLimit(collection, 2, detectIterator(order), function(res) {
-      assert.deepEqual(res, 1.1);
+      assert.strictEqual(res, 1.1);
       assert.deepEqual(order, [1]);
       done();
     }, Math);

@@ -128,17 +128,38 @@ describe('#map', function() {
         result.async.time = timer.diff();
 
         // result
-        assert.ok(result.async.sum, sum);
-        assert.ok(result.asyncjs.sum, sum);
+        assert.strictEqual(result.async.sum, sum);
+        assert.strictEqual(result.asyncjs.sum, sum);
         assert.ok(result.async.time < result.asyncjs.time);
-        var sample = _.sample(collection);
-        assert.ok(res1[sample], res2[sample]);
-        //assert.deepEqual(res1, array);
-        //assert.deepEqual(res2, array);
+        var check = _.every(res1, function(item, index) {
+          return res2[index] === item;
+        });
+        assert.ok(check);
 
         done();
       });
     });
+
+  });
+
+  it('should cause error', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    var iterator = function(num, callback) {
+      setTimeout(function() {
+        order.push(num);
+        callback(num === 3, num);
+      }, num * 10);
+    };
+
+    async.map(collection, iterator, function(err, res) {
+      assert.ok(err);
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, [1, 2, 3]);
+      done();
+    });
+
   });
 
 });
@@ -200,6 +221,26 @@ describe('#mapSeries', function() {
 
   });
 
+  it('should cause error', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    var iterator = function(num, callback) {
+      setTimeout(function() {
+        order.push(num);
+        callback(num === 3, num);
+      }, num * 10);
+    };
+
+    async.mapSeries(collection, iterator, function(err, res) {
+      assert.ok(err);
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, [1, 3]);
+      done();
+    });
+
+  });
+
 });
 
 describe('#mapLimit', function() {
@@ -213,7 +254,6 @@ describe('#mapLimit', function() {
       if (err) {
         return done(err);
       }
-
       assert.deepEqual(res, [2, 6, 8, 4, 6, 2]);
       assert.deepEqual(order, [1, 3, 2, 4, 1, 3]);
       done();
@@ -261,6 +301,27 @@ describe('#mapLimit', function() {
     }, Math);
 
   });
+
+  it('should cause error', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 4, 2, 3, 1];
+    var iterator = function(num, callback) {
+      setTimeout(function() {
+        order.push(num);
+        callback(num === 3, num);
+      }, num * 10);
+    };
+
+    async.mapLimit(collection, 4, iterator, function(err, res) {
+      assert.ok(err);
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, [1, 2, 3]);
+      done();
+    });
+
+  });
+
 
 });
 

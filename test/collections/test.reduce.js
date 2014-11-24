@@ -42,7 +42,7 @@ describe('#reduce', function() {
       if (err) {
         return done(err);
       }
-      assert.equal(res, 10);
+      assert.strictEqual(res, 10);
       assert.deepEqual(order, [1, 3, 2, 4]);
       done();
     });
@@ -102,6 +102,27 @@ describe('#reduce', function() {
     }, Math);
 
   });
+
+  it('should cause error', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    var iterator = function(memo, num, callback) {
+      setTimeout(function() {
+        memo.push(num);
+        order.push(num);
+        callback(num === 3, memo);
+      }, num * 10);
+    };
+    async.reduce(collection, [], iterator, function(err, res) {
+      assert.ok(err);
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, [1, 3]);
+      done();
+    });
+
+  });
+
 });
 
 describe('#reduceRight', function() {
@@ -114,7 +135,7 @@ describe('#reduceRight', function() {
       if (err) {
         return done(err);
       }
-      assert.equal(res, 10);
+      assert.strictEqual(res, 10);
       assert.deepEqual(order, [4, 2, 3, 1]);
       done();
     });
@@ -172,6 +193,26 @@ describe('#reduceRight', function() {
       assert.deepEqual(order, [3, 4, 1]);
       done();
     }, Math);
+
+  });
+
+  it('should cause error', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    var iterator = function(memo, num, callback) {
+      setTimeout(function() {
+        memo.push(num);
+        order.push(num);
+        callback(num === 3, memo);
+      }, num * 10);
+    };
+    async.reduceRight(collection, [], iterator, function(err, res) {
+      assert.ok(err);
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, [4, 2, 3]);
+      done();
+    });
 
   });
 
