@@ -1,7 +1,7 @@
 {
   "name": "neo-async",
   "version": "0.2.0",
-  "description": "async for node.js",
+  "description": "Neo-Async is faster than Async.js",
   "main": "index.js",
   "scripts": {
     "test": "node_modules/mocha/bin/_mocha test/*/  --require intelli-espower-loader"

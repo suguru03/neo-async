@@ -1,4 +1,4 @@
 'use strict';
 
-module.exports = require('./lib/async');
+module.exports = require('./lib/async.compact');
 
