@@ -41,7 +41,9 @@ describe('#applyEach', function() {
       assert.deepEqual(order, [2, 1, 3]);
       done();
     });
+
   });
+
 });
 
 describe('#applyEachSeries', function() {

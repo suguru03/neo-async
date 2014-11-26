@@ -4,7 +4,6 @@
 var assert = require('power-assert');
 var async = require('../../');
 
-// TODO test...
 describe('#auto', function() {
 
   it('should execute in accordance with best order', function(done) {
@@ -49,6 +48,69 @@ describe('#auto', function() {
       }
       assert.deepEqual(order, ['task2', 'task6', 'task3', 'task5', 'task1', 'task4']);
       done();
+    });
+
+  });
+
+  it('should execute in accordance with best order and get results', function(done) {
+
+    var order = [];
+
+    async.auto({
+      task1: ['task2', function(callback, results) {
+        assert.strictEqual(results.task2, 'task2');
+        setTimeout(function() {
+          order.push('task1');
+          callback(null, 'task1a', 'task1b');
+        });
+      }],
+      task2: function(callback) {
+        setTimeout(function() {
+          order.push('task2');
+          callback(null, 'task2');
+        });
+      },
+      task3: ['task2', function(callback, results) {
+        assert.strictEqual(results.task2, 'task2');
+        order.push('task3');
+        callback();
+      }],
+      task4: ['task1', 'task2', function(callback, results) {
+        assert.deepEqual(results.task1, ['task1a', 'task1b']);
+        assert.strictEqual(results.task2, 'task2');
+        order.push('task4');
+        callback(null, 'task4');
+      }]
+    }, function(err, results) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(results, {
+        task1: ['task1a', 'task1b'],
+        task2: 'task2',
+        task3: undefined,
+        task4: 'task4'
+      });
+      done();
+    });
+
+  });
+
+  it('should execute even if object is empty', function(done) {
+
+    async.auto({}, done);
+  });
+
+  it('should execute without callback', function(done) {
+
+    async.auto({
+      task1: function(callback) {
+        callback();
+      },
+      task2: ['task1', function(callback) {
+        callback();
+        done();
+      }]
     });
 
   });

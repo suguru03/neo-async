@@ -9,14 +9,11 @@ $ npm install neo-async
 
 ### Results
 * series
-    * 2.6ms ⇒ 1.1ms
-    * 1.5ms短縮
+    * 2.6ms ⇒ 1.1ms (-1.5ms)
 * parallel
-    * 3.3ms ⇒ 1.2ms
-    * 2.1ms短縮
+    * 3.3ms ⇒ 1.2ms (-2.1ms)
 * waterfall
-    * 11.9ms ⇒ 3.2ms
-    * 8.7ms短縮
+    * 11.9ms ⇒ 3.2ms (-8.7ms)
 
 ### Common
 ```js
@@ -63,12 +60,12 @@ async.series(tasks, function(err, res1) {
     });
 });
 ```
-* async, neo_asyncの順
+* in oder of async, neo_async
     * { async: 2632607, neo_async: 1097360 }
-    * 1.5ms短縮 (1535247ns)
-* neo_sync, asyncの順
+    * -1.5ms (1535247ns)
+* in oder of neo_sync, async
     * { async: 3749187, neo_async: 1615040 }
-    * 2.1ms短縮 (2134147ns)
+    * -2.1ms (2134147ns)
 
 ### parallel
 
@@ -96,12 +93,12 @@ neo_async.parallel(tasks, function(err, res1) {
     });
 });
 ```
-* async, neo_asyncの順
+* in order of async, neo_async
     * { async: 3291565, neo_async: 1166516 }
-    * 2.1ms短縮 (2125049ns)
-* neo_sync, asyncの順
+    * -2.1ms (2125049ns)
+* in order of neo_sync, async
     * { async: 3326372, neo_async: 1174852 }
-    * 2.1ms短縮 (2151520ns)
+    * -2.1ms (2151520ns)
 
 ### waterfall
 
@@ -138,12 +135,12 @@ async.waterfall(tasks, function(err, res1) {
 });
 ```
 
-* async, neo_asyncの順
+* in order of async, neo_async
     * { async: 11875267, neo_async: 3183565 }
-    * 8.7ms短縮 (8691702ns)
-* neo_sync, asyncの順
+    * -8.7ms (8691702ns)
+* in order of neo_sync, async
     * { async: 11667079, neo_async: 2760822 }
-    * 8.9ms短縮 (8906257ns)
+    * -8.9ms (8906257ns)
 
 
 ## Feature
