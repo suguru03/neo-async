@@ -1,6 +1,6 @@
 {
   "name": "neo-async",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Neo-Async is faster than Async.js",
   "main": "index.js",
   "scripts": {
