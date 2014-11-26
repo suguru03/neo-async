@@ -6,6 +6,11 @@
   "scripts": {
     "test": "node_modules/mocha/bin/_mocha test/*/  --require intelli-espower-loader"
   },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:suguru03/Neo-Async.git"
+  },
+  "homepage": "https://github.com/suguru03/Neo-Async",
   "directories": {
     "test": "test/"
   },
