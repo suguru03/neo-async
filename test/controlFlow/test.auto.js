@@ -62,7 +62,7 @@ describe('#auto', function() {
         setTimeout(function() {
           order.push('task1');
           callback(null, 'task1a', 'task1b');
-        });
+        }, 25);
       }],
       task2: function(callback) {
         setTimeout(function() {
@@ -85,6 +85,7 @@ describe('#auto', function() {
       if (err) {
         return done(err);
       }
+      assert.deepEqual(order, ['task2', 'task3', 'task1', 'task4']);
       assert.deepEqual(results, {
         task1: ['task1a', 'task1b'],
         task2: 'task2',
@@ -111,6 +112,44 @@ describe('#auto', function() {
         callback();
         done();
       }]
+    });
+
+  });
+
+  it('should throw error and get safe results', function(done) {
+
+    var order = [];
+
+    async.auto({
+      task1: ['task2', function(callback, results) {
+        assert.strictEqual(results.task2, 'task2');
+        setTimeout(function() {
+          order.push('task1');
+          callback(null, 'task1a', 'task1b');
+        }, 25);
+      }],
+      task2: function(callback) {
+        setTimeout(function() {
+          order.push('task2');
+          callback(null, 'task2');
+        });
+      },
+      task3: ['task2', function(callback, results) {
+        assert.strictEqual(results.task2, 'task2');
+        order.push('task3');
+        callback('error', 'task3');
+      }],
+      task4: ['task1', 'task2', function(callback, results) {
+        assert.deepEqual(results.task1, ['task1a', 'task1b']);
+        assert.strictEqual(results.task2, 'task2');
+        order.push('task4');
+        callback(null, 'task4');
+      }]
+    }, function(err, results) {
+      assert.ok(err);
+      assert.deepEqual(order, ['task2', 'task3']);
+      assert.deepEqual(results, { task2: 'task2', task3: 'task3' });
+      done();
     });
 
   });

@@ -90,7 +90,7 @@ describe('#concat', function() {
 
   it('should execute faster than async.js', function(done) {
 
-    var sample = 100;
+    var sample = 500;
     var collection = _.sample(_.times(sample), sample);
     var array = [];
     _.forEach(collection, function(num) {
