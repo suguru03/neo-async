@@ -73,7 +73,7 @@ describe('#waterfall', function() {
       if (err) {
         return done(err);
       }
-      assert.equal(res, 10);
+      assert.strictEqual(res, 10);
       done();
     });
 
@@ -92,7 +92,7 @@ describe('#waterfall', function() {
       if (err) {
         return done(err);
       }
-      assert.equal(res, 14);
+      assert.strictEqual(res, 14);
       done();
     });
 
@@ -106,10 +106,10 @@ describe('#waterfall', function() {
       if (err) {
         return done(err);
       }
-      assert.equal(a, 1);
-      assert.equal(b, 3);
-      assert.equal(c, 2);
-      assert.equal(d, 4);
+      assert.strictEqual(a, 1);
+      assert.strictEqual(b, 3);
+      assert.strictEqual(c, 2);
+      assert.strictEqual(d, 4);
       done();
     });
 
@@ -148,8 +148,8 @@ describe('#waterfall', function() {
         result.asyncjs.time = timer.diff();
 
         // result
-        assert.equal(sum, res1);
-        assert.equal(sum, res2);
+        assert.strictEqual(sum, res1);
+        assert.strictEqual(sum, res2);
         assert.ok(result.async.time < result.asyncjs.time);
 
         done();

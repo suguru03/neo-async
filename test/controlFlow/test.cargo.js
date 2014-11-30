@@ -1,6 +1,7 @@
 /* global describe, it */
 'use strict';
 
+var _ = require('lodash');
 var assert = require('power-assert');
 var async = require('../../');
 
@@ -135,6 +136,72 @@ describe('#cargo', function() {
       ]);
       done();
     }, 800);
+  });
+
+  it('should execute drain once', function(done) {
+
+    var order = [];
+    var c = async.cargo(function(tasks, callback) {
+      order.push(tasks);
+      callback();
+    }, 3);
+
+    var drainCounter = 0;
+    c.drain = function() {
+      drainCounter++;
+    };
+
+    var n = 10;
+    _.times(n, c.push);
+    assert.strictEqual(c.length(), 10);
+
+    setTimeout(function() {
+      assert.deepEqual(order, [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [9]
+      ]);
+      assert.strictEqual(drainCounter, 1);
+      done();
+    }, 500);
+
+  });
+
+  it('should execute drain twice', function(done) {
+
+    var order = [];
+    var c = async.cargo(function(tasks, callback) {
+      order.push(tasks);
+      callback();
+    }, 3);
+
+    var drainCounter = 0;
+    c.drain = function() {
+      drainCounter++;
+    };
+
+    var n = 10;
+    var loadCargo = _.times.bind(_, n, c.push);
+    loadCargo();
+    assert.strictEqual(c.length(), 10);
+    setTimeout(loadCargo, 50);
+
+    setTimeout(function() {
+      assert.deepEqual(order, [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [9],
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [9]
+      ]);
+      assert.strictEqual(drainCounter, 2);
+      done();
+    }, 100);
+
   });
 
 });

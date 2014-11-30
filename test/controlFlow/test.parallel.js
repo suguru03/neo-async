@@ -131,6 +131,26 @@ describe('#parallel', function() {
 
   });
 
+  it('should throw error', function(done) {
+
+    var order = [];
+    var numbers = [1, 3, 2, 4];
+    var tasks = createTasks(order, numbers);
+    var error = function(callback) {
+      setTimeout(function() {
+        callback('error');
+      }, 25);
+    };
+    tasks.splice(2, 0, error);
+
+    async.parallel(tasks, function(err) {
+      assert.ok(err);
+      assert.deepEqual(order, [1, 2]);
+      done();
+    });
+
+  });
+
 });
 
 describe('#parallelLimit', function() {
@@ -240,6 +260,27 @@ describe('#parallelLimit', function() {
         done();
       });
     });
+
+  });
+
+  it('should throw error', function(done) {
+
+    var order = [];
+    var numbers = [1, 3, 2, 4];
+    var tasks = createTasks(order, numbers);
+    var error = function(callback) {
+      setTimeout(function() {
+        callback('error');
+      }, 25);
+    };
+    tasks.splice(2, 0, error);
+
+    async.parallelLimit(tasks, 2, function(err) {
+      assert.ok(err);
+      assert.deepEqual(order, [1, 3, 2]);
+      done();
+    });
+
   });
 
 });

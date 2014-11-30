@@ -26,8 +26,8 @@ describe('#retry', function() {
       if (err) {
         return done(err);
       }
-      assert.equal(callCount, 3);
-      assert.equal(res, message);
+      assert.strictEqual(callCount, 3);
+      assert.strictEqual(res, message);
       done();
     });
 
@@ -47,9 +47,9 @@ describe('#retry', function() {
     };
 
     async.retry(times, fn, function(err, res) {
-      assert.equal(callCount, 3);
-      assert.equal(err, error + times);
-      assert.equal(res, success + times);
+      assert.strictEqual(callCount, 3);
+      assert.strictEqual(err, error + times);
+      assert.strictEqual(res, success + times);
       done();
     });
 
