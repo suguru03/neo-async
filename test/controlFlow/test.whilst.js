@@ -32,6 +32,7 @@ describe('#whilst', function() {
       assert.deepEqual(order.test, [0, 1, 2, 3, 4, 5]);
       done();
     });
+
   });
 
   it('should execute with binding until test is false', function(done) {
@@ -63,7 +64,38 @@ describe('#whilst', function() {
       assert.deepEqual(result, [0, 1, 4, 9, 16]);
       done();
     }, Math);
+
   });
+
+  it('should throw error', function(done) {
+
+    var count = 0;
+    var limit = 5;
+    var order = {
+      test: [],
+      iterator: []
+    };
+    var result = [];
+    var test = function() {
+      order.test.push(count);
+      return count < limit;
+    };
+    var iterator = function(callback) {
+      result.push(this.pow(count, 2));
+      order.iterator.push(count++);
+      callback(count === 3);
+    };
+
+    async.whilst(test, iterator, function(err) {
+      assert.ok(err);
+      assert.deepEqual(order.iterator, [0, 1, 2]);
+      assert.deepEqual(order.test, [0, 1, 2]);
+      assert.deepEqual(result, [0, 1, 4]);
+      done();
+    }, Math);
+
+  });
+
 });
 
 describe('#doWhilst', function() {
@@ -94,6 +126,7 @@ describe('#doWhilst', function() {
       assert.deepEqual(order.test, [1, 2, 3, 4, 5]);
       done();
     });
+
   });
 
   it('should execute with binding until test is false', function(done) {
@@ -125,6 +158,7 @@ describe('#doWhilst', function() {
       assert.deepEqual(result, [0, 1, 4, 9, 16]);
       done();
     }, Math);
+
   });
 
   it('should execute until test is false and apply params', function(done) {
@@ -153,6 +187,35 @@ describe('#doWhilst', function() {
       assert.deepEqual(order.test, [1, 2, 3, 4, 5]);
       done();
     });
+
+  });
+
+  it('should throw error', function(done) {
+
+    var count = 0;
+    var limit = 5;
+    var order = {
+      test: [],
+      iterator: []
+    };
+    var result = [];
+    var test = function() {
+      order.test.push(count);
+      return count < limit;
+    };
+    var iterator = function(callback) {
+      result.push(this.pow(count, 2));
+      order.iterator.push(count++);
+      callback(count === 3);
+    };
+
+    async.doWhilst(iterator, test, function(err) {
+      assert.ok(err);
+      assert.deepEqual(order.iterator, [0, 1, 2]);
+      assert.deepEqual(order.test, [1, 2]);
+      assert.deepEqual(result, [0, 1, 4]);
+      done();
+    }, Math);
 
   });
 

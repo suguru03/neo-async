@@ -52,5 +52,27 @@ describe('#createLogger', function() {
 
   });
 
+  it('should throw error', function(done) {
+
+    var fn = function(name) {
+
+      return function(arg, done, logger) {
+
+        assert.equal(arg, name);
+        logger('error');
+        done('error');
+      };
+    };
+
+    var names = ['log', 'debug', 'info'];
+    var name = names.shift();
+    var logger = async.createLogger(name);
+
+    logger(fn(name), name, function(err) {
+      assert.ok(err);
+      done();
+    });
+  });
+
 });
 

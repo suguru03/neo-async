@@ -70,5 +70,35 @@ describe('#memoize', function() {
 
   });
 
+  it('should use queue', function(done) {
+
+    var order = [];
+    var fn = function(arg, callback) {
+      order.push(arg);
+      setTimeout(function() {
+        callback(null, arg);
+      }, 100);
+    };
+
+    var fn2 = async.memoize(fn);
+    fn2(1, function(err, res) {
+      assert.ok(!err);
+      assert.strictEqual(res, 1);
+    });
+    fn2(2, function(err, res) {
+      assert.ok(!err);
+      assert.strictEqual(res, 2);
+    });
+    fn2(1, function(err, res) {
+      assert.ok(!err);
+      assert.strictEqual(res, 1);
+    });
+    setTimeout(function() {
+      assert.deepEqual(order, [1, 2]);
+      done();
+    }, 300);
+
+  });
+
 });
 
