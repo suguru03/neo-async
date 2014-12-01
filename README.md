@@ -1,6 +1,6 @@
 # Neo-Async
 [![Build Status](https://travis-ci.org/suguru03/Neo-Async.svg?branch=master)](https://travis-ci.org/suguru03/Neo-Async)
-[![Coverage Status](https://coveralls.io/repos/suguru03/Neo-Async/badge.png)](https://coveralls.io/r/suguru03/Neo-Async)
+[![Coverage Status](https://coveralls.io/repos/suguru03/Neo-Async/badge.png?branch=master)](https://coveralls.io/r/suguru03/Neo-Async?branch=master)
 
 Neo-Async is faster than Async.js and has more feature.
 
