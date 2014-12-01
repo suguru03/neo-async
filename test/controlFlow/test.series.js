@@ -5,7 +5,9 @@ var _ = require('lodash');
 var assert = require('power-assert');
 var async = require('../../');
 var asyncjs = require('async');
-var timer = require('../util').createTimer();
+var util = require('../util');
+var timer = util.createTimer();
+var speedTest = util.checkSpeed() ? it : it.skip;
 
 function createTasks(order, numbers) {
 
@@ -87,7 +89,7 @@ describe('#series', function() {
     }, Math);
   });
 
-  it('should execute faster than async.js', function(done) {
+  speedTest('should execute faster than async.js', function(done) {
 
     var sample = 1000;
     var collection = _.sample(_.times(sample), sample);

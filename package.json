@@ -4,7 +4,7 @@
   "description": "Neo-Async is faster than Async.js",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/mocha/bin/_mocha test/*/  --require intelli-espower-loader"
+    "test": "make test-cov"
   },
   "repository": {
     "type": "git",
@@ -17,8 +17,10 @@
   "dependencies": {},
   "devDependencies": {
     "async": "^0.9.0",
+    "coveralls": "^2.11.2",
     "espower-loader": "^0.10.0",
     "intelli-espower-loader": "^0.5.0",
+    "istanbul": "^0.3.2",
     "lodash": "^2.4.1",
     "mocha": "^2.0.1",
     "power-assert": "^0.10.0"

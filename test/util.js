@@ -33,3 +33,8 @@ exports.createTimer = function() {
 
 };
 
+exports.checkSpeed = function() {
+
+  return process.env.CHECK_SPEED == 1;
+};
+
