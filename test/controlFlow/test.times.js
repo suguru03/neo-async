@@ -58,6 +58,36 @@ describe('#times', function() {
 
   });
 
+  it('should return response immediately', function(done) {
+
+    var n = 0;
+    var order = [];
+    async.times(n, timeItrator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should throw error', function(done) {
+
+    var n = 4;
+    var iterator = function(n, next) {
+      next(n === 2);
+    };
+    async.times(n, iterator, function(err) {
+      assert.ok(err);
+      setTimeout(function() {
+        done();
+      }, 50);
+    });
+
+  });
+
   speedTest('should execute faster than async.js', function(done) {
 
     var n = 1000;
@@ -120,6 +150,7 @@ describe('#timesSeries', function() {
     });
 
   });
+
   it('should execute iterator with binding', function(done) {
 
     var n = 3;
@@ -132,6 +163,34 @@ describe('#timesSeries', function() {
       assert.deepEqual(order, [0, 1, 2]);
       done();
     }, Math);
+
+  });
+
+  it('should return response immediately', function(done) {
+
+    var n = 0;
+    var order = [];
+    async.timesSeries(n, timeItrator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should throw error', function(done) {
+
+    var n = 4;
+    var iterator = function(n, next) {
+      next(n === 2);
+    };
+    async.timesSeries(n, iterator, function(err) {
+      assert.ok(err);
+      done();
+    });
 
   });
 
@@ -166,6 +225,36 @@ describe('#timesLimit', function() {
       assert.deepEqual(order, [0, 2, 1, 4, 3, 5, 6]);
       done();
     }, Math);
+
+  });
+
+  it('should return response immediately', function(done) {
+
+    var n = 0;
+    var order = [];
+    async.timesLimit(n, 2, timeItrator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should throw error', function(done) {
+
+    var n = 6;
+    var iterator = function(n, next) {
+      next(n === 4);
+    };
+    async.timesLimit(n, 3, iterator, function(err) {
+      assert.ok(err);
+      setTimeout(function() {
+        done();
+      }, 50);
+    });
 
   });
 
