@@ -6,6 +6,8 @@
   "scripts": {
     "test": "make test-cov"
   },
+  "lisence": "MIT",
+  "keywords": "async, util",
   "repository": {
     "type": "git",
     "url": "git@github.com:suguru03/Neo-Async.git"
