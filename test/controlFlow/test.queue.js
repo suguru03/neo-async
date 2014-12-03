@@ -200,6 +200,61 @@ describe('#queue', function() {
 
   });
 
+  it('should execute using unshift', function(done) {
+
+    var order = {
+      callback: [],
+      process: []
+    };
+    var delays = [160, 80, 240, 80];
+    var worker = function(data, callback) {
+      setTimeout(function() {
+        order.process.push(data);
+        callback('err', 'arg');
+      }, delays.shift());
+    };
+
+    var queue = async.queue(worker, 2);
+
+    queue.push(1, function(err, arg) {
+      assert.strictEqual(err, 'err');
+      assert.strictEqual(arg, 'arg');
+      assert.strictEqual(queue.length(), 0);
+      queue.concurrency = 1;
+      order.callback.push(1);
+    });
+    queue.push(2, function(err, arg) {
+      assert.strictEqual(err, 'err');
+      assert.strictEqual(arg, 'arg');
+      assert.strictEqual(queue.length(), 0);
+      order.callback.push(2);
+    });
+    queue.unshift(3, function(err, arg) {
+      assert.strictEqual(err, 'err');
+      assert.strictEqual(arg, 'arg');
+      assert.strictEqual(queue.length(), 2);
+      order.callback.push(3);
+    });
+    queue.unshift(4, function(err, arg) {
+      assert.strictEqual(err, 'err');
+      assert.strictEqual(arg, 'arg');
+      assert.strictEqual(queue.length(), 1);
+      order.callback.push(4);
+    });
+
+    assert.strictEqual(queue.length(),  4);
+    assert.strictEqual(queue.concurrency, 2);
+
+    queue.drain = function() {
+      assert.deepEqual(order.callback, [3, 4, 2, 1]);
+      assert.deepEqual(order.process, [3, 4, 2, 1]);
+      assert.strictEqual(queue.length(),  0);
+      assert.strictEqual(queue.concurrency, 1);
+      done();
+    };
+
+  });
+
 });
 
 describe('#priorityQueue', function() {

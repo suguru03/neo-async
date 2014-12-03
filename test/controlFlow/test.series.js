@@ -45,6 +45,7 @@ describe('#series', function() {
       assert.deepEqual(order, [1, 3, 2, 4]);
       done();
     });
+
   });
 
   it('should execute to series by tasks of object', function(done) {
@@ -66,6 +67,7 @@ describe('#series', function() {
       assert.deepEqual(order, [4, 2, 1, 3]);
       done();
     });
+
   });
 
   it('should execute parallel with binding', function(done) {
@@ -87,6 +89,24 @@ describe('#series', function() {
       assert.deepEqual(order, [1, 2, 2, 4]);
       done();
     }, Math);
+
+  });
+
+  it('should throw error', function(done) {
+
+    var order = [];
+    var numbers = [1, 3, 2, 4];
+    var tasks = createTasks(order, numbers);
+    var errorTask = function(next) {
+      next('error');
+    };
+    tasks.splice(2, 0, errorTask);
+
+    async.series(tasks, function(err) {
+      assert.ok(err);
+      done();
+    });
+
   });
 
   speedTest('should execute faster than async.js', function(done) {
