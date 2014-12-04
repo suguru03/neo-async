@@ -1,7 +1,7 @@
 /* global describe, it */
 'use strict';
 
-var _ = require('lodash');
+  var _ = require('lodash');
 var assert = require('power-assert');
 var async = require('../../');
 
@@ -215,6 +215,11 @@ describe('#queue', function() {
     };
 
     var queue = async.queue(worker, 2);
+    queue.saturated = function() {
+      setTimeout(function() {
+        assert.strictEqual(queue.running(), 2);
+      }, 40);
+    };
 
     queue.push(1, function(err, arg) {
       assert.strictEqual(err, 'err');
@@ -252,6 +257,78 @@ describe('#queue', function() {
       assert.strictEqual(queue.concurrency, 1);
       done();
     };
+
+  });
+
+  it('should execute drain immediately if insert task is empty', function(done) {
+
+    var order = [];
+    var worker = function(data, callback) {
+      order.push(1);
+      callback();
+    };
+    var queue = async.queue(worker);
+    queue.drain = function() {
+      assert.deepEqual(order, []);
+      done();
+    };
+    queue.push();
+
+  });
+
+  it('should execute empty function if task is empty', function(done) {
+
+    var worker = function(data, callback) {
+      setTimeout(function() {
+        callback();
+      }, 50);
+    };
+
+    var called = false;
+    var queue = async.queue(worker);
+    queue.empty = function() {
+      assert.strictEqual(queue.length(), 0);
+      called = true;
+    };
+    queue.push(1, function() {
+      assert.strictEqual(queue.length(), 0);
+    });
+    queue.drain = function() {
+      assert.ok(called);
+      done();
+    };
+
+  });
+
+  it('should pause, resume and kill', function(done) {
+
+    var order = [];
+    var delays = [40, 20];
+    var worker = function(data, callback) {
+      setTimeout(function() {
+        order.push(data);
+        callback();
+      }, delays.shift());
+    };
+
+    var queue = async.queue(worker);
+    queue.resume();
+    queue.pause();
+    queue.push(1, function() {
+      assert.strictEqual(queue.length(), 0);
+    });
+    queue.push(2, function() {
+    });
+    setTimeout(function() {
+      queue.resume();
+    }, 100);
+    setTimeout(function() {
+      queue.kill();
+    }, 120);
+    setTimeout(function() {
+      assert.deepEqual(order, [1]);
+      done();
+    }, 200);
 
   });
 
@@ -321,8 +398,12 @@ describe('#priorityQueue', function() {
         callback('err', 'arg');
       }, delays.shift());
     };
+    var called = false;
     var concurrency = 2;
     var queue = async.priorityQueue(worker, concurrency);
+    queue.saturated = function() {
+      called = true;
+    };
 
     queue.push(1, 1.4, function(err, arg) {
       assert.strictEqual(err, 'err');
@@ -357,8 +438,25 @@ describe('#priorityQueue', function() {
       assert.deepEqual(order.callback, [1, 2, 3, 4]);
       assert.strictEqual(queue.concurrency, 2);
       assert.strictEqual(queue.length(), 0);
+      assert.ok(called);
       done();
     };
+
+  });
+
+  it('should execute drain immediately if insert task is empty', function(done) {
+
+    var order = [];
+    var worker = function(data, callback) {
+      order.push(1);
+      callback();
+    };
+    var queue = async.priorityQueue(worker);
+    queue.drain = function() {
+      assert.deepEqual(order, []);
+      done();
+    };
+    queue.push();
 
   });
 
