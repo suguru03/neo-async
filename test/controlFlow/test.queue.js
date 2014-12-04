@@ -1,7 +1,7 @@
 /* global describe, it */
 'use strict';
 
-  var _ = require('lodash');
+var _ = require('lodash');
 var assert = require('power-assert');
 var async = require('../../');
 
