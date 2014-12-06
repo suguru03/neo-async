@@ -1,13 +1,8 @@
 /* global describe, it */
 'use strict';
 
-var _ = require('lodash');
 var assert = require('power-assert');
 var async = require('../../');
-var asyncjs = require('async');
-var util = require('../util');
-var timer = util.createTimer();
-var speedTest = util.checkSpeed() ? it : it.skip;
 
 function mapIterator(order) {
 
@@ -80,67 +75,6 @@ describe('#map', function() {
       assert.deepEqual(order, [1, 3, 4]);
       done();
     }, Math);
-
-  });
-
-  speedTest('should execute faster than async.js', function(done) {
-
-    var sample = 1000;
-    var collection = _.sample(_.times(sample), sample);
-    var array = [];
-    var sum = _.reduce(collection, function(sum, num) {
-        array.push(num * 2);
-        return sum + num;
-      }, 0);
-
-    var result = {
-      async: {
-        sum: 0
-      },
-      asyncjs: {
-        sum: 0
-      }
-    };
-
-    var iterator = function(result) {
-
-      return function(num, callback) {
-
-        result.sum += num;
-        callback(null, num * 2);
-      };
-    };
-
-    // asyncjs
-    timer.init().start();
-    asyncjs.map(collection, iterator(result.asyncjs), function(err, res1) {
-      if (err) {
-        return done(err);
-      }
-
-      result.asyncjs.time = timer.diff();
-      timer.init().start();
-
-      // async
-      async.map(collection, iterator(result.async), function(err, res2) {
-        if (err) {
-          return done(err);
-        }
-
-        result.async.time = timer.diff();
-
-        // result
-        assert.strictEqual(result.async.sum, sum);
-        assert.strictEqual(result.asyncjs.sum, sum);
-        assert.ok(result.async.time < result.asyncjs.time);
-        var check = _.every(res1, function(item, index) {
-          return res2[index] === item;
-        });
-        assert.ok(check);
-
-        done();
-      });
-    });
 
   });
 

@@ -4,10 +4,6 @@
 var _ = require('lodash');
 var assert = require('power-assert');
 var async = require('../../');
-var asyncjs = require('async');
-var util = require('../util');
-var timer = util.createTimer();
-var speedTest = util.checkSpeed() ? it : it.skip;
 
 function createTasks(type, numbers) {
 
@@ -214,49 +210,6 @@ describe('#waterfall', function() {
       assert.ok(err);
       done();
     }, Math);
-
-  });
-
-  speedTest('should execute faster than async.js', function(done) {
-
-    var sample = 1000;
-    var collection = _.sample(_.times(sample), sample);
-    var sum = _.reduce(collection, function(sum, num) {
-      return sum + num;
-    }, 0);
-    var tasks = createTasks('simple', collection);
-
-    var result = {
-      async: {},
-      asyncjs: {}
-    };
-
-    // async
-    timer.init().start();
-    async.waterfall(tasks, function(err, res1) {
-      if (err) {
-        return done(err);
-      }
-
-      result.async.time = timer.diff();
-      timer.init().start();
-
-      // asyncjs
-      asyncjs.waterfall(tasks, function(err, res2) {
-        if (err) {
-          return done(err);
-        }
-
-        result.asyncjs.time = timer.diff();
-
-        // result
-        assert.strictEqual(sum, res1);
-        assert.strictEqual(sum, res2);
-        assert.ok(result.async.time < result.asyncjs.time);
-
-        done();
-      });
-    });
 
   });
 

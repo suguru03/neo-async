@@ -1,13 +1,8 @@
 /* global describe, it */
 'use strict';
 
-var _ = require('lodash');
 var assert = require('power-assert');
 var async = require('../../');
-var asyncjs = require('async');
-var util = require('../util');
-var timer = util.createTimer();
-var speedTest = util.checkSpeed() ? it : it.skip;
 
 function timeItrator(order) {
 
@@ -84,50 +79,6 @@ describe('#times', function() {
       setTimeout(function() {
         done();
       }, 50);
-    });
-
-  });
-
-  speedTest('should execute faster than async.js', function(done) {
-
-    var n = 1000;
-    var array = _.times(n, function(n) {
-      return n * 2;
-    });
-    var result = {
-      async: {},
-      asyncjs: {}
-    };
-
-    var iterator = function(num, callback) {
-      callback(null, num * 2);
-    };
-
-    // asyncjs
-    timer.init().start();
-    asyncjs.times(n, iterator, function(err, res1) {
-      if (err) {
-        return done(err);
-      }
-
-      result.asyncjs.time = timer.diff();
-      timer.init().start();
-
-      // asyncjs
-      async.times(n, iterator, function(err, res2) {
-        if (err) {
-          return done(err);
-        }
-
-        result.async.time = timer.diff();
-
-        // result
-        assert.ok(result.async.time < result.asyncjs.time);
-        assert.deepEqual(res1, array);
-        assert.deepEqual(res2, array);
-
-        done();
-      });
     });
 
   });

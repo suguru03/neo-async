@@ -4,10 +4,6 @@
 var _ = require('lodash');
 var assert = require('power-assert');
 var async = require('../../');
-var asyncjs = require('async');
-var util = require('../util');
-var timer = util.createTimer();
-var speedTest = util.checkSpeed() ? it : it.skip;
 
 function createTasks(order, numbers) {
 
@@ -87,50 +83,6 @@ describe('#parallel', function() {
       assert.deepEqual(order, [1, 2, 2, 4]);
       done();
     }, Math);
-  });
-
-  speedTest('should execute faster than async.js', function(done) {
-
-    var sample = 1000;
-    var collection = _.sample(_.times(sample), sample);
-    var tasks = _.map(collection, function(item) {
-      return function(callback) {
-        callback(null, item);
-      };
-    });
-
-    var result = {
-      async: {},
-      asyncjs: {}
-    };
-
-    // asyncjs
-    timer.init().start();
-    async.parallel(tasks, function(err, res1) {
-      if (err) {
-        return done(err);
-      }
-
-      result.async.time = timer.diff();
-      timer.init().start();
-
-      // async
-      asyncjs.parallel(tasks, function(err, res2) {
-        if (err) {
-          return done(err);
-        }
-
-        result.asyncjs.time = timer.diff();
-
-        // result
-        assert.deepEqual(collection, res1);
-        assert.deepEqual(collection, res2);
-        assert.ok(result.async.time < result.asyncjs.time);
-
-        done();
-      });
-    });
-
   });
 
   it('should throw error', function(done) {
@@ -213,56 +165,6 @@ describe('#parallelLimit', function() {
       assert.deepEqual(order, [1, 2, 2, 4]);
       done();
     }, Math);
-  });
-
-  speedTest('should execute faster than async.js', function(done) {
-
-    var sample = 1000;
-    var limit = 5;
-    var collection = _.sample(_.times(sample), sample);
-    var tasks = _.map(collection, function(item) {
-      return function(callback) {
-        callback(null, item);
-      };
-    });
-
-    var result = {
-      async: {
-        sum: 0
-      },
-      asyncjs: {
-        sum: 0
-      }
-    };
-
-    // asyncjs
-    var now = _.now();
-    asyncjs.parallelLimit(tasks, limit, function(err, res1) {
-      if (err) {
-        return done(err);
-      }
-
-      result.asyncjs.time = _.now() - now;
-
-      now = _.now();
-
-      // async
-      async.parallelLimit(tasks, 4, function(err, res2) {
-        if (err) {
-          return done(err);
-        }
-
-        result.async.time = _.now() - now;
-
-        // result
-        assert.deepEqual(collection, res1);
-        assert.deepEqual(collection, res2);
-        assert.ok(result.async.time < result.asyncjs.time);
-
-        done();
-      });
-    });
-
   });
 
   it('should throw error', function(done) {
