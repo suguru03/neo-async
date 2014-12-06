@@ -2,150 +2,40 @@
 [![Build Status](https://travis-ci.org/suguru03/Neo-Async.svg?branch=master)](https://travis-ci.org/suguru03/Neo-Async)
 [![Coverage Status](https://coveralls.io/repos/suguru03/Neo-Async/badge.png?branch=master)](https://coveralls.io/r/suguru03/Neo-Async?branch=master)
 
-Neo-Async is faster than Async.js and has more feature.
+Neo-Async is compatible with Async.js, it is faster and has more feature.  
+Async is a utilty module which provides staright-forward.
+
+## Installation
+
+### In a browser
+```html
+<script src="async.compact.js"></script>
+```
+
+### In an AMD loader
+```js
+require(['async.compact'], function(async) {});
+```
+
+### Node.js
+
+#### standard
 
 ```bash
 $ npm install neo-async
 ```
-
-## Speed Comparison
-
-### Results
-* series
-    * 2.6ms ⇒ 1.1ms (-1.5ms)
-* parallel
-    * 3.3ms ⇒ 1.2ms (-2.1ms)
-* waterfall
-    * 11.9ms ⇒ 3.2ms (-8.7ms)
-
-### Common
 ```js
-var _ = require('lodash');
+var async = require('neo-async');
+```
+
+#### replacement
+```bash
+$ npm install neo-async
+$ ln -s ./node_modules/neo-async ./node_modules/async
+```
+```js
 var async = require('async');
-var neo_async = require('neo-async');
-var start = function() {
-  return process.hrtime();
-};
-var getDiff = function(start) {
-  var diff = process.hrtime(start);
-  return diff[0] * 1e9 + diff[1];
-};
-var sample = 1000;
-var time = {
-  async: 0,
-  neo_async: 0
-};
 ```
-
-### series
-
-```js
-var tasks = _.map(_.times(sample), function(item) {
-  return function(callback) {
-    callback(null, item);
-  };
-});
-
-var timer = start();
-async.series(tasks, function(err, res1) {
-   time.async = getDiff(timer);
-
-   timer = start();
-    neo_async.series(tasks, function(err, res2) {
-      time.neo_async = getDiff(timer);
-
-      var check = _.every(res1, function(item, index) {
-        return res2[index] === item;
-      });
-      console.log('check', check);
-      console.log('**** time ****');
-      console.log(time.async - time.neo_async);
-    });
-});
-```
-* in oder of async, neo_async
-    * { async: 2632607, neo_async: 1097360 }
-    * -1.5ms (1535247ns)
-* in oder of neo_sync, async
-    * { async: 3749187, neo_async: 1615040 }
-    * -2.1ms (2134147ns)
-
-### parallel
-
-```js
-var tasks = _.map(_.times(sample), function(item) {
-  return function(callback) {
-    callback(null, item);
-  };
-});
-
-var timer = start();
-neo_async.parallel(tasks, function(err, res1) {
-   time.neo_async = getDiff(timer);
-
-   timer = start();
-    async.parallel(tasks, function(err, res2) {
-      time.async = getDiff(timer);
-
-      var check = _.every(res1, function(item, index) {
-        return res2[index] === item;
-      });
-      console.log('check', check);
-      console.log('**** time ****');
-      console.log(time.async - time.neo_async);
-    });
-});
-```
-* in order of async, neo_async
-    * { async: 3291565, neo_async: 1166516 }
-    * -2.1ms (2125049ns)
-* in order of neo_sync, async
-    * { async: 3326372, neo_async: 1174852 }
-    * -2.1ms (2151520ns)
-
-### waterfall
-
-```js
-var tasks = (function createSimpleTasks(num) {
-  var first = true;
-  var tasks = _.transform(_.times(num), function(memo, num, key) {
-    if (first) {
-      first = false;
-      memo[key] = function(done) {
-        done(null, num);
-      };
-    } else {
-      memo[key] = function(sum, done) {
-        done(null, sum + num);
-      };
-    }
-  });
-  return tasks;
-})(sample);
-
-var timer = start();
-async.waterfall(tasks, function(err, res1) {
-  time.neo_async = getDiff(timer);
-
-  timer = start();
-  async.waterfall(tasks, function(err, res2) {
-    time.async = getDiff(timer);
-
-    console.log('check', res1 === res2);
-    console.log('**** time ****');
-    console.log(time.async - time.neo_async);
-  });
-});
-```
-
-* in order of async, neo_async
-    * { async: 11875267, neo_async: 3183565 }
-    * -8.7ms (8691702ns)
-* in order of neo_sync, async
-    * { async: 11667079, neo_async: 2760822 }
-    * -8.9ms (8906257ns)
-
-
 ## Feature
 
 ### Collections
@@ -193,3 +83,95 @@ async.waterfall(tasks, function(err, res1) {
 * async.log
 * async.dir
 * async.noConflict
+
+## Speed Comparison
+
+* Compare Async with Neo-Async  
+* Use [func-comparator](https://github.com/suguru03/func-comparator "func-comparator")
+
+
+### sample script
+
+#### sample.waterfall.js
+
+```js
+'use strict';
+var comparator = require('func-comparator');
+var _ = require('lodash');
+var async = require('async');
+var neo_async = require('neo-async');
+
+// roop count
+var count = 10;
+// sampling times
+var times = 10000;
+var array = _.sample(_.times(count), count);
+var tasks = _.map(array, function(n, i) {
+  if (i === 0) {
+    return function(next) {
+      next(null, n);
+    };
+  }
+  return function(total, next) {
+    next(null, total + n);
+  };
+});
+var funcs = {
+  'async': function(callback) {
+    async.waterfall(tasks, callback);
+  },
+  'neo-async': function(callback) {
+    neo_async.waterfall(tasks, callback);
+  }
+};
+
+comparator
+.set(funcs)
+.option({
+  async: true,
+  times: times
+})
+.start()
+.result(function(err, res) {
+  console.log(res);
+});
+```
+
+#### execute
+
+```bash
+$ node --stack-size=65536 speed_test/sample.waterfall.js
+```
+
+#### result
+
+```js
+{ async:
+   { min: 47.16, // [μs]
+     max: 7957.74,
+     average: 69.31,
+     variance: 31939.14,
+     standard_deviation: 178.71,
+     vs: { 'neo-async': 12.03 } }, // [%] 100 * neo_async.average / async.average
+  'neo-async':
+   { min: 3.2,
+     max: 7296.46,
+     average: 8.34,
+     variance: 11866,
+     standard_deviation: 108.93,
+     vs: { async: 831.05 } } }
+```
+
+### Results
+
+* waterfall
+  * vs: { async: 831.05 }
+* parallel
+  * vs: { async: 209.96 }
+* parallelLimit
+  * vs: { async: 171.77 }
+* concat
+  * vs: { async: 289.67 }
+* series
+  * vs: { async: 52.14 } ~ vs: { async: 779.62 }
+  * unstable: because sample is less.

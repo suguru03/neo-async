@@ -8,7 +8,7 @@ var neo_async = require('../');
 // roop count
 var count = 10;
 // sampling times
-var times = 500;
+var times = 2000;
 var array = _.sample(_.times(count), count);
 var total = 0;
 var tasks = _.map(array, function(n) {
