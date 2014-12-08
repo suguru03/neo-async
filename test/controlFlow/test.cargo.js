@@ -10,7 +10,7 @@ describe('#cargo', function() {
   it('should execute in accordance with payload', function(done) {
 
     var order = [];
-    var delays = [160, 160, 80];
+    var delays = [40, 40, 20];
     var iterator = function(tasks, callback) {
       setTimeout(function() {
         order.push('process ' + tasks.join(' '));
@@ -42,7 +42,7 @@ describe('#cargo', function() {
         assert.strictEqual(cargo.length(), 1);
         order.push('callback ' + 3);
       });
-    }, 60);
+    }, 20);
 
     setTimeout(function() {
       cargo.push(4, function(err, arg) {
@@ -58,7 +58,7 @@ describe('#cargo', function() {
         order.push('callback ' + 5);
         assert.strictEqual(cargo.length(), 0);
       });
-    }, 120);
+    }, 30);
 
     setTimeout(function() {
       assert.deepEqual(order, [
@@ -68,14 +68,14 @@ describe('#cargo', function() {
       ]);
       assert.strictEqual(cargo.length(), 0);
       done();
-    }, 800);
+    }, 200);
 
   });
 
   it('should execute without callback', function(done) {
 
     var order = [];
-    var delays = [160, 80, 240, 80];
+    var delays = [40, 20, 60, 20];
 
     var c = async.cargo(function(tasks, callback) {
       setTimeout(function() {
@@ -87,12 +87,12 @@ describe('#cargo', function() {
     c.push(1);
     setTimeout(function() {
       c.push(2);
-    }, 120);
+    }, 30);
     setTimeout(function() {
       c.push(3);
       c.push(4);
       c.push(5);
-    }, 180);
+    }, 45);
 
     setTimeout(function() {
       assert.deepEqual(order, [
@@ -102,14 +102,14 @@ describe('#cargo', function() {
         'process 5'
       ]);
       done();
-    }, 800);
+    }, 200);
 
   });
 
   it('should execute with bulk tasks', function(done) {
 
     var order = [];
-    var delays = [120, 40];
+    var delays = [30, 10];
 
     var c = async.cargo(function(tasks, callback) {
       setTimeout(function() {
@@ -135,7 +135,7 @@ describe('#cargo', function() {
         'callback 4'
       ]);
       done();
-    }, 800);
+    }, 200);
   });
 
   it('should execute drain once', function(done) {
@@ -164,7 +164,7 @@ describe('#cargo', function() {
       ]);
       assert.strictEqual(drainCounter, 1);
       done();
-    }, 500);
+    }, 120);
 
   });
 
@@ -173,6 +173,7 @@ describe('#cargo', function() {
     var order = [];
     var c = async.cargo(function(tasks, callback) {
       order.push(tasks);
+      assert.ok(c.running());
       callback();
     }, 3);
 
@@ -180,11 +181,20 @@ describe('#cargo', function() {
     c.drain = function() {
       drainCounter++;
     };
+    var saturated = false;
+    c.saturated = function() {
+      saturated = true;
+    };
 
     var n = 10;
     var loadCargo = _.times.bind(_, n, c.push);
     loadCargo();
     assert.strictEqual(c.length(), 10);
+
+    var empty = false;
+    c.empty = function() {
+      empty = true;
+    };
     setTimeout(loadCargo, 50);
 
     setTimeout(function() {
@@ -199,10 +209,12 @@ describe('#cargo', function() {
         [9]
       ]);
       assert.strictEqual(drainCounter, 2);
+      assert.ok(saturated);
       done();
     }, 100);
 
   });
+
 
 });
 
