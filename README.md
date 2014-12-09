@@ -9,12 +9,12 @@ Async is a utilty module which provides staright-forward.
 
 ### In a browser
 ```html
-<script src="async.compact.js"></script>
+<script src="async.min.js"></script>
 ```
 
 ### In an AMD loader
 ```js
-require(['async.compact'], function(async) {});
+require(['async.min'], function(async) {});
 ```
 
 ### Node.js
