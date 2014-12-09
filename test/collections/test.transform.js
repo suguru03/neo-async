@@ -114,7 +114,7 @@ describe('#transform', function() {
 
   });
 
-  it('should cause error', function(done) {
+  it('should throw error', function(done) {
 
     var order = [];
     var collection = [1, 5, 3, 2, 4];
@@ -129,6 +129,36 @@ describe('#transform', function() {
       assert.ok(err);
       assert.strictEqual(res, undefined);
       assert.deepEqual(order, [1, 2, 3, 4]);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if array is empty', function(done) {
+
+    var iterator = function(memo, value, key, callback) {
+      callback();
+    };
+    async.transform([], iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if object is empty', function(done) {
+
+    var iterator = function(memo, value, key, callback) {
+      callback();
+    };
+    async.transform({}, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, {});
       done();
     });
 
@@ -213,7 +243,7 @@ describe('#transformSeries', function() {
 
   });
 
-  it('should cause error', function(done) {
+  it('should throw error', function(done) {
 
     var order = [];
     var collection = [1, 5, 3, 2, 4];
@@ -233,6 +263,36 @@ describe('#transformSeries', function() {
 
   });
 
+  it('should return response immediately if array is empty', function(done) {
+
+    var iterator = function(memo, value, key, callback) {
+      callback();
+    };
+    async.transformSeries([], iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if object is empty', function(done) {
+
+    var iterator = function(memo, value, key, callback) {
+      callback();
+    };
+    async.transformSeries({}, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, {});
+      done();
+    });
+
+  });
+
 });
 
 describe('#transformLimit', function() {
@@ -240,14 +300,14 @@ describe('#transformLimit', function() {
   it('should execute iterator in limited by collection of array', function(done) {
 
     var order = [];
-    var collection = [1, 3, 4, 2, 3, 1];
+    var collection = [1, 3, 4, 2, 3, 1, 1];
 
     async.transformLimit(collection, 2, transformIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [1, 3, 1, 3]);
-      assert.deepEqual(order, [1, 3, 2, 4, 1, 3]);
+      assert.deepEqual(res, [1, 3, 1, 3, 1]);
+      assert.deepEqual(order, [1, 3, 2, 4, 1, 3, 1]);
       done();
     });
 
@@ -316,7 +376,7 @@ describe('#transformLimit', function() {
 
   });
 
-  it('should cause error', function(done) {
+  it('should throw error', function(done) {
 
     var order = [];
     var collection = [1, 5, 3, 2, 4];
@@ -331,6 +391,36 @@ describe('#transformLimit', function() {
       assert.ok(err);
       assert.strictEqual(res, undefined);
       assert.deepEqual(order, [1, 3]);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if array is empty', function(done) {
+
+    var iterator = function(memo, value, key, callback) {
+      callback();
+    };
+    async.transformLimit([], 3, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if object is empty', function(done) {
+
+    var iterator = function(memo, value, key, callback) {
+      callback();
+    };
+    async.transformLimit({}, 2, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, {});
       done();
     });
 
