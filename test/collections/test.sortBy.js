@@ -78,7 +78,7 @@ describe('#sortBy', function() {
 
   });
 
-  it('should cause error', function(done) {
+  it('should throw error', function(done) {
 
     var order = [];
     var collection = [1, 3, 2];
@@ -155,7 +155,7 @@ describe('#sortBySeries', function() {
 
   });
 
-  it('should cause error', function(done) {
+  it('should throw error', function(done) {
 
     var order = [];
     var collection = [1, 3, 2];
@@ -231,7 +231,7 @@ describe('#sortByLimit', function() {
     }, Math);
   });
 
-  it('should cause error', function(done) {
+  it('should throw error', function(done) {
 
     var order = [];
     var collection = [1, 3, 2];

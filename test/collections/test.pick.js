@@ -68,6 +68,31 @@ describe('#pick', function() {
     }, Math);
 
   });
+
+  it('should return response immediately if array is empty', function(done) {
+
+    var order = [];
+    var array = [];
+    async.pick(array, pickIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if object is empty', function(done) {
+
+    var order = [];
+    var object = {};
+    async.pick(object, pickIterator(order), function(res) {
+      assert.deepEqual(res, {});
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
 });
 
 describe('#pickSeries', function() {
@@ -116,6 +141,31 @@ describe('#pickSeries', function() {
     }, Math);
 
   });
+
+  it('should return response immediately if array is empty', function(done) {
+
+    var order = [];
+    var array = [];
+    async.pickSeries(array, pickIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if object is empty', function(done) {
+
+    var order = [];
+    var object = {};
+    async.pickSeries(object, pickIterator(order), function(res) {
+      assert.deepEqual(res, {});
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
 });
 
 describe('#pickLimit', function() {
@@ -123,11 +173,11 @@ describe('#pickLimit', function() {
   it('should execute iterator in limited by collection of array', function(done) {
 
     var order = [];
-    var collection = [1, 3, 4, 2, 3, 1];
+    var collection = [1, 3, 4, 2, 3, 1, 3];
 
     async.pickLimit(collection, 2, pickIterator(order), function(res) {
-      assert.deepEqual(res, [1, 3, 3, 1]);
-      assert.deepEqual(order, [1, 3, 2, 4, 1, 3]);
+      assert.deepEqual(res, [1, 3, 3, 1, 3]);
+      assert.deepEqual(order, [1, 3, 2, 4, 1, 3, 3]);
       done();
     });
 
@@ -165,6 +215,30 @@ describe('#pickLimit', function() {
       assert.deepEqual(order, [1, 4, 3]);
       done();
     }, Math);
+
+  });
+
+  it('should return response immediately if array is empty', function(done) {
+
+    var order = [];
+    var array = [];
+    async.pickLimit(array, 3, pickIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if object is empty', function(done) {
+
+    var order = [];
+    var object = {};
+    async.pickLimit(object, 2, pickIterator(order), function(res) {
+      assert.deepEqual(res, {});
+      assert.deepEqual(order, []);
+      done();
+    });
 
   });
 
