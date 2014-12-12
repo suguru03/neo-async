@@ -78,7 +78,7 @@ describe('#map', function() {
 
   });
 
-  it('should cause error', function(done) {
+  it('should throw error', function(done) {
 
     var order = [];
     var collection = [1, 3, 2, 4];
@@ -93,6 +93,36 @@ describe('#map', function() {
       assert.ok(err);
       assert.strictEqual(res, undefined);
       assert.deepEqual(order, [1, 2, 3]);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if array is empty', function(done) {
+
+    var order = [];
+    var array = [];
+    async.map(array, mapIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if object is empty', function(done) {
+
+    var order = [];
+    var object = {};
+    async.map(object, mapIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
       done();
     });
 
@@ -157,7 +187,7 @@ describe('#mapSeries', function() {
 
   });
 
-  it('should cause error', function(done) {
+  it('should throw error', function(done) {
 
     var order = [];
     var collection = [1, 3, 2, 4];
@@ -177,6 +207,37 @@ describe('#mapSeries', function() {
 
   });
 
+  it('should return response immediately if array is empty', function(done) {
+
+    var order = [];
+    var array = [];
+    async.mapSeries(array, mapIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if object is empty', function(done) {
+
+    var order = [];
+    var object = {};
+    async.mapSeries(object, mapIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+
 });
 
 describe('#mapLimit', function() {
@@ -184,14 +245,14 @@ describe('#mapLimit', function() {
   it('should execute iterator in limited by collection of array', function(done) {
 
     var order = [];
-    var collection = [1, 3, 4, 2, 3, 1];
+    var collection = [1, 3, 4, 2, 3];
 
     async.mapLimit(collection, 2, mapIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [2, 6, 8, 4, 6, 2]);
-      assert.deepEqual(order, [1, 3, 2, 4, 1, 3]);
+      assert.deepEqual(res, [2, 6, 8, 4, 6]);
+      assert.deepEqual(order, [1, 3, 2, 4, 3]);
       done();
     });
 
@@ -238,7 +299,7 @@ describe('#mapLimit', function() {
 
   });
 
-  it('should cause error', function(done) {
+  it('should throw error', function(done) {
 
     var order = [];
     var collection = [1, 3, 4, 2, 3, 1];
@@ -253,6 +314,36 @@ describe('#mapLimit', function() {
       assert.ok(err);
       assert.strictEqual(res, undefined);
       assert.deepEqual(order, [1, 2, 3]);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if array is empty', function(done) {
+
+    var order = [];
+    var array = [];
+    async.mapLimit(array, 3, mapIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if object is empty', function(done) {
+
+    var order = [];
+    var object = {};
+    async.mapLimit(object, 2, mapIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
       done();
     });
 
