@@ -76,7 +76,7 @@ describe('#each', function() {
 
   });
 
-  it('should cause error', function(done) {
+  it('should throw error', function(done) {
 
     var order = [];
     var collection = [1, 3, 2, 4];
@@ -111,6 +111,34 @@ describe('#each', function() {
         return done(err);
       }
       assert.deepEqual(order, [1, 2, 3]);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if array is empty', function(done) {
+
+    var order = [];
+    var array = [];
+    async.each(array, eachIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if object is empty', function(done) {
+
+    var order = [];
+    var object = {};
+    async.each(object, eachIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, []);
       done();
     });
 
@@ -173,7 +201,7 @@ describe('#eachSeries', function() {
 
   });
 
-  it('should cause error', function(done) {
+  it('should throw error', function(done) {
 
     var order = [];
     var collection = [1, 3, 2, 4];
@@ -213,6 +241,34 @@ describe('#eachSeries', function() {
 
   });
 
+  it('should return response immediately if array is empty', function(done) {
+
+    var order = [];
+    var array = [];
+    async.eachSeries(array, eachIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if object is empty', function(done) {
+
+    var order = [];
+    var object = {};
+    async.eachSeries(object, eachIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
 });
 
 describe('#eachLimit', function() {
@@ -220,14 +276,14 @@ describe('#eachLimit', function() {
   it('should execute iterator in ned by collection of array', function(done) {
 
     var order = [];
-    var collection = [1, 3, 4, 2, 3, 1];
+    var collection = [1, 3, 4, 2, 3];
 
     async.eachLimit(collection, 2, eachIterator(order), function(err) {
       if (err) {
         return done(err);
       }
 
-      assert.deepEqual(order, [1, 3, 2, 4, 1, 3]);
+      assert.deepEqual(order, [1, 3, 2, 4, 3]);
       done();
     });
   });
@@ -270,7 +326,7 @@ describe('#eachLimit', function() {
     }, Math);
   });
 
-  it('should cause error', function(done) {
+  it('should throw error', function(done) {
 
     var order = [];
     var collection = [1, 3, 2, 4];
@@ -310,5 +366,32 @@ describe('#eachLimit', function() {
 
   });
 
+  it('should return response immediately if array is empty', function(done) {
+
+    var order = [];
+    var array = [];
+    async.eachLimit(array, 3, eachIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if object is empty', function(done) {
+
+    var order = [];
+    var object = {};
+    async.eachLimit(object, 3, eachIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
 });
 
