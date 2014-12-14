@@ -76,6 +76,29 @@ describe('#transform', function() {
   it('should execute iterator and break when callback is called "false"', function(done) {
 
     var order = [];
+    var collection = [4, 3, 2];
+    var iterator = function(memo, num, index, callback) {
+
+      setTimeout(function() {
+        order.push(num);
+        memo.push(num);
+        callback(null, num !== 3);
+      }, num * 10);
+    };
+    async.transform(collection, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [2, 3]);
+      assert.deepEqual(order, [2, 3]);
+      done();
+    });
+
+  });
+
+  it('should execute iterator and break when callback is called "false"', function(done) {
+
+    var order = [];
     var collection = {
       a: 5,
       b: 3,
@@ -127,7 +150,7 @@ describe('#transform', function() {
     };
     async.transform(collection, iterator, function(err, res) {
       assert.ok(err);
-      assert.strictEqual(res, undefined);
+      assert.deepEqual(res, [1, 2, 3, 4]);
       assert.deepEqual(order, [1, 2, 3, 4]);
       done();
     });
@@ -256,7 +279,7 @@ describe('#transformSeries', function() {
     };
     async.transformSeries(collection, iterator, function(err, res) {
       assert.ok(err);
-      assert.strictEqual(res, undefined);
+      assert.deepEqual(res, [1, 5, 3, 2, 4]);
       assert.deepEqual(order, [1, 5, 3, 2, 4]);
       done();
     });
@@ -389,7 +412,7 @@ describe('#transformLimit', function() {
     };
     async.transformLimit(collection, 3, iterator, function(err, res) {
       assert.ok(err);
-      assert.strictEqual(res, undefined);
+      assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [1, 3]);
       done();
     });

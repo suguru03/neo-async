@@ -103,7 +103,7 @@ describe('#reduce', function() {
 
   });
 
-  it('should cause error', function(done) {
+  it('should throw error', function(done) {
 
     var order = [];
     var collection = [1, 3, 2, 4];
@@ -118,6 +118,36 @@ describe('#reduce', function() {
       assert.ok(err);
       assert.strictEqual(res, undefined);
       assert.deepEqual(order, [1, 3]);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if array is empty', function(done) {
+
+    var order = [];
+    var array = [];
+    async.reduce(array, 0, reduceIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, 0);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if object is empty', function(done) {
+
+    var order = [];
+    var object = {};
+    async.reduce(object, 0, reduceIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, 0);
+      assert.deepEqual(order, []);
       done();
     });
 
@@ -196,7 +226,7 @@ describe('#reduceRight', function() {
 
   });
 
-  it('should cause error', function(done) {
+  it('should throw error', function(done) {
 
     var order = [];
     var collection = [1, 3, 2, 4];
@@ -211,6 +241,36 @@ describe('#reduceRight', function() {
       assert.ok(err);
       assert.strictEqual(res, undefined);
       assert.deepEqual(order, [4, 2, 3]);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if array is empty', function(done) {
+
+    var order = [];
+    var array = [];
+    async.reduceRight(array, 0, reduceIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, 0);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if object is empty', function(done) {
+
+    var order = [];
+    var object = {};
+    async.reduceRight(object, 0, reduceIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, 0);
+      assert.deepEqual(order, []);
       done();
     });
 
