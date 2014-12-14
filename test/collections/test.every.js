@@ -29,7 +29,7 @@ describe('#every', function() {
     var order = [];
     var collection = [1, 3, 2, 4];
     async.every(collection, everyIterator(order), function(res) {
-      assert.ok(!res);
+      assert.strictEqual(res, false);
       assert.deepEqual(order, [1, 2]);
       done();
     });
@@ -41,7 +41,7 @@ describe('#every', function() {
     var order = [];
     var collection = [1, 3, 1, 5];
     async.every(collection, everyIterator(order), function(res) {
-      assert.ok(res);
+      assert.strictEqual(res, true);
       assert.deepEqual(order, [1, 1, 3, 5]);
       done();
     });
@@ -57,7 +57,7 @@ describe('#every', function() {
       c: 2
     };
     async.every(collection, everyIterator(order), function(res) {
-      assert.ok(!res);
+      assert.strictEqual(res, false);
       assert.deepEqual(order, [2]);
       done();
     });
@@ -74,7 +74,7 @@ describe('#every', function() {
     };
 
     async.every(collection, everyIterator(order), function(res) {
-      assert.ok(!res);
+      assert.strictEqual(res, false);
       assert.deepEqual(order, [1, 3, 4]);
       done();
     }, Math);
@@ -89,7 +89,7 @@ describe('#everySeries', function() {
     var order = [];
     var collection = [1, 3, 2, 4];
     async.everySeries(collection, everyIterator(order), function(res) {
-      assert.ok(!res);
+      assert.strictEqual(res, false);
       assert.deepEqual(order, [1, 3, 2]);
       done();
     });
@@ -101,7 +101,7 @@ describe('#everySeries', function() {
     var order = [];
     var collection = [1, 3, 1, 5];
     async.everySeries(collection, everyIterator(order), function(res) {
-      assert.ok(res);
+      assert.strictEqual(res, true);
       assert.deepEqual(order, [1, 3, 1, 5]);
       done();
     });
@@ -117,7 +117,7 @@ describe('#everySeries', function() {
       c: 2
     };
     async.everySeries(collection, everyIterator(order), function(res) {
-      assert.ok(!res);
+      assert.strictEqual(res, false);
       assert.deepEqual(order, [4]);
       done();
     });
@@ -134,7 +134,7 @@ describe('#everySeries', function() {
     };
 
     async.everySeries(collection, everyIterator(order), function(res) {
-      assert.ok(!res);
+      assert.strictEqual(res, false);
       assert.deepEqual(order, [1, 4]);
       done();
     }, Math);
@@ -149,7 +149,7 @@ describe('#everyLimit', function() {
     var order = [];
     var collection = [1, 3, 2, 4];
     async.everyLimit(collection, 3, everyIterator(order), function(res) {
-      assert.ok(!res);
+      assert.strictEqual(res, false);
       assert.deepEqual(order, [1, 2]);
       done();
     });
@@ -161,7 +161,7 @@ describe('#everyLimit', function() {
     var order = [];
     var collection = [1, 3, 1, 5];
     async.everyLimit(collection, 1, everyIterator(order), function(res) {
-      assert.ok(res);
+      assert.strictEqual(res, true);
       assert.deepEqual(order, [1, 3, 1, 5]);
       done();
     });
@@ -177,7 +177,7 @@ describe('#everyLimit', function() {
       c: 2
     };
     async.everyLimit(collection, 2, everyIterator(order), function(res) {
-      assert.ok(!res);
+      assert.strictEqual(res, false);
       assert.deepEqual(order, [3, 4]);
       done();
     });
@@ -194,7 +194,7 @@ describe('#everyLimit', function() {
     };
 
     async.everyLimit(collection, 2, everyIterator(order), function(res) {
-      assert.ok(!res);
+      assert.strictEqual(res, false);
       assert.deepEqual(order, [1, 4]);
       done();
     }, Math);

@@ -68,6 +68,43 @@ describe('#detect', function() {
     }, Math);
 
   });
+
+  it('should not get item', function(done) {
+
+    var order = [];
+    var collection = [2, 6, 4];
+
+    async.detect(collection, detectIterator(order), function(res) {
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, [2, 4, 6]);
+      done();
+    });
+  });
+
+  it('should return response immediately if array is empty', function(done) {
+
+    var order = [];
+    var array = [];
+    async.detect(array, detectIterator(order), function(res) {
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if object is empty', function(done) {
+
+    var order = [];
+    var object = {};
+    async.detect(object, detectIterator(order), function(res) {
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
 });
 
 describe('#detectSeries', function() {
@@ -116,6 +153,43 @@ describe('#detectSeries', function() {
     }, Math);
 
   });
+
+  it('should not get item', function(done) {
+
+    var order = [];
+    var collection = [2, 6, 4];
+
+    async.detectSeries(collection, detectIterator(order), function(res) {
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, [2, 6, 4]);
+      done();
+    });
+  });
+
+  it('should return response immediately if array is empty', function(done) {
+
+    var order = [];
+    var array = [];
+    async.detectSeries(array, detectIterator(order), function(res) {
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if object is empty', function(done) {
+
+    var order = [];
+    var object = {};
+    async.detectSeries(object, detectIterator(order), function(res) {
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
 });
 
 describe('#detectLimit', function() {
@@ -155,18 +229,54 @@ describe('#detectLimit', function() {
 
     var order = [];
     var collection = {
-      a: 1.1,
+      a: 2.1,
       b: 3.5,
       c: 2.7
     };
 
     async.detectLimit(collection, 2, detectIterator(order), function(res) {
-      assert.strictEqual(res, 1.1);
-      assert.deepEqual(order, [1]);
+      assert.strictEqual(res, 2.7);
+      assert.deepEqual(order, [2, 4, 3]);
       done();
     }, Math);
 
   });
 
+  it('should not get item', function(done) {
+
+    var order = [];
+    var collection = [2, 6, 4];
+
+    async.detectLimit(collection, 2, detectIterator(order), function(res) {
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, [2, 6, 4]);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if array is empty', function(done) {
+
+    var order = [];
+    var array = [];
+    async.detectLimit(array, 2, detectIterator(order), function(res) {
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if object is empty', function(done) {
+
+    var order = [];
+    var object = {};
+    async.detectLimit(object, 2, detectIterator(order), function(res) {
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
 });
 
