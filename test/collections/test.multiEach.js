@@ -254,6 +254,101 @@ describe('#multiEach', function() {
       assert.deepEqual(order, _order);
       done();
     });
+
+  });
+
+  it('should test for README-1', function(done) {
+
+    var order = [];
+    var array = [1, 2, 3];
+    var tasks = [
+      function(num, index, callback) {
+        order.push(num);
+        callback(null, array);
+      },
+      function(num, index, callback) {
+        order.push(num);
+        callback(null, array);
+      },
+      function(num, index, callback) {
+        order.push(num);
+        callback(null, array);
+      },
+      function(num, index, callback) {
+        order.push(num);
+        callback();
+      }
+    ];
+
+    // get same result
+    var _order = [];
+    array.forEach(function(num) {
+      _order.push(num);
+      array.forEach(function(num) {
+        _order.push(num);
+        array.forEach(function(num) {
+          _order.push(num);
+          array.forEach(function(num) {
+            _order.push(num);
+          });
+        });
+      });
+    });
+
+    async.multiEach(array, tasks, function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, _order);
+      done();
+    });
+
+  });
+
+  it('should test for README-2', function(done) {
+
+    var order = [];
+    var array = [1, 2, 3];
+    var collection = {
+      a: [array, array],
+      b: {
+        c: array,
+        d: array
+      }
+    };
+    var delay = [25, 10];
+    var tasks = [
+      function(collection, key, callback) {
+        setTimeout(function() {
+          callback(null, array);
+        }, delay.shift());
+      },
+      function(collection, key, callback) {
+        callback(null, array);
+      },
+      function(value, key, callback) {
+        setTimeout(function() {
+          order.push(value);
+          callback();
+        }, value * 10);
+      }
+    ];
+
+    async.multiEach(collection, tasks, function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, [
+        1, 1, 1,
+        2, 2, 2,
+        1, 1, 1,
+        3, 3, 3,
+        2, 2, 2,
+        3, 3, 3
+      ]);
+      done();
+    });
+
   });
 
 });

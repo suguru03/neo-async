@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/suguru03/Neo-Async.svg?branch=master)](https://travis-ci.org/suguru03/Neo-Async)
 [![Coverage Status](https://coveralls.io/repos/suguru03/Neo-Async/badge.png?branch=master)](https://coveralls.io/r/suguru03/Neo-Async?branch=master)
 
-Neo-Async is compatible with Async.js, it is faster and has more feature.  
+Neo-Async is compatible with Async.js, it is faster and has more feature.
 Async is a utilty module which provides staright-forward.
 
 ## Installation
@@ -40,7 +40,7 @@ var async = require('async');
 
 ### Collections
 
-* async.each [Series, Limit]
+* .each [Series, Limit]
 * async.map [Series, Limit]
 * async.filter [Series, Limit]
 * async.reject [Series, Limit]
@@ -53,6 +53,7 @@ var async = require('async');
 * async.some [Series, Limit]
 * async.every [Series, Limit]
 * async.concat [Series, Limit]
+* [`multiEach`](#multEach)
 
 ### Control Flow
 
@@ -84,9 +85,100 @@ var async = require('async');
 * async.dir
 * async.noConflict
 
+<a name="multiEach" />
+### multiEach (collection, tasks, callback)
+This function provides asynchronous and straight-forward to deep nested each functions.
+
+#### synchronous
+
+```js
+vvar order = [];
+var array = [1, 2, 3];
+var tasks = [
+  function(num, index, callback) {
+    order.push(num);
+    callback(null, array);
+  },
+  function(num, index, callback) {
+    order.push(num);
+    callback(null, array);
+  },
+  function(num, index, callback) {
+    order.push(num);
+    callback(null, array);
+  },
+  function(num, index, callback) {
+    order.push(num);
+    callback();
+  }
+];
+
+// get same result
+var _order = [];
+array.forEach(function(num) {
+  _order.push(num);
+  array.forEach(function(num) {
+    _order.push(num);
+    array.forEach(function(num) {
+      _order.push(num);
+      array.forEach(function(num) {
+        _order.push(num);
+      });
+    });
+  });
+});
+
+async.multiEach(array, tasks, function(err) {
+  assert.deepEqual(order, _order);
+});
+
+```
+
+#### asynchronous
+
+```js
+var order = [];
+var array = [1, 2, 3];
+var collection = {
+  a: [array, array],
+  b: {
+    c: array,
+    d: array
+  }
+};
+var delay = [25, 10];
+var tasks = [
+  function(collection, key, callback) {
+    setTimeout(function() {
+      callback(null, array);
+    }, delay.shift());
+  },
+  function(collection, key, callback) {
+    callback(null, array);
+  },
+  function(value, key, callback) {
+    setTimeout(function() {
+      order.push(value);
+      callback();
+    }, value * 10);
+  }
+];
+
+async.multiEach(collection, tasks, function(err) {
+  assert.deepEqual(order, [
+    1, 1, 1,
+    2, 2, 2,
+    1, 1, 1,
+    3, 3, 3,
+    2, 2, 2,
+    3, 3, 3
+  ]);
+});
+```
+
 ## Speed Comparison
 
-* Compare Async with Neo-Async  
+* Compare Async with Neo-Async
 * Use [func-comparator](https://github.com/suguru03/func-comparator "func-comparator")
 
 
