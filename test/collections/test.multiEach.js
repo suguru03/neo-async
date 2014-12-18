@@ -351,4 +351,41 @@ describe('#multiEach', function() {
 
   });
 
+  it('should throw error', function(done) {
+
+    var collection = [3, 2, 1];
+    var tasks = [
+      function(num, index, callback) {
+        callback(null, collection);
+      },
+      function(num, index, callback) {
+        callback('error', collection);
+      },
+      function(num, index, callback) {
+        callback();
+      }
+    ];
+
+    async.multiEach(collection, tasks, function(err) {
+      assert.ok(err);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if tasks is empty', function(done) {
+
+    var collection = [3, 2, 1];
+    var tasks = [];
+
+    async.multiEach(collection, tasks, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(collection, res);
+      done();
+    });
+
+  });
+
 });
