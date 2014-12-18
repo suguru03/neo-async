@@ -53,7 +53,7 @@ var async = require('async');
 * async.some [Series, Limit]
 * async.every [Series, Limit]
 * async.concat [Series, Limit]
-* [`multiEach`](#multEach)
+* [`multiEach`](#multiEach)
 
 ### Control Flow
 
