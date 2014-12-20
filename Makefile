@@ -9,3 +9,6 @@ test-coveralls:
 
 clean:
 	rm -rf coverage
+
+minify:
+	java -jar ../compiler-latest/compiler.jar --js ./lib/async.js --js_output_file ./lib/async.min.js
