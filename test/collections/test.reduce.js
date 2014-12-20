@@ -123,6 +123,22 @@ describe('#reduce', function() {
 
   });
 
+  it('should throw error if double callback', function(done) {
+
+    var collection = [1, 3, 2, 4];
+    var iterator = function(memo, num, callback) {
+      callback();
+      callback();
+    };
+    try {
+      async.reduce(collection, [], iterator);
+    } catch(e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
+
+  });
+
   it('should return response immediately if array is empty', function(done) {
 
     var order = [];
@@ -243,6 +259,22 @@ describe('#reduceRight', function() {
       assert.deepEqual(order, [4, 2, 3]);
       done();
     });
+
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    var collection = [1, 3, 2, 4];
+    var iterator = function(memo, num, callback) {
+      callback();
+      callback();
+    };
+    try {
+      async.reduceRight(collection, [], iterator);
+    } catch(e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
 
   });
 
