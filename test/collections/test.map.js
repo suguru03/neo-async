@@ -106,7 +106,7 @@ describe('#map', function() {
       callback(null, num);
     };
     try {
-      async.map(collection, iterator, done);
+      async.map(collection, iterator);
     } catch(e) {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
@@ -231,9 +231,10 @@ describe('#mapSeries', function() {
       callback(null, num);
     };
     try {
-      async.mapSeries(collection, iterator, done);
+      async.mapSeries(collection, iterator);
     } catch(e) {
       assert.strictEqual(e.message, 'Callback was already called.');
+      done();
     }
 
   });
@@ -357,7 +358,7 @@ describe('#mapLimit', function() {
       callback(null, num);
     };
     try {
-      async.mapLimit(collection, 2, iterator, done);
+      async.mapLimit(collection, 2, iterator);
     } catch(e) {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();

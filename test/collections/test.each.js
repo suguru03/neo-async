@@ -95,6 +95,23 @@ describe('#each', function() {
 
   });
 
+  it('should throw error if double callback', function(done) {
+
+    var collection = [1, 3, 2, 4];
+    var iterator = function(num, callback) {
+      callback();
+      callback();
+    };
+
+    try {
+      async.each(collection, iterator);
+    } catch(e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
+
+  });
+
   it('should break if respond equals false', function(done) {
 
     var order = [];
@@ -217,6 +234,23 @@ describe('#eachSeries', function() {
       assert.deepEqual(order, [1, 3]);
       done();
     });
+
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    var collection = [1, 3, 2, 4];
+    var iterator = function(num, callback) {
+      callback();
+      callback();
+    };
+
+    try {
+      async.eachSeries(collection, iterator);
+    } catch(e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
 
   });
 
