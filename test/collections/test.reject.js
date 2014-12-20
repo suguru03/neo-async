@@ -68,6 +68,23 @@ describe('#reject', function() {
     }, Math);
 
   });
+
+  it('should throw error if double callback', function(done) {
+
+    var collection = [1, 2, 3] ;
+    var iterator = function(num, callback) {
+      callback();
+      callback();
+    };
+    try {
+      async.reject(collection, iterator);
+    } catch(e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
+
+  });
+
 });
 
 describe('#rejectSeries', function() {
@@ -116,6 +133,23 @@ describe('#rejectSeries', function() {
     }, Math);
 
   });
+
+  it('should throw error if double callback', function(done) {
+
+    var collection = [1, 2, 3] ;
+    var iterator = function(num, callback) {
+      callback();
+      callback();
+    };
+    try {
+      async.rejectSeries(collection, iterator);
+    } catch(e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
+
+  });
+
 });
 
 describe('#rejectLimit', function() {
@@ -166,6 +200,21 @@ describe('#rejectLimit', function() {
       done();
     }, Math);
 
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    var collection = [1, 2, 3] ;
+    var iterator = function(num, callback) {
+      callback();
+      callback();
+    };
+    try {
+      async.rejectLimit(collection, 2, iterator);
+    } catch(e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
   });
 
 });

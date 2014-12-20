@@ -93,6 +93,22 @@ describe('#pick', function() {
 
   });
 
+  it('should throw error if double callback', function(done) {
+
+    var collection = [2, 1, 3];
+    var iterator = function(item, callback) {
+      callback();
+      callback();
+    };
+    try {
+      async.pick(collection, iterator);
+    } catch(e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
+
+  });
+
 });
 
 describe('#pickSeries', function() {
@@ -163,6 +179,22 @@ describe('#pickSeries', function() {
       assert.deepEqual(order, []);
       done();
     });
+
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    var collection = [2, 1, 3];
+    var iterator = function(item, callback) {
+      callback();
+      callback();
+    };
+    try {
+      async.pickSeries(collection, iterator);
+    } catch(e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
 
   });
 
@@ -241,6 +273,23 @@ describe('#pickLimit', function() {
     });
 
   });
+
+  it('should throw error if double callback', function(done) {
+
+    var collection = [2, 1, 3];
+    var iterator = function(item, callback) {
+      callback();
+      callback();
+    };
+    try {
+      async.pickLimit(collection, 4, iterator);
+    } catch(e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
+
+  });
+
 
 });
 

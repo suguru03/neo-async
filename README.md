@@ -41,8 +41,10 @@ var async = require('async');
 ### Collections
 
 * async.each [Series, Limit]
+* async.forEach [Series, Limit]
 * async.map [Series, Limit]
 * async.filter [Series, Limit]
+* async.select [Series, Limit]
 * async.reject [Series, Limit]
 * async.detect [Series, Limit]
 * async.pick [Series, Limit]
