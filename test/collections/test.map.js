@@ -91,10 +91,26 @@ describe('#map', function() {
 
     async.map(collection, iterator, function(err, res) {
       assert.ok(err);
-      assert.deepEqual(res, [1, 3, 2]);
+      assert.deepEqual(res, [1, 3, 2, undefined]);
       assert.deepEqual(order, [1, 2, 3]);
       done();
     });
+
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    var collection = [1, 3];
+    var iterator = function(num, callback) {
+      callback(null, num);
+      callback(null, num);
+    };
+    try {
+      async.map(collection, iterator, done);
+    } catch(e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
 
   });
 
@@ -200,10 +216,25 @@ describe('#mapSeries', function() {
 
     async.mapSeries(collection, iterator, function(err, res) {
       assert.ok(err);
-      assert.deepEqual(res, [1, 3]);
+      assert.deepEqual(res, [1, 3, undefined, undefined]);
       assert.deepEqual(order, [1, 3]);
       done();
     });
+
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    var collection = [1, 3];
+    var iterator = function(num, callback) {
+      callback(null, num);
+      callback(null, num);
+    };
+    try {
+      async.mapSeries(collection, iterator, done);
+    } catch(e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+    }
 
   });
 
@@ -315,6 +346,22 @@ describe('#mapLimit', function() {
       assert.deepEqual(order, [1, 2, 3]);
       done();
     });
+
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    var collection = [1, 3, 2];
+    var iterator = function(num, callback) {
+      callback(null, num);
+      callback(null, num);
+    };
+    try {
+      async.mapLimit(collection, 2, iterator, done);
+    } catch(e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
 
   });
 
