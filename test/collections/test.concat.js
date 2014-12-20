@@ -12,7 +12,6 @@ function concatIterator(order) {
 
     setTimeout(function() {
 
-
       if (self && self.round) {
         num = self.round(num);
       }

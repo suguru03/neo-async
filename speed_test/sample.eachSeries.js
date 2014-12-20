@@ -12,16 +12,17 @@ var times = 100;
 var array = _.sample(_.times(count), count);
 var c = 0;
 var iterator = function(n, callback) {
-  callback(null, [n]);
+  c++;
+  callback();
 };
 var funcs = {
   'async': function(callback) {
     c = 0;
-    async.concat(array, iterator, callback);
+    async.eachSeries(array, iterator, callback);
   },
   'neo-async': function(callback) {
     c = 0;
-    neo_async.concat(array, iterator, callback);
+    neo_async.eachSeries(array, iterator, callback);
   }
 };
 

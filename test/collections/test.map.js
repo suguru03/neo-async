@@ -91,7 +91,7 @@ describe('#map', function() {
 
     async.map(collection, iterator, function(err, res) {
       assert.ok(err);
-      assert.strictEqual(res, undefined);
+      assert.deepEqual(res, [1, 3, 2]);
       assert.deepEqual(order, [1, 2, 3]);
       done();
     });
@@ -200,7 +200,7 @@ describe('#mapSeries', function() {
 
     async.mapSeries(collection, iterator, function(err, res) {
       assert.ok(err);
-      assert.strictEqual(res, undefined);
+      assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [1, 3]);
       done();
     });
@@ -236,7 +236,6 @@ describe('#mapSeries', function() {
     });
 
   });
-
 
 });
 
@@ -312,7 +311,7 @@ describe('#mapLimit', function() {
 
     async.mapLimit(collection, 4, iterator, function(err, res) {
       assert.ok(err);
-      assert.strictEqual(res, undefined);
+      assert.deepEqual(res, [1, 3, undefined, 2, undefined, undefined]);
       assert.deepEqual(order, [1, 2, 3]);
       done();
     });

@@ -17,11 +17,11 @@ var iterator = function(n, callback) {
 var funcs = {
   'async': function(callback) {
     c = 0;
-    async.each(array, iterator, callback);
+    async.map(array, iterator, callback);
   },
   'neo-async': function(callback) {
     c = 0;
-    neo_async.each(array, iterator, callback);
+    neo_async.map(array, iterator, callback);
   }
 };
 

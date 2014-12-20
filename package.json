@@ -13,6 +13,12 @@
     "url": "git@github.com:suguru03/Neo-Async.git"
   },
   "homepage": "https://github.com/suguru03/Neo-Async",
+  "files": [
+    "LICENSE",
+    "index.js",
+    "lib/async.js",
+    "lib/async.min.js"
+  ],
   "directories": {
     "test": "test/"
   },

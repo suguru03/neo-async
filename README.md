@@ -40,7 +40,7 @@ var async = require('async');
 
 ### Collections
 
-* .each [Series, Limit]
+* async.each [Series, Limit]
 * async.map [Series, Limit]
 * async.filter [Series, Limit]
 * async.reject [Series, Limit]
