@@ -210,6 +210,22 @@ describe('#concatSeries', function() {
 
   });
 
+  it('should throw error if double callback', function(done) {
+
+    var collection = [1, 3, 2, 4];
+    var iterator = function(num, callback) {
+      callback();
+      callback();
+    };
+    try {
+      async.concatSeries(collection, iterator);
+    } catch(e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
+
+  });
+
   it('should return response immediately if array is empty', function(done) {
 
     var order = [];
@@ -239,7 +255,6 @@ describe('#concatSeries', function() {
     });
 
   });
-
 
 });
 
