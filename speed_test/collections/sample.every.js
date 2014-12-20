@@ -3,7 +3,7 @@
 var comparator = require('func-comparator');
 var _ = require('lodash');
 var async = require('async');
-var neo_async = require('../');
+var neo_async = require('../../');
 
 // roop count
 var count = 10;
@@ -11,14 +11,14 @@ var count = 10;
 var times = 300;
 var array = _.sample(_.times(count), count);
 var iterator = function(n, callback) {
-  callback(null, false);
+  callback(null, true);
 };
 var funcs = {
   'async': function(callback) {
-    async.detectSeries(array, iterator, callback);
+    async.every(array, iterator, callback);
   },
   'neo-async': function(callback) {
-    neo_async.detectSeries(array, iterator, callback);
+    neo_async.every(array, iterator, callback);
   }
 };
 
