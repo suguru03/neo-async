@@ -1,5 +1,5 @@
 # Neo-Async
-[![Build Status](https://travis-ci.org/suguru03/Neo-Async.svg?branch=master)](https://travis-ci.org/suguru03/Neo-Async)
+[![Build Status](https://travis-ci.org/suguru03/neo-async.svg?branch=master)](https://travis-ci.org/suguru03/Neo-Async)
 [![Coverage Status](https://coveralls.io/repos/suguru03/Neo-Async/badge.png?branch=master)](https://coveralls.io/r/suguru03/Neo-Async?branch=master)
 
 Neo-Async is compatible with Async.js, it is faster and has more feature.
@@ -40,22 +40,48 @@ var async = require('async');
 
 ### Collections
 
-* async.each [Series, Limit]
-* async.forEach [Series, Limit]
-* async.map [Series, Limit]
-* async.filter [Series, Limit]
-* async.select [Series, Limit]
-* async.reject [Series, Limit]
-* async.detect [Series, Limit]
-* async.pick [Series, Limit]
-* async.transform [Series, Limit]
-* async.reduce
-* async.reduceRight
-* async.sortBy [Series, Limit]
-* async.some [Series, Limit]
-* async.every [Series, Limit]
-* async.concat [Series, Limit]
+* [`concat`](#concat)
+* [`concatSeries`](#concatSeries)
+* [`concatLimit`](#concatLimit)
+* [`detect`](#detect)
+* [`detectSeries`](#detectSeries)
+* [`detectLimit`](#detectLimit)
+* [`each`](#each)
+* [`eachSeries`](#eachSeries)
+* [`eachLimit`](#eachLimit)
+* [`every`](#every)
+* [`everySeries`](#everySeries)
+* [`everyLimit`](#everyLimit)
+* [`filter`](#filter)
+* [`filterSeries`](#filterSeries)
+* [`filterLimit`](#filterLimit)
+* [`forEach`](#each)
+* [`forEachSeries`](#eachSeries)
+* [`forEachLimit`](#eachLimit)
+* [`map`](#map)
+* [`mapSeries`](#mapSeries)
+* [`mapLimit`](#mapLimit)
 * [`multiEach`](#multiEach)
+* [`pick`](#pick)
+* [`pickSeries`](#pickSeries)
+* [`pickLimit`](#pickLimit)
+* [`reduce`](#reduce)
+* [`reduceRight`](#reduceRight)
+* [`reject`](#reject)
+* [`rejectSeries`](#rejectSeries)
+* [`rejectLimit`](#rejectLimit)
+* [`select`](#filter)
+* [`selectSeries`](#filterSeries)
+* [`selectLimit`](#filterLimit)
+* [`some`](#some)
+* [`someSeries`](#someSeries)
+* [`someLimit`](#someLimit)
+* [`sortBy`](#sortBy)
+* [`sortBySeries`](#sortBySeries)
+* [`sortByLimit`](#sortByLimit)
+* [`transform`](#transform)
+* [`transformSeries`](#transformSeries)
+* [`transformLimit`](#transformLimit)
 
 ### Control Flow
 
@@ -87,9 +113,100 @@ var async = require('async');
 * async.dir
 * async.noConflict
 
-<a name="multiEach" />
+
+<a name='each'/>
+### each(collection, iterator, callback, thisArg)
+Applies the function iterator to each item in collection, in parallel.
+
+#### Aliases
+async.forEach
+
+#### Arguments
+1. collection (Array|Object): The collection to iterate over.
+2. iterator(item, callback) (Function): The function called per iteration.
+3. callback(err) (Function): The function called at the end.
+4. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [1, 3, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done();
+  }, num * 10);
+};
+async.each(collection, iterator, function(err) {
+  assert.deepEqual(order, [1, 2, 3]);
+});
+```
+
+
+<a name='eachSeries'/>
+### eachSeries(collection, iterator, callback, thisArg)
+The same as each, in series.
+
+#### Aliases
+async.forEachSeries
+
+#### Arguments
+1. collection (Array|Object): The collection to iterate over.
+2. iterator(item, callback) (Function): The function called per iteration.
+3. callback(err) (Function): The function called at the end.
+4. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [1, 3, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done();
+  }, num * 10);
+};
+async.eachSeries(collection, iterator, function(err) {
+  assert.deepEqual(order, [1, 3, 2]);
+});
+```
+
+
+<a name='eachLimit'/>
+### eachLimit(collection, limit, iterator, callback, thisArg)
+The same as each, in limited parallel.
+
+#### Aliases
+async.forEachLimit
+
+#### Arguments
+1. collection (Array|Object): The collection to iterate over.
+2. limit (Number): The maximum number of iterators to run at any time.
+3. iterator(item, callback) (Function): The function called per iteration.
+4. callback(err) (Function): The function called at the end.
+5. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [1, 3, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done();
+  }, num * 10);
+};
+async.eachLimit(collection, 2, iterator, function(err) {
+  assert.deepEqual(order, [1, 3, 2]);
+});
+```
+
+
+<a name='multiEach'/>
 ### multiEach (collection, tasks, callback)
-This function provides asynchronous and straight-forward to deep nested each functions.
+This function provides asynchronous and straight-forward to deep nested each functions, in parallel.
+
+#### Arguments
+1. collection (Array|Object): The collection to iterate over to tasks.
+2. tasks (Function[]): The function called in task order.
+3. callback(err) (Function): The function called at the end.
 
 #### synchronous
 
