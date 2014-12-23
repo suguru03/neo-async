@@ -5,6 +5,8 @@
 Neo-Async is compatible with Async.js, it is faster and has more feature.
 Async is a utilty module which provides staright-forward.
 
+---
+
 ## Installation
 
 ### In a browser
@@ -36,6 +38,9 @@ $ ln -s ./node_modules/neo-async ./node_modules/async
 ```js
 var async = require('async');
 ```
+
+---
+
 ## Feature
 
 ### Collections
@@ -113,15 +118,18 @@ var async = require('async');
 * async.dir
 * async.noConflict
 
+---
 
 <a name='each'/>
 ### each(collection, iterator, callback, thisArg)
 Applies the function iterator to each item in collection, in parallel.
 
-#### Aliases
+__Aliases__
+
 async.forEach
 
-#### Arguments
+__Arguments__
+
 1. collection (Array|Object): The collection to iterate over.
 2. iterator(item, callback) (Function): The function called per iteration.
 3. callback(err) (Function): The function called at the end.
@@ -141,15 +149,18 @@ async.each(collection, iterator, function(err) {
 });
 ```
 
+---
 
 <a name='eachSeries'/>
 ### eachSeries(collection, iterator, callback, thisArg)
 The same as each, in series.
 
-#### Aliases
+__Aliases__
+
 async.forEachSeries
 
-#### Arguments
+__Arguments__
+
 1. collection (Array|Object): The collection to iterate over.
 2. iterator(item, callback) (Function): The function called per iteration.
 3. callback(err) (Function): The function called at the end.
@@ -169,15 +180,18 @@ async.eachSeries(collection, iterator, function(err) {
 });
 ```
 
+---
 
 <a name='eachLimit'/>
 ### eachLimit(collection, limit, iterator, callback, thisArg)
 The same as each, in limited parallel.
 
-#### Aliases
+__Aliases__
+
 async.forEachLimit
 
-#### Arguments
+__Arguments__
+
 1. collection (Array|Object): The collection to iterate over.
 2. limit (Number): The maximum number of iterators to run at any time.
 3. iterator(item, callback) (Function): The function called per iteration.
@@ -198,17 +212,19 @@ async.eachLimit(collection, 2, iterator, function(err) {
 });
 ```
 
+---
 
 <a name='multiEach'/>
 ### multiEach (collection, tasks, callback)
 This function provides asynchronous and straight-forward to deep nested each functions, in parallel.
 
-#### Arguments
+__Arguments__
+
 1. collection (Array|Object): The collection to iterate over to tasks.
 2. tasks (Function[]): The function called in task order.
 3. callback(err) (Function): The function called at the end.
 
-#### synchronous
+__synchronous__
 
 ```js
 vvar order = [];
@@ -253,7 +269,7 @@ async.multiEach(array, tasks, function(err) {
 
 ```
 
-#### asynchronous
+__asynchronous__
 
 ```js
 var order = [];
@@ -294,12 +310,15 @@ async.multiEach(collection, tasks, function(err) {
   ]);
 });
 ```
+---
 
 ## Speed Comparison
 
 * Compare Async with Neo-Async
 * Use [func-comparator](https://github.com/suguru03/func-comparator "func-comparator")
-
+* node --version v0.10.33
+* async v0.9.0
+* neo-async v0.3.1
 
 ### sample script
 
@@ -315,7 +334,7 @@ var neo_async = require('neo-async');
 // roop count
 var count = 10;
 // sampling times
-var times = 10000;
+var times = 1000;
 var array = _.sample(_.times(count), count);
 var tasks = _.map(array, function(n, i) {
   if (i === 0) {
@@ -348,41 +367,38 @@ comparator
 });
 ```
 
-#### execute
+__execute__
 
 ```bash
-$ node --stack-size=65536 speed_test/sample.waterfall.js
+# using garbage collection per execute
+$ node --exsepo_gc speed_test/controlFlow/sample.waterfall.js
 ```
 
-#### result
+__result__
 
 ```js
 { async:
-   { min: 47.16, // [μs]
-     max: 7957.74,
-     average: 69.31,
-     variance: 31939.14,
-     standard_deviation: 178.71,
-     vs: { 'neo-async': 12.03 } }, // [%] 100 * neo_async.average / async.average
+   { min: 91.79,
+     max: 1751.06,
+     average: 275.01,
+     variance: 55185.67,
+     standard_deviation: 234.91,
+     vs: { 'neo-async': 41 } }, //[%] 100 * neo_async.average / async.average
   'neo-async':
-   { min: 3.2,
-     max: 7296.46,
-     average: 8.34,
-     variance: 11866,
-     standard_deviation: 108.93,
-     vs: { async: 831.05 } } }
+   { min: 16.55,
+     max: 600.16,
+     average: 112.78,
+     variance: 11310.35,
+     standard_deviation: 106.35,
+     vs: { async: 243.84 } } }
 ```
 
 ### Results
 
-* waterfall
-  * vs: { async: 831.05 }
-* parallel
-  * vs: { async: 209.96 }
-* parallelLimit
-  * vs: { async: 171.77 }
-* concat
-  * vs: { async: 289.67 }
-* series
-  * vs: { async: 52.14 } ~ vs: { async: 779.62 }
-  * unstable: because sample is less.
+|function|count|times|async/neo-async|
+|---|---|---|---|
+|waterfall|10|1000|243.84|
+|waterfall|50|1000|413.35|
+|parallel|10|1000|145.45|
+|parallelLimit|10|1000|196.36|
+|series|10|500|111.44|
