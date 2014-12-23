@@ -120,6 +120,34 @@ var async = require('async');
 
 ---
 
+<a name='concat'/>
+### concat(collection, iterator, callback, thisArg)
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. iterator(item, callback) (Function): The function called per iteration.
+3. callback(err) (Function): The function called at the end.
+4. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [1, 3, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num);
+  }, num * 10);
+};
+async.each(collection, iterator, function(err, res) {
+  assert.deepEqual(res, [1, 2, 3]);
+  assert.deepEqual(order, [1, 2, 3]);
+});
+
+```
+
+---
+
 <a name='each'/>
 ### each(collection, iterator, callback, thisArg)
 Applies the function iterator to each item in collection, in parallel.
@@ -316,7 +344,7 @@ async.multiEach(collection, tasks, function(err) {
 
 * Compare Async with Neo-Async
 * Use [func-comparator](https://github.com/suguru03/func-comparator "func-comparator")
-* node --version v0.10.33
+* node v0.10.33
 * async v0.9.0
 * neo-async v0.3.1
 
@@ -394,6 +422,30 @@ __result__
 ```
 
 ### Results
+
+__Collections__
+
+|function|count|times|async/neo-async|
+|---|---|---|---|
+|concat|10|1000|125.77|
+|concatSeries|10|1000|101.81|
+|detect|10|1000|282.77|
+|detectSeries|10|1000|112.06|
+|each|10|1000|111.66|
+|eachSeries|10|1000|94.08|
+|eachLimit|10|1000|154.82|
+|every|10|1000|217.7|
+|filter|10|1000|279.27|
+|filterSeries|10|1000|242.97|
+|map|10|1000|473.08|
+|mapSeries|10|1000|359.44|
+|mapLimit|10|1000|590.42|
+|reduce|10|1000|102.36|
+|reduceRight|10|1000|341.52|
+|some|10|1000|266.78|
+|sortBy|10|1000|135.18|
+
+__ControlFlow__
 
 |function|count|times|async/neo-async|
 |---|---|---|---|
