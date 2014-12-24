@@ -11,7 +11,7 @@ var count = 10;
 var times = 1000;
 var array = _.sample(_.times(count), count);
 var iterator = function(n, callback) {
-  callback(null, true);
+  callback(false);
 };
 var funcs = {
   'async': function(callback) {

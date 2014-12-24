@@ -140,6 +140,23 @@ describe('#everySeries', function() {
     }, Math);
 
   });
+
+  it('should throw error if double callback', function(done) {
+
+    var collection = [1, 3, 2, 4];
+    var iterator = function(num, callback) {
+      callback(true);
+      callback(true);
+    };
+    try {
+      async.everySeries(collection, iterator);
+    } catch(e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
+
+  });
+
 });
 
 describe('#everyLimit', function() {
