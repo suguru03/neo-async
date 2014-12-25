@@ -453,4 +453,4 @@ __ControlFlow__
 |waterfall|50|1000|413.35|
 |parallel|10|1000|145.45|
 |parallelLimit|10|1000|196.36|
-|series|10|500|111.44|
+|series|10|500|140.98|
