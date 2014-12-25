@@ -2,6 +2,8 @@
 [![Build Status](https://travis-ci.org/suguru03/neo-async.svg?branch=master)](https://travis-ci.org/suguru03/Neo-Async)
 [![Coverage Status](https://coveralls.io/repos/suguru03/Neo-Async/badge.png?branch=master)](https://coveralls.io/r/suguru03/Neo-Async?branch=master)
 
+![Neo-Async](https://raw.githubusercontent.com/wiki/suguru03/neo-async/images/neo_async.png)
+
 Neo-Async is compatible with Async.js, it is faster and has more feature.
 Async is a utilty module which provides staright-forward.
 
