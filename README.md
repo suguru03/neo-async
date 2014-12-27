@@ -4,6 +4,8 @@
 
 ![Neo-Async](https://raw.githubusercontent.com/wiki/suguru03/neo-async/images/neo_async.png)
 
+![nodei](https://nodei.co/npm/neo-async.png?downloads=true&downloadRank=true)
+
 Neo-Async is compatible with Async.js, it is faster and has more feature.
 Async is a utilty module which provides staright-forward.
 
