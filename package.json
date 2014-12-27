@@ -1,6 +1,6 @@
 {
   "name": "neo-async",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Neo-Async is compatible with Async.js, it is faster and has more feature.",
   "main": "index.js",
   "scripts": {
