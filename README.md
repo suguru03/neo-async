@@ -1,6 +1,7 @@
 # Neo-Async
 [![Build Status](https://travis-ci.org/suguru03/neo-async.svg?branch=master)](https://travis-ci.org/suguru03/Neo-Async)
 [![codecov.io](https://codecov.io/github/suguru03/neo-async/coverage.svg?branch=master)](https://codecov.io/github/suguru03/neo-async?branch=master)
+
 ![Neo-Async](https://raw.githubusercontent.com/wiki/suguru03/neo-async/images/neo_async.png)
 
 ![nodei](https://nodei.co/npm/neo-async.png?downloads=true&downloadRank=true)
@@ -144,9 +145,65 @@ var iterator = function(num, done) {
     done(null, num);
   }, num * 10);
 };
-async.each(collection, iterator, function(err, res) {
+async.concat(collection, iterator, function(err, res) {
   assert.deepEqual(res, [1, 2, 3]);
   assert.deepEqual(order, [1, 2, 3]);
+});
+
+```
+
+---
+
+<a name='concatSeries'/>
+### concatSeries(collection, iterator, callback, thisArg)
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. iterator(item, callback) (Function): The function called per iteration.
+3. callback(err) (Function): The function called at the end.
+4. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [1, 3, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num);
+  }, num * 10);
+};
+async.concatSeries(collection, iterator, function(err, res) {
+  assert.deepEqual(res, [1, 3, 2]);
+  assert.deepEqual(order, [1, 3, 2]);
+});
+
+```
+
+---
+<a name='concatLimit'/>
+### concatLimit(collection, limit, iterator, callback, thisArg)
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. limit (Number): The maximum number of iterators to run at any time.
+3. iterator(item, callback) (Function): The function called per iteration.
+4. callback(err) (Function): The function called at the end.
+5. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [1, 3, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num);
+  }, num * 10);
+};
+async.concatLimit(collection, 2, iterator, function(err, res) {
+  assert.deepEqual(res, [1, 3, 2]);
+  assert.deepEqual(order, [1, 3, 2]);
 });
 
 ```
@@ -248,7 +305,7 @@ async.eachLimit(collection, 2, iterator, function(err) {
 ---
 
 <a name='multiEach'/>
-### multiEach (collection, tasks, callback)
+### multiEach(collection, tasks, callback)
 This function provides asynchronous and straight-forward to deep nested each functions, in parallel.
 
 __Arguments__
