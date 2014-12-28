@@ -1,7 +1,6 @@
 # Neo-Async
 [![Build Status](https://travis-ci.org/suguru03/neo-async.svg?branch=master)](https://travis-ci.org/suguru03/Neo-Async)
-[![Coverage Status](https://coveralls.io/repos/suguru03/Neo-Async/badge.png?branch=master)](https://coveralls.io/r/suguru03/Neo-Async?branch=master)
-
+[![codecov.io](https://codecov.io/github/suguru03/neo-async/coverage.svg?branch=master)](https://codecov.io/github/suguru03/neo-async?branch=master)
 ![Neo-Async](https://raw.githubusercontent.com/wiki/suguru03/neo-async/images/neo_async.png)
 
 ![nodei](https://nodei.co/npm/neo-async.png?downloads=true&downloadRank=true)
