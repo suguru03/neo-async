@@ -145,6 +145,21 @@ describe('#timesSeries', function() {
 
   });
 
+  it('should throw error if double callback', function(done) {
+
+    var iterator = function(num, callback) {
+      callback();
+      callback();
+    };
+    try {
+      async.timesSeries(4, iterator);
+    } catch(e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
+
+  });
+
 });
 
 describe('#timesLimit', function() {
