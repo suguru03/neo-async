@@ -4,8 +4,8 @@ ISTANBUL=./node_modules/.bin/istanbul
 test-cov: clean
 	$(ISTANBUL) cover $(MOCHA) --require ./node_modules/intelli-espower-loader --report lcovonly -- -R spec ./test/*/*.js
 
-test-coveralls:
-	cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js --verbose
+test-codecov:
+	cat ./coverage/lcov.info | ./node_modules/codecov.io/bin/codecov.io.js --verbose
 
 clean:
 	rm -rf coverage

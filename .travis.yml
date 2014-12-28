@@ -1,6 +1,6 @@
 language: node_js
 
-after_success: 'make test-coveralls; make clean'
+after_success: 'make test-codecov; make clean'
 
 node_js:
   - "0.11"
