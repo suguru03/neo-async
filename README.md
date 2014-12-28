@@ -121,6 +121,8 @@ var async = require('async');
 * async.log
 * async.dir
 * async.noConflict
+* async.eventEmitter
+* async.EventEmitter
 
 ---
 
