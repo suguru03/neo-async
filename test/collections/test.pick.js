@@ -290,6 +290,5 @@ describe('#pickLimit', function() {
 
   });
 
-
 });
 

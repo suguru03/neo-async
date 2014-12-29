@@ -83,6 +83,22 @@ describe('#times', function() {
 
   });
 
+  it('should throw error if double callback', function(done) {
+
+    var iterator = function(num, callback) {
+      callback();
+      callback();
+    };
+    try {
+      async.times(4, iterator);
+    } catch(e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
+
+  });
+
+
 });
 
 describe('#timesSeries', function() {
@@ -221,6 +237,21 @@ describe('#timesLimit', function() {
         done();
       }, 50);
     });
+
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    var iterator = function(num, callback) {
+      callback();
+      callback();
+    };
+    try {
+      async.timesLimit(4, 2, iterator);
+    } catch(e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
 
   });
 
