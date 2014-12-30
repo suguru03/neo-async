@@ -385,7 +385,93 @@ async.eachLimit(collection, 2, iterator, function(err) {
   assert.deepEqual(order, [1, 3, 2]);
 });
 ```
+---
 
+<a name='every'/>
+### every(collection, iterator, callback, thisArg)
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. iterator(item, callback) (Function): The function called per iteration.
+3. callback(bool) (Function): The function called at the end.
+4. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [1, 3, 2, 4];
+var iterator = function(num, callback) {
+  setTimeout(function() {
+    order.push(num);
+    callback(num % 2);
+  }, num * 10);
+};
+async.every(collection, iterator, function(res) {
+  assert.strictEqual(res, false);
+  assert.deepEqual(order, [1, 2]);
+  done();
+});
+
+```
+
+---
+
+<a name='everySeries'/>
+### everySeries(collection, iterator, callback, thisArg)
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. iterator(item, callback) (Function): The function called per iteration.
+3. callback(bool) (Function): The function called at the end.
+4. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [1, 3, 2, 4];
+var iterator = function(num, callback) {
+  setTimeout(function() {
+    order.push(num);
+    callback(num % 2);
+  }, num * 10);
+};
+async.everySeries(collection, iterator, function(res) {
+  assert.strictEqual(res, false);
+  assert.deepEqual(order, [1, 3, 2]);
+  done();
+});
+
+```
+
+---
+
+<a name='everyLimit'/>
+### everyLimit(collection, iterator, callback, thisArg)
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. iterator(item, callback) (Function): The function called per iteration.
+3. callback(bool) (Function): The function called at the end.
+4. thisArg (*): The this binding of iterator.
+
+```js
+var limit = 2;
+var order = [];
+var collection = [1, 3, 2, 4];
+var iterator = function(num, callback) {
+  setTimeout(function() {
+    order.push(num);
+    callback(num % 2);
+  }, num * 10);
+};
+async.everyLimit(collection, limit, iterator, function(res) {
+  assert.strictEqual(res, false);
+  assert.deepEqual(order, [1, 3, 2]);
+  done();
+});
+
+```
 ---
 
 <a name='multiEach'/>
