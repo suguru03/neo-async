@@ -472,8 +472,87 @@ async.everyLimit(collection, limit, iterator, function(res) {
 });
 
 ```
+
 ---
 
+<a name='filter'/>
+### filter(collection, iterator, callback, thisArg)
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. iterator(item, callback) (Function): The function called per iteration.
+3. callback(array) (Function): The function called at the end.
+4. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [3, 1, 2, 4];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(num % 2);
+  }, num * 10);
+};
+async.filter(collection, iterator, function(res) {
+  assert.deepEqual(res, [3, 1]);
+  assert.deepEqual(order, [1, 2, 3, 4]);
+});
+```
+---
+
+<a name='filterSeries'/>
+### filterSeries(collection, iterator, callback, thisArg)
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. iterator(item, callback) (Function): The function called per iteration.
+3. callback(array) (Function): The function called at the end.
+4. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [3, 1, 2, 4];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(num % 2);
+  }, num * 10);
+};
+async.filterSeries(collection, iterator, function(res) {
+  assert.deepEqual(res, [3, 1]);
+  assert.deepEqual(order, [3, 1, 2, 4]);
+});
+```
+----
+
+<a name='filterLimit'/>
+### filterLimit(collection, limit, iterator, callback, thisArg)
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. limit (Number): The maximum number of iterators to run at any time.
+3. iterator(item, callback) (Function): The function called per iteration.
+4. callback(res) (Function): The function called at the end.
+5. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [3, 1, 2, 4];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(num % 2);
+  }, num * 10);
+};
+async.filterLimit(collection, 2, iterator, function(res) {
+  assert.deepEqual(res, [3, 1]);
+  assert.deepEqual(order, [1, 3, 2, 4]);
+});
+```
+---
 <a name='multiEach'/>
 ### multiEach(collection, tasks, callback)
 This function provides asynchronous and straight-forward to deep nested each functions, in parallel.
