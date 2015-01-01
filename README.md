@@ -552,7 +552,92 @@ async.filterLimit(collection, 2, iterator, function(res) {
   assert.deepEqual(order, [1, 3, 2, 4]);
 });
 ```
+
 ---
+
+<a name='map'/>
+### map(collection, iterator, callback, thisArg)
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. iterator(item, callback) (Function): The function called per iteration.
+3. callback(err, array) (Function): The function called at the end.
+4. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [1, 3, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num);
+  }, num * 10);
+};
+async.map(collection, iterator, function(err, array) {
+  assert.deepEqual(array, [1, 3, 2]);
+  assert.deepEqual(order, [1, 2, 3]);
+});
+```
+
+---
+
+<a name='mapSeries'/>
+### eachSeries(collection, iterator, callback, thisArg)
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. iterator(item, callback) (Function): The function called per iteration.
+3. callback(err, array) (Function): The function called at the end.
+4. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [1, 3, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num);
+  }, num * 10);
+};
+async.mapSeries(collection, iterator, function(err, array) {
+  assert.deepEqual(array, [1, 3, 2]);
+  assert.deepEqual(order, [1, 3, 2]);
+});
+
+```
+
+---
+
+<a name='mapLimit'/>
+### mapLimit(collection, limit, iterator, callback, thisArg)
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. limit (Number): The maximum number of iterators to run at any time.
+3. iterator(item, callback) (Function): The function called per iteration.
+4. callback(err, array) (Function): The function called at the end.
+5. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [1, 3, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num);
+  }, num * 10);
+};
+async.mapLimit(collection, 2, iterator, function(err, array) {
+  assert.deepEqual(array, [1, 3, 2]);
+  assert.deepEqual(order, [1, 3, 2]);
+});
+```
+
+---
+
 <a name='multiEach'/>
 ### multiEach(collection, tasks, callback)
 This function provides asynchronous and straight-forward to deep nested each functions, in parallel.
