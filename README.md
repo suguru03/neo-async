@@ -128,7 +128,7 @@ var async = require('async');
 ---
 
 <a name='concat'/>
-### concat(collection, iterator, callback, thisArg)
+### concat(collection, iterator, [callback], [thisArg])
 
 __Arguments__
 
@@ -156,7 +156,7 @@ async.concat(collection, iterator, function(err, array) {
 ---
 
 <a name='concatSeries'/>
-### concatSeries(collection, iterator, callback, thisArg)
+### concatSeries(collection, iterator, [callback], [thisArg])
 
 __Arguments__
 
@@ -183,7 +183,7 @@ async.concatSeries(collection, iterator, function(err, array) {
 
 ---
 <a name='concatLimit'/>
-### concatLimit(collection, limit, iterator, callback, thisArg)
+### concatLimit(collection, limit, iterator, [callback], [thisArg])
 
 __Arguments__
 
@@ -212,7 +212,7 @@ async.concatLimit(collection, 2, iterator, function(err, array) {
 ---
 
 <a name='detect'/>
-### detect(collection, iterator, callback, thisArg)
+### detect(collection, iterator, [callback], [thisArg])
 
 __Arguments__
 
@@ -240,7 +240,7 @@ async.detect(collection, iterator, function(item) {
 ---
 
 <a name='detectSeries'/>
-### detectSeries(collection, iterator, callback, thisArg)
+### detectSeries(collection, iterator, [callback], [thisArg])
 
 __Arguments__
 
@@ -268,7 +268,7 @@ async.detectSeries(collection, iterator, function(item) {
 ---
 
 <a name='detectLimit'/>
-### detectLimit(collection, limit, iterator, callback, thisArg)
+### detectLimit(collection, limit, iterator, [callback], [thisArg])
 
 __Arguments__
 
@@ -297,7 +297,7 @@ async.detectLimit(collection, 2, iterator, function(item) {
 ---
 
 <a name='each'/>
-### each(collection, iterator, callback, thisArg)
+### each(collection, iterator, [callback], [thisArg])
 Applies the function iterator to each item in collection, in parallel.
 
 __Aliases__
@@ -328,7 +328,7 @@ async.each(collection, iterator, function(err) {
 ---
 
 <a name='eachSeries'/>
-### eachSeries(collection, iterator, callback, thisArg)
+### eachSeries(collection, iterator, [callback], [thisArg])
 The same as each, in series.
 
 __Aliases__
@@ -359,7 +359,7 @@ async.eachSeries(collection, iterator, function(err) {
 ---
 
 <a name='eachLimit'/>
-### eachLimit(collection, limit, iterator, callback, thisArg)
+### eachLimit(collection, limit, iterator, [callback], [thisArg])
 The same as each, in limited parallel.
 
 __Aliases__
@@ -391,7 +391,7 @@ async.eachLimit(collection, 2, iterator, function(err) {
 ---
 
 <a name='every'/>
-### every(collection, iterator, callback, thisArg)
+### every(collection, iterator, [callback], [thisArg])
 
 __Arguments__
 
@@ -420,7 +420,7 @@ async.every(collection, iterator, function(bool) {
 ---
 
 <a name='everySeries'/>
-### everySeries(collection, iterator, callback, thisArg)
+### everySeries(collection, iterator, [callback], [thisArg])
 
 __Arguments__
 
@@ -448,7 +448,7 @@ async.everySeries(collection, iterator, function(bool) {
 ---
 
 <a name='everyLimit'/>
-### everyLimit(collection, iterator, callback, thisArg)
+### everyLimit(collection, iterator, [callback], [thisArg])
 
 __Arguments__
 
@@ -478,7 +478,7 @@ async.everyLimit(collection, limit, iterator, function(bool) {
 ---
 
 <a name='filter'/>
-### filter(collection, iterator, callback, thisArg)
+### filter(collection, iterator, [callback], [thisArg])
 
 __Arguments__
 
@@ -504,7 +504,7 @@ async.filter(collection, iterator, function(array) {
 ---
 
 <a name='filterSeries'/>
-### filterSeries(collection, iterator, callback, thisArg)
+### filterSeries(collection, iterator, [callback], [thisArg])
 
 __Arguments__
 
@@ -530,7 +530,7 @@ async.filterSeries(collection, iterator, function(array) {
 ----
 
 <a name='filterLimit'/>
-### filterLimit(collection, limit, iterator, callback, thisArg)
+### filterLimit(collection, limit, iterator, [callback], [thisArg])
 
 __Arguments__
 
@@ -558,7 +558,7 @@ async.filterLimit(collection, 2, iterator, function(array) {
 ---
 
 <a name='map'/>
-### map(collection, iterator, callback, thisArg)
+### map(collection, iterator, [callback], [thisArg])
 
 __Arguments__
 
@@ -585,7 +585,7 @@ async.map(collection, iterator, function(err, array) {
 ---
 
 <a name='mapSeries'/>
-### eachSeries(collection, iterator, callback, thisArg)
+### eachSeries(collection, iterator, [callback], [thisArg])
 
 __Arguments__
 
@@ -612,7 +612,7 @@ async.mapSeries(collection, iterator, function(err, array) {
 ---
 
 <a name='mapLimit'/>
-### mapLimit(collection, limit, iterator, callback, thisArg)
+### mapLimit(collection, limit, iterator, [callback], [thisArg])
 
 __Arguments__
 
@@ -640,7 +640,7 @@ async.mapLimit(collection, 2, iterator, function(err, array) {
 ---
 
 <a name='multiEach'/>
-### multiEach(collection, tasks, callback)
+### multiEach(collection, [tasks], [callback])
 This function provides asynchronous and straight-forward to deep nested each functions, in parallel.
 
 __Arguments__
@@ -739,7 +739,7 @@ async.multiEach(collection, tasks, function(err) {
 ---
 
 <a name='pick'/>
-### pick(collection, iterator, callback, thisArg)
+### pick(collection, iterator, [callback], [thisArg])
 
 __Arguments__
 
@@ -766,7 +766,7 @@ async.pick(collection, iterator, function(collection) {
 ---
 
 <a name='pickSeries'/>
-### pickSeries(collection, iterator, callback, thisArg)
+### pickSeries(collection, iterator, [callback], [thisArg])
 
 __Arguments__
 
@@ -793,7 +793,7 @@ async.pickSeries(collection, iterator, function(collection) {
 ---
 
 <a name='pickLimit'/>
-### pickLimit(collection, limit, iterator, callback, thisArg)
+### pickLimit(collection, limit, iterator, [callback], [thisArg])
 
 __Arguments__
 
@@ -821,7 +821,7 @@ async.pickLimit(collection, 2, iterator, function(collection) {
 ---
 
 <a name='reduce'/>
-### reduce(collection, accumulator, iterator, callback, thisArg)
+### reduce(collection, accumulator, iterator, [callback], [thisArg])
 
 __Arguments__
 
@@ -849,7 +849,7 @@ async.reduce(collection, 0, iterator, function(err, result) {
 ---
 
 <a name='reduceRight'/>
-### reduceRight(collection, accumulator, iterator, callback, thisArg)
+### reduceRight(collection, accumulator, iterator, [callback], [thisArg])
 
 __Arguments__
 
@@ -877,7 +877,7 @@ async.reduceRight(collection, 0, iterator, function(err, result) {
 ---
 
 <a name='reject'/>
-### reject(collection, iterator, callback, thisArg)
+### reject(collection, iterator, [callback], [thisArg])
 
 
 __Arguments__
@@ -905,7 +905,7 @@ async.reject(collection, iterator, function(collection) {
 ---
 
 <a name='rejectSeries'/>
-### rejectSeries(collection, iterator, callback, thisArg)
+### rejectSeries(collection, iterator, [callback], [thisArg])
 
 __Arguments__
 
@@ -932,7 +932,7 @@ async.rejectSeries(collection, iterator, function(collection) {
 ---
 
 <a name='rejectLimit'/>
-### rejectLimit(collection, limit, iterator, callback, thisArg)
+### rejectLimit(collection, limit, iterator, [callback], [thisArg])
 
 __Arguments__
 
@@ -960,7 +960,7 @@ async.rejectLimit(collection, 2, iterator, function(collection) {
 ---
 
 <a name='some'/>
-### some(collection, iterator, callback, thisArg)
+### some(collection, iterator, [callback], [thisArg])
 
 __Arguments__
 
@@ -987,7 +987,7 @@ async.some(collection, iterator, function(bool) {
 ---
 
 <a name='someSeries'/>
-### someSeries(collection, iterator, callback, thisArg)
+### someSeries(collection, iterator, [callback], [thisArg])
 
 __Arguments__
 
@@ -1014,7 +1014,7 @@ async.someSeries(collection, iterator, function(bool) {
 ---
 
 <a name='someLimit'/>
-### someLimit(collection, iterator, callback, thisArg)
+### someLimit(collection, iterator, [callback], [thisArg])
 
 __Arguments__
 
@@ -1042,7 +1042,7 @@ async.someLimit(collection, 2, iterator, function(bool) {
 ---
 
 <a name='sortBy'/>
-### sortBy(collection, iterator, callback, thisArg)
+### sortBy(collection, iterator, [callback], [thisArg])
 
 __Arguments__
 
@@ -1068,8 +1068,62 @@ async.sortBy(collection, iterator, function(err, array) {
 
 ---
 
+<a name='sortBySeries'/>
+### sortBySeries(collection, iterator, [callback], [thisArg])
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. iterator(item, callback) (Function): The function called per iteration.
+3. callback(err, array) (Function): The function called at the end.
+4. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [3, 1, 4, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.sortBySeries(collection, iterator, function(err, array) {
+  assert.deepEqual(array, [4, 2, 3, 1]);
+  assert.deepEqual(order, [3, 1, 4, 2]);
+});
+```
+
+---
+
+<a name='sortByLimit'/>
+### sortByLimit(collection, iterator, [callback], [thisArg])
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. limit (Number): The maximum number of iterators to run at any time.
+3. iterator(item, callback) (Function): The function called per iteration.
+4. callback(err, array) (Function): The function called at the end.
+5. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [3, 1, 4, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.sortByLimit(collection, 2, iterator, function(err, array) {
+  assert.deepEqual(array, [4, 2, 3, 1]);
+  assert.deepEqual(order, [1, 3, 2, 4]);
+});
+```
+
+---
 <a name='transform'/>
-### transform(collection, iterator, callback, accumulator, thisArg)
+### transform(collection, iterator, [callback], [accumulator], [thisArg])
 This function is similar to lodash transform, in parallel.
 
 __Arguments__
@@ -1101,7 +1155,7 @@ async.transform(collection, iterator, function(err, result) {
 ---
 
 <a name='transformSeries'/>
-### transformSeries(collection, iterator, callback, accumulator, thisArg)
+### transformSeries(collection, iterator, [callback], [accumulator], [thisArg])
 
 __Arguments__
 
@@ -1132,7 +1186,7 @@ async.transformSeries(collection, iterator, function(err, result) {
 ---
 
 <a name='transformLimit'/>
-### transformLimit(collection, limit, iterator, callback, accumulator, thisArg)
+### transformLimit(collection, limit, iterator, [callback], [accumulator], [thisArg])
 
 __Arguments__
 
