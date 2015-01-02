@@ -821,14 +821,15 @@ async.pickLimit(collection, 2, iterator, function(collection) {
 ---
 
 <a name='reduce'/>
-### reduce(collection, iterator, callback, thisArg)
+### reduce(collection, accumulator, iterator, callback, thisArg)
 
 __Arguments__
 
 1. collection (Array|Object): The collection to iterate over.
-2. iterator(memo, item, callback) (Function): The function called per iteration.
-3. callback(err, result) (Function): The function called at the end.
-4. thisArg (*): The this binding of iterator.
+2. accumulator (*): Initial value of the accumulator.
+3. iterator(memo, item, callback) (Function): The function called per iteration.
+4. callback(err, result) (Function): The function called at the end.
+5. thisArg (*): The this binding of iterator.
 
 ```js
 var order = [];
@@ -848,14 +849,15 @@ async.reduce(collection, 0, iterator, function(err, result) {
 ---
 
 <a name='reduceRight'/>
-### reduceRight(collection, iterator, callback, thisArg)
+### reduceRight(collection, accumulator, iterator, callback, thisArg)
 
 __Arguments__
 
 1. collection (Array|Object): The collection to iterate over.
-2. iterator(memo, item, callback) (Function): The function called per iteration.
-3. callback(err, result) (Function): The function called at the end.
-4. thisArg (*): The this binding of iterator.
+2. accumulator (*): Initial value of the accumulator.
+3. iterator(memo, item, callback) (Function): The function called per iteration.
+4. callback(err, result) (Function): The function called at the end.
+5. thisArg (*): The this binding of iterator.
 
 ```js
 var order = [];
@@ -1066,35 +1068,71 @@ async.sortBy(collection, iterator, function(err, array) {
 
 ---
 
-<a name='sortBySeries'/>
-### sortBySeries(collection, iterator, callback, thisArg)
+<a name='transform'/>
+### transform(collection, iterator, callback, accumulator, thisArg)
+This function is similar to lodash transform, in parallel.
 
 __Arguments__
 
 1. collection (Array|Object): The collection to iterate over.
-2. iterator(item, callback) (Function): The function called per iteration.
-3. callback(err, array) (Function): The function called at the end.
-4. thisArg (*): The this binding of iterator.
+2. iterator(memo, item, callback) (Function): The function called per iteration.
+3. callback(err, result) (Function): The function called at the end.
+4. accumulator (*): Initial value of the accumulator.
+5. thisArg (*): The this binding of iterator.
 
 ```js
 var order = [];
-var collection = [3, 1, 4, 2];
-var iterator = function(num, done) {
-setTimeout(function() {
+var collection = [1, 5, 3, 2, 4];
+var iterator = function(memo, num, index, done) {
+  setTimeout(function() {
     order.push(num);
-    done(null, num % 2);
+    if (num % 2) {
+      memo.push(num);
+    }
+    done();
   }, num * 10);
 };
-async.sortBySeries(collection, iterator, function(err, array) {
-  assert.deepEqual(array, [4, 2, 3, 1]);
-  assert.deepEqual(order, [3, 1, 4, 2]);
+async.transform(collection, iterator, function(err, result) {
+  assert.deepEqual(result, [1, 3, 5]);
+  assert.deepEqual(order, [1, 2, 3, 4, 5]);
 });
 ```
 
 ---
 
-<a name='sortByLimit'/>
-### sortByLimit(collection, iterator, callback, thisArg)
+<a name='transformSeries'/>
+### transformSeries(collection, iterator, callback, accumulator, thisArg)
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. iterator(memo, item, callback) (Function): The function called per iteration.
+3. callback(err, result) (Function): The function called at the end.
+4. accumulator (*): Initial value of the accumulator.
+5. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [1, 5, 3, 2, 4];
+var iterator = function(memo, num, index, done) {
+  setTimeout(function() {
+    order.push(num);
+    if (num % 2) {
+      memo.push(num);
+    }
+    done();
+  }, num * 10);
+};
+async.transformSeries(collection, iterator, function(err, result) {
+  assert.deepEqual(result, [1, 5, 3]);
+  assert.deepEqual(order, [1, 5, 3, 2, 4]);
+});
+```
+
+---
+
+<a name='transformLimit'/>
+### transformLimit(collection, limit, iterator, callback, accumulator, thisArg)
 
 __Arguments__
 
@@ -1102,20 +1140,24 @@ __Arguments__
 2. limit (Number): The maximum number of iterators to run at any time.
 3. iterator(item, callback) (Function): The function called per iteration.
 4. callback(err, array) (Function): The function called at the end.
-5. thisArg (*): The this binding of iterator.
+5. accumulator (*): Initial value of the accumulator.
+6. thisArg (*): The this binding of iterator.
 
 ```js
 var order = [];
-var collection = [3, 1, 4, 2];
-var iterator = function(num, done) {
+var collection = [1, 5, 3, 2, 4];
+var iterator = function(memo, num, index, done) {
   setTimeout(function() {
     order.push(num);
-    done(null, num % 2);
+    if (num % 2) {
+      memo.push(num);
+    }
+    done();
   }, num * 10);
 };
-async.sortByLimit(collection, 2, iterator, function(err, array) {
-  assert.deepEqual(array, [4, 2, 3, 1]);
-  assert.deepEqual(order, [1, 3, 2, 4]);
+async.transformLimit(collection, 2, iterator, function(err, result) {
+  assert.deepEqual(result, [1, 5, 3]);
+  assert.deepEqual(order, [1, 5, 2, 3, 4]);
 });
 ```
 

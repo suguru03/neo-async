@@ -133,7 +133,7 @@ describe('#transform', function() {
       assert.deepEqual(res, { a: 1, c: 3 });
       assert.deepEqual(order, [1, 3, 4]);
       done();
-    }, Math);
+    }, {}, Math);
 
   });
 
@@ -262,7 +262,7 @@ describe('#transformSeries', function() {
       assert.deepEqual(res, { a: 1, c: 3 });
       assert.deepEqual(order, [1, 4, 3]);
       done();
-    }, Math);
+    }, undefined, Math);
 
   });
 
@@ -408,10 +408,10 @@ describe('#transformLimit', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, { a: 1, c: 3 });
+      assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [1, 4, 3]);
       done();
-    }, Math);
+    }, [], Math);
 
   });
 
