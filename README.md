@@ -133,7 +133,7 @@ __Arguments__
 
 1. collection (Array|Object): The collection to iterate over.
 2. iterator(item, callback) (Function): The function called per iteration.
-3. callback(err, res) (Function): The function called at the end.
+3. callback(err, array) (Function): The function called at the end.
 4. thisArg (*): The this binding of iterator.
 
 ```js
@@ -145,8 +145,8 @@ var iterator = function(num, done) {
     done(null, num);
   }, num * 10);
 };
-async.concat(collection, iterator, function(err, res) {
-  assert.deepEqual(res, [1, 2, 3]);
+async.concat(collection, iterator, function(err, array) {
+  assert.deepEqual(array, [1, 2, 3]);
   assert.deepEqual(order, [1, 2, 3]);
 });
 
@@ -161,7 +161,7 @@ __Arguments__
 
 1. collection (Array|Object): The collection to iterate over.
 2. iterator(item, callback) (Function): The function called per iteration.
-3. callback(err, res) (Function): The function called at the end.
+3. callback(err, array) (Function): The function called at the end.
 4. thisArg (*): The this binding of iterator.
 
 ```js
@@ -173,8 +173,8 @@ var iterator = function(num, done) {
     done(null, num);
   }, num * 10);
 };
-async.concatSeries(collection, iterator, function(err, res) {
-  assert.deepEqual(res, [1, 3, 2]);
+async.concatSeries(collection, iterator, function(err, array) {
+  assert.deepEqual(array, [1, 3, 2]);
   assert.deepEqual(order, [1, 3, 2]);
 });
 
@@ -189,7 +189,7 @@ __Arguments__
 1. collection (Array|Object): The collection to iterate over.
 2. limit (Number): The maximum number of iterators to run at any time.
 3. iterator(item, callback) (Function): The function called per iteration.
-4. callback(err, res) (Function): The function called at the end.
+4. callback(err, array) (Function): The function called at the end.
 5. thisArg (*): The this binding of iterator.
 
 ```js
@@ -201,8 +201,8 @@ var iterator = function(num, done) {
     done(null, num);
   }, num * 10);
 };
-async.concatLimit(collection, 2, iterator, function(err, res) {
-  assert.deepEqual(res, [1, 3, 2]);
+async.concatLimit(collection, 2, iterator, function(err, array) {
+  assert.deepEqual(array, [1, 3, 2]);
   assert.deepEqual(order, [1, 3, 2]);
 });
 
@@ -217,7 +217,7 @@ __Arguments__
 
 1. collection (Array|Object): The collection to iterate over.
 2. iterator(item, callback) (Function): The function called per iteration.
-3. callback(res) (Function): The function called at the end.
+3. callback(item) (Function): The function called at the end.
 4. thisArg (*): The this binding of iterator.
 
 ```js
@@ -229,8 +229,8 @@ var iterator = function(num, done) {
     done(num === 3);
   }, num * 10);
 };
-async.detect(collection, iterator, function(res) {
-  assert.deepEqual(res, 3);
+async.detect(collection, iterator, function(item) {
+  assert.deepEqual(item, 3);
   assert.deepEqual(order, [1, 2, 3]);
 });
 
@@ -245,7 +245,7 @@ __Arguments__
 
 1. collection (Array|Object): The collection to iterate over.
 2. iterator(item, callback) (Function): The function called per iteration.
-3. callback(res) (Function): The function called at the end.
+3. callback(item) (Function): The function called at the end.
 4. thisArg (*): The this binding of iterator.
 
 ```js
@@ -257,8 +257,8 @@ var iterator = function(num, done) {
     done(num === 3);
   }, num * 10);
 };
-async.detectSeries(collection, iterator, function(res) {
-  assert.deepEqual(res, 3);
+async.detectSeries(collection, iterator, function(item) {
+  assert.deepEqual(item, 3);
   assert.deepEqual(order, [1, 3]);
 });
 
@@ -274,7 +274,7 @@ __Arguments__
 1. collection (Array|Object): The collection to iterate over.
 2. limit (Number): The maximum number of iterators to run at any time.
 3. iterator(item, callback) (Function): The function called per iteration.
-4. callback(res) (Function): The function called at the end.
+4. callback(item) (Function): The function called at the end.
 5. thisArg (*): The this binding of iterator.
 
 ```js
@@ -286,12 +286,13 @@ var iterator = function(num, done) {
     done(num === 3);
   }, num * 10);
 };
-async.detectLimit(collection, 2, iterator, function(res) {
-  assert.deepEqual(res, 3);
+async.detectLimit(collection, 2, iterator, function(item) {
+  assert.deepEqual(item, 3);
   assert.deepEqual(order, [1, 3]);
 });
 
 ```
+
 ---
 
 <a name='each'/>
@@ -406,8 +407,8 @@ var iterator = function(num, callback) {
     callback(num % 2);
   }, num * 10);
 };
-async.every(collection, iterator, function(res) {
-  assert.strictEqual(res, false);
+async.every(collection, iterator, function(bool) {
+  assert.strictEqual(bool, false);
   assert.deepEqual(order, [1, 2]);
   done();
 });
@@ -435,8 +436,8 @@ var iterator = function(num, callback) {
     callback(num % 2);
   }, num * 10);
 };
-async.everySeries(collection, iterator, function(res) {
-  assert.strictEqual(res, false);
+async.everySeries(collection, iterator, function(bool) {
+  assert.strictEqual(bool, false);
   assert.deepEqual(order, [1, 3, 2]);
   done();
 });
@@ -465,12 +466,11 @@ var iterator = function(num, callback) {
     callback(num % 2);
   }, num * 10);
 };
-async.everyLimit(collection, limit, iterator, function(res) {
-  assert.strictEqual(res, false);
+async.everyLimit(collection, limit, iterator, function(bool) {
+  assert.strictEqual(bool, false);
   assert.deepEqual(order, [1, 3, 2]);
   done();
 });
-
 ```
 
 ---
@@ -494,8 +494,8 @@ var iterator = function(num, done) {
     done(num % 2);
   }, num * 10);
 };
-async.filter(collection, iterator, function(res) {
-  assert.deepEqual(res, [3, 1]);
+async.filter(collection, iterator, function(array) {
+  assert.deepEqual(array, [3, 1]);
   assert.deepEqual(order, [1, 2, 3, 4]);
 });
 ```
@@ -520,8 +520,8 @@ var iterator = function(num, done) {
     done(num % 2);
   }, num * 10);
 };
-async.filterSeries(collection, iterator, function(res) {
-  assert.deepEqual(res, [3, 1]);
+async.filterSeries(collection, iterator, function(array) {
+  assert.deepEqual(array, [3, 1]);
   assert.deepEqual(order, [3, 1, 2, 4]);
 });
 ```
@@ -535,7 +535,7 @@ __Arguments__
 1. collection (Array|Object): The collection to iterate over.
 2. limit (Number): The maximum number of iterators to run at any time.
 3. iterator(item, callback) (Function): The function called per iteration.
-4. callback(res) (Function): The function called at the end.
+4. callback(array) (Function): The function called at the end.
 5. thisArg (*): The this binding of iterator.
 
 ```js
@@ -547,8 +547,8 @@ var iterator = function(num, done) {
     done(num % 2);
   }, num * 10);
 };
-async.filterLimit(collection, 2, iterator, function(res) {
-  assert.deepEqual(res, [3, 1]);
+async.filterLimit(collection, 2, iterator, function(array) {
+  assert.deepEqual(array, [3, 1]);
   assert.deepEqual(order, [1, 3, 2, 4]);
 });
 ```
@@ -605,7 +605,6 @@ async.mapSeries(collection, iterator, function(err, array) {
   assert.deepEqual(array, [1, 3, 2]);
   assert.deepEqual(order, [1, 3, 2]);
 });
-
 ```
 
 ---
@@ -734,6 +733,89 @@ async.multiEach(collection, tasks, function(err) {
   ]);
 });
 ```
+
+---
+
+<a name='pick'/>
+### pick(collection, iterator, callback, thisArg)
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. iterator(item, callback) (Function): The function called per iteration.
+3. callback(collection) (Function): The function called at the end.
+4. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [1, 3, 2, 4];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(num % 2);
+  }, num * 10);
+};
+async.pick(collection, iterator, function(collection) {
+  assert.deepEqual(collection, [1, 3]);
+  assert.deepEqual(order, [1, 2, 3, 4]);
+});
+```
+
+---
+
+<a name='pickSeries'/>
+### pickSeries(collection, iterator, callback, thisArg)
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. iterator(item, callback) (Function): The function called per iteration.
+3. callback(collection) (Function): The function called at the end.
+4. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [1, 3, 2, 4];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(num % 2);
+  }, num * 10);
+};
+async.pickSeries(collection, iterator, function(collection) {
+  assert.deepEqual(collection, [1, 3]);
+  assert.deepEqual(order, [1, 3, 2, 4]);
+});
+```
+
+---
+
+<a name='pickLimit'/>
+### pickLimit(collection, limit, iterator, callback, thisArg)
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. limit (Number): The maximum number of iterators to run at any time.
+3. iterator(item, callback) (Function): The function called per iteration.
+4. callback(collection) (Function): The function called at the end.
+5. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [1, 3, 2, 4];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(num % 2);
+  }, num * 10);
+};
+async.pickLimit(collection, 2, iterator, function(collection) {
+  assert.deepEqual(collection, [1, 3]);
+  assert.deepEqual(order, [1, 3, 2, 4]);
+});
+```
+
 ---
 
 ## Speed Comparison
