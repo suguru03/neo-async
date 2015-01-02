@@ -6,8 +6,9 @@
 
 ![nodei](https://nodei.co/npm/neo-async.png?downloads=true&downloadRank=true)
 
-Neo-Async is compatible with Async.js, it is faster and has more feature.
-Async is a utilty module which provides staright-forward.
+Neo-Async is compatible with Async.js, it is [faster](#speed-comparison) and has more [feature](#feature).
+
+Async is a utility module which provides staright-forward.
 
 ---
 
@@ -386,6 +387,7 @@ async.eachLimit(collection, 2, iterator, function(err) {
   assert.deepEqual(order, [1, 3, 2]);
 });
 ```
+
 ---
 
 <a name='every'/>
@@ -441,7 +443,6 @@ async.everySeries(collection, iterator, function(bool) {
   assert.deepEqual(order, [1, 3, 2]);
   done();
 });
-
 ```
 
 ---
@@ -452,9 +453,10 @@ async.everySeries(collection, iterator, function(bool) {
 __Arguments__
 
 1. collection (Array|Object): The collection to iterate over.
-2. iterator(item, callback) (Function): The function called per iteration.
-3. callback(bool) (Function): The function called at the end.
-4. thisArg (*): The this binding of iterator.
+2. limit (Number): The maximum number of iterators to run at any time.
+3. iterator(item, callback) (Function): The function called per iteration.
+4. callback(bool) (Function): The function called at the end.
+5. thisArg (*): The this binding of iterator.
 
 ```js
 var limit = 2;
@@ -812,6 +814,307 @@ var iterator = function(num, done) {
 };
 async.pickLimit(collection, 2, iterator, function(collection) {
   assert.deepEqual(collection, [1, 3]);
+  assert.deepEqual(order, [1, 3, 2, 4]);
+});
+```
+
+---
+
+<a name='reduce'/>
+### reduce(collection, iterator, callback, thisArg)
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. iterator(memo, item, callback) (Function): The function called per iteration.
+3. callback(err, result) (Function): The function called at the end.
+4. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [1, 3, 2, 4];
+var iterator = function(memo, num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, memo + num);
+  }, num * 10);
+};
+async.reduce(collection, 0, iterator, function(err, result) {
+  assert.strictEqual(result, 10);
+  assert.deepEqual(order, [1, 3, 2, 4]);
+});
+```
+
+---
+
+<a name='reduceRight'/>
+### reduceRight(collection, iterator, callback, thisArg)
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. iterator(memo, item, callback) (Function): The function called per iteration.
+3. callback(err, result) (Function): The function called at the end.
+4. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [1, 3, 2, 4];
+var iterator = function(memo, num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, memo + num);
+  }, num * 10);
+};
+async.reduceRight(collection, 0, iterator, function(err, result) {
+  assert.strictEqual(result, 10);
+  assert.deepEqual(order, [4, 2, 3, 1]);
+});
+```
+
+---
+
+<a name='reject'/>
+### reject(collection, iterator, callback, thisArg)
+
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. iterator(item, callback) (Function): The function called per iteration.
+3. callback(collection) (Function): The function called at the end.
+4. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [1, 3, 2, 4];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(num % 2);
+  }, num * 10);
+};
+async.reject(collection, iterator, function(collection) {
+  assert.deepEqual(collection, [2, 4]);
+  assert.deepEqual(order, [1, 2, 3, 4]);
+});
+```
+
+---
+
+<a name='rejectSeries'/>
+### rejectSeries(collection, iterator, callback, thisArg)
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. iterator(item, callback) (Function): The function called per iteration.
+3. callback(collection) (Function): The function called at the end.
+4. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [1, 3, 2, 4];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(num % 2);
+  }, num * 10);
+};
+async.rejectSeries(collection, iterator, function(collection) {
+  assert.deepEqual(collection, [2, 4]);
+  assert.deepEqual(order, [1, 3, 2, 4]);
+});
+```
+
+---
+
+<a name='rejectLimit'/>
+### rejectLimit(collection, limit, iterator, callback, thisArg)
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. limit (Number): The maximum number of iterators to run at any time.
+3. iterator(item, callback) (Function): The function called per iteration.
+4. callback(collection) (Function): The function called at the end.
+5. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [1, 3, 2, 4];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(num % 2);
+  }, num * 10);
+};
+async.rejectLimit(collection, 2, iterator, function(collection) {
+  assert.deepEqual(collection, [2, 4]);
+  assert.deepEqual(order, [1, 3, 2, 4]);
+});
+```
+
+---
+
+<a name='some'/>
+### some(collection, iterator, callback, thisArg)
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. iterator(item, callback) (Function): The function called per iteration.
+3. callback(bool) (Function): The function called at the end.
+4. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [3, 1, 2, 4];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(num % 2);
+  }, num * 10);
+};
+async.some(collection, iterator, function(bool) {
+  assert.ok(bool);
+  assert.deepEqual(order, [1]);
+});
+```
+
+---
+
+<a name='someSeries'/>
+### someSeries(collection, iterator, callback, thisArg)
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. iterator(item, callback) (Function): The function called per iteration.
+3. callback(bool) (Function): The function called at the end.
+4. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [3, 1, 2, 4];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(num % 2);
+  }, num * 10);
+};
+async.someSeries(collection, iterator, function(bool) {
+  assert.ok(bool);
+  assert.deepEqual(order, [3]);
+});
+```
+
+---
+
+<a name='someLimit'/>
+### someLimit(collection, iterator, callback, thisArg)
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. limit (Number): The maximum number of iterators to run at any time.
+3. iterator(item, callback) (Function): The function called per iteration.
+4. callback(bool) (Function): The function called at the end.
+5. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [3, 1, 2, 4];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(num % 2);
+  }, num * 10);
+};
+async.someLimit(collection, 2, iterator, function(bool) {
+  assert.ok(bool);
+  assert.deepEqual(order, [1]);
+});
+```
+
+---
+
+<a name='sortBy'/>
+### sortBy(collection, iterator, callback, thisArg)
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. iterator(item, callback) (Function): The function called per iteration.
+3. callback(err, array) (Function): The function called at the end.
+4. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [3, 1, 4, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.sortBy(collection, iterator, function(err, array) {
+  assert.deepEqual(array, [4, 2, 3, 1]);
+  assert.deepEqual(order, [1, 2, 3, 4]);
+});
+```
+
+---
+
+<a name='sortBySeries'/>
+### sortBySeries(collection, iterator, callback, thisArg)
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. iterator(item, callback) (Function): The function called per iteration.
+3. callback(err, array) (Function): The function called at the end.
+4. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [3, 1, 4, 2];
+var iterator = function(num, done) {
+setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.sortBySeries(collection, iterator, function(err, array) {
+  assert.deepEqual(array, [4, 2, 3, 1]);
+  assert.deepEqual(order, [3, 1, 4, 2]);
+});
+```
+
+---
+
+<a name='sortByLimit'/>
+### sortByLimit(collection, iterator, callback, thisArg)
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. limit (Number): The maximum number of iterators to run at any time.
+3. iterator(item, callback) (Function): The function called per iteration.
+4. callback(err, array) (Function): The function called at the end.
+5. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var collection = [3, 1, 4, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.sortByLimit(collection, 2, iterator, function(err, array) {
+  assert.deepEqual(array, [4, 2, 3, 1]);
   assert.deepEqual(order, [1, 3, 2, 4]);
 });
 ```
