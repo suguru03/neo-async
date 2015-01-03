@@ -95,8 +95,9 @@ var async = require('async');
 
 ### Control Flow
 
-* async.series
-* async.parallel [Limit]
+* [`parallel`](#parallel)
+* [`series`](#series)
+* [`parallelLimit`](#parallelLimit)
 * async.waterfall
 * async.whilst
 * async.doWhilst
@@ -1212,6 +1213,145 @@ var iterator = function(memo, num, index, done) {
 async.transformLimit(collection, 2, iterator, function(err, result) {
   assert.deepEqual(result, [1, 5, 3]);
   assert.deepEqual(order, [1, 5, 2, 3, 4]);
+});
+```
+
+---
+
+<a name='parallel'/>
+### parallel(tasks, [callback], [thisArg])
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. callback(err, collection) (Function): The function called at the end.
+3. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var tasks = [
+  function(done) {
+    setTimeout(function() {
+      order.push(1);
+      done(null, 1);
+    }, 10);
+  },
+  function(done) {
+    setTimeout(function() {
+      order.push(3);
+      done(null, 3);
+    }, 30);
+  },
+  function(done) {
+    setTimeout(function() {
+      order.push(4);
+      done(null, 4);
+    }, 40);
+  },
+  function(done) {
+    setTimeout(function() {
+      order.push(2);
+      done(null, 2);
+    }, 10);
+  }
+];
+
+async.parallel(tasks, function(err, res) {
+  assert.deepEqual(res, [1, 3, 4, 2]);
+  assert.deepEqual(order, [1, 2, 3, 4]);
+});
+```
+
+---
+
+<a name='series'/>
+### series(tasks, [callback], [thisArg])
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. callback(err, collection) (Function): The function called at the end.
+3. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var tasks = [
+  function(done) {
+    setTimeout(function() {
+      order.push(1);
+      done(null, 1);
+    }, 10);
+  },
+  function(done) {
+    setTimeout(function() {
+      order.push(3);
+      done(null, 3);
+    }, 30);
+  },
+  function(done) {
+    setTimeout(function() {
+      order.push(4);
+      done(null, 4);
+    }, 40);
+  },
+  function(done) {
+    setTimeout(function() {
+      order.push(2);
+      done(null, 2);
+    }, 10);
+  }
+];
+
+async.series(tasks, function(err, res) {
+  assert.deepEqual(res, [1, 3, 4, 2]);
+  assert.deepEqual(order, [1, 3, 4, 2]);
+});
+```
+
+---
+
+<a name='parallelLimit'/>
+### parallelLimit(tasks, limit, [callback], [thisArg])
+
+__Arguments__
+
+1. collection (Array|Object): The collection to iterate over.
+2. limit (Number): The maximum number of iterators to run at any time.
+3. callback(err, collection) (Function): The function called at the end.
+4. thisArg (*): The this binding of iterator.
+
+```js
+var order = [];
+var tasks = [
+  function(done) {
+    setTimeout(function() {
+      order.push(1);
+      done(null, 1);
+    }, 10);
+  },
+  function(done) {
+    setTimeout(function() {
+      order.push(3);
+      done(null, 3);
+    }, 30);
+  },
+  function(done) {
+    setTimeout(function() {
+      order.push(4);
+      done(null, 4);
+    }, 40);
+  },
+  function(done) {
+    setTimeout(function() {
+      order.push(2);
+      done(null, 2);
+    }, 10);
+  }
+];
+
+async.parallelLimit(tasks, 2, function(err, res) {
+  assert.deepEqual(res, [1, 3, 4, 2]);
+  assert.deepEqual(order, [1, 3, 2, 4]);
 });
 ```
 
