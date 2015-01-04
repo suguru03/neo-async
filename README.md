@@ -98,7 +98,7 @@ var async = require('async');
 * [`parallel`](#parallel)
 * [`series`](#series)
 * [`parallelLimit`](#parallelLimit)
-* async.waterfall
+* [`waterfall`](#waterfall)
 * async.whilst
 * async.doWhilst
 * async.until
@@ -1223,7 +1223,7 @@ async.transformLimit(collection, 2, iterator, function(err, result) {
 
 __Arguments__
 
-1. collection (Array|Object): The collection to iterate over.
+1. tasks (Array|Object): The tasks is some functions, and they will be called in parallel.
 2. callback(err, collection) (Function): The function called at the end.
 3. thisArg (*): The this binding of iterator.
 
@@ -1269,7 +1269,7 @@ async.parallel(tasks, function(err, res) {
 
 __Arguments__
 
-1. collection (Array|Object): The collection to iterate over.
+1. tasks (Array|Object): The tasks is some functions, and they will be called in series.
 2. callback(err, collection) (Function): The function called at the end.
 3. thisArg (*): The this binding of iterator.
 
@@ -1315,7 +1315,7 @@ async.series(tasks, function(err, res) {
 
 __Arguments__
 
-1. collection (Array|Object): The collection to iterate over.
+1. tasks (Array|Object): The tasks is some functions, and they will be called in limited parallel.
 2. limit (Number): The maximum number of iterators to run at any time.
 3. callback(err, collection) (Function): The function called at the end.
 4. thisArg (*): The this binding of iterator.
@@ -1352,6 +1352,49 @@ var tasks = [
 async.parallelLimit(tasks, 2, function(err, res) {
   assert.deepEqual(res, [1, 3, 4, 2]);
   assert.deepEqual(order, [1, 3, 2, 4]);
+});
+```
+
+---
+
+<a name='waterfall'/>
+### waterfall(tasks, [callback], [thisArg])
+
+__Arguments__
+
+1. tasks (Array|Object): The tasks is some functions, and they will be called in series.
+2. callback(err, res) (Function): The function called at the end.
+3. thisArg (*): The this binding of iterator.
+
+```js
+var tasks = [
+  function(done) {
+    setTimeout(function() {
+      done(null, 1);
+    }, 10);
+  },
+  function(num, done) {
+    assert.strictEqual(num, 1);
+    setTimeout(function() {
+      done(null, 3);
+    }, 30);
+  },
+  function(num, done) {
+    assert.strictEqual(num, 3);
+    setTimeout(function() {
+      done(null, 2, 4);
+    }, 20);
+  },
+  function(num1, num2, done) {
+    assert.strictEqual(num1, 2);
+    assert.strictEqual(num2, 4);
+    setTimeout(function() {
+      done(null, 4);
+    }, 40);
+  }
+];
+async.waterfall(tasks, function(err, res) {
+  assert.strictEqual(res, 4);
 });
 ```
 
