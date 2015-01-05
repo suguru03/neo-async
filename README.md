@@ -99,32 +99,31 @@ var async = require('async');
 * [`series`](#series)
 * [`parallelLimit`](#parallelLimit)
 * [`waterfall`](#waterfall)
-* async.whilst
-* async.doWhilst
-* async.until
-* async.doUntil
-* async.forever
-* async.seq
-* async.applyEach [Series]
-* async.queue
-* async.priorityQueue
-* async.cargo
-* async.auto
-* async.retry
-* async.iterator
-* async.nextTick
-* async.setImmediate
-* async.times [Series, Limit]
+* [`apply`](#apply)
+* [`applyEach`](#applyEach)
+* [`applyEachSeries`](#applyEachSeries)
+* [`auto`](#auto)
+* [`cargo`](#cargo)
+* [`compose`](#compose)
+* [`forever`](#forever)
+* [`iterator`](#iterator)
+* [`queue`](#queue)
+* [`retry`](#retry)
+* [`seq`](#seq)
+* [`times`](#times)
+* [`timesSeries`](#timesSeries)
+* [`timesLimit`](#timesLimit)
+* [`until`](#until)
+* [`whilst`](#whilst)
 
 ### Utils
 
-* async.memoize
-* async.unmemoize
-* async.log
-* async.dir
-* async.noConflict
-* async.eventEmitter
-* async.EventEmitter
+* [`log`](#log)
+* [`dir`](#dir)
+* [`memoize`](#memoize)
+* [`unmemoize`](#unmemoize)
+* [`noConflict`](#noConflict)
+* [`eventEmitter`](#eventEmitter)
 
 ---
 
