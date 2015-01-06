@@ -10,6 +10,12 @@ Neo-Async is compatible with Async.js, it is [faster](#speed-comparison) and has
 
 Async is a utility module which provides staright-forward.
 
+__FUTURE PLANS__
+
+I think that first argument of response should get the error. So, I will modify it in v2.x.
+
+__
+
 ---
 
 ## Installation
