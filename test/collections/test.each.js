@@ -112,6 +112,21 @@ describe('#each', function() {
 
   });
 
+  it('should throw error to callback if callback was called twice and caused error', function(done) {
+
+    var collection = [1, 3, 2, 4];
+    var iterator = function(num, callback) {
+      callback();
+      callback('error');
+    };
+
+    async.each(collection, iterator, function(err) {
+      assert.ok(err);
+      done();
+    });
+
+  });
+
   it('should break if respond equals false', function(done) {
 
     var order = [];
