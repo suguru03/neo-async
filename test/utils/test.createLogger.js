@@ -72,6 +72,18 @@ describe('#createLogger', function() {
       assert.ok(err);
       done();
     });
+
+  });
+
+  it('should check logger', function(done) {
+
+    var fn = function(arg, callback) {
+      assert.strictEqual(arg, 'test');
+      callback(null, 'log', 'test');
+      done();
+    };
+    var logger = async.createLogger('warn');
+    logger(fn, 'test');
   });
 
 });
