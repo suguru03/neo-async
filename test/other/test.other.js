@@ -37,9 +37,11 @@ describe('#nextTick', function() {
     var _nextTick = process.nextTick;
     process.nextTick = undefined;
     delete(require.cache[path]);
-    require(path);
+    var async = require(path);
     process.nextTick = _nextTick;
-    done();
+    assert.strictEqual(typeof async.nextTick, 'function');
+    assert.notStrictEqual(async.nextTick, process.nextTick);
+    async.nextTick(done);
   });
 
   it('should check nextTick if process does not have nextTick and setImmediate', function(done) {
@@ -49,20 +51,28 @@ describe('#nextTick', function() {
     process.nextTick = undefined;
     setImmediate = undefined;
     delete(require.cache[path]);
-    require(path);
+    var async = require(path);
     process.nextTick = _nextTick;
     setImmediate = _setImmediate;
-    done();
+    assert.strictEqual(typeof async.nextTick, 'function');
+    assert.notStrictEqual(async.nextTick, process.nextTick);
+    async.nextTick(done);
   });
+});
 
-  it('should check nextTick if does not have setImmediate', function(done) {
+describe('#setImmediate', function() {
+
+  'use strict';
+
+  it('should check setImmediate if does not have setImmediate', function(done) {
 
     var _setImmediate = setImmediate;
     setImmediate = undefined;
     delete(require.cache[path]);
-    require(path);
+    var async = require(path);
     setImmediate = _setImmediate;
-    done();
+    assert.strictEqual(typeof async.setImmediate, 'function');
+    assert.notStrictEqual(async.nextTick, setImmediate);
+    async.setImmediate(done);
   });
-
 });
