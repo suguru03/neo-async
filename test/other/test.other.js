@@ -28,3 +28,17 @@ describe('#define', function() {
 
 });
 
+describe('#nextTick', function() {
+
+  'use strict';
+
+  it('should check nextTick if does not have setImmediate', function(done) {
+
+    var _setImmediate = setImmediate;
+    setImmediate = undefined;
+    delete(require.cache[path]);
+    require(path);
+    setImmediate = _setImmediate;
+    done();
+  });
+});
