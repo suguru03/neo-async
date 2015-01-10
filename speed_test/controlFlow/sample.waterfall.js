@@ -6,10 +6,10 @@ var async = require('async');
 var neo_async = require('../../');
 
 // roop count
-var count = 10;
+var count = 1000;
 // sampling times
-var times = 1000;
-var array = _.sample(_.times(count), count);
+var times = 10;
+var array = _.shuffle(_.times(count));
 var tasks = _.map(array, function(n, i) {
   if (i === 0) {
     return function(next) {
