@@ -7,9 +7,11 @@
 ![nodei](https://nodei.co/npm/neo-async.png?downloads=true&downloadRank=true)
 
 
-Neo-Async is compatible with Async.js, it is [faster](#speed-comparison) ([jsperf](#http://jsperf.com/async-parallel-sync)) and has more [feature](#feature).
+Neo-Async is compatible with Async.js, it is [faster](#speed-comparison) and has more [feature](#feature).
 
 Async is a utility module which provides staright-forward.
+
+__[jsperf Comparison](#jsperf-comparison)__
 
 __FUTURE PLANS__
 
