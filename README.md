@@ -1525,12 +1525,21 @@ __ControlFlow__
 
 ### jsperf Comparison
 
+__Collecitons__
+
+|function|url|
+|---|---|
+|each|http://jsperf.com/async-each|
+|eachSeries|http://jsperf.com/async-each-series|
+|eachLimit|http://jsperf.com/async-each-limit|
+|map|http://jsperf.com/async-map/2|
+|mapSeries|http://jsperf.com/async-map-series|
+
 __ControlFlow__
 
-* waterfall
-    * http://jsperf.com/async-waterfall
-    * http://jsperf.com/async-waterfall-sync
-
-* parallel
-    * http://jsperf.com/async-parallel-2
-    * http://jsperf.com/async-parallel-sync
+|funciton|url|
+|---|---|
+|waterfall|http://jsperf.com/async-waterfall/3|
+|parallel|http://jsperf.com/async-parallel/3|
+|parallelLimit|http://jsperf.com/async-parallel-limit|
+|series|http://jsperf.com/async-series/6|

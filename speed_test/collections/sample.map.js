@@ -5,11 +5,11 @@ var _ = require('lodash');
 var async = require('async');
 var neo_async = require('../../');
 
-// roop count
+// loop count
 var count = 10;
 // sampling times
 var times = 1000;
-var array = _.sample(_.times(count), count);
+var array = _.shuffle(_.times(count));
 var c = 0;
 var iterator = function(n, callback) {
   callback(null, c++);

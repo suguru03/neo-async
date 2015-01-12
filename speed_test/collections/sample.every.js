@@ -5,7 +5,7 @@ var _ = require('lodash');
 var async = require('async');
 var neo_async = require('../../');
 
-// roop count
+// loop count
 var count = 10;
 // sampling times
 var times = 1000;
