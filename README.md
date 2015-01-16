@@ -1412,7 +1412,8 @@ async.waterfall(tasks, function(err, res) {
 
 * Compare Async with Neo-Async
 * Use [func-comparator](https://github.com/suguru03/func-comparator "func-comparator")
-* node v0.10.33
+* node v0.10.35
+* iojs v1.0.1
 * async v0.9.0
 * neo-async v0.3.1
 
@@ -1515,13 +1516,13 @@ __Collections__
 
 __ControlFlow__
 
-|function|count|times|async/neo-async|
-|---|---|---|---|
-|waterfall|10|1000|243.84|
-|waterfall|50|1000|413.35|
-|parallel|10|1000|145.45|
-|parallelLimit|10|1000|196.36|
-|series|10|500|140.98|
+|function|count|times|async/neo-async (node)|async/neo-async (iojs)|
+|---|---|---|---|---|
+|waterfall|10|1000|243.84|226.73|
+|waterfall|50|1000|413.35|811.42|
+|parallel|10|1000|145.45|311.06|
+|parallelLimit|10|1000|196.36|310.2|
+|series|10|500|140.98|317.62|
 
 ### jsperf Comparison
 
