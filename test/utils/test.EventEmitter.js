@@ -39,10 +39,16 @@ describe('#eventEmitter', function() {
         done(null, 'event1_2');
       }]
     });
-    eventEmitter.on({
-      event1: [function(done) {
+    eventEmitter.once({
+      event1: function(done) {
         order.push('event1_3');
         done(null, 'event1_3');
+      }
+    });
+    eventEmitter.on({
+      event1: [function(done) {
+        order.push('event1_4');
+        done(null, 'event1_4');
       }],
       event2: function(done) {
         order.push('event2_2');
@@ -56,7 +62,8 @@ describe('#eventEmitter', function() {
       assert.deepEqual(res, [
         'event1_1',
         'event1_2',
-        'event1_3'
+        'event1_3',
+        'event1_4'
       ]);
       eventEmitter.emit('event2', function(err, res) {
         if (err) {
@@ -72,7 +79,7 @@ describe('#eventEmitter', function() {
           }
           assert.deepEqual(res, [
             'event1_1',
-            'event1_3'
+            'event1_4'
           ]);
           done();
         });

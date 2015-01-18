@@ -30,7 +30,7 @@ __
 
 ### In an AMD loader
 ```js
-require(['async.min'], function(async) {});
+require(['async'], function(async) {});
 ```
 
 ### Node.js
