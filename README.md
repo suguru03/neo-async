@@ -1494,25 +1494,25 @@ __result__
 
 __Collections__
 
-|function|count|times|async/neo-async|
-|---|---|---|---|
-|concat|10|1000|125.77|
-|concatSeries|10|1000|101.81|
-|detect|10|1000|282.77|
-|detectSeries|10|1000|112.06|
-|each|10|1000|111.66|
-|eachSeries|10|1000|94.08|
-|eachLimit|10|1000|154.82|
-|every|10|1000|217.7|
-|filter|10|1000|279.27|
-|filterSeries|10|1000|242.97|
-|map|10|1000|473.08|
-|mapSeries|10|1000|359.44|
-|mapLimit|10|1000|590.42|
-|reduce|10|1000|102.36|
-|reduceRight|10|1000|341.52|
-|some|10|1000|266.78|
-|sortBy|10|1000|135.18|
+|function|count|times|async/neo-async (node)|async/neo-async (iojs)|
+|---|---|---|---|---|
+|concat|10|1000|125.77|149.21|
+|concatSeries|10|1000|101.81|125.75|
+|detect|10|1000|282.77||
+|detectSeries|10|1000|112.06||
+|each|10|1000|111.66||
+|eachSeries|10|1000|94.08||
+|eachLimit|10|1000|154.82||
+|every|10|1000|217.7||
+|filter|10|1000|279.27||
+|filterSeries|10|1000|242.97||
+|map|10|1000|473.08||
+|mapSeries|10|1000|359.44||
+|mapLimit|10|1000|590.42||
+|reduce|10|1000|102.36||
+|reduceRight|10|1000|341.52||
+|some|10|1000|266.78||
+|sortBy|10|1000|135.18|||
 
 __ControlFlow__
 
