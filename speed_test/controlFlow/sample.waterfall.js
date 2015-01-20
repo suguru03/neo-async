@@ -6,9 +6,9 @@ var async = require('async');
 var neo_async = require('../../');
 
 // loop count
-var count = 1000;
+var count = 10;
 // sampling times
-var times = 10;
+var times = 1000;
 var array = _.shuffle(_.times(count));
 var tasks = _.map(array, function(n, i) {
   if (i === 0) {
