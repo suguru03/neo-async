@@ -66,7 +66,25 @@ describe('#series', function() {
 
   });
 
-  it('should execute parallel with binding', function(done) {
+  it('should execute to series by tasks of array with binding', function(done) {
+
+    var order = [];
+    var numbers = [1.2, 2.4, 1.5, 3.6];
+    var tasks = createTasks(order, numbers);
+
+    async.series(tasks, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [2, 4, 4, 8]);
+      assert.deepEqual(order, [1, 2, 2, 4]);
+      done();
+    }, Math);
+
+  });
+
+
+  it('should execute to series by tasks of object with binding', function(done) {
 
     var order = [];
     var numbers = {
@@ -88,6 +106,30 @@ describe('#series', function() {
 
   });
 
+  it('should return response immediately if array task is empty', function(done) {
+
+    var tasks = [];
+    async.series(tasks, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      done();
+    });
+  });
+
+  it('should return response immediately if object task is empty', function(done) {
+
+    var tasks = {};
+    async.series(tasks, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      done();
+    });
+  });
+
   it('should throw error', function(done) {
 
     var order = [];
@@ -102,6 +144,22 @@ describe('#series', function() {
       assert.ok(err);
       done();
     });
+
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    var tasks = [function(next) {
+      next();
+      next();
+    }];
+
+    try {
+      async.series(tasks);
+    } catch(e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
 
   });
 
