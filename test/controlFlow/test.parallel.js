@@ -167,15 +167,15 @@ describe('#parallelLimit', function() {
   it('should execute in limited by tasks of array', function(done) {
 
     var order = [];
-    var numbers = [1, 3, 2, 4];
+    var numbers = [1, 3, 2, 4, 1];
     var tasks = createTasks(order, numbers);
 
     async.parallelLimit(tasks, 2, function(err, res) {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [2, 6, 4, 8]);
-      assert.deepEqual(order, [1, 3, 2, 4]);
+      assert.deepEqual(res, [2, 6, 4, 8, 2]);
+      assert.deepEqual(order, [1, 3, 2, 4, 1]);
       done();
     });
   });
@@ -187,7 +187,8 @@ describe('#parallelLimit', function() {
       a: 4,
       b: 2,
       c: 1,
-      d: 3
+      d: 3,
+      e: 1
     };
     var tasks = createTasks(order, numbers);
 
@@ -195,8 +196,8 @@ describe('#parallelLimit', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, { b: 4, a: 8, c: 2, d: 6 });
-      assert.deepEqual(order, [2, 4, 1, 3]);
+      assert.deepEqual(res, { b: 4, a: 8, c: 2, d: 6, e: 2 });
+      assert.deepEqual(order, [2, 4, 1, 3, 1]);
       done();
     });
   });
@@ -236,6 +237,30 @@ describe('#parallelLimit', function() {
       assert.deepEqual(order, [1.2, 1.5, 2.4, 3.6]);
       done();
     }, Math);
+  });
+
+  it('should return response immediately if array task is empty', function(done) {
+
+    var tasks = [];
+    async.parallelLimit(tasks, 2, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      done();
+    });
+  });
+
+  it('should return response immediately if object task is empty', function(done) {
+
+    var tasks = {};
+    async.parallelLimit(tasks, 2, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, {});
+      done();
+    });
   });
 
   it('should throw error', function(done) {
