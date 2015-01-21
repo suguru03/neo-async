@@ -201,7 +201,23 @@ describe('#parallelLimit', function() {
     });
   });
 
-  it('should execute in parallel with binding', function(done) {
+  it('should execute in parallel by tasks of array with binding', function(done) {
+
+    var order = [];
+    var numbers = [1.2, 2.4, 1.5, 3.6];
+    var tasks = createTasks(order, numbers);
+
+    async.parallelLimit(tasks, 3, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [2, 4, 4, 8]);
+      assert.deepEqual(order, [1.2, 1.5, 2.4, 3.6]);
+      done();
+    }, Math);
+  });
+
+  it('should execute in parallel by tasks of object with binding', function(done) {
 
     var order = [];
     var numbers = {
@@ -239,6 +255,22 @@ describe('#parallelLimit', function() {
       assert.deepEqual(order, [1, 3, 2]);
       done();
     });
+
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    var tasks = [function(next) {
+      next();
+      next();
+    }];
+
+    try {
+      async.parallelLimit(tasks, 4);
+    } catch(e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
 
   });
 
