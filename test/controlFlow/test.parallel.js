@@ -15,10 +15,10 @@ function createTasks(order, numbers) {
 
       setTimeout(function() {
 
+        order.push(num);
         if (self && self.round) {
           num = self.round(num);
         }
-        order.push(num);
         callback(null, num * 2);
       }, num * 10);
     };
@@ -64,7 +64,23 @@ describe('#parallel', function() {
     });
   });
 
-  it('should execute in parallel with binding', function(done) {
+  it('should execute in parallel by tasks of array with binding', function(done) {
+
+    var order = [];
+    var numbers = [1.2, 2.4, 1.5, 3.6];
+    var tasks = createTasks(order, numbers);
+
+    async.parallel(tasks, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [2, 4, 4, 8]);
+      assert.deepEqual(order, [1.2, 1.5, 2.4, 3.6]);
+      done();
+    }, Math);
+  });
+
+  it('should execute in parallel by tasks of object with binding', function(done) {
 
     var order = [];
     var numbers = {
@@ -80,9 +96,33 @@ describe('#parallel', function() {
         return done(err);
       }
       assert.deepEqual(res, { a: 2, c: 4, b: 4, d: 8 });
-      assert.deepEqual(order, [1, 2, 2, 4]);
+      assert.deepEqual(order, [1.2, 1.5, 2.4, 3.6]);
       done();
     }, Math);
+  });
+
+  it('should return response immediately if array task is empty', function(done) {
+
+    var tasks = [];
+    async.parallel(tasks, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      done();
+    });
+  });
+
+  it('should return response immediately if object task is empty', function(done) {
+
+    var tasks = {};
+    async.parallel(tasks, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, {});
+      done();
+    });
   });
 
   it('should throw error', function(done) {
@@ -105,6 +145,21 @@ describe('#parallel', function() {
 
   });
 
+  it('should throw error if double callback', function(done) {
+
+    var tasks = [function(next) {
+      next();
+      next();
+    }];
+
+    try {
+      async.parallel(tasks);
+    } catch(e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
+
+  });
 });
 
 describe('#parallelLimit', function() {
@@ -162,7 +217,7 @@ describe('#parallelLimit', function() {
         return done(err);
       }
       assert.deepEqual(res, { a: 2, c: 4, b: 4, d: 8 });
-      assert.deepEqual(order, [1, 2, 2, 4]);
+      assert.deepEqual(order, [1.2, 1.5, 2.4, 3.6]);
       done();
     }, Math);
   });

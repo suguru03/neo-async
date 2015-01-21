@@ -15,10 +15,10 @@ function createTasks(order, numbers) {
 
       setTimeout(function() {
 
+        order.push(num);
         if (self && self.round) {
           num = self.round(num);
         }
-        order.push(num);
         callback(null, num * 2);
       }, num * 10);
     };
@@ -77,7 +77,7 @@ describe('#series', function() {
         return done(err);
       }
       assert.deepEqual(res, [2, 4, 4, 8]);
-      assert.deepEqual(order, [1, 2, 2, 4]);
+      assert.deepEqual(order, [1.2, 2.4, 1.5, 3.6]);
       done();
     }, Math);
 
@@ -100,7 +100,7 @@ describe('#series', function() {
         return done(err);
       }
       assert.deepEqual(res, { a: 2, c: 4, b: 4, d: 8 });
-      assert.deepEqual(order, [1, 2, 2, 4]);
+      assert.deepEqual(order, [1.2, 2.4, 1.5, 3.6]);
       done();
     }, Math);
 
