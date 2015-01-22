@@ -125,7 +125,7 @@ describe('#series', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, []);
+      assert.deepEqual(res, {});
       done();
     });
   });

@@ -197,6 +197,85 @@ describe('#waterfall', function() {
 
   });
 
+  it('should throw error if double callback', function(done) {
+
+    var tasks = [function(next) {
+      next();
+      next();
+    }];
+
+    try {
+      async.waterfall(tasks);
+    } catch(e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
+
+  });
+
+  it('should execute complex tasks of object', function(done) {
+
+    var numbers = {
+      a: 1,
+      b: 3,
+      c: 2,
+      d: 4,
+      e: 7,
+      f: 8,
+      g: 6,
+      h: 5
+    };
+    var tasks = createTasks('complex', numbers);
+    async.waterfall(tasks, function(err, a, b, c, d, e, f, g, h) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(a, 1);
+      assert.strictEqual(b, 3);
+      assert.strictEqual(c, 2);
+      assert.strictEqual(d, 4);
+
+      assert.strictEqual(e, 7);
+      assert.strictEqual(f, 8);
+      assert.strictEqual(g, 6);
+      assert.strictEqual(h, 5);
+
+      done();
+    });
+
+  });
+
+  it('should execute complex tasks of object with binding', function(done) {
+
+    var numbers = {
+      a: 1,
+      b: 3,
+      c: 2,
+      d: 4,
+      e: 7,
+      f: 8,
+      g: 6,
+      h: 5
+    };
+    var tasks = createTasks('complex', numbers);
+    async.waterfall(tasks, function(err, a, b, c, d, e, f, g, h) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(a, 2);
+      assert.strictEqual(b, 6);
+      assert.strictEqual(c, 4);
+      assert.strictEqual(d, 8);
+
+      assert.strictEqual(e, 14);
+      assert.strictEqual(f, 16);
+      assert.strictEqual(g, 12);
+      assert.strictEqual(h, 10);
+
+      done();
+    }, Math);
+
+  });
   it('should throw error with binding', function(done) {
 
     var numbers = [1, 3, 2, 4];
@@ -211,6 +290,30 @@ describe('#waterfall', function() {
       done();
     }, Math);
 
+  });
+
+  it('should return response immediately if array task is empty', function(done) {
+
+    var tasks = [];
+    async.waterfall(tasks, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, undefined);
+      done();
+    });
+  });
+
+  it('should return response immediately if object task is empty', function(done) {
+
+    var tasks = {};
+    async.waterfall(tasks, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, undefined);
+      done();
+    });
   });
 
 });
