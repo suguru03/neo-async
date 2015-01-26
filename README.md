@@ -13,12 +13,6 @@ Async is a utility module which provides staright-forward.
 
 __[jsperf Comparison](#jsperf-comparison)__
 
-__FUTURE PLANS__
-
-I think that first argument of response should get the error. So, I will modify it in v2.x.
-
-__
-
 ---
 
 ## Installation

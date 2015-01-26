@@ -18,6 +18,7 @@
     "index.js",
     "lib/async.js",
     "lib/async.min.js",
+    "dist/async.js",
     "dist/async.min.js"
   ],
   "directories": {
