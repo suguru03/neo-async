@@ -12,5 +12,7 @@ clean:
 
 minify:
 	java -jar ../compiler-latest/compiler.jar --js ./lib/async.js --js_output_file ./lib/async.min.js
+
+cp:
 	cp ./lib/async.min.js ./dist/async.min.js
 	cp ./lib/async.js ./dist/async.js
