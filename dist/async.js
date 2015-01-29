@@ -15,7 +15,7 @@
   createImmediate();
 
   var async = {
-    VERSION: '0.4.8',
+    VERSION: '0.4.9',
 
     // Collections
     each: each,
