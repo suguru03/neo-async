@@ -36,6 +36,25 @@ function eachIteratorWithKey(order) {
   };
 }
 
+function eachIteratorWithKey(order) {
+
+  return function(num, key, callback) {
+
+    var self = this;
+
+    setTimeout(function() {
+
+      if (self && self.round) {
+        num = self.round(num);
+      }
+
+      order.push(num);
+      callback();
+
+    }, num * 10);
+  };
+}
+
 describe('#each', function() {
 
   it('should execute iterator by collection of array', function(done) {
@@ -69,6 +88,19 @@ describe('#each', function() {
 
   });
 
+  it('should execute iterator by collection of array with passing index', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    async.each(collection, eachIteratorWithKey(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, [1, 2, 3]);
+      done();
+    });
+
+  });
   it('should execute iterator with binding', function(done) {
 
     var order = [];
