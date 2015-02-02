@@ -16,7 +16,7 @@
   createImmediate();
 
   var async = {
-    VERSION: '0.4.9',
+    VERSION: '0.5.0',
 
     // Collections
     each: each,
@@ -60,7 +60,6 @@
     concat: concat,
     concatSeries: concatSeries,
     concatLimit: concatLimit,
-    multiEach: multiEach,
 
     // Control Flow
     parallel: parallel,
@@ -199,11 +198,6 @@
       iterator(object[key], key, object);
     }
     return object;
-  }
-
-  function _forEach(collection, iterator) {
-
-    return Array.isArray(collection) ? _arrayEach(collection, iterator) : _objectEach(collection, iterator);
   }
 
   function _times(n, iterator) {
@@ -503,18 +497,18 @@
 
     if (Array.isArray(collection)) {
       size = collection.length;
-      result = Array(size);
       if (!size) {
-        return callback(null, result);
+        return callback(null, []);
       }
+      result = Array(size);
       _arrayEach(collection, iterate);
     } else {
       var keys = Object.keys(collection);
       size = keys.length;
-      result = Array(size);
       if (!size) {
-        return callback(null, result);
+        return callback(null, []);
       }
+      result = Array(size);
       _objectEach(collection, iterate, keys);
     }
 
@@ -553,20 +547,20 @@
 
     if (Array.isArray(collection)) {
       size = collection.length;
-      result = Array(size);
       if (!size) {
-        return callback(null, result);
+        return callback(null, []);
       }
+      result = Array(size);
       iterate = function() {
         _iterator(collection[completed], createCallback(completed));
       };
     } else {
       var keys = Object.keys(collection);
       size = keys.length;
-      result = Array(size);
       if (!size) {
-        return callback(null, result);
+        return callback(null, []);
       }
+      result = Array(size);
       iterate = function() {
         _iterator(collection[keys[completed]], createCallback(completed));
       };
@@ -614,10 +608,10 @@
 
     if (Array.isArray(collection)) {
       size = collection.length;
-      result = Array(size);
       if (!size) {
-        return callback(null, result);
+        return callback(null, []);
       }
+      result = Array(size);
       iterate = function() {
         _times(limit, function(n) {
           var index = beforeCompleted + n;
@@ -630,10 +624,10 @@
     } else {
       var keys = Object.keys(collection);
       size = keys.length;
-      result = Array(size);
       if (!size) {
-        return callback(null, result);
+        return callback(null, []);
       }
+      result = Array(size);
       iterate = function() {
         _times(limit, function(n) {
           var index = beforeCompleted + n;
@@ -749,7 +743,7 @@
       if (!size) {
         return callback();
       }
-      _objectEach(collection, iterate);
+      _objectEach(collection, iterate, keys);
     }
 
     function getCreateCallback() {
@@ -988,7 +982,7 @@
       if (!size) {
         return callback({});
       }
-      _objectEach(collection, iterate);
+      _objectEach(collection, iterate, keys);
     }
 
     function getCreateCallback() {
@@ -1775,75 +1769,18 @@
 
   }
 
-  function multiEach(collection, tasks, callback) {
-
-    callback = callback || noop;
-    var arrayTasks = Array.isArray(tasks) ? tasks : _toArray(tasks);
-    if (!tasks || !arrayTasks.length) {
-      return callback(null, collection);
-    }
-
-    var taskCallCount = 0;
-    var replyCount = 0;
-    var end = {};
-    var endFlag = false;
-    var col = Array.isArray(collection) ? _arrayClone(collection) : _toArray(collection);
-    col.push(end);
-    createCallback(0)(null, col);
-
-    function done(err) {
-      if (err) {
-        callback(err);
-        callback = noop;
-        return;
-      }
-      if (replyCount >= taskCallCount && endFlag) {
-        callback(null, collection);
-        callback = noop;
-      }
-    }
-
-    function createCallback(taskIndex) {
-
-      var task = arrayTasks[taskIndex];
-
-      return function(err, col) {
-        if (err) {
-          return done(err);
-        }
-        var func = createCallback(taskIndex + 1);
-        if (task && typeof col == 'object') {
-          _forEach(col, function(value, index) {
-            if (value === end) {
-              endFlag = true;
-              return done();
-            }
-            taskCallCount++;
-            task(value, index, func);
-          });
-        }
-        if (taskIndex) {
-          replyCount++;
-          return done();
-        }
-      };
-    }
-
-  }
-
   function parallel(tasks, callback, thisArg) {
 
     callback = callback || noop;
-    var size;
-    var isArray = Array.isArray(tasks);
+    var size, result;
     var completed = 0;
-    var result = isArray ? [] : {};
 
-    if (isArray) {
+    if (Array.isArray(tasks)) {
       size = tasks.length;
       if (!size) {
-        return callback(null, result);
+        return callback(null, []);
       }
+      result = Array(size);
       if (thisArg) {
         _arrayEach(tasks, function(task, index) {
           task.call(thisArg, createCallback(index));
@@ -1853,13 +1790,13 @@
           task(createCallback(index));
         });
       }
-
     } else {
       var keys = Object.keys(tasks);
       size = keys.length;
       if (!size) {
-        return callback(null, result);
+        return callback(null, {});
       }
+      result = {};
       if (thisArg) {
         _objectEach(tasks, function(task, key) {
           task.call(thisArg, createCallback(key));
@@ -1895,16 +1832,15 @@
   function series(tasks, callback, thisArg) {
 
     callback = callback || noop;
-    var size, iterate;
-    var isArray = Array.isArray(tasks);
-    var result = isArray ? [] : {};
+    var size, result, iterate;
     var completed = 0;
 
-    if (isArray) {
+    if (Array.isArray(tasks)) {
       size = tasks.length;
       if (!size) {
-        return callback(null, result);
+        return callback(null, []);
       }
+      result = Array(size);
       if (thisArg) {
         iterate = function() {
           tasks[completed].call(thisArg, createCallback(completed));
@@ -1918,8 +1854,9 @@
       var keys = Object.keys(tasks);
       size = keys.length;
       if (!size) {
-        return callback(null, result);
+        return callback(null, {});
       }
+      result = {};
       if (thisArg) {
         iterate = function() {
           var key = keys[completed];
@@ -1959,17 +1896,16 @@
   function parallelLimit(tasks, limit, callback, thisArg) {
 
     callback = callback || noop;
-    var size, iterate;
-    var isArray = Array.isArray(tasks);
-    var result = isArray ? [] : {};
+    var size, result, iterate;
     var completed = 0;
     var beforeCompleted = 0;
 
-    if (isArray) {
+    if (Array.isArray(tasks)) {
       size = tasks.length;
       if (!size) {
-        return callback(null, result);
+        return callback(null, []);
       }
+      result = Array(size);
       if (thisArg) {
         iterate = function() {
           _times(limit, function(n) {
@@ -1995,8 +1931,9 @@
       var keys = Object.keys(tasks);
       size = keys.length;
       if (!size) {
-        return callback(null, result);
+        return callback(null, {});
       }
+      result = {};
       if (thisArg) {
         iterate = function() {
           _times(limit, function(n) {
@@ -2793,11 +2730,10 @@
   function times(n, iterator, callback, thisArg) {
 
     callback = callback || noop;
-    var result = [];
     if (n < 1) {
-      return callback(null, result);
+      return callback(null, []);
     }
-
+    var result = Array(n);
     var completed = 0;
     var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
@@ -2833,11 +2769,10 @@
   function timesSeries(n, iterator, callback, thisArg) {
 
     callback = callback || noop;
-    var result = [];
     if (n < 1) {
-      return callback(null, result);
+      return callback(null, []);
     }
-
+    var result = Array(n);
     var completed = 0;
     var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
     var iterate = function() {
@@ -2873,11 +2808,10 @@
   function timesLimit(n, limit, iterator, callback, thisArg) {
 
     callback = callback || noop;
-    var result = [];
     if (n < 1) {
-      return callback(null, result);
+      return callback(null, []);
     }
-
+    var result = Array(n);
     var completed = 0;
     var beforeCompleted = 0;
     var _iterator = thisArg ? iterator.bind(thisArg) : iterator;

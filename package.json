@@ -1,7 +1,7 @@
 {
   "name": "neo-async",
-  "version": "0.4.9",
-  "description": "Neo-Async is compatible with Async.js, it is faster and has more feature.",
+  "version": "0.5.0",
+  "description": "Neo-Async is thought to be used as a drop-in replacement for Async, it almost fully covers its functionality and runs faster ",
   "main": "index.js",
   "scripts": {
     "test": "make test-cov"
@@ -28,9 +28,9 @@
   "devDependencies": {
     "async": "^0.9.0",
     "codecov.io": "0.0.8",
-    "func-comparator": "^0.2.0",
+    "func-comparator": "^0.4.1",
     "intelli-espower-loader": "^0.5.0",
-    "istanbul": "^0.3.2",
+    "istanbul": "^0.3.4",
     "lodash": "^2.4.1",
     "mocha": "^2.0.1",
     "power-assert": "^0.10.0"
