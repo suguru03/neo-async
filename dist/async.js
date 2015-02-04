@@ -16,7 +16,7 @@
   createImmediate();
 
   var async = {
-    VERSION: '0.5.0',
+    VERSION: '0.5.1',
 
     // Collections
     each: each,
@@ -591,7 +591,6 @@
           callback = noop;
           return;
         }
-
         iterate();
       };
     }
@@ -1518,7 +1517,9 @@
 
         _iterator(item, function(err, criteria) {
           if (err) {
-            return callback(err);
+            callback(err);
+            callback = noop;
+            return;
           }
 
           callback(null, { item: item, criteria: criteria });
@@ -1530,7 +1531,9 @@
 
       return function(err, res) {
         if (err) {
-          return callback(err);
+          callback(err);
+          callback = noop;
+          return;
         }
 
         var result = res.sort(function(a, b) {
@@ -1819,11 +1822,15 @@
         }
         called = true;
         if (err) {
-          return callback(err, result);
+          callback(err, result);
+          callback = noop;
+          return;
         }
         result[key] = res;
         if (++completed >= size) {
-          return callback(null, result);
+          callback(null, result);
+          callback = noop;
+          return;
         }
       };
     }
@@ -1971,7 +1978,9 @@
         }
         called = true;
         if (err) {
-          return callback(err, result);
+          callback(err, result);
+          callback = noop;
+          return;
         }
         result[key] = res;
         if (++completed >= size) {
