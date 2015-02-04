@@ -160,6 +160,23 @@ describe('#parallel', function() {
     }
 
   });
+
+  it('should throw error only once', function(done) {
+
+    var error = function(callback) {
+      setTimeout(function() {
+        callback('error');
+      }, 25);
+    };
+    var called = false;
+    var tasks = [error, error, error, error];
+    async.parallel(tasks, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      setTimeout(done, 50);
+    });
+  });
 });
 
 describe('#parallelLimit', function() {
