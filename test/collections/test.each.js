@@ -521,5 +521,33 @@ describe('#eachLimit', function() {
 
   });
 
+  it('should return response immediately if limit is zero', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    async.eachLimit(collection, 0, eachIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if limit is undefined', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    async.eachLimit(collection, undefined, eachIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
 });
 

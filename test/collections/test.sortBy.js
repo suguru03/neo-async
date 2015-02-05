@@ -100,10 +100,11 @@ describe('#sortBy', function() {
   it('should return response immediately if collection is function', function(done) {
 
     var order = [];
-    async.sortBy(function() {}, sortByIterator(order), function(err) {
+    async.sortBy(function() {}, sortByIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
     });
@@ -113,10 +114,11 @@ describe('#sortBy', function() {
   it('should return response immediately if collection is undefined', function(done) {
 
     var order = [];
-    async.sortBy(undefined, sortByIterator(order), function(err) {
+    async.sortBy(undefined, sortByIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
     });
@@ -203,10 +205,11 @@ describe('#sortBySeries', function() {
   it('should return response immediately if collection is function', function(done) {
 
     var order = [];
-    async.sortBySeries(function() {}, sortByIterator(order), function(err) {
+    async.sortBySeries(function() {}, sortByIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
     });
@@ -216,10 +219,11 @@ describe('#sortBySeries', function() {
   it('should return response immediately if collection is undefined', function(done) {
 
     var order = [];
-    async.sortBySeries(undefined, sortByIterator(order), function(err) {
+    async.sortBySeries(undefined, sortByIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
     });
@@ -304,10 +308,11 @@ describe('#sortByLimit', function() {
   it('should return response immediately if collection is function', function(done) {
 
     var order = [];
-    async.sortByLimit(function() {}, 2, sortByIterator(order), function(err) {
+    async.sortByLimit(function() {}, 2, sortByIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
     });
@@ -317,14 +322,46 @@ describe('#sortByLimit', function() {
   it('should return response immediately if collection is undefined', function(done) {
 
     var order = [];
-    async.sortByLimit(undefined, 2, sortByIterator(order), function(err) {
+    async.sortByLimit(undefined, 2, sortByIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
     });
 
   });
+
+  it('should return response immediately if limit is zero', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    async.sortByLimit(collection, 0, sortByIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if limit is undefined', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    async.sortByLimit(collection, undefined, sortByIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
 });
 

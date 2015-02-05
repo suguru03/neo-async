@@ -340,6 +340,30 @@ describe('#pickLimit', function() {
 
   });
 
+  it('should return response immediately if limit is zero', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    async.pickLimit(collection, 0, pickIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if limit is undefined', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    async.pickLimit(collection, undefined, pickIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
   it('should throw error if double callback', function(done) {
 
     var collection = [2, 1, 3];

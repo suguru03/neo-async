@@ -147,10 +147,11 @@ describe('#map', function() {
   it('should return response immediately if collection is function', function(done) {
 
     var order = [];
-    async.map(function() {}, mapIterator(order), function(err) {
+    async.map(function() {}, mapIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
     });
@@ -160,10 +161,11 @@ describe('#map', function() {
   it('should return response immediately if collection is undefined', function(done) {
 
     var order = [];
-    async.map(undefined, mapIterator(order), function(err) {
+    async.map(undefined, mapIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
     });
@@ -298,10 +300,11 @@ describe('#mapSeries', function() {
   it('should return response immediately if collection is function', function(done) {
 
     var order = [];
-    async.mapSeries(function() {}, mapIterator(order), function(err) {
+    async.mapSeries(function() {}, mapIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
     });
@@ -311,10 +314,11 @@ describe('#mapSeries', function() {
   it('should return response immediately if collection is undefined', function(done) {
 
     var order = [];
-    async.mapSeries(undefined, mapIterator(order), function(err) {
+    async.mapSeries(undefined, mapIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
     });
@@ -451,10 +455,11 @@ describe('#mapLimit', function() {
   it('should return response immediately if collection is function', function(done) {
 
     var order = [];
-    async.mapLimit(function() {}, 3, mapIterator(order), function(err) {
+    async.mapLimit(function() {}, 3, mapIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
     });
@@ -464,10 +469,41 @@ describe('#mapLimit', function() {
   it('should return response immediately if collection is undefined', function(done) {
 
     var order = [];
-    async.mapLimit(undefined, 3, mapIterator(order), function(err) {
+    async.mapLimit(undefined, 3, mapIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if limit is zero', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    async.mapLimit(collection, 0, mapIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if limit is undefined', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    async.mapLimit(collection, undefined, mapIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
     });

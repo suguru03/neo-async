@@ -136,10 +136,11 @@ describe('#concat', function() {
   it('should return response immediately if collection is function', function(done) {
 
     var order = [];
-    async.concat(function() {}, concatIterator(order), function(err) {
+    async.concat(function() {}, concatIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
     });
@@ -149,10 +150,11 @@ describe('#concat', function() {
   it('should return response immediately if collection is undefined', function(done) {
 
     var order = [];
-    async.concat(undefined, concatIterator(order), function(err) {
+    async.concat(undefined, concatIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
     });
@@ -284,10 +286,11 @@ describe('#concatSeries', function() {
   it('should return response immediately if collection is function', function(done) {
 
     var order = [];
-    async.concatSeries(function() {}, concatIterator(order), function(err) {
+    async.concatSeries(function() {}, concatIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
     });
@@ -297,10 +300,11 @@ describe('#concatSeries', function() {
   it('should return response immediately if collection is undefined', function(done) {
 
     var order = [];
-    async.concatSeries(undefined, concatIterator(order), function(err) {
+    async.concatSeries(undefined, concatIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
     });
@@ -417,10 +421,11 @@ describe('#concatLimit', function() {
   it('should return response immediately if collection is function', function(done) {
 
     var order = [];
-    async.concatLimit(function() {}, 2, concatIterator(order), function(err) {
+    async.concatLimit(function() {}, 2, concatIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
     });
@@ -430,10 +435,41 @@ describe('#concatLimit', function() {
   it('should return response immediately if collection is undefined', function(done) {
 
     var order = [];
-    async.concatLimit(undefined, 2, concatIterator(order), function(err) {
+    async.concatLimit(undefined, 2, concatIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if limit is zero', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    async.concatLimit(collection, 0, concatIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if limit is undefined', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    async.concatLimit(collection, undefined, concatIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
     });

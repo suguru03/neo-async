@@ -264,5 +264,29 @@ describe('#someLimit', function() {
 
   });
 
+  it('should return response immediately if limit is zero', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    async.someLimit(collection, 0, someIterator(order), function(res) {
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if limit is undefined', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    async.someLimit(collection, undefined, someIterator(order), function(res) {
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
 });
 

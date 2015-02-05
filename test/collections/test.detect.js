@@ -361,6 +361,30 @@ describe('#detectLimit', function() {
 
   });
 
+  it('should return response immediately if limit is zero', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    async.detectLimit(collection, 0, detectIterator(order), function(res) {
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if limit is undefined', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    async.detectLimit(collection, undefined, detectIterator(order), function(res) {
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
   it('should throw error if double callback', function(done) {
 
     var collection = [1, 3, 2, 4];

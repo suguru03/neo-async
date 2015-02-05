@@ -190,10 +190,11 @@ describe('#transform', function() {
   it('should return response immediately if collection is function', function(done) {
 
     var order = [];
-    async.transform(function() {}, transformIterator(order), function(err) {
+    async.transform(function() {}, transformIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
     });
@@ -203,10 +204,11 @@ describe('#transform', function() {
   it('should return response immediately if collection is undefined', function(done) {
 
     var order = [];
-    async.transform(undefined, transformIterator(order), function(err) {
+    async.transform(undefined, transformIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
     });
@@ -361,10 +363,11 @@ describe('#transformSeries', function() {
   it('should return response immediately if collection is function', function(done) {
 
     var order = [];
-    async.transformSeries(function() {}, transformIterator(order), function(err) {
+    async.transformSeries(function() {}, transformIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
     });
@@ -374,10 +377,11 @@ describe('#transformSeries', function() {
   it('should return response immediately if collection is undefined', function(done) {
 
     var order = [];
-    async.transformSeries(undefined, transformIterator(order), function(err) {
+    async.transformSeries(undefined, transformIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
     });
@@ -543,5 +547,34 @@ describe('#transformLimit', function() {
 
   });
 
+  it('should return response immediately if limit is zero', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    async.transformLimit(collection, 0, transformIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if limit is undefined', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    async.transformLimit(collection, undefined, transformIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
 });
 

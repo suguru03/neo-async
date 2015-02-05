@@ -316,5 +316,29 @@ describe('#everyLimit', function() {
 
   });
 
+  it('should return response immediately if limit is zero', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    async.everyLimit(collection, 0, everyIterator(order), function(res) {
+      assert.strictEqual(res, true);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if limit is undefined', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    async.everyLimit(collection, undefined, everyIterator(order), function(res) {
+      assert.strictEqual(res, true);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
 });
 

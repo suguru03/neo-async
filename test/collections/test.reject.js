@@ -104,7 +104,7 @@ describe('#reject', function() {
 
   });
 
-  it('should return response immediately if collection is function', function(done) {
+  it('should return response immediately if collection is undefined', function(done) {
 
     var order = [];
     async.reject(undefined, rejectIterator(order), function(res) {
@@ -215,6 +215,17 @@ describe('#rejectSeries', function() {
 
   });
 
+  it('should return response immediately if collection is undefined', function(done) {
+
+    var order = [];
+    async.rejectSeries(undefined, rejectIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
   it('should throw error if double callback', function(done) {
 
     var collection = [1, 2, 3] ;
@@ -228,17 +239,6 @@ describe('#rejectSeries', function() {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
-
-  });
-
-  it('should return response immediately if collection is function', function(done) {
-
-    var order = [];
-    async.rejectSeries(undefined, rejectIterator(order), function(res) {
-      assert.deepEqual(res, []);
-      assert.deepEqual(order, []);
-      done();
-    });
 
   });
 
@@ -329,6 +329,41 @@ describe('#rejectLimit', function() {
 
   });
 
+  it('should return response immediately if collection is undefined', function(done) {
+
+    var order = [];
+    async.rejectLimit(undefined, 2, rejectIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if limit is zero', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    async.rejectLimit(collection, 0, rejectIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if limit is undefined', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    async.rejectLimit(collection, undefined, rejectIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
   it('should throw error if double callback', function(done) {
 
     var collection = [1, 2, 3] ;
@@ -342,17 +377,6 @@ describe('#rejectLimit', function() {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
-
-  });
-
-  it('should return response immediately if collection is function', function(done) {
-
-    var order = [];
-    async.rejectLimit(undefined, 2, rejectIterator(order), function(res) {
-      assert.deepEqual(res, []);
-      assert.deepEqual(order, []);
-      done();
-    });
 
   });
 
