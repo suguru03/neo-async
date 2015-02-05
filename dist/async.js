@@ -16,7 +16,7 @@
   createImmediate();
 
   var async = {
-    VERSION: '0.5.1',
+    VERSION: '0.5.2',
 
     // Collections
     each: each,
@@ -340,13 +340,15 @@
         return callback();
       }
       _arrayEach(collection, iterate);
-    } else {
+    } else if (typeof collection === 'object') {
       var keys = Object.keys(collection);
       size = keys.length;
       if (!size) {
         return callback();
       }
       _objectEach(collection, iterate, keys);
+    } else {
+      callback();
     }
 
     function done(err, bool) {
@@ -384,7 +386,7 @@
         called = false;
         _iterator(collection[completed], done);
       };
-    } else {
+    } else if(typeof collection === 'object') {
       var keys = Object.keys(collection);
       size = keys.length;
       if (!size) {
@@ -394,6 +396,8 @@
         called = false;
         _iterator(collection[keys[completed]], done);
       };
+    } else {
+      return callback();
     }
 
     iterate();
@@ -421,6 +425,10 @@
   function eachLimit(collection, limit, iterator, callback, thisArg) {
 
     callback = callback || noop;
+    if (typeof limit !== 'number' || limit <= 0) {
+      return callback();
+    }
+
     var size, iterate;
     var completed = 0;
     var beforeCompleted = 0;
@@ -440,7 +448,7 @@
           _iterator(collection[index], once(done));
         });
       };
-    } else {
+    } else if (typeof collection === 'object') {
       var keys = Object.keys(collection);
       size = keys.length;
       if (!size) {
@@ -455,6 +463,8 @@
           _iterator(collection[keys[index]], once(done));
         });
       };
+    } else {
+      return callback();
     }
 
     iterate();
@@ -502,7 +512,7 @@
       }
       result = Array(size);
       _arrayEach(collection, iterate);
-    } else {
+    } else if (typeof collection === 'object') {
       var keys = Object.keys(collection);
       size = keys.length;
       if (!size) {
@@ -510,6 +520,8 @@
       }
       result = Array(size);
       _objectEach(collection, iterate, keys);
+    } else {
+      callback(null, []);
     }
 
     function createCallback(index) {
@@ -554,7 +566,7 @@
       iterate = function() {
         _iterator(collection[completed], createCallback(completed));
       };
-    } else {
+    } else if (typeof collection === 'object') {
       var keys = Object.keys(collection);
       size = keys.length;
       if (!size) {
@@ -564,6 +576,8 @@
       iterate = function() {
         _iterator(collection[keys[completed]], createCallback(completed));
       };
+    } else {
+      return callback(null, []);
     }
 
     iterate();
@@ -600,6 +614,10 @@
   function mapLimit(collection, limit, iterator, callback, thisArg) {
 
     callback = callback || noop;
+    if (typeof limit !== 'number' || limit <= 0) {
+      return callback(null, []);
+    }
+
     var size, result, iterate;
     var completed = 0;
     var beforeCompleted = 0;
@@ -620,7 +638,7 @@
           _iterator(collection[index], createCallback(index));
         });
       };
-    } else {
+    } else if (typeof collection === 'object') {
       var keys = Object.keys(collection);
       size = keys.length;
       if (!size) {
@@ -636,6 +654,8 @@
           _iterator(collection[keys[index]], createCallback(index));
         });
       };
+    } else {
+      return callback(null, []);
     }
 
     iterate();
@@ -736,13 +756,15 @@
         return callback();
       }
       _arrayEach(collection, iterate);
-    } else {
+    } else if (typeof collection === 'object') {
       var keys = Object.keys(collection);
       size = keys.length;
       if (!size) {
         return callback();
       }
       _objectEach(collection, iterate, keys);
+    } else {
+      callback();
     }
 
     function getCreateCallback() {
@@ -805,7 +827,7 @@
         var item = collection[completed];
         _iterator(item, createCallback(item));
       };
-    } else {
+    } else if (typeof collection === 'object') {
       var keys = Object.keys(collection);
       size = keys.length;
       if (!size) {
@@ -816,6 +838,8 @@
         var item = collection[keys[completed]];
         _iterator(item, createCallback(item));
       };
+    } else {
+      return callback();
     }
 
     iterate();
@@ -866,6 +890,10 @@
   function detectLimit(collection, limit, iterator, callback, thisArg, opposite) {
 
     callback = callback || noop;
+    if (typeof limit !== 'number' || limit <= 0) {
+      return callback();
+    }
+
     var size, iterate;
     var completed = 0;
     var beforeCompleted = 0;
@@ -887,7 +915,7 @@
           _iterator(item, once(createCallback(item)));
         });
       };
-    } else {
+    } else if (typeof collection === 'object') {
       var keys = Object.keys(collection);
       size = keys.length;
       if (!size) {
@@ -903,6 +931,8 @@
           _iterator(item, once(createCallback(item)));
         });
       };
+    } else {
+      return callback();
     }
 
     iterate();
@@ -975,13 +1005,15 @@
         return callback([]);
       }
       _arrayEach(collection, iterate);
-    } else {
+    } else if (typeof collection === 'object') {
       var keys = Object.keys(collection);
       size = keys.length;
       if (!size) {
         return callback({});
       }
       _objectEach(collection, iterate, keys);
+    } else {
+      callback([]);
     }
 
     function getCreateCallback() {
@@ -1048,7 +1080,7 @@
         var item = collection[completed];
         _iterator(item, createCallback(completed, item));
       };
-    } else {
+    } else if (typeof collection === 'object') {
       var keys = Object.keys(collection);
       size = keys.length;
       if (!size) {
@@ -1059,6 +1091,8 @@
         var item = collection[key];
         _iterator(item, createCallback(key, item));
       };
+    } else {
+      return callback([]);
     }
 
     iterate();
@@ -1112,6 +1146,10 @@
   function pickLimit(collection, limit, iterator, callback, thisArg, opposite) {
 
     callback = callback || noop;
+    if (typeof limit !== 'number' || limit <= 0) {
+      return callback([]);
+    }
+
     var size, iterate;
     var isArray = Array.isArray(collection);
     var result = {};
@@ -1135,7 +1173,7 @@
           _iterator(item, createCallback(index, item));
         });
       };
-    } else {
+    } else if (typeof collection === 'object') {
       var keys = Object.keys(collection);
       size = keys.length;
       if (!size) {
@@ -1152,6 +1190,8 @@
           _iterator(item, createCallback(key, item));
         });
       };
+    } else {
+      return callback([]);
     }
 
     iterate();
@@ -1228,7 +1268,7 @@
         var item = collection[completed];
         _iterator(result, item, done);
       };
-    } else {
+    } else if (typeof collection === 'object') {
       var keys = Object.keys(collection);
       size = keys.length;
       if (!size) {
@@ -1240,6 +1280,8 @@
         var item = collection[key];
         _iterator(result, item, done);
       };
+    } else {
+      return callback(null, result);
     }
 
     iterate(result);
@@ -1278,7 +1320,7 @@
         var item = collection[size - completed - 1];
         _iterator(result, item, done);
       };
-    } else {
+    } else if (typeof collection === 'object') {
       var keys = Object.keys(collection);
       size = keys.length;
       if (!size) {
@@ -1290,6 +1332,8 @@
         var item = collection[key];
         _iterator(result, item, done);
       };
+    } else {
+      return callback(null, result);
     }
 
     iterate(result);
@@ -1329,13 +1373,15 @@
         return callback(null, result);
       }
       _arrayEach(collection, iterate);
-    } else {
+    } else if (typeof collection === 'object') {
       var keys = Object.keys(collection);
       size = keys.length;
       if (!size) {
         return callback(null, result);
       }
       _objectEach(collection, iterate, keys);
+    } else {
+      callback(null, result);
     }
 
     function done(err, bool) {
@@ -1377,7 +1423,7 @@
         called = false;
         _iterator(result, collection[completed], completed, done);
       };
-    } else {
+    } else if (typeof collection === 'object') {
       var keys = Object.keys(collection);
       size = keys.length;
       if (!size) {
@@ -1388,7 +1434,10 @@
         var key = keys[completed];
         _iterator(result, collection[key], key, done);
       };
+    } else {
+      return callback(null, result);
     }
+
     iterate();
 
     function done(err, bool) {
@@ -1414,9 +1463,13 @@
   function transformLimit(collection, limit, iterator, callback, accumulator, thisArg) {
 
     callback = callback || noop;
-    var size, iterate;
     var isArray = Array.isArray(collection);
     var result = accumulator !== undefined ? accumulator : isArray ? [] : {};
+    if (typeof limit !== 'number' || limit <= 0) {
+      return callback(null, result);
+    }
+
+    var size, iterate;
     var completed = 0;
     var beforeCompleted = 0;
     var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
@@ -1435,7 +1488,7 @@
           _iterator(result, collection[index], index, once(done));
         });
       };
-    } else {
+    } else if (typeof collection === 'object') {
       var keys = Object.keys(collection);
       size = keys.length;
       if (!size) {
@@ -1451,6 +1504,8 @@
           _iterator(result, collection[key], key, once(done));
         });
       };
+    } else {
+      return callback(null, result);
     }
 
     iterate();
@@ -1629,13 +1684,15 @@
         return callback(null, result);
       }
       _arrayEach(collection, iterate);
-    } else {
+    } else if (typeof collection === 'object') {
       var keys = Object.keys(collection);
       size = keys.length;
       if (!size) {
         return callback(null, result);
       }
       _objectEach(collection, iterate, keys);
+    } else {
+      callback(null, result);
     }
 
     function done(err, array) {
@@ -1674,7 +1731,7 @@
         called = false;
         _iterator(collection[completed], done);
       };
-    } else {
+    } else if (typeof collection === 'object') {
       var keys = Object.keys(collection);
       size = keys.length;
       if (!size) {
@@ -1684,6 +1741,8 @@
         called = false;
         _iterator(collection[keys[completed]], done);
       };
+    } else {
+      return callback(null, result);
     }
     iterate();
 
@@ -1710,8 +1769,12 @@
   function concatLimit(collection, limit, iterator, callback, thisArg) {
 
     callback = callback || noop;
-    var size, iterate;
     var result = [];
+    if (typeof limit !== 'number' || limit <= 0) {
+      return callback(null, result);
+    }
+
+    var size, iterate;
     var completed = 0;
     var beforeCompleted = 0;
     var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
@@ -1730,7 +1793,7 @@
           _iterator(collection[index], once(done));
         });
       };
-    } else {
+    } else if (typeof collection === 'object') {
       var keys = Object.keys(collection);
       size = keys.length;
       if (!size) {
@@ -1745,6 +1808,8 @@
           _iterator(collection[keys[index]], once(done));
         });
       };
+    } else {
+      return callback(null, result);
     }
 
     iterate();
