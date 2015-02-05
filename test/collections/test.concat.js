@@ -133,6 +133,31 @@ describe('#concat', function() {
 
   });
 
+  it('should return response immediately if collection is function', function(done) {
+
+    var order = [];
+    async.concat(function() {}, concatIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is undefined', function(done) {
+
+    var order = [];
+    async.concat(undefined, concatIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
 });
 
 describe('#concatSeries', function() {
@@ -256,6 +281,32 @@ describe('#concatSeries', function() {
 
   });
 
+  it('should return response immediately if collection is function', function(done) {
+
+    var order = [];
+    async.concatSeries(function() {}, concatIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is undefined', function(done) {
+
+    var order = [];
+    async.concatSeries(undefined, concatIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
 });
 
 describe('#concatLimit', function() {
@@ -357,6 +408,32 @@ describe('#concatLimit', function() {
         return done(err);
       }
       assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is function', function(done) {
+
+    var order = [];
+    async.concatLimit(function() {}, 2, concatIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is undefined', function(done) {
+
+    var order = [];
+    async.concatLimit(undefined, 2, concatIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
       assert.deepEqual(order, []);
       done();
     });

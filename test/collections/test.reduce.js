@@ -169,6 +169,34 @@ describe('#reduce', function() {
 
   });
 
+  it('should return response immediately if collection is function', function(done) {
+
+    var order = [];
+    async.reduce(function() {}, 0, reduceIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, 0);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is undefined', function(done) {
+
+    var order = [];
+    async.reduce(undefined, 0, reduceIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, 0);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
 });
 
 describe('#reduceRight', function() {
@@ -298,6 +326,34 @@ describe('#reduceRight', function() {
     var order = [];
     var object = {};
     async.reduceRight(object, 0, reduceIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, 0);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is function', function(done) {
+
+    var order = [];
+    async.reduceRight(function() {}, 0, reduceIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, 0);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is undefined', function(done) {
+
+    var order = [];
+    async.reduceRight(undefined, 0, reduceIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }

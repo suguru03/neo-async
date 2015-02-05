@@ -176,6 +176,32 @@ describe('#each', function() {
 
   });
 
+  it('should return response immediately if collection is function', function(done) {
+
+    var order = [];
+    async.each(function() {}, eachIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is undefined', function(done) {
+
+    var order = [];
+    async.each(undefined, eachIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
 });
 
 describe('#eachSeries', function() {
@@ -318,6 +344,32 @@ describe('#eachSeries', function() {
 
   });
 
+  it('should return response immediately if collection is function', function(done) {
+
+    var order = [];
+    async.eachSeries(function() {}, eachIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is undefined', function(done) {
+
+    var order = [];
+    async.eachSeries(undefined, eachIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
 });
 
 describe('#eachLimit', function() {
@@ -442,5 +494,32 @@ describe('#eachLimit', function() {
     });
 
   });
+
+  it('should return response immediately if collection is function', function(done) {
+
+    var order = [];
+    async.eachLimit(function() {}, 2, eachIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is undefined', function(done) {
+
+    var order = [];
+    async.eachLimit(undefined, 2, eachIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
 });
 

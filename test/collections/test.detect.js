@@ -105,6 +105,28 @@ describe('#detect', function() {
 
   });
 
+  it('should return response immediately if collection is function', function(done) {
+
+    var order = [];
+    async.detect(function() {}, detectIterator(order), function(res) {
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is undefined', function(done) {
+
+    var order = [];
+    async.detect(undefined, detectIterator(order), function(res) {
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
 });
 
 describe('#detectSeries', function() {
@@ -183,6 +205,28 @@ describe('#detectSeries', function() {
     var order = [];
     var object = {};
     async.detectSeries(object, detectIterator(order), function(res) {
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is function', function(done) {
+
+    var order = [];
+    async.detectSeries(function() {}, detectIterator(order), function(res) {
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is undefined', function(done) {
+
+    var order = [];
+    async.detectSeries(undefined, detectIterator(order), function(res) {
       assert.strictEqual(res, undefined);
       assert.deepEqual(order, []);
       done();
@@ -294,5 +338,44 @@ describe('#detectLimit', function() {
     });
 
   });
+
+  it('should return response immediately if collection is function', function(done) {
+
+    var order = [];
+    async.detectLimit(function() {}, 2, detectIterator(order), function(res) {
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is undefined', function(done) {
+
+    var order = [];
+    async.detectLimit(undefined, 2, detectIterator(order), function(res) {
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    var collection = [1, 3, 2, 4];
+    var iterator = function(num, callback) {
+      callback();
+      callback();
+    };
+    try {
+      async.detectLimit(collection, 2, iterator);
+    } catch(e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
+
+  });
+
 });
 

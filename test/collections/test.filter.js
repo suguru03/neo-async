@@ -69,6 +69,38 @@ describe('#filter', function() {
 
   });
 
+  it('should return response immediately if collection is empty', function(done) {
+
+    var order = [];
+    async.filter([], filterIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+  });
+
+  it('should return response immediately if collection is function', function(done) {
+
+    var order = [];
+    async.filter(function() {}, filterIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is undefined', function(done) {
+
+    var order = [];
+    async.filter(undefined, filterIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
 });
 
 describe('#filterSeries', function() {
@@ -114,6 +146,38 @@ describe('#filterSeries', function() {
       assert.deepEqual(order, [1, 4, 3]);
       done();
     }, Math);
+  });
+
+  it('should return response immediately if collection is empty', function(done) {
+
+    var order = [];
+    async.filterSeries([], filterIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+  });
+
+  it('should return response immediately if collection is function', function(done) {
+
+    var order = [];
+    async.filterSeries(function() {}, filterIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is undefined', function(done) {
+
+    var order = [];
+    async.filterSeries(undefined, filterIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
   });
 
 });
@@ -167,6 +231,39 @@ describe('#filterLimit', function() {
     }, Math);
 
   });
+
+  it('should return response immediately if collection is empty', function(done) {
+
+    var order = [];
+    async.filterLimit([], 2, filterIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+  });
+
+  it('should return response immediately if collection is function', function(done) {
+
+    var order = [];
+    async.filterLimit(function() {}, 2, filterIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is undefined', function(done) {
+
+    var order = [];
+    async.filterLimit(undefined, 2, filterIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
 
 });
 

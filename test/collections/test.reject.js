@@ -69,6 +69,52 @@ describe('#reject', function() {
 
   });
 
+  it('should return response immediately if array is empty', function(done) {
+
+    var order = [];
+    var array = [];
+    async.reject(array, rejectIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if object is empty', function(done) {
+
+    var order = [];
+    var object = {};
+    async.reject(object, rejectIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is function', function(done) {
+
+    var order = [];
+    async.reject(function() {}, rejectIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is function', function(done) {
+
+    var order = [];
+    async.reject(undefined, rejectIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
   it('should throw error if double callback', function(done) {
 
     var collection = [1, 2, 3] ;
@@ -134,6 +180,41 @@ describe('#rejectSeries', function() {
 
   });
 
+  it('should return response immediately if array is empty', function(done) {
+
+    var order = [];
+    var array = [];
+    async.rejectSeries(array, rejectIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if object is empty', function(done) {
+
+    var order = [];
+    var object = {};
+    async.rejectSeries(object, rejectIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is function', function(done) {
+
+    var order = [];
+    async.rejectSeries(function() {}, rejectIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
   it('should throw error if double callback', function(done) {
 
     var collection = [1, 2, 3] ;
@@ -147,6 +228,17 @@ describe('#rejectSeries', function() {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
+
+  });
+
+  it('should return response immediately if collection is function', function(done) {
+
+    var order = [];
+    async.rejectSeries(undefined, rejectIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
 
   });
 
@@ -202,6 +294,41 @@ describe('#rejectLimit', function() {
 
   });
 
+  it('should return response immediately if array is empty', function(done) {
+
+    var order = [];
+    var array = [];
+    async.rejectLimit(array, 2, rejectIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if object is empty', function(done) {
+
+    var order = [];
+    var object = {};
+    async.rejectLimit(object, 2, rejectIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is function', function(done) {
+
+    var order = [];
+    async.rejectLimit(function() {}, 2, rejectIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
   it('should throw error if double callback', function(done) {
 
     var collection = [1, 2, 3] ;
@@ -215,6 +342,18 @@ describe('#rejectLimit', function() {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
+
+  });
+
+  it('should return response immediately if collection is function', function(done) {
+
+    var order = [];
+    async.rejectLimit(undefined, 2, rejectIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
   });
 
 });

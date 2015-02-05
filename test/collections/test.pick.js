@@ -93,6 +93,28 @@ describe('#pick', function() {
 
   });
 
+  it('should return response immediately if collection is function', function(done) {
+
+    var order = [];
+    async.pick(function() {}, pickIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is undefined', function(done) {
+
+    var order = [];
+    async.pick(undefined, pickIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
   it('should throw error if double callback', function(done) {
 
     var collection = [2, 1, 3];
@@ -176,6 +198,28 @@ describe('#pickSeries', function() {
     var object = {};
     async.pickSeries(object, pickIterator(order), function(res) {
       assert.deepEqual(res, {});
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is function', function(done) {
+
+    var order = [];
+    async.pickSeries(function() {}, pickIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is undefined', function(done) {
+
+    var order = [];
+    async.pickSeries(undefined, pickIterator(order), function(res) {
+      assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
     });
@@ -268,6 +312,28 @@ describe('#pickLimit', function() {
     var object = {};
     async.pickLimit(object, 2, pickIterator(order), function(res) {
       assert.deepEqual(res, {});
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is function', function(done) {
+
+    var order = [];
+    async.pickLimit(function() {}, 2, pickIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is undefined', function(done) {
+
+    var order = [];
+    async.pickLimit(undefined, 2, pickIterator(order), function(res) {
+      assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
     });
