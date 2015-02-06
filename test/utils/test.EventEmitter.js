@@ -148,6 +148,36 @@ describe('#eventEmitter', function() {
 
   });
 
+  it('should execute same functions events', function(done) {
+
+    var count = 0;
+    var eventEmitter = async.eventEmitter();
+    var func = function(done) {
+      count++;
+      done();
+    };
+    eventEmitter.once('event', [
+      func,
+      func,
+      func,
+      func
+    ]);
+    eventEmitter.emit('event', function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(count, 4);
+      eventEmitter.emit('event', function(err) {
+        if (err) {
+          return done(err);
+        }
+        assert.strictEqual(count, 4);
+        done();
+      });
+    });
+
+  });
+
   it('should execute events by original emitter', function(done) {
 
     var order = [];
