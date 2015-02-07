@@ -100,6 +100,17 @@ describe('#some', function() {
 
   });
 
+  it('should return response immediately if collection is null', function(done) {
+
+    var order = [];
+    async.some(null, someIterator(order), function(res) {
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
 });
 
 describe('#someSeries', function() {
@@ -173,6 +184,17 @@ describe('#someSeries', function() {
 
     var order = [];
     async.someSeries(undefined, someIterator(order), function(res) {
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is null', function(done) {
+
+    var order = [];
+    async.someSeries(null, someIterator(order), function(res) {
       assert.strictEqual(res, false);
       assert.deepEqual(order, []);
       done();
@@ -257,6 +279,17 @@ describe('#someLimit', function() {
 
     var order = [];
     async.someLimit(undefined, 2, someIterator(order), function(res) {
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is null', function(done) {
+
+    var order = [];
+    async.someLimit(null, 2, someIterator(order), function(res) {
       assert.strictEqual(res, false);
       assert.deepEqual(order, []);
       done();

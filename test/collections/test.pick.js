@@ -69,6 +69,22 @@ describe('#pick', function() {
 
   });
 
+  it('should throw error if double callback', function(done) {
+
+    var collection = [2, 1, 3];
+    var iterator = function(item, callback) {
+      callback();
+      callback();
+    };
+    try {
+      async.pick(collection, iterator);
+    } catch(e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
+
+  });
+
   it('should return response immediately if array is empty', function(done) {
 
     var order = [];
@@ -115,19 +131,14 @@ describe('#pick', function() {
 
   });
 
-  it('should throw error if double callback', function(done) {
+  it('should return response immediately if collection is null', function(done) {
 
-    var collection = [2, 1, 3];
-    var iterator = function(item, callback) {
-      callback();
-      callback();
-    };
-    try {
-      async.pick(collection, iterator);
-    } catch(e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
+    var order = [];
+    async.pick(null, pickIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
       done();
-    }
+    });
 
   });
 
@@ -180,6 +191,22 @@ describe('#pickSeries', function() {
 
   });
 
+  it('should throw error if double callback', function(done) {
+
+    var collection = [2, 1, 3];
+    var iterator = function(item, callback) {
+      callback();
+      callback();
+    };
+    try {
+      async.pickSeries(collection, iterator);
+    } catch(e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
+
+  });
+
   it('should return response immediately if array is empty', function(done) {
 
     var order = [];
@@ -226,19 +253,14 @@ describe('#pickSeries', function() {
 
   });
 
-  it('should throw error if double callback', function(done) {
+  it('should return response immediately if collection is null', function(done) {
 
-    var collection = [2, 1, 3];
-    var iterator = function(item, callback) {
-      callback();
-      callback();
-    };
-    try {
-      async.pickSeries(collection, iterator);
-    } catch(e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
+    var order = [];
+    async.pickSeries(null, pickIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
       done();
-    }
+    });
 
   });
 
@@ -294,6 +316,22 @@ describe('#pickLimit', function() {
 
   });
 
+  it('should throw error if double callback', function(done) {
+
+    var collection = [2, 1, 3];
+    var iterator = function(item, callback) {
+      callback();
+      callback();
+    };
+    try {
+      async.pickLimit(collection, 4, iterator);
+    } catch(e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
+
+  });
+
   it('should return response immediately if array is empty', function(done) {
 
     var order = [];
@@ -340,6 +378,17 @@ describe('#pickLimit', function() {
 
   });
 
+  it('should return response immediately if collection is null', function(done) {
+
+    var order = [];
+    async.pickLimit(null, 2, pickIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
   it('should return response immediately if limit is zero', function(done) {
 
     var order = [];
@@ -361,22 +410,6 @@ describe('#pickLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
-  });
-
-  it('should throw error if double callback', function(done) {
-
-    var collection = [2, 1, 3];
-    var iterator = function(item, callback) {
-      callback();
-      callback();
-    };
-    try {
-      async.pickLimit(collection, 4, iterator);
-    } catch(e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
-      done();
-    }
 
   });
 

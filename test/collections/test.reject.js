@@ -69,6 +69,22 @@ describe('#reject', function() {
 
   });
 
+  it('should throw error if double callback', function(done) {
+
+    var collection = [1, 2, 3] ;
+    var iterator = function(num, callback) {
+      callback();
+      callback();
+    };
+    try {
+      async.reject(collection, iterator);
+    } catch(e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
+
+  });
+
   it('should return response immediately if array is empty', function(done) {
 
     var order = [];
@@ -115,19 +131,14 @@ describe('#reject', function() {
 
   });
 
-  it('should throw error if double callback', function(done) {
+  it('should return response immediately if collection is null', function(done) {
 
-    var collection = [1, 2, 3] ;
-    var iterator = function(num, callback) {
-      callback();
-      callback();
-    };
-    try {
-      async.reject(collection, iterator);
-    } catch(e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
+    var order = [];
+    async.reject(null, rejectIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
       done();
-    }
+    });
 
   });
 
@@ -180,6 +191,22 @@ describe('#rejectSeries', function() {
 
   });
 
+  it('should throw error if double callback', function(done) {
+
+    var collection = [1, 2, 3] ;
+    var iterator = function(num, callback) {
+      callback();
+      callback();
+    };
+    try {
+      async.rejectSeries(collection, iterator);
+    } catch(e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
+
+  });
+
   it('should return response immediately if array is empty', function(done) {
 
     var order = [];
@@ -226,19 +253,14 @@ describe('#rejectSeries', function() {
 
   });
 
-  it('should throw error if double callback', function(done) {
+  it('should return response immediately if collection is null', function(done) {
 
-    var collection = [1, 2, 3] ;
-    var iterator = function(num, callback) {
-      callback();
-      callback();
-    };
-    try {
-      async.rejectSeries(collection, iterator);
-    } catch(e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
+    var order = [];
+    async.rejectSeries(null, rejectIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
       done();
-    }
+    });
 
   });
 

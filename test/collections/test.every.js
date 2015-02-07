@@ -113,6 +113,17 @@ describe('#every', function() {
 
   });
 
+  it('should return response immediately if collection is null', function(done) {
+
+    var order = [];
+    async.every(null, everyIterator(order), function(res) {
+      assert.strictEqual(res, true);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
 });
 
 describe('#everySeries', function() {
@@ -222,6 +233,16 @@ describe('#everySeries', function() {
 
   });
 
+  it('should return response immediately if collection is null', function(done) {
+
+    var order = [];
+    async.everySeries(null, everyIterator(order), function(res) {
+      assert.strictEqual(res, true);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
 
 });
 
@@ -309,6 +330,17 @@ describe('#everyLimit', function() {
 
     var order = [];
     async.everyLimit(undefined, 0, everyIterator(order), function(res) {
+      assert.strictEqual(res, true);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is null', function(done) {
+
+    var order = [];
+    async.everyLimit(null, 0, everyIterator(order), function(res) {
       assert.strictEqual(res, true);
       assert.deepEqual(order, []);
       done();

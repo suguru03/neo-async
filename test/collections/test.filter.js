@@ -101,6 +101,17 @@ describe('#filter', function() {
 
   });
 
+  it('should return response immediately if collection is null', function(done) {
+
+    var order = [];
+    async.filter(null, filterIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
 });
 
 describe('#filterSeries', function() {
@@ -173,6 +184,17 @@ describe('#filterSeries', function() {
 
     var order = [];
     async.filterSeries(undefined, filterIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is null', function(done) {
+
+    var order = [];
+    async.filterSeries(null, filterIterator(order), function(res) {
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -264,6 +286,17 @@ describe('#filterLimit', function() {
 
   });
 
+  it('should return response immediately if collection is null', function(done) {
+
+    var order = [];
+    async.filterLimit(null, 2, filterIterator(order), function(res) {
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
   it('should return response immediately if limit is zero', function(done) {
 
     var order = [];
@@ -287,7 +320,6 @@ describe('#filterLimit', function() {
     });
 
   });
-
 
 });
 

@@ -125,6 +125,20 @@ describe('#sortBy', function() {
 
   });
 
+  it('should return response immediately if collection is null', function(done) {
+
+    var order = [];
+    async.sortBy(null, sortByIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
 });
 
 describe('#sortBySeries', function() {
@@ -229,6 +243,21 @@ describe('#sortBySeries', function() {
     });
 
   });
+
+  it('should return response immediately if collection is null', function(done) {
+
+    var order = [];
+    async.sortBySeries(null, sortByIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
 });
 
 describe('#sortByLimit', function() {
@@ -323,6 +352,20 @@ describe('#sortByLimit', function() {
 
     var order = [];
     async.sortByLimit(undefined, 2, sortByIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is null', function(done) {
+
+    var order = [];
+    async.sortByLimit(null, 2, sortByIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }

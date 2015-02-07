@@ -215,6 +215,20 @@ describe('#transform', function() {
 
   });
 
+  it('should return response immediately if collection is null', function(done) {
+
+    var order = [];
+    async.transform(null, transformIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, {});
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
 });
 
 describe('#transformSeries', function() {
@@ -388,6 +402,20 @@ describe('#transformSeries', function() {
 
   });
 
+  it('should return response immediately if collection is null', function(done) {
+
+    var order = [];
+    async.transformSeries(null, transformIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, {});
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
 });
 
 describe('#transformLimit', function() {
@@ -547,6 +575,19 @@ describe('#transformLimit', function() {
 
   });
 
+  it('should return response immediately if collection is null', function(done) {
+
+    var order = [];
+    async.transformLimit(null, 2, transformIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
   it('should return response immediately if limit is zero', function(done) {
 
     var order = [];
@@ -576,5 +617,6 @@ describe('#transformLimit', function() {
     });
 
   });
+
 });
 

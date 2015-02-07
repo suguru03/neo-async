@@ -172,6 +172,20 @@ describe('#map', function() {
 
   });
 
+  it('should return response immediately if collection is null', function(done) {
+
+    var order = [];
+    async.map(null, mapIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
 });
 
 describe('#mapSeries', function() {
@@ -315,6 +329,20 @@ describe('#mapSeries', function() {
 
     var order = [];
     async.mapSeries(undefined, mapIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is null', function(done) {
+
+    var order = [];
+    async.mapSeries(null, mapIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -470,6 +498,20 @@ describe('#mapLimit', function() {
 
     var order = [];
     async.mapLimit(undefined, 3, mapIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is null', function(done) {
+
+    var order = [];
+    async.mapLimit(null, 3, mapIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }

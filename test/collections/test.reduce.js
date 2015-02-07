@@ -197,6 +197,20 @@ describe('#reduce', function() {
 
   });
 
+  it('should return response immediately if collection is null', function(done) {
+
+    var order = [];
+    async.reduce(null, 0, reduceIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, 0);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
 });
 
 describe('#reduceRight', function() {
@@ -354,6 +368,20 @@ describe('#reduceRight', function() {
 
     var order = [];
     async.reduceRight(undefined, 0, reduceIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, 0);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is null', function(done) {
+
+    var order = [];
+    async.reduceRight(null, 0, reduceIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }

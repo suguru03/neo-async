@@ -160,6 +160,21 @@ describe('#concat', function() {
     });
 
   });
+
+  it('should return response immediately if collection is null', function(done) {
+
+    var order = [];
+    async.concat(null, concatIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
 });
 
 describe('#concatSeries', function() {
@@ -311,6 +326,20 @@ describe('#concatSeries', function() {
 
   });
 
+  it('should return response immediately if collection is null', function(done) {
+
+    var order = [];
+    async.concatSeries(null, concatIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
 });
 
 describe('#concatLimit', function() {
@@ -436,6 +465,20 @@ describe('#concatLimit', function() {
 
     var order = [];
     async.concatLimit(undefined, 2, concatIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, []);
+      done();
+    });
+
+  });
+
+  it('should return response immediately if collection is null', function(done) {
+
+    var order = [];
+    async.concatLimit(null, 2, concatIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
