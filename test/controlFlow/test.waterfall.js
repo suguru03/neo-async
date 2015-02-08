@@ -213,6 +213,15 @@ describe('#waterfall', function() {
 
   });
 
+  it('should throw error if task is string', function(done) {
+
+    async.waterfall('test', function(err) {
+      assert.strictEqual(err.message, 'First argument to waterfall must be array or object functions');
+      done();
+    });
+
+  });
+
   it('should execute complex tasks of object', function(done) {
 
     var numbers = {
