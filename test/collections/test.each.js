@@ -413,6 +413,7 @@ describe('#eachLimit', function() {
       assert.deepEqual(order, [1, 3, 2, 4, 3]);
       done();
     });
+
   });
 
   it('should execute iterator to series by collection of object', function(done) {
@@ -451,6 +452,23 @@ describe('#eachLimit', function() {
       assert.deepEqual(order, [1, 4, 3]);
       done();
     }, Math);
+
+  });
+
+  it('should execute like parallel if limit is Infinity', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 4, 2, 3];
+
+    async.eachLimit(collection, Infinity, eachIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+
+      assert.deepEqual(order, [1, 2, 3, 3, 4]);
+      done();
+    });
+
   });
 
   it('should throw error', function(done) {

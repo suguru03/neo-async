@@ -305,6 +305,18 @@ describe('#everyLimit', function() {
 
   });
 
+  it('should execute like parallel if limit is Infinity', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    async.everyLimit(collection, Infinity, everyIterator(order), function(res) {
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [1, 2]);
+      done();
+    });
+
+  });
+
   it('should return response immediately if collection is empty', function(done) {
 
     var order = [];

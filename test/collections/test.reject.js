@@ -316,6 +316,19 @@ describe('#rejectLimit', function() {
 
   });
 
+  it('should execute like parallel if limit is Infinity', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 4, 2, 3, 1];
+
+    async.rejectLimit(collection, Infinity, rejectIterator(order), function(res) {
+      assert.deepEqual(res, [4, 2]);
+      assert.deepEqual(order, [1, 1, 2, 3, 3, 4]);
+      done();
+    });
+
+  });
+
   it('should return response immediately if array is empty', function(done) {
 
     var order = [];

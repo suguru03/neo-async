@@ -210,6 +210,27 @@ describe('#timesLimit', function() {
 
   });
 
+  it('should execute like parallel if limit is Infinity', function(done) {
+
+    var n = 5;
+    var order = [];
+    var iterator = function(n, done) {
+      setTimeout(function() {
+        order.push(n);
+        done(null, n);
+      }, n * 10);
+    };
+    async.timesLimit(n, Infinity, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [0, 1, 2, 3, 4]);
+      assert.deepEqual(order, [0, 1, 2, 3, 4]);
+      done();
+    });
+
+  });
+
   it('should return response immediately', function(done) {
 
     var n = 0;

@@ -414,6 +414,22 @@ describe('#mapLimit', function() {
 
   });
 
+  it('should execute like parallel if limit is Infinity', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 4, 2, 3];
+
+    async.mapLimit(collection, Infinity, mapIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [2, 6, 8, 4, 6]);
+      assert.deepEqual(order, [1, 2, 3, 3, 4]);
+      done();
+    });
+
+  });
+
   it('should throw error', function(done) {
 
     var order = [];

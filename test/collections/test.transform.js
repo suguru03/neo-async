@@ -499,6 +499,22 @@ describe('#transformLimit', function() {
 
   });
 
+  it('should execute like parallel if limit is Infinity', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 4, 2, 3, 1, 1];
+
+    async.transformLimit(collection, Infinity, transformIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [1, 1, 1, 3, 3]);
+      assert.deepEqual(order, [1, 1, 1, 2, 3, 3, 4]);
+      done();
+    });
+
+  });
+
   it('should throw error', function(done) {
 
     var order = [];

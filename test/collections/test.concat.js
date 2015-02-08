@@ -398,6 +398,21 @@ describe('#concatLimit', function() {
 
   });
 
+  it('should execute like parallel if limit is Infinity', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    async.concatLimit(collection, Infinity, concatIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [1, 2, 1, 3, 2, 1]);
+      assert.deepEqual(order, [1, 2, 3]);
+      done();
+    });
+
+  });
+
   it('should throw error', function(done) {
 
     var order = [];

@@ -324,6 +324,19 @@ describe('#detectLimit', function() {
 
   });
 
+  it('should execute like parallel if limit is Infinity', function(done) {
+
+    var order = [];
+    var collection = [2, 3, 1];
+
+    async.detectLimit(collection, Infinity, detectIterator(order), function(res) {
+      assert.strictEqual(res, 1);
+      assert.deepEqual(order, [1]);
+      done();
+    });
+
+  });
+
   it('should not get item', function(done) {
 
     var order = [];

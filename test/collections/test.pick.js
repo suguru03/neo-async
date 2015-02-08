@@ -316,6 +316,19 @@ describe('#pickLimit', function() {
 
   });
 
+  it('should execute like parallel if limit is Infinity', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 4, 2, 3, 1, 3];
+
+    async.pickLimit(collection, Infinity, pickIterator(order), function(res) {
+      assert.deepEqual(res, [1, 3, 3, 1, 3]);
+      assert.deepEqual(order, [1, 1, 2, 3, 3, 3, 4]);
+      done();
+    });
+
+  });
+
   it('should throw error if double callback', function(done) {
 
     var collection = [2, 1, 3];

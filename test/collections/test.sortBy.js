@@ -313,6 +313,22 @@ describe('#sortByLimit', function() {
       assert.deepEqual(order, [1, 3, 4]);
       done();
     }, Math);
+
+  });
+
+  it('should execute like parallel if limit is Infinity', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    async.sortByLimit(collection, Infinity, sortByIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [1, 2, 3]);
+      assert.deepEqual(order, [1, 2, 3]);
+      done();
+    });
+
   });
 
   it('should throw error', function(done) {

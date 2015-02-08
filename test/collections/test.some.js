@@ -254,6 +254,19 @@ describe('#someLimit', function() {
 
   });
 
+  it('should execute like parallel if limit is Infinity', function(done) {
+
+    var order = [];
+    var collection = [2, 3, 1];
+
+    async.someLimit(collection, Infinity, someIterator(order), function(res) {
+      assert.ok(res);
+      assert.deepEqual(order, [1]);
+      done();
+    });
+
+  });
+
   it('should return response immediately if collection is empty', function(done) {
 
     var order = [];
