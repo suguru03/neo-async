@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/suguru03/neo-async.svg?branch=master)](https://travis-ci.org/suguru03/neo-async)
 [![codecov.io](https://codecov.io/github/suguru03/neo-async/coverage.svg?branch=master)](https://codecov.io/github/suguru03/neo-async?branch=master)
 
-Neo-Async is thought to be used as a drop-in replacement for [Async](https://github.com/caolan/async), it fully covers its functionality and runs [faster](#speed-comparison)
+Neo-Async is thought to be used as a drop-in replacement for [Async](https://github.com/caolan/async), it almost fully covers its functionality and runs [faster](#speed-comparison)
 
 ![Neo-Async](https://raw.githubusercontent.com/wiki/suguru03/neo-async/images/neo_async.png)
 
@@ -97,7 +97,7 @@ $ iojs --expose_gc demo.js
 ```
 __result__
 
-The value is the ratio (Async/Neo-Async) of the average speed per n times.
+The value is the ratio (Neo-Async/Async) of the average speed per n times.
 
 |function|node|iojs|
 |---|---|---|
