@@ -254,6 +254,12 @@ $ ln -s ./node_modules/neo-async ./node_modules/async
 var async = require('async');
 ```
 
+### Bower
+
+```bash
+bower install neo-async
+```
+
 ## Feature *not* in Async
 
 ### Collections
