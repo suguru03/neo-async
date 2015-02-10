@@ -181,6 +181,30 @@ describe('#waterfall', function() {
 
   });
 
+  it('should execute with asynchronous', function(done) {
+
+    var order = [];
+    async.waterfall([
+
+      function(next) {
+        order.push(1);
+        setImmediate(next);
+        order.push(2);
+      },
+
+      function(next) {
+        order.push(3);
+        setImmediate(next);
+      }
+    ], function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, [1, 2, 3]);
+      done();
+    });
+  });
+
   it('should throw error', function(done) {
 
     var numbers = [1, 3, 2, 4];
