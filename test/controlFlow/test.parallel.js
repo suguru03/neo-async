@@ -125,6 +125,17 @@ describe('#parallel', function() {
     });
   });
 
+  it('should return response immediately if task is not collection', function(done) {
+
+    async.parallel(null, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, undefined);
+      done();
+    });
+  });
+
   it('should throw error', function(done) {
 
     var order = [];
@@ -266,6 +277,7 @@ describe('#parallelLimit', function() {
       assert.deepEqual(res, []);
       done();
     });
+
   });
 
   it('should return response immediately if object task is empty', function(done) {
@@ -278,6 +290,19 @@ describe('#parallelLimit', function() {
       assert.deepEqual(res, {});
       done();
     });
+
+  });
+
+  it('should return response immediately if task is not collection', function(done) {
+
+    async.parallelLimit(null, 2, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, undefined);
+      done();
+    });
+
   });
 
   it('should throw error', function(done) {

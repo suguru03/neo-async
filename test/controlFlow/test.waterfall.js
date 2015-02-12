@@ -237,9 +237,9 @@ describe('#waterfall', function() {
 
   });
 
-  it('should throw error if task is string', function(done) {
+  it('should throw error if task is not collection', function(done) {
 
-    async.waterfall('test', function(err) {
+    async.waterfall(null, function(err) {
       assert.strictEqual(err.message, 'First argument to waterfall must be array or object functions');
       done();
     });

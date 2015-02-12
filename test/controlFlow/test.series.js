@@ -128,6 +128,19 @@ describe('#series', function() {
       assert.deepEqual(res, {});
       done();
     });
+
+  });
+
+  it('should return response immediately if task is not collection', function(done) {
+
+    async.series('test', function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, undefined);
+      done();
+    });
+
   });
 
   it('should throw error', function(done) {
