@@ -87,26 +87,6 @@ describe('#waterfall', function() {
     });
 
   });
-
-  it('should execute to waterfall by collection of object', function(done) {
-
-    var numbers = {
-      a: 3,
-      b: 4,
-      d: 2,
-      c: 5
-    };
-    var tasks = createTasks('simple', numbers);
-    async.waterfall(tasks, function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(res, 14);
-      done();
-    });
-
-  });
-
   it('should execute simple tasks', function(done) {
 
     var numbers = [1, 3, 2, 4, 7, 8, 6, 5];
@@ -118,20 +98,6 @@ describe('#waterfall', function() {
       assert.strictEqual(result, 36);
       done();
     });
-
-  });
-
-  it('should execute simple tasks with binding', function(done) {
-
-    var numbers = [1, 3, 2, 4, 7, 8, 6, 5];
-    var tasks = createTasks('simple', numbers);
-    async.waterfall(tasks, function(err, result) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(result, 72);
-      done();
-    }, Math);
 
   });
 
@@ -155,29 +121,6 @@ describe('#waterfall', function() {
 
       done();
     });
-
-  });
-
-  it('should execute complex tasks with binding', function(done) {
-
-    var numbers = [1, 3, 2, 4, 7, 8, 6, 5];
-    var tasks = createTasks('complex', numbers);
-    async.waterfall(tasks, function(err, a, b, c, d, e, f, g, h) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(a, 2);
-      assert.strictEqual(b, 6);
-      assert.strictEqual(c, 4);
-      assert.strictEqual(d, 8);
-
-      assert.strictEqual(e, 14);
-      assert.strictEqual(f, 16);
-      assert.strictEqual(g, 12);
-      assert.strictEqual(h, 10);
-
-      done();
-    }, Math);
 
   });
 
@@ -221,94 +164,48 @@ describe('#waterfall', function() {
 
   });
 
-  it('should throw error if double callback', function(done) {
+  it('should call multi callbacks', function(done) {
 
-    var tasks = [function(next) {
-      next();
-      next();
-    }];
+    var order = [];
+    var array = [
+      function(next) {
+        order.push(1);
+        // call the callback twice. this should call function 2 twice
+        next(null, 'one', 'two');
+        next(null, 'one', 'two');
+      },
 
-    try {
-      async.waterfall(tasks);
-    } catch(e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
-      done();
-    }
+      function(arg1, arg2, next) {
+        order.push(2);
+        next(null, arg1, arg2, 'three');
+      },
 
+      function(arg1, arg2, arg3, next) {
+        order.push(3);
+        next(null, 'four');
+      },
+
+      function() {
+        order.push(4);
+        array[3] = function() {
+          order.push(4);
+          assert.deepEqual(order, [1, 2, 2, 3, 3, 4, 4]);
+          done();
+        };
+      }
+    ];
+    async.waterfall(array);
   });
 
   it('should throw error if task is not collection', function(done) {
 
     async.waterfall(null, function(err) {
-      assert.strictEqual(err.message, 'First argument to waterfall must be array or object functions');
+      assert.strictEqual(err.message, 'First argument to waterfall must be an array of functions');
       done();
     });
 
   });
 
-  it('should execute complex tasks of object', function(done) {
-
-    var numbers = {
-      a: 1,
-      b: 3,
-      c: 2,
-      d: 4,
-      e: 7,
-      f: 8,
-      g: 6,
-      h: 5
-    };
-    var tasks = createTasks('complex', numbers);
-    async.waterfall(tasks, function(err, a, b, c, d, e, f, g, h) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(a, 1);
-      assert.strictEqual(b, 3);
-      assert.strictEqual(c, 2);
-      assert.strictEqual(d, 4);
-
-      assert.strictEqual(e, 7);
-      assert.strictEqual(f, 8);
-      assert.strictEqual(g, 6);
-      assert.strictEqual(h, 5);
-
-      done();
-    });
-
-  });
-
-  it('should execute complex tasks of object with binding', function(done) {
-
-    var numbers = {
-      a: 1,
-      b: 3,
-      c: 2,
-      d: 4,
-      e: 7,
-      f: 8,
-      g: 6,
-      h: 5
-    };
-    var tasks = createTasks('complex', numbers);
-    async.waterfall(tasks, function(err, a, b, c, d, e, f, g, h) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(a, 2);
-      assert.strictEqual(b, 6);
-      assert.strictEqual(c, 4);
-      assert.strictEqual(d, 8);
-
-      assert.strictEqual(e, 14);
-      assert.strictEqual(f, 16);
-      assert.strictEqual(g, 12);
-      assert.strictEqual(h, 10);
-
-      done();
-    }, Math);
-
-  });
   it('should throw error with binding', function(done) {
 
     var numbers = [1, 3, 2, 4];
@@ -328,18 +225,6 @@ describe('#waterfall', function() {
   it('should return response immediately if array task is empty', function(done) {
 
     var tasks = [];
-    async.waterfall(tasks, function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(res, undefined);
-      done();
-    });
-  });
-
-  it('should return response immediately if object task is empty', function(done) {
-
-    var tasks = {};
     async.waterfall(tasks, function(err, res) {
       if (err) {
         return done(err);
