@@ -18,7 +18,7 @@ function detectIterator(order) {
 
       order.push(num);
       callback(num % 2);
-    }, num * 10);
+    }, num * 20);
   };
 }
 
@@ -279,11 +279,11 @@ describe('#detectLimit', function() {
   it('should execute iterator in limited by collection of array', function(done) {
 
     var order = [];
-    var collection = [2, 3, 1];
+    var collection = [2, 4, 3, 2];
 
     async.detectLimit(collection, 2, detectIterator(order), function(res) {
       assert.strictEqual(res, 3);
-      assert.deepEqual(order, [2, 3]);
+      assert.deepEqual(order, [2, 4, 3]);
       done();
     });
 
@@ -294,14 +294,13 @@ describe('#detectLimit', function() {
     var order = [];
     var collection = {
       a: 2,
-      b: 3,
-      c: 1,
-      d: 3,
-      e: 1
+      b: 4,
+      c: 3,
+      d: 2
     };
-    async.detectLimit(collection, 3, detectIterator(order), function(res) {
-      assert.strictEqual(res, 1);
-      assert.deepEqual(order, [1]);
+    async.detectLimit(collection, 2, detectIterator(order), function(res) {
+      assert.strictEqual(res, 3);
+      assert.deepEqual(order, [2, 4, 3]);
       done();
     });
 

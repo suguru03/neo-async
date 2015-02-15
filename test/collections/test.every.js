@@ -18,7 +18,7 @@ function everyIterator(order) {
 
       order.push(num);
       callback(num % 2);
-    }, num * 10);
+    }, num * 20);
   };
 }
 
@@ -252,21 +252,9 @@ describe('#everyLimit', function() {
 
     var order = [];
     var collection = [1, 3, 2, 4];
-    async.everyLimit(collection, 3, everyIterator(order), function(res) {
+    async.everyLimit(collection, 2, everyIterator(order), function(res) {
       assert.strictEqual(res, false);
-      assert.deepEqual(order, [1, 2]);
-      done();
-    });
-
-  });
-
-  it('should execute iterator by collection of array', function(done) {
-
-    var order = [];
-    var collection = [1, 3, 1, 5];
-    async.everyLimit(collection, 1, everyIterator(order), function(res) {
-      assert.strictEqual(res, true);
-      assert.deepEqual(order, [1, 3, 1, 5]);
+      assert.deepEqual(order, [1, 3, 2]);
       done();
     });
 
@@ -276,13 +264,14 @@ describe('#everyLimit', function() {
 
     var order = [];
     var collection = {
-      a: 4,
+      a: 1,
       b: 3,
-      c: 2
+      c: 2,
+      d: 4
     };
     async.everyLimit(collection, 2, everyIterator(order), function(res) {
       assert.strictEqual(res, false);
-      assert.deepEqual(order, [3, 4]);
+      assert.deepEqual(order, [1, 3, 2]);
       done();
     });
 
