@@ -21,6 +21,12 @@ describe('#apply', function() {
     fn(1, 2, 3, 4);
     fn(1, 2, 3, 4);
 
+    assert.strictEqual(
+      async.apply(function(name) {
+        return 'hello ' + name;
+      }, 'world')(),
+      'hello world'
+    );
     done();
 
   });
