@@ -332,6 +332,83 @@ describe('#queue', function() {
 
   });
 
+  it('should kill process', function(done) {
+
+    var q = async.queue(function (task, callback) {
+      setTimeout(function () {
+        assert.equal(false, 'Function should never be called');
+        callback();
+      }, 100);
+    }, 1);
+    q.drain = function() {
+      assert.equal(false, 'Function should never be called');
+    };
+
+    q.push(0);
+    q.kill();
+
+    setTimeout(function() {
+      assert.strictEqual(q.length(), 0);
+      done();
+    }, 200);
+  });
+
+  it('should check events', function(done) {
+
+    var calls = [];
+    var q = async.queue(function(task, cb) {
+      // nop
+      calls.push('process ' + task);
+      async.setImmediate(cb);
+    }, 10);
+    q.concurrency = 3;
+
+    q.saturated = function() {
+      assert.strictEqual(q.length(), 3);
+      calls.push('saturated');
+    };
+    q.empty = function() {
+      assert.strictEqual(q.length(), 0);
+      calls.push('empty');
+    };
+    q.drain = function() {
+      assert.strictEqual(q.length(), 0);
+      assert.strictEqual(q.running(), 0);
+      calls.push('drain');
+      assert.deepEqual(calls, [
+        'saturated',
+        'process foo',
+        'process bar',
+        'process zoo',
+        'foo cb',
+        'process poo',
+        'bar cb',
+        'empty',
+        'process moo',
+        'zoo cb',
+        'poo cb',
+        'moo cb',
+        'drain'
+      ]);
+      done();
+    };
+    q.push('foo', function() { calls.push('foo cb'); });
+    q.push('bar', function() { calls.push('bar cb'); });
+    q.push('zoo', function() { calls.push('zoo cb'); });
+    q.push('poo', function() { calls.push('poo cb'); });
+    q.push('moo', function() { calls.push('moo cb'); });
+  });
+
+  it('should start', function(done) {
+
+    var q = async.queue(function() {});
+
+    assert.strictEqual(q.started, false);
+    q.push([]);
+    assert.strictEqual(q.started, true);
+    done();
+  });
+
 });
 
 describe('#priorityQueue', function() {
