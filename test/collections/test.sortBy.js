@@ -265,13 +265,13 @@ describe('#sortByLimit', function() {
   it('should execute iterator by collection of array', function(done) {
 
     var order = [];
-    var collection = [1, 3, 2];
+    var collection = [1, 5, 3, 2, 4];
     async.sortByLimit(collection, 2, sortByIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [1, 2, 3]);
-      assert.deepEqual(order, [1, 3, 2]);
+      assert.deepEqual(res, [1, 2, 3, 4, 5]);
+      assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
 
@@ -282,15 +282,17 @@ describe('#sortByLimit', function() {
     var order = [];
     var collection = {
       a: 1,
-      b: 3,
-      c: 2
+      b: 5,
+      c: 3,
+      d: 2,
+      e: 4
     };
     async.sortByLimit(collection, 2, sortByIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [1, 2, 3]);
-      assert.deepEqual(order, [1, 3, 2]);
+      assert.deepEqual(res, [1, 2, 3, 4, 5]);
+      assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
 

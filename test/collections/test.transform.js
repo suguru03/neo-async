@@ -423,14 +423,14 @@ describe('#transformLimit', function() {
   it('should execute iterator in limited by collection of array', function(done) {
 
     var order = [];
-    var collection = [1, 3, 4, 2, 3, 1, 1];
+    var collection = [1, 5, 3, 2, 4];
 
     async.transformLimit(collection, 2, transformIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [1, 3, 1, 3, 1]);
-      assert.deepEqual(order, [1, 3, 2, 4, 1, 3, 1]);
+      assert.deepEqual(res, [1, 3, 5]);
+      assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
 
@@ -441,17 +441,17 @@ describe('#transformLimit', function() {
     var order = [];
     var collection = {
       a: 1,
-      b: 3,
-      c: 4,
-      d: 3,
-      e: 1
+      b: 5,
+      c: 3,
+      d: 2,
+      e: 4
     };
-    async.transformLimit(collection, 3, transformIterator(order), function(err, res) {
+    async.transformLimit(collection, 2, transformIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, { a: 1, b: 3, d: 3, e: 1 });
-      assert.deepEqual(order, [1, 3, 4, 1, 3]);
+      assert.deepEqual(res, { a: 1, b: 5, c: 3 });
+      assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
 
@@ -526,7 +526,7 @@ describe('#transformLimit', function() {
         callback(value === 3);
       }, value * 10);
     };
-    async.transformLimit(collection, 3, iterator, function(err, res) {
+    async.transformLimit(collection, 2, iterator, function(err, res) {
       assert.ok(err);
       assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [1, 3]);
