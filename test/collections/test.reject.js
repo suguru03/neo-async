@@ -45,7 +45,7 @@ describe('#reject', function() {
       c: 2
     };
     async.reject(collection, rejectIterator(order), function(res) {
-      assert.deepEqual(res, { c: 2, a: 4 });
+      assert.deepEqual(res, [4, 2]);
       assert.deepEqual(order, [2, 3, 4]);
       done();
     });
@@ -62,7 +62,7 @@ describe('#reject', function() {
     };
 
     async.reject(collection, rejectIterator(order), function(res) {
-      assert.deepEqual(res, { b: 3.5 });
+      assert.deepEqual(res, [3.5]);
       assert.deepEqual(order, [1, 3, 4]);
       done();
     }, Math);
@@ -167,7 +167,7 @@ describe('#rejectSeries', function() {
       c: 2
     };
     async.rejectSeries(collection, rejectIterator(order), function(res) {
-      assert.deepEqual(res, { a: 4, c: 2 });
+      assert.deepEqual(res, [4, 2]);
       assert.deepEqual(order, [4, 3, 2]);
       done();
     });
@@ -184,7 +184,7 @@ describe('#rejectSeries', function() {
     };
 
     async.rejectSeries(collection, rejectIterator(order), function(res) {
-      assert.deepEqual(res, { b: 3.5 });
+      assert.deepEqual(res, [3.5]);
       assert.deepEqual(order, [1, 4, 3]);
       done();
     }, Math);
@@ -271,11 +271,11 @@ describe('#rejectLimit', function() {
   it('should execute iterator in limited by collection of array', function(done) {
 
     var order = [];
-    var collection = [1, 3, 4, 2, 3, 1];
+    var collection = [1, 5, 3, 2, 4];
 
     async.rejectLimit(collection, 2, rejectIterator(order), function(res) {
-      assert.deepEqual(res, [4, 2]);
-      assert.deepEqual(order, [1, 3, 2, 4, 1, 3]);
+      assert.deepEqual(res, [2, 4]);
+      assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
 
@@ -286,14 +286,14 @@ describe('#rejectLimit', function() {
     var order = [];
     var collection = {
       a: 1,
-      b: 3,
-      c: 4,
-      d: 3,
-      e: 1
+      b: 5,
+      c: 3,
+      d: 2,
+      e: 4
     };
-    async.rejectLimit(collection, 3, rejectIterator(order), function(res) {
-      assert.deepEqual(res, { c: 4 });
-      assert.deepEqual(order, [1, 3, 4, 1, 3]);
+    async.rejectLimit(collection, 2, rejectIterator(order), function(res) {
+      assert.deepEqual(res, [2, 4]);
+      assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
 
@@ -309,7 +309,7 @@ describe('#rejectLimit', function() {
     };
 
     async.rejectLimit(collection, 2, rejectIterator(order), function(res) {
-      assert.deepEqual(res, { b: 3.5 });
+      assert.deepEqual(res, [3.5]);
       assert.deepEqual(order, [1, 4, 3]);
       done();
     }, Math);

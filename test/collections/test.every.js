@@ -297,10 +297,10 @@ describe('#everyLimit', function() {
   it('should execute like parallel if limit is Infinity', function(done) {
 
     var order = [];
-    var collection = [1, 3, 2, 4];
+    var collection = [1, 3, 7, 5];
     async.everyLimit(collection, Infinity, everyIterator(order), function(res) {
-      assert.strictEqual(res, false);
-      assert.deepEqual(order, [1, 2]);
+      assert.strictEqual(res, true);
+      assert.deepEqual(order, [1, 3, 5, 7]);
       done();
     });
 

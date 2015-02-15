@@ -271,11 +271,11 @@ describe('#pickLimit', function() {
   it('should execute iterator in limited by collection of array', function(done) {
 
     var order = [];
-    var collection = [1, 3, 4, 2, 3, 1, 3];
+    var collection = [1, 5, 3, 2, 4];
 
     async.pickLimit(collection, 2, pickIterator(order), function(res) {
-      assert.deepEqual(res, [1, 3, 3, 1, 3]);
-      assert.deepEqual(order, [1, 3, 2, 4, 1, 3, 3]);
+      assert.deepEqual(res, [1, 5, 3]);
+      assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
 
@@ -286,14 +286,14 @@ describe('#pickLimit', function() {
     var order = [];
     var collection = {
       a: 1,
-      b: 3,
-      c: 4,
-      d: 3,
-      e: 1
+      b: 5,
+      c: 3,
+      d: 2,
+      e: 4
     };
-    async.pickLimit(collection, 3, pickIterator(order), function(res) {
-      assert.deepEqual(res, { a: 1, b: 3, d: 3, e: 1 });
-      assert.deepEqual(order, [1, 3, 4, 1, 3]);
+    async.pickLimit(collection, 2, pickIterator(order), function(res) {
+      assert.deepEqual(res, { a: 1, b: 5, c: 3 });
+      assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
 
