@@ -195,15 +195,15 @@ describe('#parallelLimit', function() {
   it('should execute in limited by tasks of array', function(done) {
 
     var order = [];
-    var numbers = [1, 3, 2, 4, 1];
+    var numbers = [1, 4, 2, 3, 1];
     var tasks = createTasks(order, numbers);
 
     async.parallelLimit(tasks, 2, function(err, res) {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [2, 6, 4, 8, 2]);
-      assert.deepEqual(order, [1, 3, 2, 4, 1]);
+      assert.deepEqual(res, [2, 8, 4, 6, 2]);
+      assert.deepEqual(order, [1, 2, 4, 1, 3]);
       done();
     });
   });
@@ -225,7 +225,7 @@ describe('#parallelLimit', function() {
         return done(err);
       }
       assert.deepEqual(res, { b: 4, a: 8, c: 2, d: 6, e: 2 });
-      assert.deepEqual(order, [2, 4, 1, 3, 1]);
+      assert.deepEqual(order, [2, 1, 4, 1, 3]);
       done();
     });
   });
@@ -319,7 +319,7 @@ describe('#parallelLimit', function() {
 
     async.parallelLimit(tasks, 2, function(err) {
       assert.ok(err);
-      assert.deepEqual(order, [1, 3, 2]);
+      assert.deepEqual(order, [1, 3]);
       done();
     });
 

@@ -142,7 +142,7 @@ describe('#eventEmitter', function() {
         return done(err);
       }
       assert.deepEqual(res, [1, 4, 3, 2]);
-      assert.deepEqual(order, [1, 4, 2, 3]);
+      assert.deepEqual(order, [1, 4, 3, 2]);
       done();
     });
 
