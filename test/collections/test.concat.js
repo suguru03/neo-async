@@ -347,13 +347,13 @@ describe('#concatLimit', function() {
   it('should execute iterator by collection of array', function(done) {
 
     var order = [];
-    var collection = [1, 3, 2];
+    var collection = [1, 5, 3, 4, 2];
     async.concatLimit(collection, 2, concatIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [1, 3, 2, 1, 2, 1]);
-      assert.deepEqual(order, [1, 3, 2]);
+      assert.deepEqual(res, [1, 3, 2, 1, 5, 4, 3, 2, 1, 2, 1, 4, 3, 2, 1]);
+      assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
 
@@ -364,15 +364,17 @@ describe('#concatLimit', function() {
     var order = [];
     var collection = {
       a: 1,
-      b: 3,
-      c: 2
+      b: 5,
+      c: 3,
+      d: 4,
+      e: 2
     };
-    async.concatLimit(collection, 3, concatIterator(order), function(err, res) {
+    async.concatLimit(collection, 2, concatIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [1, 2, 1, 3, 2, 1]);
-      assert.deepEqual(order, [1, 2, 3]);
+      assert.deepEqual(res, [1, 3, 2, 1, 5, 4, 3, 2, 1, 2, 1, 4, 3, 2, 1]);
+      assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
 
