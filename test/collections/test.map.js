@@ -360,14 +360,14 @@ describe('#mapLimit', function() {
   it('should execute iterator in limited by collection of array', function(done) {
 
     var order = [];
-    var collection = [1, 3, 4, 2, 3];
+    var collection = [1, 5, 3, 4, 2];
 
     async.mapLimit(collection, 2, mapIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [2, 6, 8, 4, 6]);
-      assert.deepEqual(order, [1, 3, 2, 4, 3]);
+      assert.deepEqual(res, [2, 10, 6, 8, 4]);
+      assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
 
@@ -378,17 +378,17 @@ describe('#mapLimit', function() {
     var order = [];
     var collection = {
       a: 1,
-      b: 3,
-      c: 4,
-      d: 3,
-      e: 1
+      b: 5,
+      c: 3,
+      d: 4,
+      e: 2
     };
-    async.mapLimit(collection, 3, mapIterator(order), function(err, res) {
+    async.mapLimit(collection, 2, mapIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [2, 6, 8, 6, 2]);
-      assert.deepEqual(order, [1, 3, 4, 1, 3]);
+      assert.deepEqual(res, [2, 10, 6, 8, 4]);
+      assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
 
