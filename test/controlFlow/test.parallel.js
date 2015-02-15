@@ -32,13 +32,19 @@ describe('#parallel', function() {
     var order = [];
     var numbers = [1, 3, 2, 4];
     var tasks = createTasks(order, numbers);
+    tasks.push(function(cb) {
+      setTimeout(function() {
+        order.push(5);
+        cb(null, 5, 5);
+      }, 50);
+    });
 
     async.parallel(tasks, function(err, res) {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [2, 6, 4, 8]);
-      assert.deepEqual(order, [1, 2, 3, 4]);
+      assert.deepEqual(res, [2, 6, 4, 8, [5, 5]]);
+      assert.deepEqual(order, [1, 2, 3, 4, 5]);
       done();
     });
   });
@@ -197,13 +203,19 @@ describe('#parallelLimit', function() {
     var order = [];
     var numbers = [1, 4, 2, 3, 1];
     var tasks = createTasks(order, numbers);
+    tasks.push(function(cb) {
+      setTimeout(function() {
+        order.push(5);
+        cb(null, 5, 5);
+      }, 50);
+    });
 
     async.parallelLimit(tasks, 2, function(err, res) {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [2, 8, 4, 6, 2]);
-      assert.deepEqual(order, [1, 2, 4, 1, 3]);
+      assert.deepEqual(res, [2, 8, 4, 6, 2, [5, 5]]);
+      assert.deepEqual(order, [1, 2, 4, 1, 3, 5]);
       done();
     });
   });

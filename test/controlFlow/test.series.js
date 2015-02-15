@@ -32,13 +32,19 @@ describe('#series', function() {
     var order = [];
     var numbers = [1, 3, 2, 4];
     var tasks = createTasks(order, numbers);
+    tasks.push(function(cb) {
+      setTimeout(function() {
+        order.push(5);
+        cb(null, 5, 5);
+      }, 50);
+    });
 
     async.series(tasks, function(err, res) {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [2, 6, 4, 8]);
-      assert.deepEqual(order, [1, 3, 2, 4]);
+      assert.deepEqual(res, [2, 6, 4, 8, [5, 5]]);
+      assert.deepEqual(order, [1, 3, 2, 4, 5]);
       done();
     });
 
