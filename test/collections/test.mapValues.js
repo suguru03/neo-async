@@ -18,7 +18,7 @@ function mapValuesIterator(order) {
 
       order.push(num);
       callback(null, num * 2);
-    }, num * 10);
+    }, num * 30);
   };
 }
 
@@ -438,7 +438,7 @@ describe('#mapValuesLimit', function() {
       setTimeout(function() {
         order.push(num);
         callback(num === 3, num);
-      }, num * 10);
+      }, num * 30);
     };
 
     async.mapValuesLimit(collection, 4, iterator, function(err, res) {

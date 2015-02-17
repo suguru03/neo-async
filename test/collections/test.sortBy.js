@@ -18,7 +18,7 @@ function sortByIterator(order) {
 
       order.push(num);
       callback(null, num * 2);
-    }, num * 10);
+    }, num * 30);
   };
 }
 
@@ -321,13 +321,13 @@ describe('#sortByLimit', function() {
   it('should execute like parallel if limit is Infinity', function(done) {
 
     var order = [];
-    var collection = [1, 3, 2];
+    var collection = [1, 5, 3];
     async.sortByLimit(collection, Infinity, sortByIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [1, 2, 3]);
-      assert.deepEqual(order, [1, 2, 3]);
+      assert.deepEqual(res, [1, 3, 5]);
+      assert.deepEqual(order, [1, 3, 5]);
       done();
     });
 
@@ -336,12 +336,12 @@ describe('#sortByLimit', function() {
   it('should throw error', function(done) {
 
     var order = [];
-    var collection = [1, 3, 2];
+    var collection = [1, 5, 3];
     var iterator = function(num, callback) {
       setTimeout(function() {
         order.push(num);
         callback(num === 3, num);
-      }, num * 10);
+      }, num * 30);
     };
     async.sortByLimit(collection, 2, iterator, function(err, res) {
       assert.ok(err);

@@ -218,7 +218,7 @@ describe('#timesLimit', function() {
       setTimeout(function() {
         order.push(n);
         done(null, n);
-      }, n * 10);
+      }, n * 30);
     };
     async.timesLimit(n, Infinity, iterator, function(err, res) {
       if (err) {

@@ -18,7 +18,7 @@ function detectIterator(order) {
 
       order.push(num);
       callback(num % 2);
-    }, num * 20);
+    }, num * 30);
   };
 }
 
@@ -339,11 +339,11 @@ describe('#detectLimit', function() {
   it('should not get item', function(done) {
 
     var order = [];
-    var collection = [2, 6, 4];
+    var collection = [2, 8, 4];
 
     async.detectLimit(collection, 2, detectIterator(order), function(res) {
       assert.strictEqual(res, undefined);
-      assert.deepEqual(order, [2, 6, 4]);
+      assert.deepEqual(order, [2, 4, 8]);
       done();
     });
 

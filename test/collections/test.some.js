@@ -18,7 +18,7 @@ function someIterator(order) {
 
       order.push(num);
       callback(num % 2);
-    }, num * 20);
+    }, num * 30);
   };
 }
 

@@ -24,7 +24,7 @@ function concatIterator(order) {
       }
 
       callback(null, array);
-    }, num * 10);
+    }, num * 30);
   };
 }
 
@@ -386,7 +386,7 @@ describe('#concatLimit', function() {
     var collection = {
       a: 1.1,
       b: 3.5,
-      c: 2.7
+      c: 2.5
     };
 
     async.concatLimit(collection, 2, concatIterator(order), function(err, res) {
@@ -423,7 +423,7 @@ describe('#concatLimit', function() {
       setTimeout(function() {
         order.push(num);
         callback(num === 3, num);
-      }, num * 10);
+      }, num * 30);
     };
     async.concatLimit(collection, 5, iterator, function(err, res) {
       assert.ok(err);

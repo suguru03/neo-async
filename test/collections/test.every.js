@@ -18,7 +18,7 @@ function everyIterator(order) {
 
       order.push(num);
       callback(num % 2);
-    }, num * 20);
+    }, num * 30);
   };
 }
 
@@ -251,10 +251,10 @@ describe('#everyLimit', function() {
   it('should execute iterator by collection of array', function(done) {
 
     var order = [];
-    var collection = [1, 3, 2, 4];
+    var collection = [1, 5, 2, 4];
     async.everyLimit(collection, 2, everyIterator(order), function(res) {
       assert.strictEqual(res, false);
-      assert.deepEqual(order, [1, 3, 2]);
+      assert.deepEqual(order, [1, 2]);
       done();
     });
 
@@ -265,13 +265,13 @@ describe('#everyLimit', function() {
     var order = [];
     var collection = {
       a: 1,
-      b: 3,
+      b: 5,
       c: 2,
       d: 4
     };
     async.everyLimit(collection, 2, everyIterator(order), function(res) {
       assert.strictEqual(res, false);
-      assert.deepEqual(order, [1, 3, 2]);
+      assert.deepEqual(order, [1, 2]);
       done();
     });
 
@@ -297,10 +297,10 @@ describe('#everyLimit', function() {
   it('should execute like parallel if limit is Infinity', function(done) {
 
     var order = [];
-    var collection = [1, 3, 7, 5];
+    var collection = [1, 3, 9, 5];
     async.everyLimit(collection, Infinity, everyIterator(order), function(res) {
       assert.strictEqual(res, true);
-      assert.deepEqual(order, [1, 3, 5, 7]);
+      assert.deepEqual(order, [1, 3, 5, 9]);
       done();
     });
 

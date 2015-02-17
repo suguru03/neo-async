@@ -19,7 +19,7 @@ function eachIterator(order) {
       order.push(num);
       callback();
 
-    }, num * 10);
+    }, num * 30);
   };
 }
 
@@ -476,7 +476,7 @@ describe('#eachLimit', function() {
       setTimeout(function() {
         order.push(num);
         callback(num === 3);
-      }, num * 10);
+      }, num * 30);
     };
 
     async.eachLimit(collection, 3, iterator, function(err) {

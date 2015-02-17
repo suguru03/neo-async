@@ -18,7 +18,7 @@ function filterIterator(order) {
 
       order.push(num);
       callback(num % 2);
-    }, num * 10);
+    }, num * 30);
   };
 }
 

@@ -31,7 +31,7 @@ function transformIterator(order) {
       }
 
       callback();
-    }, num * 10);
+    }, num * 30);
   };
 }
 
@@ -524,7 +524,7 @@ describe('#transformLimit', function() {
         memo.push(value);
         order.push(value);
         callback(value === 3);
-      }, value * 10);
+      }, value * 30);
     };
     async.transformLimit(collection, 2, iterator, function(err, res) {
       assert.ok(err);
