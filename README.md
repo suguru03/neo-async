@@ -174,6 +174,9 @@ bower install neo-async
 ### Collections
 
 * [`concatLimit`](#concatLimit)
+* [`mapValues`](#mapValues)
+* [`mapValuesSeries`](#mapValuesSeries)
+* [`mapValuesLimit`](#mapValuesLimit)
 * [`detectLimit`](#detectLimit)
 * [`everySeries`](#everySeries)
 * [`everyLimit`](#everyLimit)
