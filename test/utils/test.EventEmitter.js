@@ -13,7 +13,7 @@ function createTasks(order, numbers) {
       setTimeout(function() {
         order.push(num);
         callback(null, num);
-      }, num * 10);
+      }, num * 30);
     };
   });
 }
@@ -91,7 +91,7 @@ describe('#eventEmitter', function() {
   it('should execute events in series', function(done) {
 
     var order = [];
-    var numbers = [1, 4, 3, 2];
+    var numbers = [1, 2, 4, 3];
     var eventEmitter = async.eventEmitter();
     var tasks = createTasks(order, numbers);
     eventEmitter.on('event', tasks);
@@ -99,8 +99,8 @@ describe('#eventEmitter', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [1, 4, 3, 2]);
-      assert.deepEqual(order, [1, 4, 3, 2]);
+      assert.deepEqual(res, [1, 2, 4, 3]);
+      assert.deepEqual(order, [1, 2, 4, 3]);
       done();
     });
 
@@ -110,7 +110,7 @@ describe('#eventEmitter', function() {
   it('should execute events in parallel', function(done) {
 
     var order = [];
-    var numbers = [1, 4, 3, 2];
+    var numbers = [1, 2, 4, 3];
     var eventEmitter = async.eventEmitter({
       parallel: true
     });
@@ -120,7 +120,7 @@ describe('#eventEmitter', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [1, 4, 3, 2]);
+      assert.deepEqual(res, [1, 2, 4, 3]);
       assert.deepEqual(order, [1, 2, 3, 4]);
       done();
     });
@@ -130,7 +130,7 @@ describe('#eventEmitter', function() {
   it('should execute events in limited parallel', function(done) {
 
     var order = [];
-    var numbers = [1, 4, 3, 2];
+    var numbers = [1, 4, 2, 3];
     var eventEmitter = async.eventEmitter({
       parallel: true,
       limit: 2
@@ -141,8 +141,8 @@ describe('#eventEmitter', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [1, 4, 3, 2]);
-      assert.deepEqual(order, [1, 4, 3, 2]);
+      assert.deepEqual(res, [1, 4, 2, 3]);
+      assert.deepEqual(order, [1, 2, 4, 3]);
       done();
     });
 
