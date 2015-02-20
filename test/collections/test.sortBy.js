@@ -86,7 +86,7 @@ describe('#sortBy', function() {
       setTimeout(function() {
         order.push(num);
         callback(num === 3, num);
-      }, num * 10);
+      }, num * 30);
     };
     async.sortBy(collection, iterator, function(err, res) {
       assert.ok(err);
