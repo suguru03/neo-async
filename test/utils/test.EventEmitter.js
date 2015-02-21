@@ -18,7 +18,6 @@ function createTasks(order, numbers) {
   });
 }
 
-
 describe('#eventEmitter', function() {
 
   it('should execute emitter', function(done) {
@@ -105,7 +104,6 @@ describe('#eventEmitter', function() {
     });
 
   });
-
 
   it('should execute events in parallel', function(done) {
 
@@ -207,4 +205,3 @@ describe('#eventEmitter', function() {
   });
 
 });
-

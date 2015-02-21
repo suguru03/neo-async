@@ -13,4 +13,3 @@ describe('#noConflict', function() {
     done();
   });
 });
-

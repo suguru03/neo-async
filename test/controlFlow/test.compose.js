@@ -111,7 +111,9 @@ describe('#compose', function() {
 
   it('should execute with binding', function(done) {
 
-    var testContext = { name: 'foo' };
+    var testContext = {
+      name: 'foo'
+    };
 
     var add2 = function(n, cb) {
       assert.strictEqual(this, testContext);
@@ -141,4 +143,3 @@ describe('#compose', function() {
   });
 
 });
-

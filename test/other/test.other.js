@@ -1,7 +1,6 @@
 /* global describe, it */
 
-define = function() {
-};
+define = function() {};
 
 var _ = require('lodash');
 var assert = require('power-assert');

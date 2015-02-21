@@ -13,14 +13,13 @@ function reduceIterator(order) {
 
     setTimeout(function() {
 
-
       if (self && self.round) {
         num = self.round(num);
       }
 
       if (_.isArray(memo)) {
         memo.push(num);
-      } else if (_.isNumber(memo)){
+      } else if (_.isNumber(memo)) {
         memo += num;
       } else {
         memo[num] = num;
@@ -76,7 +75,11 @@ describe('#reduce', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, { 2: 2, 3: 3, 5: 5 });
+      assert.deepEqual(res, {
+        2: 2,
+        3: 3,
+        5: 5
+      });
       assert.deepEqual(order, [5, 3, 2]);
       done();
     });
@@ -96,7 +99,11 @@ describe('#reduce', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, { 1: 1, 3: 3, 4: 4 });
+      assert.deepEqual(res, {
+        1: 1,
+        3: 3,
+        4: 4
+      });
       assert.deepEqual(order, [1, 4, 3]);
       done();
     }, Math);
@@ -132,7 +139,7 @@ describe('#reduce', function() {
     };
     try {
       async.reduce(collection, [], iterator);
-    } catch(e) {
+    } catch (e) {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
@@ -257,7 +264,11 @@ describe('#reduceRight', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, { 2: 2, 3: 3, 5: 5 });
+      assert.deepEqual(res, {
+        2: 2,
+        3: 3,
+        5: 5
+      });
       assert.deepEqual(order, [2, 3, 5]);
       done();
     });
@@ -313,7 +324,7 @@ describe('#reduceRight', function() {
     };
     try {
       async.reduceRight(collection, [], iterator);
-    } catch(e) {
+    } catch (e) {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
@@ -393,4 +404,3 @@ describe('#reduceRight', function() {
   });
 
 });
-

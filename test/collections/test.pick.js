@@ -45,7 +45,9 @@ describe('#pick', function() {
       c: 2
     };
     async.pick(collection, pickIterator(order), function(res) {
-      assert.deepEqual(res, { b: 3 });
+      assert.deepEqual(res, {
+        b: 3
+      });
       assert.deepEqual(order, [2, 3, 4]);
       done();
     });
@@ -62,7 +64,10 @@ describe('#pick', function() {
     };
 
     async.pick(collection, pickIterator(order), function(res) {
-      assert.deepEqual(res, { a: 1.1, c: 2.6 });
+      assert.deepEqual(res, {
+        a: 1.1,
+        c: 2.6
+      });
       assert.deepEqual(order, [1, 3, 4]);
       done();
     }, Math);
@@ -78,7 +83,7 @@ describe('#pick', function() {
     };
     try {
       async.pick(collection, iterator);
-    } catch(e) {
+    } catch (e) {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
@@ -167,7 +172,9 @@ describe('#pickSeries', function() {
       c: 2
     };
     async.pickSeries(collection, pickIterator(order), function(res) {
-      assert.deepEqual(res, { b: 3 });
+      assert.deepEqual(res, {
+        b: 3
+      });
       assert.deepEqual(order, [4, 3, 2]);
       done();
     });
@@ -184,7 +191,10 @@ describe('#pickSeries', function() {
     };
 
     async.pickSeries(collection, pickIterator(order), function(res) {
-      assert.deepEqual(res, { a: 1.1, c: 2.6 });
+      assert.deepEqual(res, {
+        a: 1.1,
+        c: 2.6
+      });
       assert.deepEqual(order, [1, 4, 3]);
       done();
     }, Math);
@@ -200,7 +210,7 @@ describe('#pickSeries', function() {
     };
     try {
       async.pickSeries(collection, iterator);
-    } catch(e) {
+    } catch (e) {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
@@ -292,7 +302,11 @@ describe('#pickLimit', function() {
       e: 4
     };
     async.pickLimit(collection, 2, pickIterator(order), function(res) {
-      assert.deepEqual(res, { a: 1, b: 5, c: 3 });
+      assert.deepEqual(res, {
+        a: 1,
+        b: 5,
+        c: 3
+      });
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
@@ -309,7 +323,10 @@ describe('#pickLimit', function() {
     };
 
     async.pickLimit(collection, 2, pickIterator(order), function(res) {
-      assert.deepEqual(res, { a: 1.1, c: 2.7 });
+      assert.deepEqual(res, {
+        a: 1.1,
+        c: 2.7
+      });
       assert.deepEqual(order, [1, 4, 3]);
       done();
     }, Math);
@@ -338,7 +355,7 @@ describe('#pickLimit', function() {
     };
     try {
       async.pickLimit(collection, 4, iterator);
-    } catch(e) {
+    } catch (e) {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
@@ -427,4 +444,3 @@ describe('#pickLimit', function() {
   });
 
 });
-

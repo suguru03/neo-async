@@ -48,7 +48,7 @@ describe('#queue', function() {
       order.callback.push(4);
     });
 
-    assert.strictEqual(queue.length(),  4);
+    assert.strictEqual(queue.length(), 4);
     assert.strictEqual(queue.concurrency, concurrency);
 
     queue.drain = function() {
@@ -101,13 +101,13 @@ describe('#queue', function() {
       order.callback.push(4);
     });
 
-    assert.strictEqual(queue.length(),  4);
+    assert.strictEqual(queue.length(), 4);
     assert.strictEqual(queue.concurrency, 1);
 
     queue.drain = function() {
       assert.deepEqual(order.callback, [1, 2, 3, 4]);
       assert.deepEqual(order.process, [1, 2, 3, 4]);
-      assert.strictEqual(queue.length(),  0);
+      assert.strictEqual(queue.length(), 0);
       assert.strictEqual(queue.concurrency, 1);
       done();
     };
@@ -134,7 +134,9 @@ describe('#queue', function() {
 
     _.forEach(names, function(name) {
 
-      queue.push({ name: name }, function(err) {
+      queue.push({
+        name: name
+      }, function(err) {
         if (err) {
           results.push(name + 'Error');
         } else {
@@ -187,13 +189,13 @@ describe('#queue', function() {
       order.callback.push(4);
     });
 
-    assert.strictEqual(queue.length(),  4);
+    assert.strictEqual(queue.length(), 4);
     assert.strictEqual(queue.concurrency, 2);
 
     queue.drain = function() {
       assert.deepEqual(order.callback, [2, 1, 3, 4]);
       assert.deepEqual(order.process, [2, 1, 3, 4]);
-      assert.strictEqual(queue.length(),  0);
+      assert.strictEqual(queue.length(), 0);
       assert.strictEqual(queue.concurrency, 1);
       done();
     };
@@ -247,13 +249,13 @@ describe('#queue', function() {
       order.callback.push(4);
     });
 
-    assert.strictEqual(queue.length(),  4);
+    assert.strictEqual(queue.length(), 4);
     assert.strictEqual(queue.concurrency, 2);
 
     queue.drain = function() {
       assert.deepEqual(order.callback, [3, 4, 2, 1]);
       assert.deepEqual(order.process, [3, 4, 2, 1]);
-      assert.strictEqual(queue.length(),  0);
+      assert.strictEqual(queue.length(), 0);
       assert.strictEqual(queue.concurrency, 1);
       done();
     };
@@ -317,8 +319,7 @@ describe('#queue', function() {
     queue.push(1, function() {
       assert.strictEqual(queue.length(), 0);
     });
-    queue.push(2, function() {
-    });
+    queue.push(2, function() {});
     setTimeout(function() {
       queue.resume();
     }, 100);
@@ -334,8 +335,8 @@ describe('#queue', function() {
 
   it('should kill process', function(done) {
 
-    var q = async.queue(function (task, callback) {
-      setTimeout(function () {
+    var q = async.queue(function(task, callback) {
+      setTimeout(function() {
         assert.equal(false, 'Function should never be called');
         callback();
       }, 100);
@@ -392,11 +393,21 @@ describe('#queue', function() {
       ]);
       done();
     };
-    q.push('foo', function() { calls.push('foo cb'); });
-    q.push('bar', function() { calls.push('bar cb'); });
-    q.push('zoo', function() { calls.push('zoo cb'); });
-    q.push('poo', function() { calls.push('poo cb'); });
-    q.push('moo', function() { calls.push('moo cb'); });
+    q.push('foo', function() {
+      calls.push('foo cb');
+    });
+    q.push('bar', function() {
+      calls.push('bar cb');
+    });
+    q.push('zoo', function() {
+      calls.push('zoo cb');
+    });
+    q.push('poo', function() {
+      calls.push('poo cb');
+    });
+    q.push('moo', function() {
+      calls.push('moo cb');
+    });
   });
 
   it('should start', function(done) {
@@ -538,4 +549,3 @@ describe('#priorityQueue', function() {
   });
 
 });
-

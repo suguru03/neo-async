@@ -57,8 +57,7 @@ describe('#memoize', function() {
 
       var call_order = [
         ['fn', 1, 2],
-        'tick1',
-        ['cb', 1, 2],
+        'tick1', ['cb', 1, 2],
         // ['fn', 1, 2], memoized
         'tick2',
         // ['cb', 1, 2], memoized
@@ -101,4 +100,3 @@ describe('#memoize', function() {
   });
 
 });
-

@@ -19,7 +19,7 @@ function concatIterator(order) {
       order.push(num);
       var array = [];
 
-      while(num > 0) {
+      while (num > 0) {
         array.push(num--);
       }
 
@@ -261,7 +261,7 @@ describe('#concatSeries', function() {
     };
     try {
       async.concatSeries(collection, iterator);
-    } catch(e) {
+    } catch (e) {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
@@ -537,4 +537,3 @@ describe('#concatLimit', function() {
   });
 
 });
-

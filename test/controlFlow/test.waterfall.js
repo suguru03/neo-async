@@ -7,11 +7,11 @@ var async = require('../../');
 
 function createTasks(type, numbers) {
 
-  switch(type) {
-  case 'simple':
-    return createSimpleTasks();
-  case 'complex':
-    return createComplexTasks();
+  switch (type) {
+    case 'simple':
+      return createSimpleTasks();
+    case 'complex':
+      return createComplexTasks();
   }
 
   function createSimpleTasks() {
@@ -68,7 +68,6 @@ function createTasks(type, numbers) {
 
     return tasks;
   }
-
 
 }
 
@@ -235,4 +234,3 @@ describe('#waterfall', function() {
   });
 
 });
-

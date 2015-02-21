@@ -91,13 +91,12 @@ describe('#times', function() {
     };
     try {
       async.times(4, iterator);
-    } catch(e) {
+    } catch (e) {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
 
   });
-
 
 });
 
@@ -169,7 +168,7 @@ describe('#timesSeries', function() {
     };
     try {
       async.timesSeries(4, iterator);
-    } catch(e) {
+    } catch (e) {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
@@ -269,7 +268,7 @@ describe('#timesLimit', function() {
     };
     try {
       async.timesLimit(4, 2, iterator);
-    } catch(e) {
+    } catch (e) {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
@@ -277,4 +276,3 @@ describe('#timesLimit', function() {
   });
 
 });
-

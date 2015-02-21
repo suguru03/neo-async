@@ -35,7 +35,6 @@ function transformIterator(order) {
   };
 }
 
-
 describe('#transform', function() {
 
   it('should execute iterator by collection of array', function(done) {
@@ -66,7 +65,10 @@ describe('#transform', function() {
         return done(err);
       }
 
-      assert.deepEqual(res, { b: 3, a: 5 });
+      assert.deepEqual(res, {
+        b: 3,
+        a: 5
+      });
       assert.deepEqual(order, [2, 3, 5]);
       done();
     });
@@ -110,7 +112,9 @@ describe('#transform', function() {
         return done(err);
       }
 
-      assert.deepEqual(res, { b: 3 });
+      assert.deepEqual(res, {
+        b: 3
+      });
       assert.deepEqual(order, [2, 3, 3.5]);
       done();
     });
@@ -130,7 +134,10 @@ describe('#transform', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, { a: 1, c: 3 });
+      assert.deepEqual(res, {
+        a: 1,
+        c: 3
+      });
       assert.deepEqual(order, [1, 3, 4]);
       done();
     }, {}, Math);
@@ -260,7 +267,10 @@ describe('#transformSeries', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, { a: 5, b: 3 });
+      assert.deepEqual(res, {
+        a: 5,
+        b: 3
+      });
       assert.deepEqual(order, [5, 3, 2]);
       done();
     });
@@ -281,7 +291,9 @@ describe('#transformSeries', function() {
         return done(err);
       }
 
-      assert.deepEqual(res, { a: 5 });
+      assert.deepEqual(res, {
+        a: 5
+      });
       assert.deepEqual(order, [5, 3.5]);
       done();
     });
@@ -301,7 +313,10 @@ describe('#transformSeries', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, { a: 1, c: 3 });
+      assert.deepEqual(res, {
+        a: 1,
+        c: 3
+      });
       assert.deepEqual(order, [1, 4, 3]);
       done();
     }, undefined, Math);
@@ -337,7 +352,7 @@ describe('#transformSeries', function() {
     };
     try {
       async.transformSeries(collection, iterator);
-    } catch(e) {
+    } catch (e) {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
@@ -450,7 +465,11 @@ describe('#transformLimit', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, { a: 1, b: 5, c: 3 });
+      assert.deepEqual(res, {
+        a: 1,
+        b: 5,
+        c: 3
+      });
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
@@ -472,7 +491,9 @@ describe('#transformLimit', function() {
         return done(err);
       }
 
-      assert.deepEqual(res, { b: 3 });
+      assert.deepEqual(res, {
+        b: 3
+      });
       assert.deepEqual(order, [2, 3, 3.5]);
       done();
     });
@@ -635,4 +656,3 @@ describe('#transformLimit', function() {
   });
 
 });
-

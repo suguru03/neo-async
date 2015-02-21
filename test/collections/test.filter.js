@@ -335,4 +335,3 @@ describe('#filterLimit', function() {
   });
 
 });
-

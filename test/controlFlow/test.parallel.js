@@ -64,7 +64,12 @@ describe('#parallel', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, { c: 2, b: 4, d: 6, a: 8 });
+      assert.deepEqual(res, {
+        c: 2,
+        b: 4,
+        d: 6,
+        a: 8
+      });
       assert.deepEqual(order, [1, 2, 3, 4]);
       done();
     });
@@ -101,7 +106,12 @@ describe('#parallel', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, { a: 2, c: 4, b: 4, d: 8 });
+      assert.deepEqual(res, {
+        a: 2,
+        c: 4,
+        b: 4,
+        d: 8
+      });
       assert.deepEqual(order, [1.2, 1.5, 2.4, 3.6]);
       done();
     }, Math);
@@ -171,7 +181,7 @@ describe('#parallel', function() {
 
     try {
       async.parallel(tasks);
-    } catch(e) {
+    } catch (e) {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
@@ -236,7 +246,13 @@ describe('#parallelLimit', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, { b: 4, a: 8, c: 2, d: 6, e: 2 });
+      assert.deepEqual(res, {
+        b: 4,
+        a: 8,
+        c: 2,
+        d: 6,
+        e: 2
+      });
       assert.deepEqual(order, [2, 1, 4, 1, 3]);
       done();
     });
@@ -273,7 +289,12 @@ describe('#parallelLimit', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, { a: 2, c: 4, b: 4, d: 8 });
+      assert.deepEqual(res, {
+        a: 2,
+        c: 4,
+        b: 4,
+        d: 8
+      });
       assert.deepEqual(order, [1.2, 1.5, 2.4, 3.6]);
       done();
     }, Math);
@@ -346,7 +367,7 @@ describe('#parallelLimit', function() {
 
     try {
       async.parallelLimit(tasks, 4);
-    } catch(e) {
+    } catch (e) {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
@@ -354,4 +375,3 @@ describe('#parallelLimit', function() {
   });
 
 });
-

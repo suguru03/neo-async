@@ -87,4 +87,3 @@ describe('#createLogger', function() {
   });
 
 });
-

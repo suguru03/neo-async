@@ -215,6 +215,4 @@ describe('#cargo', function() {
 
   });
 
-
 });
-

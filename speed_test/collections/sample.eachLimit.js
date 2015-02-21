@@ -1,4 +1,5 @@
 #!/usr/bin/env node --stack-size=65536
+
 'use strict';
 var comparator = require('func-comparator');
 var _ = require('lodash');
@@ -27,14 +28,12 @@ var funcs = {
 };
 
 comparator
-.set(funcs)
-.option({
-  async: true,
-  times: times
-})
-.start()
-.result(function(err, res) {
-  console.log(res);
-});
-
-
+  .set(funcs)
+  .option({
+    async: true,
+    times: times
+  })
+  .start()
+  .result(function(err, res) {
+    console.log(res);
+  });

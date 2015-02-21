@@ -32,7 +32,11 @@ describe('#mapValues', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, { '0': 2, '1': 6, '2': 4 });
+      assert.deepEqual(res, {
+        '0': 2,
+        '1': 6,
+        '2': 4
+      });
       assert.deepEqual(order, [1, 2, 3]);
       done();
     });
@@ -51,7 +55,11 @@ describe('#mapValues', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, { a: 2, b: 6, c: 4 });
+      assert.deepEqual(res, {
+        a: 2,
+        b: 6,
+        c: 4
+      });
       assert.deepEqual(order, [1, 2, 3]);
       done();
     });
@@ -71,7 +79,11 @@ describe('#mapValues', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, { a: 2, b: 8, c: 6 });
+      assert.deepEqual(res, {
+        a: 2,
+        b: 8,
+        c: 6
+      });
       assert.deepEqual(order, [1, 3, 4]);
       done();
     }, Math);
@@ -91,7 +103,11 @@ describe('#mapValues', function() {
 
     async.mapValues(collection, iterator, function(err, res) {
       assert.ok(err);
-      assert.deepEqual(res, { '0': 1, '1': 3, '2': 2 });
+      assert.deepEqual(res, {
+        '0': 1,
+        '1': 3,
+        '2': 2
+      });
       assert.deepEqual(order, [1, 2, 3]);
       done();
     });
@@ -107,7 +123,7 @@ describe('#mapValues', function() {
     };
     try {
       async.mapValues(collection, iterator);
-    } catch(e) {
+    } catch (e) {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
@@ -199,7 +215,11 @@ describe('#mapValuesSeries', function() {
         return done(err);
       }
 
-      assert.deepEqual(res, { '0': 2, '1': 6, '2': 4 });
+      assert.deepEqual(res, {
+        '0': 2,
+        '1': 6,
+        '2': 4
+      });
       assert.deepEqual(order, [1, 3, 2]);
       done();
     });
@@ -218,7 +238,11 @@ describe('#mapValuesSeries', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, { a: 2, b: 6, c: 4 });
+      assert.deepEqual(res, {
+        a: 2,
+        b: 6,
+        c: 4
+      });
       assert.deepEqual(order, [1, 3, 2]);
       done();
     });
@@ -238,7 +262,11 @@ describe('#mapValuesSeries', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, { a: 2, b: 8, c: 6 });
+      assert.deepEqual(res, {
+        a: 2,
+        b: 8,
+        c: 6
+      });
       assert.deepEqual(order, [1, 4, 3]);
       done();
     }, Math);
@@ -258,7 +286,10 @@ describe('#mapValuesSeries', function() {
 
     async.mapValuesSeries(collection, iterator, function(err, res) {
       assert.ok(err);
-      assert.deepEqual(res, { '0': 1, '1': 3 });
+      assert.deepEqual(res, {
+        '0': 1,
+        '1': 3
+      });
       assert.deepEqual(order, [1, 3]);
       done();
     });
@@ -274,7 +305,7 @@ describe('#mapValuesSeries', function() {
     };
     try {
       async.mapValuesSeries(collection, iterator);
-    } catch(e) {
+    } catch (e) {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
@@ -366,7 +397,13 @@ describe('#mapValuesLimit', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, { '0': 2, '1': 10, '2': 6, '3': 8, '4': 4 });
+      assert.deepEqual(res, {
+        '0': 2,
+        '1': 10,
+        '2': 6,
+        '3': 8,
+        '4': 4
+      });
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
@@ -387,7 +424,13 @@ describe('#mapValuesLimit', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, { a: 2, b: 10, c: 6, d: 8, e: 4 });
+      assert.deepEqual(res, {
+        a: 2,
+        b: 10,
+        c: 6,
+        d: 8,
+        e: 4
+      });
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
@@ -407,7 +450,11 @@ describe('#mapValuesLimit', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, { a: 2, b: 8, c: 6 });
+      assert.deepEqual(res, {
+        a: 2,
+        b: 8,
+        c: 6
+      });
       assert.deepEqual(order, [1, 4, 3]);
       done();
     }, Math);
@@ -423,7 +470,13 @@ describe('#mapValuesLimit', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, { '0': 2, '1': 6, '2': 8, '3': 4, '4': 6 });
+      assert.deepEqual(res, {
+        '0': 2,
+        '1': 6,
+        '2': 8,
+        '3': 4,
+        '4': 6
+      });
       assert.deepEqual(order, [1, 2, 3, 3, 4]);
       done();
     });
@@ -443,7 +496,11 @@ describe('#mapValuesLimit', function() {
 
     async.mapValuesLimit(collection, 4, iterator, function(err, res) {
       assert.ok(err);
-      assert.deepEqual(res, { '0': 1, '1': 3, '3': 2 });
+      assert.deepEqual(res, {
+        '0': 1,
+        '1': 3,
+        '3': 2
+      });
       assert.deepEqual(order, [1, 2, 3]);
       done();
     });
@@ -459,7 +516,7 @@ describe('#mapValuesLimit', function() {
     };
     try {
       async.mapValuesLimit(collection, 2, iterator);
-    } catch(e) {
+    } catch (e) {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
@@ -569,4 +626,3 @@ describe('#mapValuesLimit', function() {
   });
 
 });
-

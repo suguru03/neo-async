@@ -104,7 +104,7 @@ describe('#each', function() {
 
     try {
       async.each(collection, iterator);
-    } catch(e) {
+    } catch (e) {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
@@ -300,7 +300,7 @@ describe('#eachSeries', function() {
 
     try {
       async.eachSeries(collection, iterator);
-    } catch(e) {
+    } catch (e) {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
@@ -604,4 +604,3 @@ describe('#eachLimit', function() {
   });
 
 });
-

@@ -208,7 +208,7 @@ describe('#detectSeries', function() {
     };
     try {
       async.detectSeries(collection, iterator);
-    } catch(e) {
+    } catch (e) {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
@@ -358,13 +358,12 @@ describe('#detectLimit', function() {
     };
     try {
       async.detectLimit(collection, 2, iterator);
-    } catch(e) {
+    } catch (e) {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
 
   });
-
 
   it('should return response immediately if array is empty', function(done) {
 
@@ -448,4 +447,3 @@ describe('#detectLimit', function() {
   });
 
 });
-

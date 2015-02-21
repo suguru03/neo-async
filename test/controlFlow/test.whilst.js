@@ -220,4 +220,3 @@ describe('#doWhilst', function() {
   });
 
 });
-

@@ -148,11 +148,13 @@ describe('#auto', function() {
     }, function(err, results) {
       assert.ok(err);
       assert.deepEqual(order, ['task2', 'task3']);
-      assert.deepEqual(results, { task2: 'task2', task3: 'task3' });
+      assert.deepEqual(results, {
+        task2: 'task2',
+        task3: 'task3'
+      });
       done();
     });
 
   });
 
 });
-

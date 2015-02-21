@@ -194,7 +194,7 @@ describe('#everySeries', function() {
     };
     try {
       async.everySeries(collection, iterator);
-    } catch(e) {
+    } catch (e) {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
@@ -374,4 +374,3 @@ describe('#everyLimit', function() {
   });
 
 });
-

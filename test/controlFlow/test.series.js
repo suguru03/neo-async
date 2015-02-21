@@ -65,7 +65,12 @@ describe('#series', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, { a: 8, b: 4, c: 2, d: 6 });
+      assert.deepEqual(res, {
+        a: 8,
+        b: 4,
+        c: 2,
+        d: 6
+      });
       assert.deepEqual(order, [4, 2, 1, 3]);
       done();
     });
@@ -89,7 +94,6 @@ describe('#series', function() {
 
   });
 
-
   it('should execute to series by tasks of object with binding', function(done) {
 
     var order = [];
@@ -105,7 +109,12 @@ describe('#series', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, { a: 2, c: 4, b: 4, d: 8 });
+      assert.deepEqual(res, {
+        a: 2,
+        c: 4,
+        b: 4,
+        d: 8
+      });
       assert.deepEqual(order, [1.2, 2.4, 1.5, 3.6]);
       done();
     }, Math);
@@ -175,7 +184,7 @@ describe('#series', function() {
 
     try {
       async.series(tasks);
-    } catch(e) {
+    } catch (e) {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
@@ -183,4 +192,3 @@ describe('#series', function() {
   });
 
 });
-
