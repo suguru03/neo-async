@@ -1,0 +1,19 @@
+{
+  "indentSize": 2,
+  "indentChar": " ",
+  "indentLevel": 0,
+  "indentWithTabs": false,
+  "preserveNewlines": true,
+  "maxPreserveNewlines": 2,
+  "spaceInParen": false,
+  "jslintHappy": false,
+  "braceStyle": "collapse",
+  "breakChainedMethods": false,
+  "keepArrayIndentation": false,
+  "keepFunctionIndentation": false,
+  "unescapeStrings": false,
+  "wrapLineLength": 0,
+  "e4x": false,
+  "evalCode": false,
+  "spaceBeforeConditional": true
+}

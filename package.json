@@ -28,15 +28,17 @@
   "devDependencies": {
     "async": "^0.9.0",
     "codecov.io": "0.0.8",
+    "event-stream": "^3.2.2",
     "func-comparator": "^0.4.1",
     "gulp": "^3.8.11",
     "gulp-exit": "0.0.2",
+    "gulp-jsbeautifier": "0.0.4",
     "gulp-jscs": "^1.4.0",
     "gulp-mocha": "^2.0.0",
     "gulp-util": "^3.0.3",
     "intelli-espower-loader": "^0.5.0",
     "istanbul": "^0.3.4",
-    "lodash": "^2.4.1",
+    "lodash": "^3.3.0",
     "mocha": "^2.0.1",
     "power-assert": "^0.10.0"
   }
