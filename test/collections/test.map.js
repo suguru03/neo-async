@@ -22,6 +22,24 @@ function mapIterator(order) {
   };
 }
 
+function mapIteratorWithKey(order) {
+
+  return function(num, key, callback) {
+
+    var self = this;
+
+    setTimeout(function() {
+
+      if (self && self.round) {
+        num = self.round(num);
+      }
+
+      order.push([num, key]);
+      callback(null, num * 2);
+    }, num * 30);
+  };
+}
+
 describe('#map', function() {
 
   it('should execute iterator by collection of array', function(done) {
@@ -36,7 +54,24 @@ describe('#map', function() {
       assert.deepEqual(order, [1, 2, 3]);
       done();
     });
+  });
 
+  it('should execute iterator by collection of array with passing index', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    async.map(collection, mapIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [2, 6, 4]);
+      assert.deepEqual(order, [
+        [1, 0],
+        [2, 2],
+        [3, 1]
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator by collection of object', function(done) {
@@ -55,7 +90,28 @@ describe('#map', function() {
       assert.deepEqual(order, [1, 2, 3]);
       done();
     });
+  });
 
+  it('should execute iterator by collection of object with passing key', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 1,
+      b: 3,
+      c: 2
+    };
+    async.map(collection, mapIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [2, 6, 4]);
+      assert.deepEqual(order, [
+        [1, 'a'],
+        [2, 'c'],
+        [3, 'b']
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator with binding', function(done) {
@@ -75,7 +131,6 @@ describe('#map', function() {
       assert.deepEqual(order, [1, 3, 4]);
       done();
     }, Math);
-
   });
 
   it('should throw error', function(done) {
@@ -95,7 +150,6 @@ describe('#map', function() {
       assert.deepEqual(order, [1, 2, 3]);
       done();
     });
-
   });
 
   it('should throw error if double callback', function(done) {
@@ -111,7 +165,6 @@ describe('#map', function() {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
-
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -126,7 +179,6 @@ describe('#map', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if object is empty', function(done) {
@@ -141,7 +193,6 @@ describe('#map', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is function', function(done) {
@@ -155,7 +206,6 @@ describe('#map', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is undefined', function(done) {
@@ -169,7 +219,6 @@ describe('#map', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is null', function(done) {
@@ -183,7 +232,6 @@ describe('#map', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
 });
