@@ -20,7 +20,7 @@ function createTasks(order, numbers) {
           num = self.round(num);
         }
         callback(null, num * 2);
-      }, num * 10);
+      }, num * 30);
     };
   });
 }
@@ -36,7 +36,7 @@ describe('#parallel', function() {
       setTimeout(function() {
         order.push(5);
         cb(null, 5, 5);
-      }, 50);
+      }, 150);
     });
 
     async.parallel(tasks, function(err, res) {
@@ -160,7 +160,7 @@ describe('#parallel', function() {
     var error = function(callback) {
       setTimeout(function() {
         callback('error');
-      }, 25);
+      }, 75);
     };
     tasks.splice(2, 0, error);
 
@@ -346,7 +346,7 @@ describe('#parallelLimit', function() {
     var error = function(callback) {
       setTimeout(function() {
         callback('error');
-      }, 25);
+      }, 75);
     };
     tasks.splice(2, 0, error);
 
