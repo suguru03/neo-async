@@ -279,7 +279,29 @@ describe('#mapValuesSeries', function() {
       assert.deepEqual(order, [1, 3, 2]);
       done();
     });
+  });
 
+  it('should execute iterator to series by collection of array with passing index', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    async.mapValuesSeries(collection, mapValuesIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+
+      assert.deepEqual(res, {
+        '0': 2,
+        '1': 6,
+        '2': 4
+      });
+      assert.deepEqual(order, [
+        [1, 0],
+        [3, 1],
+        [2, 2]
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator to series by collection of object', function(done) {
@@ -302,7 +324,32 @@ describe('#mapValuesSeries', function() {
       assert.deepEqual(order, [1, 3, 2]);
       done();
     });
+  });
 
+  it('should execute iterator to series by collection of object with passing key', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 1,
+      b: 3,
+      c: 2
+    };
+    async.mapValuesSeries(collection, mapValuesIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, {
+        a: 2,
+        b: 6,
+        c: 4
+      });
+      assert.deepEqual(order, [
+        [1, 'a'],
+        [3, 'b'],
+        [2, 'c']
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator to series with binding', function(done) {
@@ -326,7 +373,6 @@ describe('#mapValuesSeries', function() {
       assert.deepEqual(order, [1, 4, 3]);
       done();
     }, Math);
-
   });
 
   it('should throw error', function(done) {
@@ -349,7 +395,6 @@ describe('#mapValuesSeries', function() {
       assert.deepEqual(order, [1, 3]);
       done();
     });
-
   });
 
   it('should throw error if double callback', function(done) {
@@ -365,7 +410,6 @@ describe('#mapValuesSeries', function() {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
-
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -380,7 +424,6 @@ describe('#mapValuesSeries', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if object is empty', function(done) {
@@ -395,7 +438,6 @@ describe('#mapValuesSeries', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is function', function(done) {
@@ -409,7 +451,6 @@ describe('#mapValuesSeries', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is undefined', function(done) {
@@ -423,7 +464,6 @@ describe('#mapValuesSeries', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is null', function(done) {
@@ -437,7 +477,6 @@ describe('#mapValuesSeries', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
 });
