@@ -4,24 +4,6 @@
 var assert = require('power-assert');
 var async = require('../../');
 
-function pickIterator(order) {
-
-  return function(num, callback) {
-
-    var self = this;
-
-    setTimeout(function() {
-
-      if (self && self.round) {
-        num = self.round(num);
-      }
-
-      order.push(num);
-      callback(num % 2);
-    }, num * 30);
-  };
-}
-
 describe('#pick', function() {
 
   it('should execute iterator by collection of array', function(done) {
@@ -33,7 +15,55 @@ describe('#pick', function() {
       assert.deepEqual(order, [1, 2, 3, 4]);
       done();
     });
+  });
 
+  it('should execute iterator by collection of array and get 2rd callback argument', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    async.pick(collection, pickIteratorWithError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [1, 3]);
+      assert.deepEqual(order, [1, 2, 3, 4]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of array with passing index', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    async.pick(collection, pickIteratorWithKey(order), function(res) {
+      assert.deepEqual(res, [1, 3]);
+      assert.deepEqual(order, [
+        [1, 0],
+        [2, 2],
+        [3, 1],
+        [4, 3]
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of array with passing index and get 2rd callback argument', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    async.pick(collection, pickIteratorWithKeyAndError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [1, 3]);
+      assert.deepEqual(order, [
+        [1, 0],
+        [2, 2],
+        [3, 1],
+        [4, 3]
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator by collection of object', function(done) {
@@ -51,7 +81,6 @@ describe('#pick', function() {
       assert.deepEqual(order, [2, 3, 4]);
       done();
     });
-
   });
 
   it('should execute iterator with binding', function(done) {
@@ -71,7 +100,6 @@ describe('#pick', function() {
       assert.deepEqual(order, [1, 3, 4]);
       done();
     }, Math);
-
   });
 
   it('should throw error if double callback', function(done) {
@@ -87,7 +115,6 @@ describe('#pick', function() {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
-
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -99,7 +126,6 @@ describe('#pick', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if object is empty', function(done) {
@@ -111,7 +137,6 @@ describe('#pick', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is function', function(done) {
@@ -122,7 +147,6 @@ describe('#pick', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is undefined', function(done) {
@@ -133,7 +157,6 @@ describe('#pick', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is null', function(done) {
@@ -144,7 +167,6 @@ describe('#pick', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
 });
@@ -444,3 +466,71 @@ describe('#pickLimit', function() {
   });
 
 });
+
+function pickIterator(order) {
+
+  return function(num, callback) {
+
+    var self = this;
+
+    setTimeout(function() {
+
+      if (self && self.round) {
+        num = self.round(num);
+      }
+      order.push(num);
+      callback(num % 2);
+    }, num * 30);
+  };
+}
+
+function pickIteratorWithError(order) {
+
+  return function(num, callback) {
+
+    var self = this;
+
+    setTimeout(function() {
+
+      if (self && self.round) {
+        num = self.round(num);
+      }
+      order.push(num);
+      callback(null, num % 2);
+    }, num * 30);
+  };
+}
+
+function pickIteratorWithKey(order) {
+
+  return function(num, key, callback) {
+
+    var self = this;
+
+    setTimeout(function() {
+
+      if (self && self.round) {
+        num = self.round(num);
+      }
+      order.push([num, key]);
+      callback(num % 2);
+    }, num * 30);
+  };
+}
+
+function pickIteratorWithKeyAndError(order) {
+
+  return function(num, key, callback) {
+
+    var self = this;
+
+    setTimeout(function() {
+
+      if (self && self.round) {
+        num = self.round(num);
+      }
+      order.push([num, key]);
+      callback(null, num % 2);
+    }, num * 30);
+  };
+}
