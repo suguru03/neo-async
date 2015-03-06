@@ -182,7 +182,37 @@ describe('#pickSeries', function() {
       assert.deepEqual(order, [1, 3, 2, 4]);
       done();
     });
+  });
 
+  it('should execute iterator by collection of array and get 2rd callback argument', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    async.pickSeries(collection, pickIteratorWithError(order), function(err, res) {
+      console.log(err);
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [1, 3]);
+      assert.deepEqual(order, [1, 3, 2, 4]);
+      done();
+    });
+  });
+
+  it('should execute iterator to series by collection of array with passing index', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    async.pickSeries(collection, pickIteratorWithKey(order), function(res) {
+      assert.deepEqual(res, [1, 3]);
+      assert.deepEqual(order, [
+        [1, 0],
+        [3, 1],
+        [2, 2],
+        [4, 3]
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator to series by collection of object', function(done) {
