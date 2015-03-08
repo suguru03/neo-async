@@ -189,7 +189,6 @@ describe('#pickSeries', function() {
     var order = [];
     var collection = [1, 3, 2, 4];
     async.pickSeries(collection, pickIteratorWithError(order), function(err, res) {
-      console.log(err);
       if (err) {
         return done(err);
       }
