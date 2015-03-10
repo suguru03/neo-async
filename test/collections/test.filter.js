@@ -15,8 +15,24 @@ function filterIterator(order) {
       if (self && self.round) {
         num = self.round(num);
       }
-
       order.push(num);
+      callback(num % 2);
+    }, num * 30);
+  };
+}
+
+function filterIteratorWithKey(order) {
+
+  return function(num, key, callback) {
+
+    var self = this;
+
+    setTimeout(function() {
+
+      if (self && self.round) {
+        num = self.round(num);
+      }
+      order.push([num, key]);
       callback(num % 2);
     }, num * 30);
   };
@@ -33,7 +49,22 @@ describe('#filter', function() {
       assert.deepEqual(order, [1, 2, 3, 4]);
       done();
     });
+  });
 
+  it('should execute iterator by collection of array with passing index', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    async.filter(collection, filterIteratorWithKey(order), function(res) {
+      assert.deepEqual(res, [1, 3]);
+      assert.deepEqual(order, [
+        [1, 0],
+        [2, 2],
+        [3, 1],
+        [4, 3]
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator by collection of object', function(done) {
@@ -49,7 +80,25 @@ describe('#filter', function() {
       assert.deepEqual(order, [2, 3, 4]);
       done();
     });
+  });
 
+  it('should execute iterator by collection of object with passing key', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 4,
+      b: 3,
+      c: 2
+    };
+    async.filter(collection, filterIteratorWithKey(order), function(res) {
+      assert.deepEqual(res, [3]);
+      assert.deepEqual(order, [
+        [2, 'c'],
+        [3, 'b'],
+        [4, 'a']
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator with binding', function(done) {
@@ -60,13 +109,11 @@ describe('#filter', function() {
       b: 3.5,
       c: 2.6
     };
-
     async.filter(collection, filterIterator(order), function(res) {
       assert.deepEqual(res, [1.1, 2.6]);
       assert.deepEqual(order, [1, 3, 4]);
       done();
     }, Math);
-
   });
 
   it('should return response immediately if collection is empty', function(done) {
@@ -87,7 +134,6 @@ describe('#filter', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is undefined', function(done) {
@@ -98,7 +144,6 @@ describe('#filter', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is null', function(done) {
@@ -109,7 +154,6 @@ describe('#filter', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
 });
