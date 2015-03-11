@@ -171,6 +171,22 @@ describe('#filterSeries', function() {
     });
   });
 
+  it('should execute iterator to series by collection of array with passing index', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    async.filterSeries(collection, filterIteratorWithKey(order), function(res) {
+      assert.deepEqual(res, [1, 3]);
+      assert.deepEqual(order, [
+        [1, 0],
+        [3, 1],
+        [2, 2],
+        [4, 3]
+      ]);
+      done();
+    });
+  });
+
   it('should execute iterator to series by collection of object', function(done) {
 
     var order = [];
@@ -184,8 +200,27 @@ describe('#filterSeries', function() {
       assert.deepEqual(order, [1, 3, 2]);
       done();
     });
-
   });
+
+  it('should execute iterator to series by collection of object with passing key', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 1,
+      b: 3,
+      c: 2
+    };
+    async.filterSeries(collection, filterIteratorWithKey(order), function(res) {
+      assert.deepEqual(res, [1, 3]);
+      assert.deepEqual(order, [
+        [1, 'a'],
+        [3, 'b'],
+        [2, 'c']
+      ]);
+      done();
+    });
+  });
+
 
   it('should execute iterator to series with binding', function(done) {
 
@@ -221,7 +256,6 @@ describe('#filterSeries', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is undefined', function(done) {
@@ -232,7 +266,6 @@ describe('#filterSeries', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is null', function(done) {
@@ -243,7 +276,6 @@ describe('#filterSeries', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
 });
