@@ -16,7 +16,7 @@
   createImmediate();
 
   var async = {
-    VERSION: '0.6.2',
+    VERSION: '0.6.3',
 
     // Collections
     each: each,
@@ -2258,7 +2258,7 @@
           _args.unshift(undefined);
           return callback.apply(null, _args);
         }
-        _nextTick(function() {
+        async.nextTick(function() {
           iterate(completed, _args);
         });
       }
@@ -2452,7 +2452,7 @@
 
       if (!tasks || !_tasks.length) {
         if (q.idle()) {
-          _setImmediate(function() {
+          async.nextTick(function() {
             if (typeof q.drain === 'function') {
               q.drain();
             }
@@ -2476,7 +2476,7 @@
         if (typeof q.saturated === 'function' && q.length() === q.concurrency) {
           q.saturated();
         }
-        _setImmediate(q.process);
+        async.nextTick(q.process);
       });
     }
 
@@ -2517,7 +2517,7 @@
 
       if (!tasks || !_tasks.length) {
         if (q.idle()) {
-          _setImmediate(function() {
+          async.nextTick(function() {
             if (typeof q.drain === 'function') {
               q.drain();
             }
@@ -2543,7 +2543,7 @@
         if (typeof q.saturated === 'function' && q.length() === q.concurrency) {
           q.saturated();
         }
-        _setImmediate(q.process);
+        async.nextTick(q.process);
       });
     }
 
@@ -2655,7 +2655,7 @@
         }
       });
 
-      _setImmediate(c.process);
+      async.nextTick(c.process);
     }
 
     function run() {
@@ -2753,7 +2753,7 @@
         }
 
         results[key] = args;
-        _setImmediate(taskComplete);
+        async.nextTick(taskComplete);
       }
 
       function ready() {
@@ -3028,7 +3028,7 @@
       var callback = args.pop();
       var key = hasher.apply(null, args);
       if (_has(memo, key)) {
-        _nextTick(function() {
+        async.nextTick(function() {
           callback.apply(thisArg, memo[key]);
         });
         return;
