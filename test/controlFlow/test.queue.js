@@ -360,7 +360,7 @@ describe('#queue', function() {
     var q = async.queue(function(task, cb) {
       // nop
       calls.push('process ' + task);
-      async.setImmediate(cb);
+      setImmediate(cb);
     }, 10);
     q.concurrency = 3;
 
@@ -418,6 +418,53 @@ describe('#queue', function() {
     q.push([]);
     assert.strictEqual(q.started, true);
     done();
+  });
+
+  it('should check concurrency when queue paused and resumed', function(done) {
+
+    var order = [];
+    var q = async.queue(function(task, callback) {
+      var name = task.name;
+      order.push(['process', name]);
+      setTimeout(function() {
+        order.push(['called', name]);
+        callback();
+      }, 100);
+    }, 5);
+
+    q.pause();
+    _.times(10, function(n) {
+      q.push({
+        name: ++n
+      });
+    });
+    setTimeout(q.resume, 100);
+
+    q.drain = function() {
+      assert.deepEqual(order, [
+        ['process', 1],
+        ['process', 2],
+        ['process', 3],
+        ['process', 4],
+        ['process', 5],
+        ['called', 1],
+        ['process', 6],
+        ['called', 2],
+        ['process', 7],
+        ['called', 3],
+        ['process', 8],
+        ['called', 4],
+        ['process', 9],
+        ['called', 5],
+        ['process', 10],
+        ['called', 6],
+        ['called', 7],
+        ['called', 8],
+        ['called', 9],
+        ['called', 10]
+      ]);
+      done();
+    };
   });
 
 });
