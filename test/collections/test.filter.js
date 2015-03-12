@@ -221,7 +221,6 @@ describe('#filterSeries', function() {
     });
   });
 
-
   it('should execute iterator to series with binding', function(done) {
 
     var order = [];
