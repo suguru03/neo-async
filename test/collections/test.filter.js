@@ -292,7 +292,24 @@ describe('#filterLimit', function() {
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
+  });
 
+  it('should execute iterator in limited by collection of array with passing index', function(done) {
+
+    var order = [];
+    var collection = [1, 5, 3, 2, 4];
+
+    async.filterLimit(collection, 2, filterIteratorWithKey(order), function(res) {
+      assert.deepEqual(res, [1, 5, 3]);
+      assert.deepEqual(order, [
+        [1, 0],
+        [3, 2],
+        [5, 1],
+        [2, 3],
+        [4, 4]
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator to series by collection of object', function(done) {
@@ -310,7 +327,29 @@ describe('#filterLimit', function() {
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
+  });
 
+  it('should execute iterator to series by collection of object with passing key', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 1,
+      b: 5,
+      c: 3,
+      d: 2,
+      e: 4
+    };
+    async.filterLimit(collection, 2, filterIteratorWithKey(order), function(res) {
+      assert.deepEqual(res, [1, 5, 3]);
+      assert.deepEqual(order, [
+        [1, 'a'],
+        [3, 'c'],
+        [5, 'b'],
+        [2, 'd'],
+        [4, 'e']
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator to series with binding', function(done) {
@@ -321,13 +360,11 @@ describe('#filterLimit', function() {
       b: 3.5,
       c: 2.7
     };
-
     async.filterLimit(collection, 2, filterIterator(order), function(res) {
       assert.deepEqual(res, [1.1, 2.7]);
       assert.deepEqual(order, [1, 4, 3]);
       done();
     }, Math);
-
   });
 
   it('should execute like parallel if limit is Infinity', function(done) {
@@ -340,7 +377,6 @@ describe('#filterLimit', function() {
       assert.deepEqual(order, [1, 1, 2, 3, 3, 4]);
       done();
     });
-
   });
 
   it('should return response immediately if collection is empty', function(done) {
@@ -361,7 +397,6 @@ describe('#filterLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is undefined', function(done) {
@@ -372,7 +407,6 @@ describe('#filterLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is null', function(done) {
@@ -383,7 +417,6 @@ describe('#filterLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if limit is zero', function(done) {
@@ -395,7 +428,6 @@ describe('#filterLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if limit is undefined', function(done) {
@@ -407,7 +439,6 @@ describe('#filterLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
 });
