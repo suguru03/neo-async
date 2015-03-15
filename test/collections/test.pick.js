@@ -4,6 +4,74 @@
 var assert = require('power-assert');
 var async = require('../../');
 
+function pickIterator(order) {
+
+  return function(num, callback) {
+
+    var self = this;
+
+    setTimeout(function() {
+
+      if (self && self.round) {
+        num = self.round(num);
+      }
+      order.push(num);
+      callback(num % 2);
+    }, num * 30);
+  };
+}
+
+function pickIteratorWithError(order) {
+
+  return function(num, callback) {
+
+    var self = this;
+
+    setTimeout(function() {
+
+      if (self && self.round) {
+        num = self.round(num);
+      }
+      order.push(num);
+      callback(null, num % 2);
+    }, num * 30);
+  };
+}
+
+function pickIteratorWithKey(order) {
+
+  return function(num, key, callback) {
+
+    var self = this;
+
+    setTimeout(function() {
+
+      if (self && self.round) {
+        num = self.round(num);
+      }
+      order.push([num, key]);
+      callback(num % 2);
+    }, num * 30);
+  };
+}
+
+function pickIteratorWithKeyAndError(order) {
+
+  return function(num, key, callback) {
+
+    var self = this;
+
+    setTimeout(function() {
+
+      if (self && self.round) {
+        num = self.round(num);
+      }
+      order.push([num, key]);
+      callback(null, num % 2);
+    }, num * 30);
+  };
+}
+
 describe('#pick', function() {
 
   it('should execute iterator by collection of array', function(done) {
@@ -495,71 +563,3 @@ describe('#pickLimit', function() {
   });
 
 });
-
-function pickIterator(order) {
-
-  return function(num, callback) {
-
-    var self = this;
-
-    setTimeout(function() {
-
-      if (self && self.round) {
-        num = self.round(num);
-      }
-      order.push(num);
-      callback(num % 2);
-    }, num * 30);
-  };
-}
-
-function pickIteratorWithError(order) {
-
-  return function(num, callback) {
-
-    var self = this;
-
-    setTimeout(function() {
-
-      if (self && self.round) {
-        num = self.round(num);
-      }
-      order.push(num);
-      callback(null, num % 2);
-    }, num * 30);
-  };
-}
-
-function pickIteratorWithKey(order) {
-
-  return function(num, key, callback) {
-
-    var self = this;
-
-    setTimeout(function() {
-
-      if (self && self.round) {
-        num = self.round(num);
-      }
-      order.push([num, key]);
-      callback(num % 2);
-    }, num * 30);
-  };
-}
-
-function pickIteratorWithKeyAndError(order) {
-
-  return function(num, key, callback) {
-
-    var self = this;
-
-    setTimeout(function() {
-
-      if (self && self.round) {
-        num = self.round(num);
-      }
-      order.push([num, key]);
-      callback(null, num % 2);
-    }, num * 30);
-  };
-}

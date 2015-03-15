@@ -15,8 +15,24 @@ function everyIterator(order) {
       if (self && self.round) {
         num = self.round(num);
       }
-
       order.push(num);
+      callback(num % 2);
+    }, num * 30);
+  };
+}
+
+function everyIteratorWithKey(order) {
+
+  return function(num, key, callback) {
+
+    var self = this;
+
+    setTimeout(function() {
+
+      if (self && self.round) {
+        num = self.round(num);
+      }
+      order.push([num, key]);
       callback(num % 2);
     }, num * 30);
   };
@@ -33,7 +49,6 @@ describe('#every', function() {
       assert.deepEqual(order, [1, 2]);
       done();
     });
-
   });
 
   it('should execute iterator by collection of array', function(done) {
@@ -45,7 +60,20 @@ describe('#every', function() {
       assert.deepEqual(order, [1, 1, 3, 5]);
       done();
     });
+  });
 
+  it('should execute iterator by collection of array with passing index', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    async.every(collection, everyIteratorWithKey(order), function(res) {
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [
+        [1, 0],
+        [2, 2]
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator by collection of object', function(done) {
@@ -61,7 +89,23 @@ describe('#every', function() {
       assert.deepEqual(order, [2]);
       done();
     });
+  });
 
+  it('should execute iterator by collection of object', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 4,
+      b: 3,
+      c: 2
+    };
+    async.every(collection, everyIteratorWithKey(order), function(res) {
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [
+        [2, 'c']
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator with binding', function(done) {
@@ -78,7 +122,6 @@ describe('#every', function() {
       assert.deepEqual(order, [1, 3, 4]);
       done();
     }, Math);
-
   });
 
   it('should return response immediately if collection is empty', function(done) {
@@ -99,7 +142,6 @@ describe('#every', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is undefined', function(done) {
@@ -110,7 +152,6 @@ describe('#every', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is null', function(done) {
@@ -121,7 +162,6 @@ describe('#every', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
 });
