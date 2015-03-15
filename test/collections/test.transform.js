@@ -7,6 +7,28 @@ var async = require('../../');
 
 function transformIterator(order) {
 
+  return function(memo, num, callback) {
+
+    var self = this;
+
+    setTimeout(function() {
+
+      if (self && self.round) {
+        num = self.round(num);
+      }
+      if (num % 2 === 1) {
+        if (_.isArray(memo)) {
+          memo.push(num);
+        }
+      }
+      order.push(num);
+      callback();
+    }, num * 30);
+  };
+}
+
+function transformIteratorWithKey(order) {
+
   return function(memo, num, key, callback) {
 
     var self = this;
@@ -16,7 +38,6 @@ function transformIterator(order) {
       if (self && self.round) {
         num = self.round(num);
       }
-
       if (num % 2 === 1) {
         if (_.isArray(memo)) {
           memo.push(num);
@@ -24,12 +45,10 @@ function transformIterator(order) {
           memo[key] = num;
         }
       }
-      order.push(num);
-
+      order.push([num, key]);
       if (key === 'break') {
         return callback(null, false);
       }
-
       callback();
     }, num * 30);
   };
@@ -49,7 +68,26 @@ describe('#transform', function() {
       assert.deepEqual(order, [1, 2, 3, 4, 5]);
       done();
     });
+  });
 
+  it('should execute iterator by collection of array with passing index', function(done) {
+
+    var order = [];
+    var collection = [1, 5, 3, 2, 4];
+    async.transform(collection, transformIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [1, 3, 5]);
+      assert.deepEqual(order, [
+        [1, 0],
+        [2, 3],
+        [3, 2],
+        [4, 4],
+        [5, 1]
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator by collection of object', function(done) {
@@ -64,23 +102,42 @@ describe('#transform', function() {
       if (err) {
         return done(err);
       }
+      assert.deepEqual(res, [3, 5]);
+      assert.deepEqual(order, [2, 3, 5]);
+      done();
+    }, []);
+  });
 
+  it('should execute iterator by collection of object with passing key', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 5,
+      b: 3,
+      c: 2
+    };
+    async.transform(collection, transformIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.deepEqual(res, {
         b: 3,
         a: 5
       });
-      assert.deepEqual(order, [2, 3, 5]);
+      assert.deepEqual(order, [
+        [2, 'c'],
+        [3, 'b'],
+        [5, 'a']
+      ]);
       done();
     });
-
   });
 
   it('should execute iterator and break when callback is called "false"', function(done) {
 
     var order = [];
     var collection = [4, 3, 2];
-    var iterator = function(memo, num, index, callback) {
-
+    var iterator = function(memo, num, callback) {
       setTimeout(function() {
         order.push(num);
         memo.push(num);
@@ -107,17 +164,19 @@ describe('#transform', function() {
       c: 2,
       'break': 3.5
     };
-    async.transform(collection, transformIterator(order), function(err, res) {
+    async.transform(collection, transformIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
 
-      assert.deepEqual(res, {
-        b: 3
-      });
-      assert.deepEqual(order, [2, 3, 3.5]);
+      assert.deepEqual(res, [3]);
+      assert.deepEqual(order, [
+        [2, 'c'],
+        [3, 'b'],
+        [3.5, 'break']
+      ]);
       done();
-    });
+    }, []);
 
   });
 
@@ -130,7 +189,7 @@ describe('#transform', function() {
       c: 2.6
     };
 
-    async.transform(collection, transformIterator(order), function(err, res) {
+    async.transform(collection, transformIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -138,7 +197,11 @@ describe('#transform', function() {
         a: 1,
         c: 3
       });
-      assert.deepEqual(order, [1, 3, 4]);
+      assert.deepEqual(order, [
+        [1, 'a'],
+        [3, 'c'],
+        [4, 'b']
+      ]);
       done();
     }, {}, Math);
 
@@ -238,7 +301,7 @@ describe('#transform', function() {
 
 });
 
-describe('#transformSeries', function() {
+describe.skip('#transformSeries', function() {
 
   it('should execute iterator to series by collection of array', function(done) {
 
@@ -433,7 +496,7 @@ describe('#transformSeries', function() {
 
 });
 
-describe('#transformLimit', function() {
+describe.skip('#transformLimit', function() {
 
   it('should execute iterator in limited by collection of array', function(done) {
 
