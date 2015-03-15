@@ -508,7 +508,7 @@ describe('#transformSeries', function() {
 
 });
 
-describe.skip('#transformLimit', function() {
+describe('#transformLimit', function() {
 
   it('should execute iterator in limited by collection of array', function(done) {
 
@@ -523,7 +523,27 @@ describe.skip('#transformLimit', function() {
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
+  });
 
+  it('should execute iterator in limited by collection of array with passing index', function(done) {
+
+    var order = [];
+    var collection = [1, 5, 3, 2, 4];
+
+    async.transformLimit(collection, 2, transformIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [1, 3, 5]);
+      assert.deepEqual(order, [
+        [1, 0],
+        [3, 2],
+        [5, 1],
+        [2, 3],
+        [4, 4]
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator in limited by collection of object', function(done) {
@@ -540,15 +560,40 @@ describe.skip('#transformLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.deepEqual(res, [1, 3, 5]);
+      assert.deepEqual(order, [1, 3, 5, 2, 4]);
+      done();
+    }, []);
+  });
+
+  it('should execute iterator in limited by collection of object with passing key', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 1,
+      b: 5,
+      c: 3,
+      d: 2,
+      e: 4
+    };
+    async.transformLimit(collection, 2, transformIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.deepEqual(res, {
         a: 1,
         b: 5,
         c: 3
       });
-      assert.deepEqual(order, [1, 3, 5, 2, 4]);
+      assert.deepEqual(order, [
+        [1, 'a'],
+        [3, 'c'],
+        [5, 'b'],
+        [2, 'd'],
+        [4, 'e']
+      ]);
       done();
     });
-
   });
 
   it('should execute iterator in limited and break when callback is called "false"', function(done) {
@@ -561,7 +606,7 @@ describe.skip('#transformLimit', function() {
       'break': 3.5,
       d: 3
     };
-    async.transformLimit(collection, 4, transformIterator(order), function(err, res) {
+    async.transformLimit(collection, 4, transformIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -569,7 +614,11 @@ describe.skip('#transformLimit', function() {
       assert.deepEqual(res, {
         b: 3
       });
-      assert.deepEqual(order, [2, 3, 3.5]);
+      assert.deepEqual(order, [
+        [2, 'c'],
+        [3, 'b'],
+        [3.5, 'break']
+      ]);
       done();
     });
 
@@ -592,7 +641,6 @@ describe.skip('#transformLimit', function() {
       assert.deepEqual(order, [1, 4, 3]);
       done();
     }, [], Math);
-
   });
 
   it('should execute like parallel if limit is Infinity', function(done) {
@@ -608,7 +656,6 @@ describe.skip('#transformLimit', function() {
       assert.deepEqual(order, [1, 1, 1, 2, 3, 3, 4]);
       done();
     });
-
   });
 
   it('should throw error', function(done) {
@@ -628,7 +675,6 @@ describe.skip('#transformLimit', function() {
       assert.deepEqual(order, [1, 3]);
       done();
     });
-
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -643,7 +689,6 @@ describe.skip('#transformLimit', function() {
       assert.deepEqual(res, []);
       done();
     });
-
   });
 
   it('should return response immediately if object is empty', function(done) {
@@ -658,7 +703,6 @@ describe.skip('#transformLimit', function() {
       assert.deepEqual(res, {});
       done();
     });
-
   });
 
   it('should return response immediately if collection is function', function(done) {
@@ -671,7 +715,6 @@ describe.skip('#transformLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is undefined', function(done) {
@@ -684,7 +727,6 @@ describe.skip('#transformLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is null', function(done) {
@@ -697,7 +739,6 @@ describe.skip('#transformLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if limit is zero', function(done) {
@@ -712,7 +753,6 @@ describe.skip('#transformLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if limit is undefined', function(done) {
@@ -727,7 +767,6 @@ describe.skip('#transformLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
 });
