@@ -16,7 +16,6 @@ function reduceIterator(order) {
       if (self && self.round) {
         num = self.round(num);
       }
-
       if (_.isArray(memo)) {
         memo.push(num);
       } else if (_.isNumber(memo)) {
@@ -24,8 +23,31 @@ function reduceIterator(order) {
       } else {
         memo[num] = num;
       }
-
       order.push(num);
+      callback(null, memo);
+    }, num * 10);
+  };
+}
+
+function reduceIteratorWithKey(order) {
+
+  return function(memo, num, key, callback) {
+
+    var self = this;
+
+    setTimeout(function() {
+
+      if (self && self.round) {
+        num = self.round(num);
+      }
+      if (_.isArray(memo)) {
+        memo.push(num);
+      } else if (_.isNumber(memo)) {
+        memo += num;
+      } else {
+        memo[num] = num;
+      }
+      order.push([num, key]);
       callback(null, memo);
     }, num * 10);
   };
@@ -45,7 +67,6 @@ describe('#reduce', function() {
       assert.deepEqual(order, [1, 3, 2, 4]);
       done();
     });
-
   });
 
   it('should get array by collection of array', function(done) {
@@ -60,7 +81,25 @@ describe('#reduce', function() {
       assert.deepEqual(order, [1, 3, 2, 4]);
       done();
     });
+  });
 
+  it('should sum number by collection of array with passing index', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    async.reduce(collection, 0, reduceIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, 10);
+      assert.deepEqual(order, [
+        [1, 0],
+        [3, 1],
+        [2, 2],
+        [4, 3]
+      ]);
+      done();
+    });
   });
 
   it('should get object  by collection of object', function(done) {
@@ -83,7 +122,32 @@ describe('#reduce', function() {
       assert.deepEqual(order, [5, 3, 2]);
       done();
     });
+  });
 
+  it('should get object  by collection of object with passing key', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 5,
+      b: 3,
+      c: 2
+    };
+    async.reduce(collection, {}, reduceIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, {
+        2: 2,
+        3: 3,
+        5: 5
+      });
+      assert.deepEqual(order, [
+        [5, 'a'],
+        [3, 'b'],
+        [2, 'c']
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator to series with binding', function(done) {
@@ -107,7 +171,6 @@ describe('#reduce', function() {
       assert.deepEqual(order, [1, 4, 3]);
       done();
     }, Math);
-
   });
 
   it('should throw error', function(done) {
@@ -123,11 +186,10 @@ describe('#reduce', function() {
     };
     async.reduce(collection, [], iterator, function(err, res) {
       assert.ok(err);
-      assert.strictEqual(res, undefined);
+      assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [1, 3]);
       done();
     });
-
   });
 
   it('should throw error if double callback', function(done) {
@@ -143,7 +205,6 @@ describe('#reduce', function() {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
-
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -158,7 +219,6 @@ describe('#reduce', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if object is empty', function(done) {
@@ -173,7 +233,6 @@ describe('#reduce', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is function', function(done) {
@@ -187,7 +246,6 @@ describe('#reduce', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is undefined', function(done) {
@@ -201,7 +259,6 @@ describe('#reduce', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is null', function(done) {
@@ -215,7 +272,6 @@ describe('#reduce', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
 });
