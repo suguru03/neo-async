@@ -301,7 +301,7 @@ describe('#transform', function() {
 
 });
 
-describe.skip('#transformSeries', function() {
+describe('#transformSeries', function() {
 
   it('should execute iterator to series by collection of array', function(done) {
 
@@ -315,7 +315,25 @@ describe.skip('#transformSeries', function() {
       assert.deepEqual(order, [1, 3, 2, 4]);
       done();
     });
+  });
 
+  it('should execute iterator to series by collection of array with passing index', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    async.transformSeries(collection, transformIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [1, 3]);
+      assert.deepEqual(order, [
+        [1, 0],
+        [3, 1],
+        [2, 2],
+        [4, 3]
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator to series by collection of object', function(done) {
@@ -330,14 +348,10 @@ describe.skip('#transformSeries', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, {
-        a: 5,
-        b: 3
-      });
+      assert.deepEqual(res, [5, 3]);
       assert.deepEqual(order, [5, 3, 2]);
       done();
-    });
-
+    }, []);
   });
 
   it('should execute iterator and break when callback is called "false"', function(done) {
@@ -349,7 +363,7 @@ describe.skip('#transformSeries', function() {
       b: 3,
       c: 2
     };
-    async.transformSeries(collection, transformIterator(order), function(err, res) {
+    async.transformSeries(collection, transformIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -357,10 +371,12 @@ describe.skip('#transformSeries', function() {
       assert.deepEqual(res, {
         a: 5
       });
-      assert.deepEqual(order, [5, 3.5]);
+      assert.deepEqual(order, [
+        [5, 'a'],
+        [3.5, 'break']
+      ]);
       done();
     });
-
   });
 
   it('should execute iterator to series with binding', function(done) {
@@ -372,7 +388,7 @@ describe.skip('#transformSeries', function() {
       c: 2.6
     };
 
-    async.transformSeries(collection, transformIterator(order), function(err, res) {
+    async.transformSeries(collection, transformIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -380,10 +396,13 @@ describe.skip('#transformSeries', function() {
         a: 1,
         c: 3
       });
-      assert.deepEqual(order, [1, 4, 3]);
+      assert.deepEqual(order, [
+        [1, 'a'],
+        [4, 'b'],
+        [3, 'c']
+      ]);
       done();
     }, undefined, Math);
-
   });
 
   it('should throw error', function(done) {
@@ -403,7 +422,6 @@ describe.skip('#transformSeries', function() {
       assert.deepEqual(order, [1, 5, 3, 2, 4]);
       done();
     });
-
   });
 
   it('should throw error if double callback', function(done) {
@@ -419,7 +437,6 @@ describe.skip('#transformSeries', function() {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
-
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -434,7 +451,6 @@ describe.skip('#transformSeries', function() {
       assert.deepEqual(res, []);
       done();
     });
-
   });
 
   it('should return response immediately if object is empty', function(done) {
@@ -449,7 +465,6 @@ describe.skip('#transformSeries', function() {
       assert.deepEqual(res, {});
       done();
     });
-
   });
 
   it('should return response immediately if collection is function', function(done) {
@@ -463,7 +478,6 @@ describe.skip('#transformSeries', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is undefined', function(done) {
@@ -477,7 +491,6 @@ describe.skip('#transformSeries', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is null', function(done) {
@@ -491,7 +504,6 @@ describe.skip('#transformSeries', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
 });
