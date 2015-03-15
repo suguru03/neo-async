@@ -290,7 +290,6 @@ describe('#reduceRight', function() {
       assert.deepEqual(order, [4, 2, 3, 1]);
       done();
     });
-
   });
 
   it('should get array by collection of array', function(done) {
@@ -305,7 +304,25 @@ describe('#reduceRight', function() {
       assert.deepEqual(order, [4, 2, 3, 1]);
       done();
     });
+  });
 
+  it('should sum number by collection of array with passing index', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    async.reduceRight(collection, 0, reduceIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, 10);
+      assert.deepEqual(order, [
+        [4, 3],
+        [2, 2],
+        [3, 1],
+        [1, 0]
+      ]);
+      done();
+    });
   });
 
   it('should get object  by collection of object', function(done) {
@@ -328,7 +345,32 @@ describe('#reduceRight', function() {
       assert.deepEqual(order, [2, 3, 5]);
       done();
     });
+  });
 
+  it('should get object  by collection of object with passing key', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 5,
+      b: 3,
+      c: 2
+    };
+    async.reduceRight(collection, {}, reduceIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, {
+        2: 2,
+        3: 3,
+        5: 5
+      });
+      assert.deepEqual(order, [
+        [2, 'c'],
+        [3, 'b'],
+        [5, 'a']
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator to series with binding', function(done) {
@@ -348,7 +390,6 @@ describe('#reduceRight', function() {
       assert.deepEqual(order, [3, 4, 1]);
       done();
     }, Math);
-
   });
 
   it('should throw error', function(done) {
@@ -364,11 +405,10 @@ describe('#reduceRight', function() {
     };
     async.reduceRight(collection, [], iterator, function(err, res) {
       assert.ok(err);
-      assert.strictEqual(res, undefined);
+      assert.deepEqual(res, [4, 2, 3]);
       assert.deepEqual(order, [4, 2, 3]);
       done();
     });
-
   });
 
   it('should throw error if double callback', function(done) {
@@ -384,7 +424,6 @@ describe('#reduceRight', function() {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
-
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -399,7 +438,6 @@ describe('#reduceRight', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if object is empty', function(done) {
@@ -414,7 +452,6 @@ describe('#reduceRight', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is function', function(done) {
@@ -428,7 +465,6 @@ describe('#reduceRight', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is undefined', function(done) {
@@ -442,7 +478,6 @@ describe('#reduceRight', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is null', function(done) {
@@ -456,7 +491,6 @@ describe('#reduceRight', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
 });
