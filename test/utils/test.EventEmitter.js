@@ -24,32 +24,32 @@ describe('#eventEmitter', function() {
 
     var order = [];
     var eventEmitter = async.eventEmitter();
-    eventEmitter.on('event1', function(done) {
+    eventEmitter.on('event1', function event1_1(done) {
       order.push('event1_1');
       done(null, 'event1_1');
     });
-    eventEmitter.on('event2', function(done) {
+    eventEmitter.on('event2', function event2_1(done) {
       order.push('event2_1');
       done(null, 'event2_1');
     });
     eventEmitter.once({
-      event1: [function(done) {
+      event1: [function event1_2(done) {
         order.push('event1_2');
         done(null, 'event1_2');
       }]
     });
     eventEmitter.once({
-      event1: function(done) {
+      event1: function event1_3(done) {
         order.push('event1_3');
         done(null, 'event1_3');
       }
     });
     eventEmitter.on({
-      event1: [function(done) {
+      event1: [function event1_4(done) {
         order.push('event1_4');
         done(null, 'event1_4');
       }],
-      event2: function(done) {
+      event2: function event2_2(done) {
         order.push('event2_2');
         done(null, 'event2_2');
       }
@@ -202,6 +202,38 @@ describe('#eventEmitter', function() {
 
     var eventEmitter = async.eventEmitter();
     eventEmitter.emit('event', done);
+  });
+
+  it('should not remove if callback is not called', function(done) {
+
+    var called = 0;
+    var eventEmitter = new async.EventEmitter();
+
+    function event(done) {
+      called++;
+      done();
+    }
+    eventEmitter.once('event1', event);
+    eventEmitter.on('event1', event);
+    eventEmitter.once('event2', event);
+    eventEmitter.on('event2', event);
+    eventEmitter.on('event2', event);
+    eventEmitter.once('event2', event);
+    eventEmitter.once('event1', event);
+    eventEmitter.emit('event1');
+    eventEmitter.emit('event2');
+    eventEmitter.emit('event1');
+    eventEmitter.emit('event2');
+    eventEmitter.emit('event1');
+    eventEmitter.emit('event2', function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(called, 13);
+      assert.strictEqual(eventEmitter._events.event1.length, 1);
+      assert.strictEqual(eventEmitter._events.event2.length, 2);
+      done();
+    });
   });
 
 });
