@@ -23,7 +23,7 @@ describe('#eventEmitter', function() {
   it('should execute emitter', function(done) {
 
     var order = [];
-    var eventEmitter = async.eventEmitter();
+    var eventEmitter = new async.EventEmitter();
     eventEmitter.on('event1', function event1_1(done) {
       order.push('event1_1');
       done(null, 'event1_1');
@@ -232,6 +232,61 @@ describe('#eventEmitter', function() {
       assert.strictEqual(called, 13);
       assert.strictEqual(eventEmitter._events.event1.length, 1);
       assert.strictEqual(eventEmitter._events.event2.length, 2);
+      done();
+    });
+  });
+
+  it('should execute tasks which does not have callback', function(done) {
+
+    var order = [];
+    var eventEmitter = new async.EventEmitter();
+    eventEmitter.on('event', function() {
+      order.push('event1');
+    });
+    eventEmitter.on('event', function(done) {
+      order.push('event2');
+      done();
+    });
+    eventEmitter.once('event', function() {
+      order.push('event3');
+    });
+    eventEmitter.once('event', function(done) {
+      order.push('event4');
+      done();
+    });
+    eventEmitter.emit('event', function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, [
+        'event1',
+        'event2',
+        'event3',
+        'event4'
+      ]);
+      done();
+    });
+  });
+
+  it('should throw error and not remove tasks', function(done) {
+    var order = [];
+    var eventEmitter = new async.EventEmitter();
+    eventEmitter.once('event', function() {
+      order.push('event1');
+    });
+    eventEmitter.once('event', function(done) {
+      order.push('event2');
+      done(new Error('error'));
+    });
+    eventEmitter.emit('event', function(err) {
+      assert.strictEqual(err.message, 'error');
+      eventEmitter.emit('event');
+      assert.deepEqual(order, [
+        'event1',
+        'event2',
+        'event1',
+        'event2'
+      ]);
       done();
     });
   });
