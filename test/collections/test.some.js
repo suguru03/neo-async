@@ -15,8 +15,24 @@ function someIterator(order) {
       if (self && self.round) {
         num = self.round(num);
       }
-
       order.push(num);
+      callback(num % 2);
+    }, num * 30);
+  };
+}
+
+function someIteratorWithKey(order) {
+
+  return function(num, key, callback) {
+
+    var self = this;
+
+    setTimeout(function() {
+
+      if (self && self.round) {
+        num = self.round(num);
+      }
+      order.push([num, key]);
       callback(num % 2);
     }, num * 30);
   };
@@ -33,7 +49,19 @@ describe('#some', function() {
       assert.deepEqual(order, [1]);
       done();
     });
+  });
 
+  it('should execute iterator by collection of array with passing index', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    async.some(collection, someIteratorWithKey(order), function(res) {
+      assert.ok(res);
+      assert.deepEqual(order, [
+        [1, 0]
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator by collection of object', function(done) {
@@ -49,7 +77,24 @@ describe('#some', function() {
       assert.deepEqual(order, [2, 3]);
       done();
     });
+  });
 
+  it('should execute iterator by collection of object with passing key', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 5,
+      b: 3,
+      c: 2
+    };
+    async.some(collection, someIteratorWithKey(order), function(res) {
+      assert.ok(res);
+      assert.deepEqual(order, [
+        [2, 'c'],
+        [3, 'b']
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator with binding', function(done) {
@@ -86,7 +131,6 @@ describe('#some', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is undefined', function(done) {
@@ -97,7 +141,6 @@ describe('#some', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is null', function(done) {
@@ -108,7 +151,6 @@ describe('#some', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
 });
