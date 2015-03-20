@@ -166,7 +166,19 @@ describe('#someSeries', function() {
       assert.deepEqual(order, [1]);
       done();
     });
+  });
 
+  it('should execute iterator by collection of array with passing index', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    async.someSeries(collection, someIteratorWithKey(order), function(res) {
+      assert.ok(res);
+      assert.deepEqual(order, [
+        [1, 0]
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator by collection of object', function(done) {
@@ -182,7 +194,23 @@ describe('#someSeries', function() {
       assert.deepEqual(order, [5]);
       done();
     });
+  });
 
+  it('should execute iterator by collection of object with passing key', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 5,
+      b: 3,
+      c: 2
+    };
+    async.someSeries(collection, someIteratorWithKey(order), function(res) {
+      assert.ok(res);
+      assert.deepEqual(order, [
+        [5, 'a']
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator with binding', function(done) {
@@ -230,7 +258,6 @@ describe('#someSeries', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is null', function(done) {
@@ -241,7 +268,6 @@ describe('#someSeries', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
 });
