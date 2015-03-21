@@ -21,7 +21,41 @@ function everyIterator(order) {
   };
 }
 
+function everyIteratorWithError(order) {
+
+  return function(num, callback) {
+
+    var self = this;
+
+    setTimeout(function() {
+
+      if (self && self.round) {
+        num = self.round(num);
+      }
+      order.push(num);
+      callback(null, num % 2);
+    }, num * 30);
+  };
+}
+
 function everyIteratorWithKey(order) {
+
+  return function(num, key, callback) {
+
+    var self = this;
+
+    setTimeout(function() {
+
+      if (self && self.round) {
+        num = self.round(num);
+      }
+      order.push([num, key]);
+      callback(num % 2);
+    }, num * 30);
+  };
+}
+
+function everyIteratorWithKeyAndError(order) {
 
   return function(num, key, callback) {
 
@@ -45,6 +79,20 @@ describe('#every', function() {
     var order = [];
     var collection = [1, 3, 2, 4];
     async.every(collection, everyIterator(order), function(res) {
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [1, 2]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of array and get 2rd callback argument', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    async.every(collection, everyIteratorWithError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, false);
       assert.deepEqual(order, [1, 2]);
       done();
@@ -87,6 +135,43 @@ describe('#every', function() {
     async.every(collection, everyIterator(order), function(res) {
       assert.strictEqual(res, false);
       assert.deepEqual(order, [2]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of object with passing key', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 4,
+      b: 3,
+      c: 2
+    };
+    async.every(collection, everyIteratorWithKey(order), function(res) {
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [
+        [2, 'c']
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of object with passing key and get 2rd callback argument', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 4,
+      b: 3,
+      c: 2
+    };
+    async.every(collection, everyIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [
+        [2, 'c']
+      ]);
       done();
     });
   });
