@@ -15,14 +15,34 @@ function concatIterator(order) {
       if (self && self.round) {
         num = self.round(num);
       }
-
       order.push(num);
       var array = [];
 
       while (num > 0) {
         array.push(num--);
       }
+      callback(null, array);
+    }, num * 30);
+  };
+}
 
+function concatIteratorWithKey(order) {
+
+  return function(num, key, callback) {
+
+    var self = this;
+
+    setTimeout(function() {
+
+      if (self && self.round) {
+        num = self.round(num);
+      }
+      order.push([num, key]);
+      var array = [];
+
+      while (num > 0) {
+        array.push(num--);
+      }
       callback(null, array);
     }, num * 30);
   };
@@ -42,7 +62,24 @@ describe('#concat', function() {
       assert.deepEqual(order, [1, 2, 3]);
       done();
     });
+  });
 
+  it('should execute iterator by collection of array with passing index', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    async.concat(collection, concatIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [1, 2, 1, 3, 2, 1]);
+      assert.deepEqual(order, [
+        [1, 0],
+        [2, 2],
+        [3, 1]
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator by collection of object', function(done) {
@@ -61,7 +98,28 @@ describe('#concat', function() {
       assert.deepEqual(order, [1, 2, 3]);
       done();
     });
+  });
 
+  it('should execute iterator by collection of object with passing key', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 1,
+      b: 3,
+      c: 2
+    };
+    async.concat(collection, concatIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [1, 2, 1, 3, 2, 1]);
+      assert.deepEqual(order, [
+        [1, 'a'],
+        [2, 'c'],
+        [3, 'b']
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator with binding', function(done) {
@@ -81,7 +139,6 @@ describe('#concat', function() {
       assert.deepEqual(order, [1, 3, 4]);
       done();
     }, Math);
-
   });
 
   it('should throw error', function(done) {
@@ -100,7 +157,6 @@ describe('#concat', function() {
       assert.deepEqual(order, [1, 2, 3]);
       done();
     });
-
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -115,7 +171,6 @@ describe('#concat', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if object is empty', function(done) {
@@ -130,7 +185,6 @@ describe('#concat', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is function', function(done) {
@@ -144,7 +198,6 @@ describe('#concat', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is undefined', function(done) {
@@ -158,7 +211,6 @@ describe('#concat', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is null', function(done) {
@@ -172,7 +224,6 @@ describe('#concat', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
 });
