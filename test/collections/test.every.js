@@ -67,7 +67,7 @@ function everyIteratorWithKeyAndError(order) {
         num = self.round(num);
       }
       order.push([num, key]);
-      callback(num % 2);
+      callback(null, num % 2);
     }, num * 30);
   };
 }
@@ -164,7 +164,7 @@ describe('#every', function() {
       b: 3,
       c: 2
     };
-    async.every(collection, everyIteratorWithKey(order), function(err, res) {
+    async.every(collection, everyIteratorWithKeyAndError(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -262,7 +262,54 @@ describe('#everySeries', function() {
       assert.deepEqual(order, [1, 3, 2]);
       done();
     });
+  });
 
+  it('should execute iterator by collection of array with passing index', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    async.everySeries(collection, everyIteratorWithKey(order), function(res) {
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [
+        [1, 0],
+        [3, 1],
+        [2, 2]
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of array and get callback 2rd argument', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    async.everySeries(collection, everyIteratorWithError(order), function(err, res) {
+      console.log(err, res);
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [1, 3, 2]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of array with passing index and get callback 2rd argument', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    async.everySeries(collection, everyIteratorWithKeyAndError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [
+        [1, 0],
+        [3, 1],
+        [2, 2]
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator by collection of array', function(done) {
@@ -274,7 +321,6 @@ describe('#everySeries', function() {
       assert.deepEqual(order, [1, 3, 1, 5]);
       done();
     });
-
   });
 
   it('should execute iterator by collection of object', function(done) {
@@ -290,7 +336,6 @@ describe('#everySeries', function() {
       assert.deepEqual(order, [4]);
       done();
     });
-
   });
 
   it('should execute iterator with binding', function(done) {
@@ -307,7 +352,6 @@ describe('#everySeries', function() {
       assert.deepEqual(order, [1, 4]);
       done();
     }, Math);
-
   });
 
   it('should throw error if double callback', function(done) {
@@ -323,7 +367,6 @@ describe('#everySeries', function() {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
-
   });
 
   it('should return response immediately if collection is empty', function(done) {
@@ -344,7 +387,6 @@ describe('#everySeries', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is undefined', function(done) {
@@ -355,7 +397,6 @@ describe('#everySeries', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is null', function(done) {
@@ -366,7 +407,6 @@ describe('#everySeries', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
 });
