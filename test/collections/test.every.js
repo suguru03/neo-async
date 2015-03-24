@@ -422,7 +422,51 @@ describe('#everyLimit', function() {
       assert.deepEqual(order, [1, 2]);
       done();
     });
+  });
 
+  it('should execute iterator by collection of array passing index', function(done) {
+
+    var order = [];
+    var collection = [1, 5, 2, 4];
+    async.everyLimit(collection, 2, everyIteratorWithKey(order), function(res) {
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [
+        [1, 0],
+        [2, 2]
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of array and get 2rd callback argument', function(done) {
+
+    var order = [];
+    var collection = [1, 5, 2, 4];
+    async.everyLimit(collection, 2, everyIteratorWithError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [1, 2]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of array with passing index and get 2rd callback argument', function(done) {
+
+    var order = [];
+    var collection = [1, 5, 2, 4];
+    async.everyLimit(collection, 2, everyIteratorWithKeyAndError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [
+        [1, 0],
+        [2, 2]
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator by collection of object', function(done) {
@@ -439,7 +483,6 @@ describe('#everyLimit', function() {
       assert.deepEqual(order, [1, 2]);
       done();
     });
-
   });
 
   it('should execute iterator with binding', function(done) {
@@ -456,7 +499,6 @@ describe('#everyLimit', function() {
       assert.deepEqual(order, [1, 4]);
       done();
     }, Math);
-
   });
 
   it('should execute like parallel if limit is Infinity', function(done) {
@@ -489,7 +531,6 @@ describe('#everyLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is undefined', function(done) {
@@ -500,7 +541,6 @@ describe('#everyLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is null', function(done) {
@@ -511,7 +551,6 @@ describe('#everyLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if limit is zero', function(done) {
@@ -523,7 +562,6 @@ describe('#everyLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if limit is undefined', function(done) {
@@ -535,7 +573,6 @@ describe('#everyLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
 });
