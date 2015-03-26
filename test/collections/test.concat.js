@@ -437,7 +437,26 @@ describe('#concatLimit', function() {
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
+  });
 
+  it('should execute iterator by collection of array with passing index', function(done) {
+
+    var order = [];
+    var collection = [1, 5, 3, 4, 2];
+    async.concatLimit(collection, 2, concatIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [1, 3, 2, 1, 5, 4, 3, 2, 1, 2, 1, 4, 3, 2, 1]);
+      assert.deepEqual(order, [
+        [1, 0],
+        [3, 2],
+        [5, 1],
+        [2, 4],
+        [4, 3]
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator by collection of object', function(done) {
@@ -458,7 +477,32 @@ describe('#concatLimit', function() {
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
+  });
 
+  it('should execute iterator by collection of object with passing key', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 1,
+      b: 5,
+      c: 3,
+      d: 4,
+      e: 2
+    };
+    async.concatLimit(collection, 2, concatIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [1, 3, 2, 1, 5, 4, 3, 2, 1, 2, 1, 4, 3, 2, 1]);
+      assert.deepEqual(order, [
+        [1, 'a'],
+        [3, 'c'],
+        [5, 'b'],
+        [2, 'e'],
+        [4, 'd']
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator with binding', function(done) {
@@ -478,7 +522,6 @@ describe('#concatLimit', function() {
       assert.deepEqual(order, [1, 4, 3]);
       done();
     }, Math);
-
   });
 
   it('should execute like parallel if limit is Infinity', function(done) {
@@ -493,7 +536,6 @@ describe('#concatLimit', function() {
       assert.deepEqual(order, [1, 2, 3]);
       done();
     });
-
   });
 
   it('should throw error', function(done) {
@@ -512,7 +554,6 @@ describe('#concatLimit', function() {
       assert.deepEqual(order, [1, 2, 3]);
       done();
     });
-
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -527,7 +568,6 @@ describe('#concatLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if object is empty', function(done) {
@@ -542,7 +582,6 @@ describe('#concatLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is function', function(done) {
@@ -556,7 +595,6 @@ describe('#concatLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is undefined', function(done) {
@@ -570,7 +608,6 @@ describe('#concatLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is null', function(done) {
@@ -584,7 +621,6 @@ describe('#concatLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if limit is zero', function(done) {
@@ -599,7 +635,6 @@ describe('#concatLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if limit is undefined', function(done) {
@@ -614,7 +649,6 @@ describe('#concatLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
 });
