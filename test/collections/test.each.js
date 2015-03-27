@@ -51,24 +51,6 @@ describe('#each', function() {
     });
   });
 
-  it('should execute iterator by collection of object', function(done) {
-
-    var order = [];
-    var collection = {
-      a: 1,
-      b: 3,
-      c: 2
-    };
-    async.each(collection, eachIterator(order), function(err) {
-      if (err) {
-        return done(err);
-      }
-      assert.deepEqual(order, [1, 2, 3]);
-      done();
-    });
-
-  });
-
   it('should execute iterator by collection of array with passing index', function(done) {
 
     var order = [];
@@ -84,8 +66,46 @@ describe('#each', function() {
       ]);
       done();
     });
-
   });
+
+  it('should execute iterator by collection of object', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 1,
+      b: 3,
+      c: 2
+    };
+    async.each(collection, eachIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, [1, 2, 3]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of object with passing key', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 1,
+      b: 3,
+      c: 2
+    };
+    async.each(collection, eachIteratorWithKey(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, [
+        [1, 'a'],
+        [2, 'c'],
+        [3, 'b']
+      ]);
+      done();
+    });
+  });
+
   it('should execute iterator with binding', function(done) {
 
     var order = [];
@@ -102,7 +122,6 @@ describe('#each', function() {
       assert.deepEqual(order, [1, 3, 4]);
       done();
     }, Math);
-
   });
 
   it('should throw error', function(done) {
@@ -121,7 +140,6 @@ describe('#each', function() {
       assert.deepEqual(order, [1, 2, 3]);
       done();
     });
-
   });
 
   it('should throw error if double callback', function(done) {
@@ -138,7 +156,6 @@ describe('#each', function() {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
-
   });
 
   it('should throw error to callback if callback was called twice and caused error', function(done) {
@@ -153,7 +170,6 @@ describe('#each', function() {
       assert.ok(err);
       done();
     });
-
   });
 
   it('should break if respond equals false', function(done) {
@@ -174,7 +190,6 @@ describe('#each', function() {
       assert.deepEqual(order, [1, 2, 3]);
       done();
     });
-
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -188,7 +203,6 @@ describe('#each', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if object is empty', function(done) {
@@ -202,7 +216,6 @@ describe('#each', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is function', function(done) {
@@ -215,7 +228,6 @@ describe('#each', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is undefined', function(done) {
@@ -228,7 +240,6 @@ describe('#each', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is null', function(done) {
@@ -241,7 +252,6 @@ describe('#each', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
 });
