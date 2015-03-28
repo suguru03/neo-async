@@ -628,13 +628,12 @@ describe('#filterLimit', function() {
     try {
       async.filterLimit(collection, 2, iterator);
     } catch (e) {
-      console.log(e);
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
   });
 
-  it('should throw error if double callback', function(done) {
+  it('should throw error if callback has 2rd argument and called twice', function(done) {
 
     var collection = [1, 5, 3, 2, 4];
     var iterator = function(num, index, callback) {
@@ -643,9 +642,13 @@ describe('#filterLimit', function() {
     };
 
     try {
-      async.filterLimit(collection, 2, iterator);
+      async.filterLimit(collection, 2, iterator, function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        assert.deepEqual(res, []);
+      });
     } catch (e) {
-      console.log(e);
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
     }
