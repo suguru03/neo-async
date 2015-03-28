@@ -21,6 +21,23 @@ function detectIterator(order) {
   };
 }
 
+function detectIteratorWithError(order) {
+
+  return function(num, callback) {
+
+    var self = this;
+
+    setTimeout(function() {
+
+      if (self && self.round) {
+        num = self.round(num);
+      }
+      order.push(num);
+      callback(null, num % 2);
+    }, num * 30);
+  };
+}
+
 function detectIteratorWithKey(order) {
 
   return function(num, key, callback) {
@@ -34,6 +51,23 @@ function detectIteratorWithKey(order) {
       }
       order.push([num, key]);
       callback(num % 2);
+    }, num * 30);
+  };
+}
+
+function detectIteratorWithKeyAndError(order) {
+
+  return function(num, key, callback) {
+
+    var self = this;
+
+    setTimeout(function() {
+
+      if (self && self.round) {
+        num = self.round(num);
+      }
+      order.push([num, key]);
+      callback(null, num % 2);
     }, num * 30);
   };
 }
@@ -64,6 +98,36 @@ describe('#detect', function() {
     });
   });
 
+  it('should execute iterator by collection of array and get 2rd callback argument', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    async.detect(collection, detectIteratorWithError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, 1);
+      assert.deepEqual(order, [1]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of array with passing index and get 2rd callback argument', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    async.detect(collection, detectIteratorWithKeyAndError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, 1);
+      assert.deepEqual(order, [
+        [1, 0]
+      ]);
+      done();
+    });
+  });
+
   it('should execute iterator by collection of object', function(done) {
 
     var order = [];
@@ -75,6 +139,63 @@ describe('#detect', function() {
     async.detect(collection, detectIterator(order), function(res) {
       assert.strictEqual(res, 3);
       assert.deepEqual(order, [2, 3]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of object with passing key', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 5,
+      b: 3,
+      c: 2
+    };
+    async.detect(collection, detectIteratorWithKey(order), function(res) {
+      assert.strictEqual(res, 3);
+      assert.deepEqual(order, [
+        [2, 'c'],
+        [3, 'b']
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of object and get 2rd callback argument', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 5,
+      b: 3,
+      c: 2
+    };
+    async.detect(collection, detectIteratorWithError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, 3);
+      assert.deepEqual(order, [2, 3]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of object with passing key and get 2rd callback argument', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 5,
+      b: 3,
+      c: 2
+    };
+    async.detect(collection, detectIteratorWithKeyAndError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, 3);
+      assert.deepEqual(order, [
+        [2, 'c'],
+        [3, 'b']
+      ]);
       done();
     });
   });
@@ -106,6 +227,8 @@ describe('#detect', function() {
       done();
     });
   });
+
+
 
   it('should return response immediately if array is empty', function(done) {
 
