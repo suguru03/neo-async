@@ -228,7 +228,53 @@ describe('#detect', function() {
     });
   });
 
+  it('should not get item', function(done) {
 
+    var order = [];
+    var collection = [2, 6, 4];
+
+    async.detect(collection, detectIteratorWithError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, [2, 4, 6]);
+      done();
+    });
+  });
+
+  it('should throw error', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    var iterator = function(num, callback) {
+      setTimeout(function() {
+        order.push(num);
+        callback(num === 3, false);
+      }, num * 30);
+    };
+    async.detect(collection, iterator, function(err, res) {
+      assert.ok(err);
+      assert.strictEqual(res, undefined);
+      done();
+    });
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    var collection = [1, 3, 2, 4];
+    var iterator = function(num, callback) {
+      callback();
+      callback();
+    };
+
+    try {
+      async.detect(collection, iterator);
+    } catch (e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
+  });
 
   it('should return response immediately if array is empty', function(done) {
 
@@ -370,7 +416,24 @@ describe('#detectSeries', function() {
     });
   });
 
-  it('should throw error if double callback', function(done) {
+  it('should throw error', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    var iterator = function(num, callback) {
+      setTimeout(function() {
+        order.push(num);
+        callback(num === 3, false);
+      }, num * 30);
+    };
+    async.detectSeries(collection, iterator, function(err, res) {
+      assert.ok(err);
+      assert.strictEqual(res, undefined);
+      done();
+    });
+  });
+
+    it('should throw error if double callback', function(done) {
 
     var collection = [1, 3, 2, 4];
     var iterator = function(num, callback) {
