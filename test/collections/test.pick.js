@@ -170,6 +170,51 @@ describe('#pick', function() {
     }, Math);
   });
 
+  it('should throw error', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    var iterator = function(num, callback) {
+      setTimeout(function() {
+        order.push(num);
+        callback(num === 3, num % 2);
+      }, num * 30);
+    };
+
+    async.pick(collection, iterator, function(err, res) {
+      assert.ok(err);
+      assert.deepEqual(res, [1]);
+      assert.deepEqual(order, [1, 2, 3]);
+      done();
+    });
+  });
+
+  it('should throw error', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 1,
+      b: 3,
+      c: 2,
+      d: 4
+    };
+    var iterator = function(num, callback) {
+      setTimeout(function() {
+        order.push(num);
+        callback(num === 3, num % 2);
+      }, num * 30);
+    };
+
+    async.pick(collection, iterator, function(err, res) {
+      assert.ok(err);
+      assert.deepEqual(res, {
+        a: 1
+      });
+      assert.deepEqual(order, [1, 2, 3]);
+      done();
+    });
+  });
+
   it('should throw error if double callback', function(done) {
 
     var collection = [2, 1, 3];
@@ -179,6 +224,65 @@ describe('#pick', function() {
     };
     try {
       async.pick(collection, iterator);
+    } catch (e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    var collection = [2, 1, 3];
+    var iterator = function(item, callback) {
+      callback();
+      callback();
+    };
+    try {
+      async.pick(collection, iterator, function(err, res) {
+        assert.strictEqual(err, undefined);
+        assert.strictEqual(res, undefined);
+      });
+    } catch (e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    var collection = {
+      a: 4,
+      b: 3,
+      c: 2
+    };
+    var iterator = function(item, callback) {
+      callback();
+      callback();
+    };
+    try {
+      async.pick(collection, iterator);
+    } catch (e) {
+      assert.strictEqual(e.message, 'Callback was already called.');
+      done();
+    }
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    var collection = {
+      a: 4,
+      b: 3,
+      c: 2
+    };
+    var iterator = function(item, callback) {
+      callback();
+      callback();
+    };
+    try {
+      async.pick(collection, iterator, function(err, res) {
+        assert.strictEqual(err, undefined);
+        assert.strictEqual(res, undefined);
+      });
     } catch (e) {
       assert.strictEqual(e.message, 'Callback was already called.');
       done();
