@@ -1,8 +1,14 @@
 /* global describe, it */
 'use strict';
 
+var domain = require('domain').create();
 var assert = require('power-assert');
 var async = require('../../');
+var errorCallCount = 0;
+domain.on('error', function (err) {
+  errorCallCount++;
+  assert.strictEqual(err.message, 'Callback was already called.');
+});
 
 function pickIterator(order) {
 
@@ -421,23 +427,129 @@ describe('#pickSeries', function() {
       assert.deepEqual(order, [1, 4, 3]);
       done();
     }, Math);
+  });
 
+  it('should throw error', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    var iterator = function(num, callback) {
+      setTimeout(function() {
+        order.push(num);
+        callback(num === 3, num % 2);
+      }, num * 30);
+    };
+
+    async.pickSeries(collection, iterator, function(err, res) {
+      assert.ok(err);
+      assert.deepEqual(res, [1]);
+      assert.deepEqual(order, [1, 3]);
+      done();
+    });
+  });
+
+  it('should throw error', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 1,
+      b: 3,
+      c: 2,
+      d: 4
+    };
+    var iterator = function(num, callback) {
+      setTimeout(function() {
+        order.push(num);
+        callback(num === 3, num % 2);
+      }, num * 30);
+    };
+
+    async.pickSeries(collection, iterator, function(err, res) {
+      assert.ok(err);
+      assert.deepEqual(res, {
+        a: 1
+      });
+      assert.deepEqual(order, [1, 3]);
+      done();
+    });
   });
 
   it('should throw error if double callback', function(done) {
 
-    var collection = [2, 1, 3];
-    var iterator = function(item, callback) {
-      callback();
-      callback();
-    };
-    try {
+    domain.run(function() {
+      var collection = [2, 1, 3];
+      var iterator = function(item, callback) {
+        process.nextTick(callback);
+        process.nextTick(callback);
+      };
       async.pickSeries(collection, iterator);
-    } catch (e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 3);
       done();
-    }
+    }, 50);
+  });
 
+  it('should throw error if double callback', function(done) {
+
+    domain.run(function() {
+      var collection = [2, 1, 3];
+      var iterator = function(item, callback) {
+        process.nextTick(callback);
+        process.nextTick(callback);
+      };
+      async.pickSeries(collection, iterator, function(err, res) {
+        assert.strictEqual(err, undefined);
+        assert.deepEqual(res, []);
+      });
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 6);
+      done();
+    }, 50);
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    domain.run(function() {
+      var collection = {
+        a: 4,
+        b: 3,
+        c: 2
+      };
+      var iterator = function(item, callback) {
+        process.nextTick(callback);
+        process.nextTick(callback);
+      };
+      async.pickSeries(collection, iterator);
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 9);
+      done();
+    }, 50);
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    domain.run(function() {
+      var collection = {
+        a: 4,
+        b: 3,
+        c: 2
+      };
+      var iterator = function(item, callback) {
+        process.nextTick(callback);
+        process.nextTick(callback);
+      };
+      async.pickSeries(collection, iterator, function(err, res) {
+        assert.strictEqual(err, undefined);
+        assert.deepEqual(res, []);
+      });
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 12);
+      done();
+    }, 50);
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -449,7 +561,6 @@ describe('#pickSeries', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if object is empty', function(done) {
@@ -461,7 +572,6 @@ describe('#pickSeries', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is function', function(done) {
@@ -472,7 +582,6 @@ describe('#pickSeries', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is undefined', function(done) {
@@ -483,7 +592,6 @@ describe('#pickSeries', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is null', function(done) {
@@ -494,7 +602,6 @@ describe('#pickSeries', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
 });
