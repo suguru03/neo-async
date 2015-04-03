@@ -5,7 +5,7 @@ var domain = require('domain').create();
 var assert = require('power-assert');
 var async = require('../../');
 var errorCallCount = 0;
-domain.on('error', function (err) {
+domain.on('error', function(err) {
   errorCallCount++;
   assert.strictEqual(err.message, 'Callback was already called.');
 });
@@ -476,6 +476,7 @@ describe('#pickSeries', function() {
 
   it('should throw error if double callback', function(done) {
 
+    errorCallCount = 0;
     domain.run(function() {
       var collection = [2, 1, 3];
       var iterator = function(item, callback) {
@@ -492,6 +493,7 @@ describe('#pickSeries', function() {
 
   it('should throw error if double callback', function(done) {
 
+    errorCallCount = 0;
     domain.run(function() {
       var collection = [2, 1, 3];
       var iterator = function(item, callback) {
@@ -504,13 +506,14 @@ describe('#pickSeries', function() {
       });
     });
     setTimeout(function() {
-      assert.strictEqual(errorCallCount, 6);
+      assert.strictEqual(errorCallCount, 3);
       done();
     }, 50);
   });
 
   it('should throw error if double callback', function(done) {
 
+    errorCallCount = 0;
     domain.run(function() {
       var collection = {
         a: 4,
@@ -524,13 +527,14 @@ describe('#pickSeries', function() {
       async.pickSeries(collection, iterator);
     });
     setTimeout(function() {
-      assert.strictEqual(errorCallCount, 9);
+      assert.strictEqual(errorCallCount, 3);
       done();
     }, 50);
   });
 
   it('should throw error if double callback', function(done) {
 
+    errorCallCount = 0;
     domain.run(function() {
       var collection = {
         a: 4,
@@ -547,7 +551,7 @@ describe('#pickSeries', function() {
       });
     });
     setTimeout(function() {
-      assert.strictEqual(errorCallCount, 12);
+      assert.strictEqual(errorCallCount, 3);
       done();
     }, 50);
   });
@@ -618,7 +622,59 @@ describe('#pickLimit', function() {
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
+  });
 
+  it('should execute iterator by collection of array and get 2rd callback argument', function(done) {
+
+    var order = [];
+    var collection = [1, 5, 3, 2, 4];
+
+    async.pickLimit(collection, 2, pickIteratorWithError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [1, 5, 3]);
+      assert.deepEqual(order, [1, 3, 5, 2, 4]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of array with passing index', function(done) {
+
+    var order = [];
+    var collection = [1, 5, 3, 2, 4];
+
+    async.pickLimit(collection, 2, pickIteratorWithKey(order), function(res) {
+      assert.deepEqual(res, [1, 5, 3]);
+      assert.deepEqual(order, [
+        [1, 0],
+        [3, 2],
+        [5, 1],
+        [2, 3],
+        [4, 4]
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of array with passing index and get 2rd callback argument', function(done) {
+    var order = [];
+    var collection = [1, 5, 3, 2, 4];
+
+    async.pickLimit(collection, 2, pickIteratorWithKeyAndError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [1, 5, 3]);
+      assert.deepEqual(order, [
+        [1, 0],
+        [3, 2],
+        [5, 1],
+        [2, 3],
+        [4, 4]
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator to series by collection of object', function(done) {
@@ -640,7 +696,87 @@ describe('#pickLimit', function() {
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
+  });
 
+  it('should execute iterator by collection of object and get 2rd callback argument', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 1,
+      b: 5,
+      c: 3,
+      d: 2,
+      e: 4
+    };
+    async.pickLimit(collection, 2, pickIteratorWithError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, {
+        a: 1,
+        b: 5,
+        c: 3
+      });
+      assert.deepEqual(order, [1, 3, 5, 2, 4]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of array with passing index', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 1,
+      b: 5,
+      c: 3,
+      d: 2,
+      e: 4
+    };
+    async.pickLimit(collection, 2, pickIteratorWithKey(order), function(res) {
+      assert.deepEqual(res, {
+        a: 1,
+        b: 5,
+        c: 3
+      });
+      assert.deepEqual(order, [
+        [1, 'a'],
+        [3, 'c'],
+        [5, 'b'],
+        [2, 'd'],
+        [4, 'e']
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of array with passing index and get 2rd callback argument', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 1,
+      b: 5,
+      c: 3,
+      d: 2,
+      e: 4
+    };
+    async.pickLimit(collection, 2, pickIteratorWithKeyAndError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, {
+        a: 1,
+        b: 5,
+        c: 3
+      });
+      assert.deepEqual(order, [
+        [1, 'a'],
+        [3, 'c'],
+        [5, 'b'],
+        [2, 'd'],
+        [4, 'e']
+      ]);
+      done();
+    });
   });
 
   it('should execute iterator to series with binding', function(done) {
@@ -660,7 +796,6 @@ describe('#pickLimit', function() {
       assert.deepEqual(order, [1, 4, 3]);
       done();
     }, Math);
-
   });
 
   it('should execute like parallel if limit is Infinity', function(done) {
@@ -673,23 +808,128 @@ describe('#pickLimit', function() {
       assert.deepEqual(order, [1, 1, 2, 3, 3, 3, 4]);
       done();
     });
+  });
 
+  it('should throw error', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 2,
+      b: 1,
+      c: 3
+    };
+    var iterator = function(num, callback) {
+      setTimeout(function() {
+        order.push(num);
+        callback(num === 2, num);
+      }, num * 30);
+    };
+    async.pickLimit(collection, 4, iterator, function(err, res) {
+      assert.ok(err);
+      assert.deepEqual(res, { b: 1 });
+      assert.deepEqual(order, [1, 2]);
+      done();
+    });
+  });
+
+  it('should throw error', function(done) {
+
+    var order = [];
+    var collection = [2, 1, 3];
+    var iterator = function(num, callback) {
+      setTimeout(function() {
+        order.push(num);
+        callback(num === 2, num);
+      }, num * 30);
+    };
+    async.pickLimit(collection, 4, iterator, function(err, res) {
+      assert.ok(err);
+      assert.deepEqual(res, [1]);
+      assert.deepEqual(order, [1, 2]);
+      done();
+    });
   });
 
   it('should throw error if double callback', function(done) {
 
+    errorCallCount = 0;
     var collection = [2, 1, 3];
     var iterator = function(item, callback) {
-      callback();
-      callback();
+      process.nextTick(callback);
+      process.nextTick(callback);
     };
-    try {
+    domain.run(function() {
       async.pickLimit(collection, 4, iterator);
-    } catch (e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 3);
       done();
-    }
+    }, 50);
+  });
 
+  it('should throw error if double callback', function(done) {
+
+    errorCallCount = 0;
+    var collection = [2, 1, 3];
+    var iterator = function(item, index, callback) {
+      process.nextTick(callback);
+      process.nextTick(callback);
+    };
+    domain.run(function() {
+      async.pickLimit(collection, 4, iterator, function(err, res) {
+        assert.strictEqual(err, undefined);
+        assert.deepEqual(res, []);
+      });
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 3);
+      done();
+    }, 50);
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    errorCallCount = 0;
+    var collection = {
+      a: 2,
+      b: 1,
+      c: 3
+    };
+    var iterator = function(item, callback) {
+      process.nextTick(callback);
+      process.nextTick(callback);
+    };
+    domain.run(function() {
+      async.pickLimit(collection, 4, iterator);
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 3);
+      done();
+    }, 50);
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    errorCallCount = 0;
+    var collection = {
+      a: 2,
+      b: 1,
+      c: 3
+    };
+    var iterator = function(item, index, callback) {
+      process.nextTick(callback);
+      process.nextTick(callback);
+    };
+    domain.run(function() {
+      async.pickLimit(collection, 4, iterator, function(err, res) {
+        assert.strictEqual(err, undefined);
+        assert.deepEqual(res, {});
+      });
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 3);
+      done();
+    }, 50);
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -701,7 +941,6 @@ describe('#pickLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if object is empty', function(done) {
@@ -713,7 +952,6 @@ describe('#pickLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is function', function(done) {
@@ -724,7 +962,6 @@ describe('#pickLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is undefined', function(done) {
@@ -735,7 +972,6 @@ describe('#pickLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is null', function(done) {
@@ -746,7 +982,6 @@ describe('#pickLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if limit is zero', function(done) {
@@ -758,7 +993,6 @@ describe('#pickLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if limit is undefined', function(done) {
@@ -770,7 +1004,6 @@ describe('#pickLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
 });
