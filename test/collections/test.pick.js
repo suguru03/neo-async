@@ -826,7 +826,9 @@ describe('#pickLimit', function() {
     };
     async.pickLimit(collection, 4, iterator, function(err, res) {
       assert.ok(err);
-      assert.deepEqual(res, { b: 1 });
+      assert.deepEqual(res, {
+        b: 1
+      });
       assert.deepEqual(order, [1, 2]);
       done();
     });
