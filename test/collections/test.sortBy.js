@@ -149,6 +149,28 @@ describe('#sortBy', function() {
     });
   });
 
+  it('should throw error', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    var iterator = function(num, index, callback) {
+      setTimeout(function() {
+        order.push([num, index]);
+        callback(num === 3, num);
+      }, num * 30);
+    };
+    async.sortBy(collection, iterator, function(err, res) {
+      assert.ok(err);
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, [
+        [1, 0],
+        [2, 2],
+        [3, 1]
+      ]);
+      done();
+    });
+  });
+
   it('should return response immediately if collection is function', function(done) {
 
     var order = [];
@@ -297,6 +319,27 @@ describe('#sortBySeries', function() {
       assert.ok(err);
       assert.strictEqual(res, undefined);
       assert.deepEqual(order, [1, 3]);
+      done();
+    });
+  });
+
+  it('should throw error', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    var iterator = function(num, index, callback) {
+      setTimeout(function() {
+        order.push([num, index]);
+        callback(num === 3, num);
+      }, num * 10);
+    };
+    async.sortBySeries(collection, iterator, function(err, res) {
+      assert.ok(err);
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, [
+        [1, 0],
+        [3, 1]
+      ]);
       done();
     });
   });
@@ -471,6 +514,27 @@ describe('#sortByLimit', function() {
       assert.ok(err);
       assert.strictEqual(res, undefined);
       assert.deepEqual(order, [1, 3]);
+      done();
+    });
+  });
+
+  it('should throw error', function(done) {
+
+    var order = [];
+    var collection = [1, 5, 3];
+    var iterator = function(num, index, callback) {
+      setTimeout(function() {
+        order.push([num, index]);
+        callback(num === 3, num);
+      }, num * 30);
+    };
+    async.sortByLimit(collection, 2, iterator, function(err, res) {
+      assert.ok(err);
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, [
+        [1, 0],
+        [3, 2]
+      ]);
       done();
     });
   });
