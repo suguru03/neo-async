@@ -4,7 +4,8 @@
 var comparator = require('func-comparator');
 var _ = require('lodash');
 var async = require('async');
-var neo_async = require('../../');
+var neo_async_v0 = require('neo-async');
+var neo_async_v1 = require('../../');
 
 // loop count
 var count = 100;
@@ -21,9 +22,13 @@ var funcs = {
     c = 0;
     async.each(array, iterator, callback);
   },
-  'neo-async': function(callback) {
+  'neo-async_v0': function(callback) {
     c = 0;
-    neo_async.each(array, iterator, callback);
+    neo_async_v0.each(array, iterator, callback);
+  },
+  'neo-async_v1': function(callback) {
+    c = 0;
+    neo_async_v1.each(array, iterator, callback);
   }
 };
 
