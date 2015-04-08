@@ -152,7 +152,6 @@ describe('#transform', function() {
       assert.deepEqual(order, [2, 3]);
       done();
     });
-
   });
 
   it('should execute iterator and break when callback is called "false"', function(done) {
@@ -177,7 +176,6 @@ describe('#transform', function() {
       ]);
       done();
     }, []);
-
   });
 
   it('should execute iterator with binding', function(done) {
@@ -204,7 +202,6 @@ describe('#transform', function() {
       ]);
       done();
     }, {}, Math);
-
   });
 
   it('should throw error', function(done) {
@@ -224,7 +221,6 @@ describe('#transform', function() {
       assert.deepEqual(order, [1, 2, 3, 4]);
       done();
     });
-
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -239,7 +235,6 @@ describe('#transform', function() {
       assert.deepEqual(res, []);
       done();
     });
-
   });
 
   it('should return response immediately if object is empty', function(done) {
@@ -254,7 +249,6 @@ describe('#transform', function() {
       assert.deepEqual(res, {});
       done();
     });
-
   });
 
   it('should return response immediately if collection is function', function(done) {
@@ -268,7 +262,6 @@ describe('#transform', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is undefined', function(done) {
@@ -282,7 +275,6 @@ describe('#transform', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is null', function(done) {
@@ -296,7 +288,6 @@ describe('#transform', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
 });
