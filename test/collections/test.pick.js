@@ -1,9 +1,10 @@
 /* global describe, it */
 'use strict';
 
-var domain = require('domain').create();
 var assert = require('power-assert');
 var async = require('../../');
+
+var domain = require('domain').create();
 var errorCallCount = 0;
 domain.on('error', function(err) {
   errorCallCount++;
