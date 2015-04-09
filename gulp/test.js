@@ -6,16 +6,10 @@ var mocha = require('gulp-mocha');
 var gutil = require('gulp-util');
 
 gulp.task('test', function() {
-  var filename = gutil.env.file || gutil.env.f;
-
-  if (filename) {
-    filename = 'test.' + filename;
-  } else {
-    filename = '*';
-  }
+  var filename = gutil.env.file || gutil.env.f || '*';
 
   gulp.src([
-    './test/**/' + filename + '.js'
+    './test/**/test.' + filename + '.js'
   ])
   .pipe(mocha({
     reporter: 'spec',
