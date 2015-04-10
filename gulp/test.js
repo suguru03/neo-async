@@ -6,7 +6,7 @@ var mocha = require('gulp-mocha');
 var gutil = require('gulp-util');
 
 gulp.task('test', function() {
-  var filename = gutil.env.file || gutil.env.f || '*';
+  var filename = gutil.env.file || '*';
 
   gulp.src([
     './test/**/test.' + filename + '.js'
