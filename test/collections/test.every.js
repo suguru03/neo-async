@@ -284,7 +284,6 @@ describe('#everySeries', function() {
     var order = [];
     var collection = [1, 3, 2, 4];
     async.everySeries(collection, everyIteratorWithError(order), function(err, res) {
-      console.log(err, res);
       if (err) {
         return done(err);
       }
