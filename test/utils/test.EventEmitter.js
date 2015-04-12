@@ -6,9 +6,7 @@ var async = require('../../');
 var _ = require('lodash');
 
 function createTasks(order, numbers) {
-
   return _.map(numbers, function(num) {
-
     return function(callback) {
       setTimeout(function() {
         order.push(num);
@@ -20,8 +18,34 @@ function createTasks(order, numbers) {
 
 describe('#eventEmitter', function() {
 
-  it('should execute emitter', function(done) {
+  it('should get a listener', function() {
+    var eventEmitter = new async.EventEmitter();
+    var event1 = function(callback) {
+      callback();
+    };
+    eventEmitter.on('event1', event1);
+    assert.deepEqual(eventEmitter.getListeners('event1'), [event1]);
+  });
 
+  it('should get all listeners', function() {
+    var eventEmitter = new async.EventEmitter();
+    var event1 = function(callback) {
+      callback();
+    };
+    var event2 = function() {
+    };
+    eventEmitter.on({
+      'event1': event1,
+      'event2': [event2, event2]
+    });
+    eventEmitter.once('event2', event2);
+    assert.deepEqual(eventEmitter.getListeners(), {
+      'event1': [event1],
+      'event2': [event2, event2, event2]
+    });
+  });
+
+  it('should execute emitter', function(done) {
     var order = [];
     var eventEmitter = new async.EventEmitter();
     eventEmitter.on('event1', function event1_1(done) {
@@ -84,11 +108,9 @@ describe('#eventEmitter', function() {
         });
       });
     });
-
   });
 
   it('should execute events in series', function(done) {
-
     var order = [];
     var numbers = [1, 2, 4, 3];
     var eventEmitter = async.eventEmitter();
@@ -102,11 +124,9 @@ describe('#eventEmitter', function() {
       assert.deepEqual(order, [1, 2, 4, 3]);
       done();
     });
-
   });
 
   it('should execute events in parallel', function(done) {
-
     var order = [];
     var numbers = [1, 2, 4, 3];
     var eventEmitter = async.eventEmitter({
@@ -122,7 +142,6 @@ describe('#eventEmitter', function() {
       assert.deepEqual(order, [1, 2, 3, 4]);
       done();
     });
-
   });
 
   it('should execute events in limited parallel', function(done) {
@@ -143,11 +162,9 @@ describe('#eventEmitter', function() {
       assert.deepEqual(order, [1, 2, 4, 3]);
       done();
     });
-
   });
 
   it('should execute same functions events', function(done) {
-
     var count = 0;
     var eventEmitter = async.eventEmitter();
     var func = function(done) {
@@ -173,11 +190,9 @@ describe('#eventEmitter', function() {
         done();
       });
     });
-
   });
 
   it('should execute events by original emitter', function(done) {
-
     var order = [];
     var numbers = [1, 4, 3, 2];
     var emitter = function(tasks, callback) {
@@ -192,20 +207,19 @@ describe('#eventEmitter', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, tasks);
+      _.forEach(tasks, function(task, index) {
+        assert.strictEqual(res[index].func, task);
+      });
       done();
     });
-
   });
 
   it('should return callback immediately if tasks is empty', function(done) {
-
     var eventEmitter = async.eventEmitter();
     eventEmitter.emit('event', done);
   });
 
   it('should not remove if callback is not called', function(done) {
-
     var called = 0;
     var eventEmitter = new async.EventEmitter();
 
@@ -237,7 +251,6 @@ describe('#eventEmitter', function() {
   });
 
   it('should execute tasks which does not have callback', function(done) {
-
     var order = [];
     var eventEmitter = new async.EventEmitter();
     eventEmitter.on('event', function() {
@@ -289,6 +302,39 @@ describe('#eventEmitter', function() {
       ]);
       done();
     });
+  });
+
+  it('should remove once event', function() {
+    var order = [];
+    var eventEmitter = new async.EventEmitter();
+    eventEmitter.on('event', function() {
+      order.push('event1');
+    });
+    var event2 = function() {
+      order.push('event2');
+    };
+    var event3 = function() {
+      order.push('event3');
+    };
+    eventEmitter.on('event', event2);
+    eventEmitter.once('event', event3);
+    eventEmitter.emit('event');
+    eventEmitter.emit('event');
+    eventEmitter.off('event', event2);
+    eventEmitter.off('event', event2);
+    eventEmitter.off('event', event2);
+    eventEmitter.off({
+      'event': [event3]
+    });
+    eventEmitter.emit('event');
+    assert.deepEqual(order, [
+      'event1',
+      'event2',
+      'event3',
+      'event1',
+      'event2',
+      'event1'
+    ]);
   });
 
 });
