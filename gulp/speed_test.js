@@ -4,12 +4,11 @@ var _ = require('lodash');
 var es = require('event-stream');
 var exec = require('child_process').exec;
 var gulp = require('gulp');
-var exit = require('gulp-exit');
 var gutil = require('gulp-util');
 
 gulp.task('speed_test', function() {
   var filename = gutil.env.file || '*';
-  var gc = gutil.env.gc !== 'false';
+  var gc = !!gutil.env.gc;
 
   gulp.src([
     './speed_test/**/sample.' + filename + '.js'
@@ -21,8 +20,7 @@ gulp.task('speed_test', function() {
       console.log(result);
       next(err);
     });
-  }))
-  .pipe(exit());
+  }));
 });
 
 
