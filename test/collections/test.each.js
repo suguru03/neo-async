@@ -3,6 +3,12 @@
 
 var assert = require('power-assert');
 var async = require('../../');
+var domain = require('domain').create();
+var errorCallCount = 0;
+domain.on('error', function(err) {
+  errorCallCount++;
+  assert.strictEqual(err.message, 'Callback was already called.');
+});
 
 function eachIterator(order) {
 
@@ -144,18 +150,19 @@ describe('#each', function() {
 
   it('should throw error if double callback', function(done) {
 
-    var collection = [1, 3, 2, 4];
-    var iterator = function(num, callback) {
-      callback();
-      callback();
-    };
-
-    try {
+    errorCallCount = 0;
+    domain.run(function() {
+      var collection = [1, 3, 2, 4];
+      var iterator = function(num, callback) {
+        setImmediate(callback);
+        setImmediate(callback);
+      };
       async.each(collection, iterator);
-    } catch (e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 4);
       done();
-    }
+    }, 50);
   });
 
   it('should throw error to callback if callback was called twice and caused error', function(done) {
@@ -383,18 +390,19 @@ describe('#eachSeries', function() {
 
   it('should throw error if double callback', function(done) {
 
-    var collection = [1, 3, 2, 4];
-    var iterator = function(num, callback) {
-      callback();
-      callback();
-    };
-
-    try {
+    errorCallCount = 0;
+    domain.run(function() {
+      var collection = [1, 3, 2, 4];
+      var iterator = function(num, callback) {
+        setImmediate(callback);
+        setImmediate(callback);
+      };
       async.eachSeries(collection, iterator);
-    } catch (e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 4);
       done();
-    }
+    }, 50);
   });
 
   it('should break if respond equals false', function(done) {
