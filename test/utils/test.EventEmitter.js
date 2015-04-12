@@ -337,4 +337,35 @@ describe('#eventEmitter', function() {
     ]);
   });
 
+  it('should remove all events in this key', function() {
+    var eventEmitter = new async.EventEmitter();
+    var event1 = function() {
+    };
+    var event2 = function() {
+    };
+    eventEmitter.on('event1', event1);
+    eventEmitter.on({
+      event1: event1,
+      event2: event2
+    });
+    eventEmitter.removeEvent('event1');
+    assert.deepEqual(eventEmitter.getListeners(), {
+      event2: [event2]
+    });
+  });
+
+  it('should remove all events', function() {
+    var eventEmitter = new async.EventEmitter();
+    var event1 = function() {
+    };
+    var event2 = function() {
+    };
+    eventEmitter.on('event1', event1);
+    eventEmitter.on({
+      event1: event1,
+      event2: event2
+    });
+    eventEmitter.removeEvent();
+    assert.deepEqual(eventEmitter.getListeners(), {});
+  });
 });
