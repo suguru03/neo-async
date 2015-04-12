@@ -16,7 +16,7 @@
   createImmediate();
 
   var async = {
-    VERSION: '0.6.3',
+    VERSION: '0.6.4',
 
     // Collections
     each: each,
@@ -188,6 +188,16 @@
 
     while (++index < length) {
       iterator(array[index], index);
+    }
+    return array;
+  }
+
+  function _arrayEachRight(array, iterator) {
+
+    var length = array.length;
+
+    while (length--) {
+      iterator(array[length], length);
     }
     return array;
   }
@@ -3107,80 +3117,186 @@
     return async;
   }
 
+  // base on EventEmitter
+
+  var ONCE = {
+    __ONCE__: true
+  };
+
   function EventEmitter(emitter, limit) {
 
     this._emitter = emitter || series;
     this._limit = limit || 4;
     this._events = {};
-    this._once = [];
   }
 
-  EventEmitter.prototype.on = function on(key, callback) {
+  function createCallback(func) {
+    func = func || noop;
+    if (func.ONCE === ONCE) {
+      return func;
+    }
+    var callback = function(done) {
+      if (func.length) {
+        return func(done);
+      }
+      func();
+      done();
+    };
+    callback.func = func;
+    return callback;
+  }
 
+  function createOnce(func) {
+    func = func || noop;
+    var once = function(done) {
+      if (func.length) {
+        return func(done);
+      }
+      func();
+      done();
+    };
+    once.func = func;
+    once.ONCE = ONCE;
+    return once;
+  }
+
+  EventEmitter.prototype.getListeners = function(key) {
+    var events = this._events;
+    if (key) {
+      return getTasks(events[key]);
+    }
+    var allTasks = {};
+    _objectEach(events, function(_events, key) {
+      allTasks[key] = getTasks(_events);
+    });
+    return allTasks;
+
+    function getTasks(events) {
+      events = events || [];
+      var tasks = Array(events.length);
+      _arrayEach(events, function(task, index) {
+        tasks[index] = task.func;
+      });
+      return tasks;
+    }
+  };
+
+  EventEmitter.prototype.addListener = function addListener(key, functions) {
     var self = this;
     if (typeof key === 'object') {
       _objectEach(key, function(func, key) {
-        on.call(self, key, func);
+        addListener.call(self, key, func);
+      });
+      return self;
+    }
+
+    self._events[key] = self._events[key] || [];
+    if (Array.isArray(functions)) {
+      _arrayEach(functions, function(func) {
+        self._events[key].push(createCallback(func));
       });
     } else {
-      self._events[key] = self._events[key] || [];
-      if (Array.isArray(callback)) {
-        Array.prototype.push.apply(self._events[key], callback);
-      } else {
-        self._events[key].push(callback);
-      }
+      self._events[key].push(createCallback(functions));
     }
     return self;
   };
 
-  EventEmitter.prototype.once = function once(key, callback) {
-
+  EventEmitter.prototype.addOnceListener = function addOnceListener(key, functions) {
     var self = this;
     if (typeof key === 'object') {
       _objectEach(key, function(func, key) {
-        once.call(self, key, func);
+        addOnceListener.call(self, key, func);
+      });
+      return self;
+    }
+
+    if (Array.isArray(functions)) {
+      _arrayEach(functions, function(func, index) {
+        functions[index] = createOnce(func);
       });
     } else {
-      if (Array.isArray(callback)) {
-        Array.prototype.push.apply(self._once, callback);
-      } else {
-        self._once.push(callback);
+      functions = createOnce(functions);
+    }
+    return self.addListener(key, functions);
+  };
+
+  EventEmitter.prototype.removeListener = function removeListener(key, functions) {
+    var self = this;
+    if (typeof key === 'object') {
+      _objectEach(key, function(func, key) {
+        removeListener.call(self, key, func);
+      });
+      return self;
+    }
+
+    var events = self._events[key] || [];
+    if (!events.length) {
+      return self;
+    }
+    if (Array.isArray(functions)) {
+      _arrayEachRight(functions, function(func) {
+        removeListener.call(self, func, key);
+      });
+      return self;
+    }
+
+    _arrayEachRight(events, function(event, index) {
+      if (event.func === functions) {
+        events.splice(index, 1);
       }
-      self.on(key, callback);
+    });
+    return self;
+  };
+
+  EventEmitter.prototype.removeEvent = function removeEvent(key) {
+    var self = this;
+    if (key) {
+      var events = self._events[key] || [];
+      if (events.length) {
+        delete self._events[key];
+      }
+    } else {
+      self._events = {};
     }
     return self;
   };
 
   EventEmitter.prototype.emit = function(key, callback, thisArg) {
-
     callback = callback || noop;
-    var self = this;
-    var events = self._events[key] || [];
+    var events = this._events[key] || [];
     if (!events.length) {
-      return callback();
+      callback();
+      return this;
     }
 
-    var emitter = self._emitter;
+    var emitter = this._emitter;
     emitter = thisArg ? emitter.bind(thisArg) : emitter;
     if (emitter === parallelLimit) {
-      emitter(events, self._limit, done);
+      emitter(events, this._limit, done);
     } else {
       emitter(events, done);
     }
-    return self;
+    return this;
 
     function done(err, res) {
-
-      _arrayEach(self._once, function(func) {
-        var index = _indexOf(events, func);
-        if (0 <= index) {
+      if (err) {
+        return callback(err);
+      }
+      _arrayEachRight(events, function(func, index) {
+        if (func.ONCE === ONCE) {
           events.splice(index, 1);
         }
       });
-      self._once = [];
-      callback(err, res);
+      callback(undefined, res);
     }
   };
+
+  // alias
+  EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+  EventEmitter.prototype.once = EventEmitter.prototype.addOnceListener;
+  EventEmitter.prototype.off = EventEmitter.prototype.removeListener;
+  EventEmitter.prototype.removeAllListener = EventEmitter.prototype.removeEvent;
+  EventEmitter.prototype.trigger = EventEmitter.prototype.emit;
 
   /**
    * @param {Object} option
