@@ -4,6 +4,12 @@
 var _ = require('lodash');
 var assert = require('power-assert');
 var async = require('../../');
+var domain = require('domain').create();
+var errorCallCount = 0;
+domain.on('error', function(err) {
+  errorCallCount++;
+  assert.strictEqual(err.message, 'Callback was already called.');
+});
 
 function createTasks(type, numbers) {
 
@@ -18,7 +24,6 @@ function createTasks(type, numbers) {
 
     var first = true;
     var tasks = _.transform(numbers, function(memo, num, key) {
-
       if (first) {
         first = false;
         memo[key] = function(done) {
@@ -36,7 +41,6 @@ function createTasks(type, numbers) {
         };
       }
     });
-
     return tasks;
   }
 
@@ -44,7 +48,6 @@ function createTasks(type, numbers) {
 
     var count = 0;
     var tasks = _.transform(numbers, function(memo, num, key) {
-
       if (count++ === 0) {
         memo[key] = function(done) {
           if (this === Math) {
@@ -65,7 +68,6 @@ function createTasks(type, numbers) {
         };
       }
     });
-
     return tasks;
   }
 
@@ -163,37 +165,39 @@ describe('#waterfall', function() {
 
   });
 
-  it('should call multi callbacks', function(done) {
+  it('should throw error if callback is called twice', function(done) {
 
-    var order = [];
-    var array = [
-      function(next) {
-        order.push(1);
-        // call the callback twice. this should call function 2 twice
-        next(null, 'one', 'two');
-        next(null, 'one', 'two');
-      },
+    errorCallCount = 0;
+    domain.run(function() {
+      var array = [
+        function(next) {
+          setImmediate(function() {
+            next(null, 'one', 'two');
+          });
+          setImmediate(function() {
+            next(null, 'one', 'two');
+          });
+        },
 
-      function(arg1, arg2, next) {
-        order.push(2);
-        next(null, arg1, arg2, 'three');
-      },
+        function(arg1, arg2, next) {
+          next(null, arg1, arg2, 'three');
+        },
 
-      function(arg1, arg2, arg3, next) {
-        order.push(3);
-        next(null, 'four');
-      },
+        function(arg1, arg2, arg3, next) {
+          next(null, 'four');
+        },
 
-      function() {
-        order.push(4);
-        array[3] = function() {
-          order.push(4);
-          assert.deepEqual(order, [1, 2, 2, 3, 3, 4, 4]);
-          done();
-        };
-      }
-    ];
-    async.waterfall(array);
+        function(arg1, next) {
+          next();
+        }
+      ];
+      async.waterfall(array);
+    });
+
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 1);
+      done();
+    }, 100);
   });
 
   it('should throw error if task is not collection', function(done) {
