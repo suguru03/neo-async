@@ -18,9 +18,9 @@ var tasks = _.map(array, function() {
   };
 });
 var funcs = {
-  // 'async': function(callback) {
-  //   async.series(tasks, callback);
-  // },
+  'async': function(callback) {
+    async.series(tasks, callback);
+  },
   'neo-async_v0': function(callback) {
     neo_async_v0.series(tasks, callback);
   },
