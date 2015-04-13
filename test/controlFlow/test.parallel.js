@@ -10,11 +10,8 @@ function createTasks(order, numbers) {
   return _.transform(numbers, function(memo, num, index) {
 
     memo[index] = function(callback) {
-
       var self = this;
-
       setTimeout(function() {
-
         order.push(num);
         if (self && self.round) {
           num = self.round(num);
