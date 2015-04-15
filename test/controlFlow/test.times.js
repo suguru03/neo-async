@@ -203,7 +203,7 @@ describe('#timesLimit', function() {
         return done(err);
       }
       assert.deepEqual(res, [0, 1, 4, 9, 16, 25, 36]);
-      assert.deepEqual(order, [0, 2, 1, 4, 3, 5, 6]);
+      assert.deepEqual(order, [0, 2, 1, 4, 3, 6, 5]);
       done();
     }, Math);
 
