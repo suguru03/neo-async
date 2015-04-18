@@ -13,7 +13,7 @@ var count = 100;
 var times = 100000;
 var array = _.shuffle(_.times(count));
 var iterator = function(n, callback) {
-  callback(null,n);
+  callback(null, n);
 };
 var funcs = {
   'async': function(callback) {

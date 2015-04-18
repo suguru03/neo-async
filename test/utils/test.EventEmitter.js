@@ -32,8 +32,7 @@ describe('#eventEmitter', function() {
     var event1 = function(callback) {
       callback();
     };
-    var event2 = function() {
-    };
+    var event2 = function() {};
     eventEmitter.on({
       'event1': event1,
       'event2': [event2, event2]
@@ -339,10 +338,8 @@ describe('#eventEmitter', function() {
 
   it('should remove all events in this key', function() {
     var eventEmitter = new async.EventEmitter();
-    var event1 = function() {
-    };
-    var event2 = function() {
-    };
+    var event1 = function() {};
+    var event2 = function() {};
     eventEmitter.on('event1', event1);
     eventEmitter.on({
       event1: event1,
@@ -356,10 +353,8 @@ describe('#eventEmitter', function() {
 
   it('should remove all events', function() {
     var eventEmitter = new async.EventEmitter();
-    var event1 = function() {
-    };
-    var event2 = function() {
-    };
+    var event1 = function() {};
+    var event2 = function() {};
     eventEmitter.on('event1', event1);
     eventEmitter.on({
       event1: event1,

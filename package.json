@@ -32,15 +32,17 @@
     "func-comparator": "^0.4.1",
     "gulp": "^3.8.11",
     "gulp-exit": "0.0.2",
+    "gulp-git": "^1.2.0",
     "gulp-jsbeautifier": "0.0.4",
     "gulp-jscs": "^1.4.0",
     "gulp-mocha": "^2.0.0",
     "gulp-util": "^3.0.3",
     "intelli-espower-loader": "^0.5.0",
     "istanbul": "^0.3.4",
+    "jsdoc": "^3.3.0-beta3",
     "lodash": "^3.6.0",
     "mocha": "^2.0.1",
-    "neo-async": "^0.6.3",
+    "neo-async": "^0.6.4",
     "power-assert": "^0.10.0"
   }
 }

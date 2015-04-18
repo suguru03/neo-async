@@ -3,3 +3,4 @@ npm-debug.log
 coverage
 ## JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm Directory-based project format:
 .idea
+doc
