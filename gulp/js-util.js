@@ -1,8 +1,11 @@
 'use strict';
 
+var exec = require('child_process').exec;
+var fs = require('fs');
+var path = require('path');
+
 var _ = require('lodash');
 var es = require('event-stream');
-var exec = require('child_process').exec;
 var gulp = require('gulp');
 var git = require('gulp-git');
 var jscs = require('gulp-jscs');
@@ -35,9 +38,16 @@ gulp.task('jsfmt', function() {
   return es.merge.apply(es, streams);
 });
 
-gulp.task('jsdoc', function(done) {
-  exec('$(npm bin)/jsdoc -c .jsdocrc ./lib', done);
-});
+function createJSDoc(done) {
+  var config = JSON.parse(fs.readFileSync(path.resolve(__dirname, '..', '.jsdocrc'), {
+    encoding: 'utf8'
+  }));
+  var dirpath = path.resolve(__dirname, '..', config.opts.destination);
+  exec('rm -rf ' + dirpath);
+  exec('$(npm bin)/jsdoc -c .jsdocrc ./lib/async.js', done);
+}
+
+gulp.task('jsdoc', createJSDoc);
 
 gulp.task('gh-pages', ['jsdoc'], function(done) {
 
@@ -49,7 +59,7 @@ gulp.task('gh-pages', ['jsdoc'], function(done) {
 
     function(next) {
       git.checkout('gh-pages', {
-        args: '-8'
+        args: '-B'
       }, next);
     },
 
@@ -62,20 +72,23 @@ gulp.task('gh-pages', ['jsdoc'], function(done) {
     function(result, next) {
       if (!result) {
         gulp.log('[skip commit]');
-        return done();
+        return checkoutMaster(done);
       }
       git.exec({
-        args: 'commit -m "update(jsdoc): update jsdoc ' + _.now() + '"'
+        args: 'add ./doc'
       }, next);
     },
 
-    function(next) {
-      git.push('origin', 'gh-pages', next);
+    function (result, next) {
+      git.exec({
+        args: 'commit -m "update(jsdoc): update jsdoc [v' + async.VERSION + ']"'
+      }, next);
     },
 
-    function(next) {
-      git.checkout('master', next);
-    }
+    checkoutMaster
   ], done);
-});
 
+  function checkoutMaster(next) {
+    git.checkout('v1.x', next);
+  }
+});
