@@ -29,6 +29,7 @@ describe('#reject', function() {
     var order = [];
     var collection = [1, 3, 2, 4];
     async.reject(collection, rejectIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [2, 4]);
       assert.deepEqual(order, [1, 2, 3, 4]);
       done();
@@ -45,6 +46,7 @@ describe('#reject', function() {
       c: 2
     };
     async.reject(collection, rejectIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [4, 2]);
       assert.deepEqual(order, [2, 3, 4]);
       done();
@@ -62,6 +64,7 @@ describe('#reject', function() {
     };
 
     async.reject(collection, rejectIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [3.5]);
       assert.deepEqual(order, [1, 3, 4]);
       done();
@@ -90,6 +93,7 @@ describe('#reject', function() {
     var order = [];
     var array = [];
     async.reject(array, rejectIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -102,6 +106,7 @@ describe('#reject', function() {
     var order = [];
     var object = {};
     async.reject(object, rejectIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -113,6 +118,7 @@ describe('#reject', function() {
 
     var order = [];
     async.reject(function() {}, rejectIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -124,6 +130,7 @@ describe('#reject', function() {
 
     var order = [];
     async.reject(undefined, rejectIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -135,6 +142,7 @@ describe('#reject', function() {
 
     var order = [];
     async.reject(null, rejectIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();

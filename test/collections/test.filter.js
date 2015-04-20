@@ -79,6 +79,7 @@ describe('#filter', function() {
     var order = [];
     var collection = [1, 3, 2, 4];
     async.filter(collection, filterIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [1, 2, 3, 4]);
       done();
@@ -90,6 +91,7 @@ describe('#filter', function() {
     var order = [];
     var collection = [1, 3, 2, 4];
     async.filter(collection, filterIteratorWithKey(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [
         [1, 0],
@@ -109,6 +111,7 @@ describe('#filter', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [1, 2, 3, 4]);
       done();
@@ -123,6 +126,7 @@ describe('#filter', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [
         [1, 0],
@@ -143,6 +147,7 @@ describe('#filter', function() {
       c: 2
     };
     async.filter(collection, filterIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [3]);
       assert.deepEqual(order, [2, 3, 4]);
       done();
@@ -158,6 +163,7 @@ describe('#filter', function() {
       c: 2
     };
     async.filter(collection, filterIteratorWithKey(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [3]);
       assert.deepEqual(order, [
         [2, 'c'],
@@ -180,6 +186,7 @@ describe('#filter', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [3]);
       assert.deepEqual(order, [2, 3, 4]);
       done();
@@ -198,6 +205,7 @@ describe('#filter', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [3]);
       assert.deepEqual(order, [
         [2, 'c'],
@@ -217,6 +225,7 @@ describe('#filter', function() {
       c: 2.6
     };
     async.filter(collection, filterIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1.1, 2.6]);
       assert.deepEqual(order, [1, 3, 4]);
       done();
@@ -227,6 +236,7 @@ describe('#filter', function() {
 
     var order = [];
     async.filter([], filterIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -237,6 +247,7 @@ describe('#filter', function() {
 
     var order = [];
     async.filter(function() {}, filterIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -247,6 +258,7 @@ describe('#filter', function() {
 
     var order = [];
     async.filter(undefined, filterIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -257,12 +269,12 @@ describe('#filter', function() {
 
     var order = [];
     async.filter(null, filterIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
     });
   });
-
 });
 
 describe('#filterSeries', function() {
