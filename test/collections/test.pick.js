@@ -86,7 +86,11 @@ describe('#pick', function() {
     var order = [];
     var collection = [1, 3, 2, 4];
     async.pick(collection, pickIterator(order), function(res) {
-      assert.deepEqual(res, [1, 3]);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {
+        '0': 1,
+        '1': 3
+      });
       assert.deepEqual(order, [1, 2, 3, 4]);
       done();
     });
@@ -100,7 +104,11 @@ describe('#pick', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [1, 3]);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {
+        '0': 1,
+        '1': 3
+      });
       assert.deepEqual(order, [1, 2, 3, 4]);
       done();
     });
@@ -111,7 +119,11 @@ describe('#pick', function() {
     var order = [];
     var collection = [1, 3, 2, 4];
     async.pick(collection, pickIteratorWithKey(order), function(res) {
-      assert.deepEqual(res, [1, 3]);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {
+        '0': 1,
+        '1': 3
+      });
       assert.deepEqual(order, [
         [1, 0],
         [2, 2],
@@ -130,7 +142,11 @@ describe('#pick', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [1, 3]);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {
+        '0': 1,
+        '1': 3
+      });
       assert.deepEqual(order, [
         [1, 0],
         [2, 2],
@@ -150,6 +166,7 @@ describe('#pick', function() {
       c: 2
     };
     async.pick(collection, pickIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         b: 3
       });
@@ -168,6 +185,7 @@ describe('#pick', function() {
     };
 
     async.pick(collection, pickIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         a: 1.1,
         c: 2.6
@@ -190,7 +208,10 @@ describe('#pick', function() {
 
     async.pick(collection, iterator, function(err, res) {
       assert.ok(err);
-      assert.deepEqual(res, [1]);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {
+        '0': 1
+      });
       assert.deepEqual(order, [1, 2, 3]);
       done();
     });
@@ -214,6 +235,7 @@ describe('#pick', function() {
 
     async.pick(collection, iterator, function(err, res) {
       assert.ok(err);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         a: 1
       });
@@ -301,7 +323,8 @@ describe('#pick', function() {
     var order = [];
     var array = [];
     async.pick(array, pickIterator(order), function(res) {
-      assert.deepEqual(res, []);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
     });
@@ -312,6 +335,7 @@ describe('#pick', function() {
     var order = [];
     var object = {};
     async.pick(object, pickIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
@@ -322,7 +346,8 @@ describe('#pick', function() {
 
     var order = [];
     async.pick(function() {}, pickIterator(order), function(res) {
-      assert.deepEqual(res, []);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
     });
@@ -332,7 +357,8 @@ describe('#pick', function() {
 
     var order = [];
     async.pick(undefined, pickIterator(order), function(res) {
-      assert.deepEqual(res, []);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
     });
@@ -342,7 +368,8 @@ describe('#pick', function() {
 
     var order = [];
     async.pick(null, pickIterator(order), function(res) {
-      assert.deepEqual(res, []);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
     });
