@@ -3,6 +3,7 @@
 
 var assert = require('power-assert');
 var async = require('../../');
+var delay = require('../config').delay;
 
 function mapValuesIterator(order) {
 
@@ -18,7 +19,7 @@ function mapValuesIterator(order) {
 
       order.push(num);
       callback(null, num * 2);
-    }, num * 30);
+    }, num * delay);
   };
 }
 
@@ -36,7 +37,7 @@ function mapValuesIteratorWithKey(order) {
 
       order.push([num, key]);
       callback(null, num * 2);
-    }, num * 30);
+    }, num * delay);
   };
 }
 
@@ -161,7 +162,7 @@ describe('#mapValues', function() {
       setTimeout(function() {
         order.push(num);
         callback(num === 3, num);
-      }, num * 10);
+      }, num * delay);
     };
 
     async.mapValues(collection, iterator, function(err, res) {
@@ -383,7 +384,7 @@ describe('#mapValuesSeries', function() {
       setTimeout(function() {
         order.push(num);
         callback(num === 3, num);
-      }, num * 10);
+      }, num * delay);
     };
 
     async.mapValuesSeries(collection, iterator, function(err, res) {
@@ -641,7 +642,7 @@ describe('#mapValuesLimit', function() {
       setTimeout(function() {
         order.push(num);
         callback(num === 3, num);
-      }, num * 30);
+      }, num * delay);
     };
 
     async.mapValuesLimit(collection, 4, iterator, function(err, res) {

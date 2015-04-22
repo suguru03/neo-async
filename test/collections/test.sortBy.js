@@ -3,6 +3,7 @@
 
 var assert = require('power-assert');
 var async = require('../../');
+var delay = require('../config').delay;
 
 function sortByIterator(order) {
 
@@ -17,7 +18,7 @@ function sortByIterator(order) {
       }
       order.push(num);
       callback(null, num * 2);
-    }, num * 30);
+    }, num * delay);
   };
 }
 
@@ -34,7 +35,7 @@ function sortByIteratorWithKey(order) {
       }
       order.push([num, key]);
       callback(null, num * 2);
-    }, num * 30);
+    }, num * delay);
   };
 }
 
@@ -139,7 +140,7 @@ describe('#sortBy', function() {
       setTimeout(function() {
         order.push(num);
         callback(num === 3, num);
-      }, num * 30);
+      }, num * delay);
     };
     async.sortBy(collection, iterator, function(err, res) {
       assert.ok(err);
@@ -157,7 +158,7 @@ describe('#sortBy', function() {
       setTimeout(function() {
         order.push([num, index]);
         callback(num === 3, num);
-      }, num * 30);
+      }, num * delay);
     };
     async.sortBy(collection, iterator, function(err, res) {
       assert.ok(err);
@@ -313,7 +314,7 @@ describe('#sortBySeries', function() {
       setTimeout(function() {
         order.push(num);
         callback(num === 3, num);
-      }, num * 10);
+      }, num * delay);
     };
     async.sortBySeries(collection, iterator, function(err, res) {
       assert.ok(err);
@@ -331,7 +332,7 @@ describe('#sortBySeries', function() {
       setTimeout(function() {
         order.push([num, index]);
         callback(num === 3, num);
-      }, num * 10);
+      }, num * delay);
     };
     async.sortBySeries(collection, iterator, function(err, res) {
       assert.ok(err);
@@ -508,7 +509,7 @@ describe('#sortByLimit', function() {
       setTimeout(function() {
         order.push(num);
         callback(num === 3, num);
-      }, num * 30);
+      }, num * delay);
     };
     async.sortByLimit(collection, 2, iterator, function(err, res) {
       assert.ok(err);
@@ -526,7 +527,7 @@ describe('#sortByLimit', function() {
       setTimeout(function() {
         order.push([num, index]);
         callback(num === 3, num);
-      }, num * 30);
+      }, num * delay);
     };
     async.sortByLimit(collection, 2, iterator, function(err, res) {
       assert.ok(err);

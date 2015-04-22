@@ -3,6 +3,7 @@
 
 var assert = require('power-assert');
 var async = require('../../');
+var delay = require('../config').delay;
 
 function filterIterator(order) {
 
@@ -17,7 +18,7 @@ function filterIterator(order) {
       }
       order.push(num);
       callback(num % 2);
-    }, num * 30);
+    }, num * delay);
   };
 }
 
@@ -34,7 +35,7 @@ function filterIteratorWithError(order) {
       }
       order.push(num);
       callback(null, num % 2);
-    }, num * 30);
+    }, num * delay);
   };
 }
 
@@ -51,7 +52,7 @@ function filterIteratorWithKey(order) {
       }
       order.push([num, key]);
       callback(num % 2);
-    }, num * 30);
+    }, num * delay);
   };
 }
 
@@ -68,7 +69,7 @@ function filterIteratorWithKeyAndError(order) {
       }
       order.push([num, key]);
       callback(null, num % 2);
-    }, num * 30);
+    }, num * delay);
   };
 }
 
@@ -627,7 +628,7 @@ describe('#filterLimit', function() {
       setTimeout(function() {
         order.push([num, index]);
         callback(num === 5, num % 2);
-      }, num * 30);
+      }, num * delay);
     };
 
     async.filterLimit(collection, 2, iterator, function(err, res) {

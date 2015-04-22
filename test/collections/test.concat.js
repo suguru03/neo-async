@@ -3,7 +3,7 @@
 
 var assert = require('power-assert');
 var async = require('../../');
-
+var delay = require('../config').delay;
 var domain = require('domain').create();
 var errorCallCount = 0;
 domain.on('error', function(err) {
@@ -29,7 +29,7 @@ function concatIterator(order) {
         array.push(num--);
       }
       callback(null, array);
-    }, num * 30);
+    }, num * delay);
   };
 }
 
@@ -51,7 +51,7 @@ function concatIteratorWithKey(order) {
         array.push(num--);
       }
       callback(null, array);
-    }, num * 30);
+    }, num * delay);
   };
 }
 
@@ -156,7 +156,7 @@ describe('#concat', function() {
       setTimeout(function() {
         order.push(num);
         callback(num === 3, num);
-      }, num * 10);
+      }, num * delay);
     };
     async.concat(collection, iterator, function(err, res) {
       assert.ok(err);
@@ -336,7 +336,7 @@ describe('#concatSeries', function() {
       setTimeout(function() {
         order.push(num);
         callback(num === 3, num);
-      }, num * 10);
+      }, num * delay);
     };
     async.concatSeries(collection, iterator, function(err, res) {
       assert.ok(err);
@@ -360,7 +360,7 @@ describe('#concatSeries', function() {
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 4);
       done();
-    }, 50);
+    }, delay);
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -555,7 +555,7 @@ describe('#concatLimit', function() {
       setTimeout(function() {
         order.push(num);
         callback(num === 3, num);
-      }, num * 30);
+      }, num * delay);
     };
     async.concatLimit(collection, 5, iterator, function(err, res) {
       assert.ok(err);

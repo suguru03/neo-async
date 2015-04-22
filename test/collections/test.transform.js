@@ -4,6 +4,7 @@
 var _ = require('lodash');
 var assert = require('power-assert');
 var async = require('../../');
+var delay = require('../config').delay;
 
 function transformIterator(order) {
 
@@ -23,7 +24,7 @@ function transformIterator(order) {
       }
       order.push(num);
       callback();
-    }, num * 30);
+    }, num * delay);
   };
 }
 
@@ -50,7 +51,7 @@ function transformIteratorWithKey(order) {
         return callback(null, false);
       }
       callback();
-    }, num * 30);
+    }, num * delay);
   };
 }
 
@@ -142,7 +143,7 @@ describe('#transform', function() {
         order.push(num);
         memo.push(num);
         callback(null, num !== 3);
-      }, num * 10);
+      }, num * delay);
     };
     async.transform(collection, iterator, function(err, res) {
       if (err) {
@@ -213,7 +214,7 @@ describe('#transform', function() {
         memo.push(value);
         order.push(value);
         callback(value === 4);
-      }, value * 10);
+      }, value * delay);
     };
     async.transform(collection, iterator, function(err, res) {
       assert.ok(err);
@@ -405,7 +406,7 @@ describe('#transformSeries', function() {
         memo.push(value);
         order.push(value);
         callback(value === 4);
-      }, value * 10);
+      }, value * delay);
     };
     async.transformSeries(collection, iterator, function(err, res) {
       assert.ok(err);
@@ -658,7 +659,7 @@ describe('#transformLimit', function() {
         memo.push(value);
         order.push(value);
         callback(value === 3);
-      }, value * 30);
+      }, value * delay);
     };
     async.transformLimit(collection, 2, iterator, function(err, res) {
       assert.ok(err);

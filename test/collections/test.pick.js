@@ -3,7 +3,7 @@
 
 var assert = require('power-assert');
 var async = require('../../');
-
+var delay = require('../config').delay;
 var domain = require('domain').create();
 var errorCallCount = 0;
 domain.on('error', function(err) {
@@ -24,7 +24,7 @@ function pickIterator(order) {
       }
       order.push(num);
       callback(num % 2);
-    }, num * 30);
+    }, num * delay);
   };
 }
 
@@ -41,7 +41,7 @@ function pickIteratorWithError(order) {
       }
       order.push(num);
       callback(null, num % 2);
-    }, num * 30);
+    }, num * delay);
   };
 }
 
@@ -58,7 +58,7 @@ function pickIteratorWithKey(order) {
       }
       order.push([num, key]);
       callback(num % 2);
-    }, num * 30);
+    }, num * delay);
   };
 }
 
@@ -75,7 +75,7 @@ function pickIteratorWithKeyAndError(order) {
       }
       order.push([num, key]);
       callback(null, num % 2);
-    }, num * 30);
+    }, num * delay);
   };
 }
 
@@ -203,7 +203,7 @@ describe('#pick', function() {
       setTimeout(function() {
         order.push(num);
         callback(num === 3, num % 2);
-      }, num * 30);
+      }, num * delay);
     };
 
     async.pick(collection, iterator, function(err, res) {
@@ -230,7 +230,7 @@ describe('#pick', function() {
       setTimeout(function() {
         order.push(num);
         callback(num === 3, num % 2);
-      }, num * 30);
+      }, num * delay);
     };
 
     async.pick(collection, iterator, function(err, res) {
@@ -478,7 +478,7 @@ describe('#pickSeries', function() {
       setTimeout(function() {
         order.push(num);
         callback(num === 3, num % 2);
-      }, num * 30);
+      }, num * delay);
     };
 
     async.pickSeries(collection, iterator, function(err, res) {
@@ -505,7 +505,7 @@ describe('#pickSeries', function() {
       setTimeout(function() {
         order.push(num);
         callback(num === 3, num % 2);
-      }, num * 30);
+      }, num * delay);
     };
 
     async.pickSeries(collection, iterator, function(err, res) {
@@ -533,7 +533,7 @@ describe('#pickSeries', function() {
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 3);
       done();
-    }, 50);
+    }, delay);
   });
 
   it('should throw error if double callback', function(done) {
@@ -556,7 +556,7 @@ describe('#pickSeries', function() {
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 3);
       done();
-    }, 50);
+    }, delay);
   });
 
   it('should throw error if double callback', function(done) {
@@ -577,7 +577,7 @@ describe('#pickSeries', function() {
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 3);
       done();
-    }, 50);
+    }, delay);
   });
 
   it('should throw error if double callback', function(done) {
@@ -604,7 +604,7 @@ describe('#pickSeries', function() {
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 3);
       done();
-    }, 50);
+    }, delay);
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -877,7 +877,7 @@ describe('#pickLimit', function() {
       setTimeout(function() {
         order.push(num);
         callback(num === 2, num);
-      }, num * 30);
+      }, num * delay);
     };
     async.pickLimit(collection, 4, iterator, function(err, res) {
       assert.ok(err);
@@ -897,7 +897,7 @@ describe('#pickLimit', function() {
       setTimeout(function() {
         order.push(num);
         callback(num === 2, num);
-      }, num * 30);
+      }, num * delay);
     };
     async.pickLimit(collection, 4, iterator, function(err, res) {
       assert.ok(err);
@@ -921,7 +921,7 @@ describe('#pickLimit', function() {
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 3);
       done();
-    }, 50);
+    }, delay);
   });
 
   it('should throw error if double callback', function(done) {
@@ -941,7 +941,7 @@ describe('#pickLimit', function() {
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 3);
       done();
-    }, 50);
+    }, delay);
   });
 
   it('should throw error if double callback', function(done) {
@@ -962,7 +962,7 @@ describe('#pickLimit', function() {
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 3);
       done();
-    }, 50);
+    }, delay);
   });
 
   it('should throw error if double callback', function(done) {
@@ -986,7 +986,7 @@ describe('#pickLimit', function() {
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 3);
       done();
-    }, 50);
+    }, delay);
   });
 
   it('should return response immediately if array is empty', function(done) {

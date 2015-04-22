@@ -3,6 +3,7 @@
 
 var assert = require('power-assert');
 var async = require('../../');
+var delay = require('../config').delay;
 
 function someIterator(order) {
 
@@ -17,7 +18,7 @@ function someIterator(order) {
       }
       order.push(num);
       callback(num % 2);
-    }, num * 30);
+    }, num * delay);
   };
 }
 
@@ -34,7 +35,7 @@ function someIteratorWithError(order) {
       }
       order.push(num);
       callback(null, num % 2);
-    }, num * 30);
+    }, num * delay);
   };
 }
 
@@ -51,7 +52,7 @@ function someIteratorWithKey(order) {
       }
       order.push([num, key]);
       callback(num % 2);
-    }, num * 30);
+    }, num * delay);
   };
 }
 
@@ -68,7 +69,7 @@ function someIteratorWithKeyAndError(order) {
       }
       order.push([num, key]);
       callback(null, num % 2);
-    }, num * 30);
+    }, num * delay);
   };
 }
 

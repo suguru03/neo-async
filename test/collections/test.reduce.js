@@ -4,6 +4,7 @@
 var _ = require('lodash');
 var assert = require('power-assert');
 var async = require('../../');
+var delay = require('../config').delay;
 
 function reduceIterator(order) {
 
@@ -25,7 +26,7 @@ function reduceIterator(order) {
       }
       order.push(num);
       callback(null, memo);
-    }, num * 10);
+    }, num * delay);
   };
 }
 
@@ -49,7 +50,7 @@ function reduceIteratorWithKey(order) {
       }
       order.push([num, key]);
       callback(null, memo);
-    }, num * 10);
+    }, num * delay);
   };
 }
 
@@ -182,7 +183,7 @@ describe('#reduce', function() {
         memo.push(num);
         order.push(num);
         callback(num === 3, memo);
-      }, num * 10);
+      }, num * delay);
     };
     async.reduce(collection, [], iterator, function(err, res) {
       assert.ok(err);
@@ -401,7 +402,7 @@ describe('#reduceRight', function() {
         memo.push(num);
         order.push(num);
         callback(num === 3, memo);
-      }, num * 10);
+      }, num * delay);
     };
     async.reduceRight(collection, [], iterator, function(err, res) {
       assert.ok(err);

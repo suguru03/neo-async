@@ -3,6 +3,7 @@
 
 var assert = require('power-assert');
 var async = require('../../');
+var delay = require('../config').delay;
 var domain = require('domain').create();
 var errorCallCount = 0;
 domain.on('error', function(err) {
@@ -22,7 +23,7 @@ function eachIterator(order) {
       }
       order.push(num);
       callback();
-    }, num * 30);
+    }, num * delay);
   };
 }
 
@@ -38,7 +39,7 @@ function eachIteratorWithKey(order) {
       }
       order.push([num, key]);
       callback();
-    }, num * 30);
+    }, num * delay);
   };
 }
 
@@ -138,7 +139,7 @@ describe('#each', function() {
       setTimeout(function() {
         order.push(num);
         callback(num === 3);
-      }, num * 10);
+      }, num * delay);
     };
 
     async.each(collection, iterator, function(err) {
@@ -162,7 +163,7 @@ describe('#each', function() {
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 4);
       done();
-    }, 50);
+    }, delay);
   });
 
   it('should throw error to callback if callback was called twice and caused error', function(done) {
@@ -187,7 +188,7 @@ describe('#each', function() {
       setTimeout(function() {
         order.push(num);
         callback(null, num !== 3);
-      }, num * 10);
+      }, num * delay);
     };
 
     async.each(collection, iterator, function(err) {
@@ -378,7 +379,7 @@ describe('#eachSeries', function() {
       setTimeout(function() {
         order.push(num);
         callback(num === 3);
-      }, num * 10);
+      }, num * delay);
     };
 
     async.eachSeries(collection, iterator, function(err) {
@@ -402,7 +403,7 @@ describe('#eachSeries', function() {
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 4);
       done();
-    }, 50);
+    }, delay);
   });
 
   it('should break if respond equals false', function(done) {
@@ -610,7 +611,7 @@ describe('#eachLimit', function() {
       setTimeout(function() {
         order.push(num);
         callback(num === 3);
-      }, num * 30);
+      }, num * delay);
     };
 
     async.eachLimit(collection, 3, iterator, function(err) {
@@ -628,7 +629,7 @@ describe('#eachLimit', function() {
       setTimeout(function() {
         order.push(num);
         callback(null, num !== 3);
-      }, num * 10);
+      }, num * delay);
     };
 
     async.eachLimit(collection, 3, iterator, function(err) {

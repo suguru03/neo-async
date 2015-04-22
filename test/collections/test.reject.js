@@ -3,6 +3,7 @@
 
 var assert = require('power-assert');
 var async = require('../../');
+var delay = require('../config').delay;
 
 function rejectIterator(order) {
 
@@ -18,7 +19,7 @@ function rejectIterator(order) {
 
       order.push(num);
       callback(num % 2);
-    }, num * 30);
+    }, num * delay);
   };
 }
 
