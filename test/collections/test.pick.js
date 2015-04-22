@@ -384,7 +384,11 @@ describe('#pickSeries', function() {
     var order = [];
     var collection = [1, 3, 2, 4];
     async.pickSeries(collection, pickIterator(order), function(res) {
-      assert.deepEqual(res, [1, 3]);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {
+        '0': 1,
+        '1': 3
+      });
       assert.deepEqual(order, [1, 3, 2, 4]);
       done();
     });
@@ -398,8 +402,11 @@ describe('#pickSeries', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [1, 3]);
-      assert.deepEqual(order, [1, 3, 2, 4]);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {
+        '0': 1,
+        '1': 3
+      });
       done();
     });
   });
@@ -409,7 +416,11 @@ describe('#pickSeries', function() {
     var order = [];
     var collection = [1, 3, 2, 4];
     async.pickSeries(collection, pickIteratorWithKey(order), function(res) {
-      assert.deepEqual(res, [1, 3]);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {
+        '0': 1,
+        '1': 3
+      });
       assert.deepEqual(order, [
         [1, 0],
         [3, 1],
@@ -429,6 +440,7 @@ describe('#pickSeries', function() {
       c: 2
     };
     async.pickSeries(collection, pickIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         b: 3
       });
@@ -448,6 +460,7 @@ describe('#pickSeries', function() {
     };
 
     async.pickSeries(collection, pickIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         a: 1.1,
         c: 2.6
@@ -470,7 +483,10 @@ describe('#pickSeries', function() {
 
     async.pickSeries(collection, iterator, function(err, res) {
       assert.ok(err);
-      assert.deepEqual(res, [1]);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {
+        '0': 1
+      });
       assert.deepEqual(order, [1, 3]);
       done();
     });
@@ -494,6 +510,7 @@ describe('#pickSeries', function() {
 
     async.pickSeries(collection, iterator, function(err, res) {
       assert.ok(err);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         a: 1
       });
@@ -529,8 +546,11 @@ describe('#pickSeries', function() {
         process.nextTick(callback);
       };
       async.pickSeries(collection, iterator, function(err, res) {
-        assert.strictEqual(err, undefined);
-        assert.deepEqual(res, []);
+        if (err) {
+          return done(err);
+        }
+        assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+        assert.deepEqual(res, {});
       });
     });
     setTimeout(function() {
@@ -574,8 +594,11 @@ describe('#pickSeries', function() {
         process.nextTick(callback);
       };
       async.pickSeries(collection, iterator, function(err, res) {
-        assert.strictEqual(err, undefined);
-        assert.deepEqual(res, []);
+        if (err) {
+          return done(err);
+        }
+        assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+        assert.deepEqual(res, {});
       });
     });
     setTimeout(function() {
@@ -600,6 +623,7 @@ describe('#pickSeries', function() {
     var order = [];
     var object = {};
     async.pickSeries(object, pickIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
@@ -610,7 +634,8 @@ describe('#pickSeries', function() {
 
     var order = [];
     async.pickSeries(function() {}, pickIterator(order), function(res) {
-      assert.deepEqual(res, []);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
     });
@@ -620,7 +645,8 @@ describe('#pickSeries', function() {
 
     var order = [];
     async.pickSeries(undefined, pickIterator(order), function(res) {
-      assert.deepEqual(res, []);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
     });
@@ -630,7 +656,8 @@ describe('#pickSeries', function() {
 
     var order = [];
     async.pickSeries(null, pickIterator(order), function(res) {
-      assert.deepEqual(res, []);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
     });

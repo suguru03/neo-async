@@ -9,7 +9,7 @@ var neo_async_v1 = require('../../');
 // loop count
 var count = 100;
 // sampling times
-var times = 3000;
+var times = 100000;
 var array = _.shuffle(_.times(count));
 var iterator = function(n, callback) {
   callback(false);
