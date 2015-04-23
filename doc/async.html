@@ -111,6 +111,919 @@
 
     
 
+    <h4 class="name" id=".detect"><span class="type-signature">(static) </span>detect<span class="signature">(collection, iterator, callback, thisArg<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>collection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>iterator</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>thisArg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="async.js.html">async.js</a>, <a href="async.js.html#line2531">line 2531</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// array
+var order = [];
+var array = [1, 3, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.detect(array, iterator, function(err, res) {
+  console.log(res); // 1
+  console.log(order); // [1]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// array with index
+var order = [];
+var array = [1, 3, 2];
+var iterator = function(num, index, done) {
+  setTimeout(function() {
+    order.push([num, index]);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.detect(array, iterator, function(err, res) {
+  console.log(res); // 1
+  console.log(order); // [[1, 0]]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object
+var order = [];
+var object = { a: 1, b: 3, c: 2 };
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.detect(object, iterator, function(err, res) {
+  console.log(res); // 1
+  console.log(order); // [1]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object with key
+var order = [];
+var object = { a: 1, b: 3, c: 2 };
+var iterator = function(num, key, done) {
+  setTimeout(function() {
+    order.push([num, key]);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.detect(object, iterator, function(err, res) {
+  console.log(res); // 1
+  console.log(order); // [[1, 'a']]
+});</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".detectLimit"><span class="type-signature">(static) </span>detectLimit<span class="signature">(collection, limit, iterator, callback, thisArg<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>collection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>limit</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">limit >= 1</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>iterator</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>thisArg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="async.js.html">async.js</a>, <a href="async.js.html#line2837">line 2837</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// array
+var order = [];
+var array = [1, 5, 3, 4, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.detectLimit(array, 2, iterator, function(err, res) {
+  console.log(res); // 1
+  console.log(order); // [1]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// array with index
+var order = [];
+var array = [1, 5, 3, 4, 2];
+var iterator = function(num, index, done) {
+  setTimeout(function() {
+    order.push([num, index]);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.detectLimit(array, 2, iterator, function(err, res) {
+  console.log(res); // 1
+  console.log(order); // [[1, 0]]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object
+var order = [];
+var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.detectLimit(object, 2, iterator, function(err, res) {
+  console.log(res); // 1
+  console.log(order); // [1]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object with key
+var order = [];
+var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+var iterator = function(num, key, done) {
+  setTimeout(function() {
+    order.push([num, key]);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.detectLimit(object, 2, iterator, function(err, res) {
+  console.log(res); // 1
+  console.log(order); // [[1, 'a']]
+});</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".detectSeries"><span class="type-signature">(static) </span>detectSeries<span class="signature">(collection, iterator, callback, thisArg<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>collection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>iterator</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>thisArg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="async.js.html">async.js</a>, <a href="async.js.html#line2681">line 2681</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// array
+var order = [];
+var array = [1, 3, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.detectSeries(array, iterator, function(err, res) {
+  console.log(res); // 1
+  console.log(order); // [1]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// array with index
+var order = [];
+var array = [1, 3, 2];
+var iterator = function(num, index, done) {
+  setTimeout(function() {
+    order.push([num, index]);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.detectSeries(array, iterator, function(err, res) {
+  console.log(res); // 1
+  console.log(order); // [[1, 0]]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object
+var order = [];
+var object = { a: 1, b: 3, c: 2 };
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.detectSeries(object, iterator, function(err, res) {
+  console.log(res); // 1
+  console.log(order); // [1]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object with key
+var order = [];
+var object = { a: 1, b: 3, c: 2 };
+var iterator = function(num, key, done) {
+  setTimeout(function() {
+    order.push([num, key]);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.detectSeries(object, iterator, function(err, res) {
+  console.log(res); // 1
+  console.log(order); // [[1, 'a']]
+});</code></pre>
+
+
+
+        
+            
+
+    
+
     <h4 class="name" id=".each"><span class="type-signature">(static) </span>each<span class="signature">(collection, iterator, callback, thisArg<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
@@ -315,7 +1228,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="async.js.html">async.js</a>, <a href="async.js.html#line492">line 492</a>
+        <a href="async.js.html">async.js</a>, <a href="async.js.html#line801">line 801</a>
     </li></ul></dd>
     
 
@@ -640,7 +1553,7 @@ async.each(object, iterator, function(err, res) {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="async.js.html">async.js</a>, <a href="async.js.html#line748">line 748</a>
+        <a href="async.js.html">async.js</a>, <a href="async.js.html#line1057">line 1057</a>
     </li></ul></dd>
     
 
@@ -718,7 +1631,7 @@ var iterator = function(num, key, done) {
     done();
   }, num * 10);
 };
-async.each(object, iterator, function(err, res) {
+async.eachLimit(object, 2, iterator, function(err, res) {
   console.log(res); // undefined
   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
 });</code></pre>
@@ -934,7 +1847,7 @@ async.each(object, iterator, function(err, res) {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="async.js.html">async.js</a>, <a href="async.js.html#line612">line 612</a>
+        <a href="async.js.html">async.js</a>, <a href="async.js.html#line921">line 921</a>
     </li></ul></dd>
     
 
@@ -1020,6 +1933,4008 @@ async.eachSeries(object, iterator, function(err, res) {
 
 
         
+            
+
+    
+
+    <h4 class="name" id=".filter"><span class="type-signature">(static) </span>filter<span class="signature">(collection, iterator, callback, thisArg<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>collection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>iterator</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>thisArg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="async.js.html">async.js</a>, <a href="async.js.html#line2079">line 2079</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// array
+var order = [];
+var array = [1, 3, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.filter(array, iterator, function(err, res) {
+  console.log(res); // [1, 3];
+  console.log(order); // [1, 2, 3]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// array with index
+var order = [];
+var array = [1, 3, 2];
+var iterator = function(num, index, done) {
+  setTimeout(function() {
+    order.push([num, index]);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.filter(array, iterator, function(err, res) {
+  console.log(res); // [1, 3];
+  console.log(order); // [[1, 0], [2, 2], [3, 1]]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object
+var order = [];
+var object = { a: 1, b: 3, c: 2 };
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.filter(object, iterator, function(err, res) {
+  console.log(res); // [1, 3];
+  console.log(order); // [1, 2, 3]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object with key
+var order = [];
+var object = { a: 1, b: 3, c: 2 };
+var iterator = function(num, key, done) {
+  setTimeout(function() {
+    order.push([num, key]);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.filter(object, iterator, function(err, res) {
+  console.log(res); // [1, 3];
+  console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b']]
+});</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".filterLimit"><span class="type-signature">(static) </span>filterLimit<span class="signature">(collection, limit, iterator, callback, thisArg<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>collection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>limit</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">limit >= 1</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>iterator</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>thisArg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="async.js.html">async.js</a>, <a href="async.js.html#line2230">line 2230</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// array
+var order = [];
+var array = [1, 5, 3, 4, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.filterLimit(array, 2, iterator, function(err, res) {
+  console.log(res); // [1, 5, 3]
+  console.log(order); // [1, 3, 5, 2, 4]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// array with index
+var order = [];
+var array = [1, 5, 3, 4, 2];
+var iterator = function(num, index, done) {
+  setTimeout(function() {
+    order.push([num, index]);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.filterLimit(array, 2, iterator, function(err, res) {
+  console.log(res); // [1, 5, 3]
+  console.log(order); // [[1, 0], [3, 2], [5, 1], [2, 4], [4, 3]]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object
+var order = [];
+var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.filterLimit(object, 2, iterator, function(err, res) {
+  console.log(res); // [1, 5, 3]
+  console.log(order); // [1, 3, 5, 2, 4]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object with key
+var order = [];
+var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+var iterator = function(num, key, done) {
+  setTimeout(function() {
+    order.push([num, key]);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.filterLimit(object, 2, iterator, function(err, res) {
+  console.log(res); // [1, 5, 3]
+  console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
+});</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".filterSeries"><span class="type-signature">(static) </span>filterSeries<span class="signature">(collection, iterator, callback, thisArg<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>collection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>iterator</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>thisArg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="async.js.html">async.js</a>, <a href="async.js.html#line2154">line 2154</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// array
+var order = [];
+var array = [1, 3, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.filterSeries(array, iterator, function(err, res) {
+  console.log(res); // [1, 3];
+  console.log(order); // [1, 3, 2]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// array with index
+var order = [];
+var array = [1, 3, 2];
+var iterator = function(num, index, done) {
+  setTimeout(function() {
+    order.push([num, index]);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.filterSeries(array, iterator, function(err, res) {
+  console.log(res); // [1, 3]
+  console.log(order); // [[1, 0], [3, 1], [2, 2]]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object
+var order = [];
+var object = { a: 1, b: 3, c: 2 };
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.filterSeries(object, iterator, function(err, res) {
+  console.log(res); // [1, 3]
+  console.log(order); // [1, 3, 2]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object with key
+var order = [];
+var object = { a: 1, b: 3, c: 2 };
+var iterator = function(num, key, done) {
+  setTimeout(function() {
+    order.push([num, key]);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.filterSeries(object, iterator, function(err, res) {
+  console.log(res); // [1, 3]
+  console.log(order); // [[1, 'a'], [3, 'b'], [2, 'c']]
+});</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".map"><span class="type-signature">(static) </span>map<span class="signature">(collection, iterator, callback, thisArg<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>collection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>iterator</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>thisArg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="async.js.html">async.js</a>, <a href="async.js.html#line1210">line 1210</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// array
+var order = [];
+var array = [1, 3, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num);
+  }, num * 10);
+};
+async.map(array, iterator, function(err, res) {
+  console.log(res); // [1, 3, 2];
+  console.log(order); // [1, 2, 3]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// array with index
+var order = [];
+var array = [1, 3, 2];
+var iterator = function(num, index, done) {
+  setTimeout(function() {
+    order.push([num, index]);
+    done(null, num);
+  }, num * 10);
+};
+async.map(array, iterator, function(err, res) {
+  console.log(res); // [1, 3, 2]
+  console.log(order); // [[1, 0], [2, 2], [3, 1]]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object
+var order = [];
+var object = { a: 1, b: 3, c: 2 };
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num);
+  }, num * 10);
+};
+async.map(object, iterator, function(err, res) {
+  console.log(res); // [1, 3, 2]
+  console.log(order); // [1, 2, 3]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object with key
+var order = [];
+var object = { a: 1, b: 3, c: 2 };
+var iterator = function(num, key, done) {
+  setTimeout(function() {
+    order.push([num, key]);
+    done(null, num);
+  }, num * 10);
+};
+async.map(object, iterator, function(err, res) {
+  console.log(res); // [1, 3, 2]
+  console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b']]
+});</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".mapLimit"><span class="type-signature">(static) </span>mapLimit<span class="signature">(collection, limit, iterator, callback, thisArg<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>collection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>limit</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">limit >= 1</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>iterator</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>thisArg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="async.js.html">async.js</a>, <a href="async.js.html#line1485">line 1485</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// array
+var order = [];
+var array = [1, 5, 3, 4, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num);
+  }, num * 10);
+};
+async.mapLimit(array, 2, iterator, function(err, res) {
+  console.log(res); // [1, 5, 3, 4, 2]
+  console.log(order); // [1, 3, 5, 2, 4]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// array with index
+var order = [];
+var array = [1, 5, 3, 4, 2];
+var iterator = function(num, index, done) {
+  setTimeout(function() {
+    order.push([num, index]);
+    done(null, num);
+  }, num * 10);
+};
+async.mapLimit(array, 2, iterator, function(err, res) {
+  console.log(res); // [1, 5, 3, 4, 2]
+  console.log(order); // [[1, 0], [3, 2], [5, 1], [2, 4], [4, 3]]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object
+var order = [];
+var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num);
+  }, num * 10);
+};
+async.mapLimit(object, 2, iterator, function(err, res) {
+  console.log(res); // [1, 5, 3, 4, 2]
+  console.log(order); // [1, 3, 5, 2, 4]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object with key
+var order = [];
+var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+var iterator = function(num, key, done) {
+  setTimeout(function() {
+    order.push([num, key]);
+    done(null, num);
+  }, num * 10);
+};
+async.mapLimit(object, 2, iterator, function(err, res) {
+  console.log(res); // [1, 5, 3, 4, 2]
+  console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
+});</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".mapSeries"><span class="type-signature">(static) </span>mapSeries<span class="signature">(collection, iterator, callback, thisArg<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>collection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>iterator</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>thisArg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="async.js.html">async.js</a>, <a href="async.js.html#line1345">line 1345</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// array
+var order = [];
+var array = [1, 3, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num);
+  }, num * 10);
+};
+async.mapSeries(array, iterator, function(err, res) {
+  console.log(res); // [1, 3, 2];
+  console.log(order); // [1, 3, 2]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// array with index
+var order = [];
+var array = [1, 3, 2];
+var iterator = function(num, index, done) {
+  setTimeout(function() {
+    order.push([num, index]);
+    done(null, num);
+  }, num * 10);
+};
+async.mapSeries(array, iterator, function(err, res) {
+  console.log(res); // [1, 3, 2]
+  console.log(order); // [[1, 0], [3, 1], [2, 2]]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object
+var order = [];
+var object = { a: 1, b: 3, c: 2 };
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num);
+  }, num * 10);
+};
+async.mapSeries(object, iterator, function(err, res) {
+  console.log(res); // [1, 3, 2]
+  console.log(order); // [1, 3, 2]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object with key
+var order = [];
+var object = { a: 1, b: 3, c: 2 };
+var iterator = function(num, key, done) {
+  setTimeout(function() {
+    order.push([num, key]);
+    done(null, num);
+  }, num * 10);
+};
+async.mapSeries(object, iterator, function(err, res) {
+  console.log(res); // [1, 3, 2]
+  console.log(order); // [[1, 'a'], [3, 'b'], [2, 'c']]
+});</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".mapValues"><span class="type-signature">(static) </span>mapValues<span class="signature">(collection, iterator, callback, thisArg<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>collection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>iterator</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>thisArg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="async.js.html">async.js</a>, <a href="async.js.html#line1643">line 1643</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// array
+var order = [];
+var array = [1, 3, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num);
+  }, num * 10);
+};
+async.mapValues(array, iterator, function(err, res) {
+  console.log(res); // { '0': 1, '1': 3, '2': 2 }
+  console.log(order); // [1, 2, 3]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// array with index
+var order = [];
+var array = [1, 3, 2];
+var iterator = function(num, index, done) {
+  setTimeout(function() {
+    order.push([num, index]);
+    done(null, num);
+  }, num * 10);
+};
+async.mapValues(array, iterator, function(err, res) {
+  console.log(res); // { '0': 1, '1': 3, '2': 2 }
+  console.log(order); // [[1, 0], [2, 2], [3, 1]]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object
+var order = [];
+var object = { a: 1, b: 3, c: 2 };
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num);
+  }, num * 10);
+};
+async.mapValues(object, iterator, function(err, res) {
+  console.log(res); // { a: 1, b: 3, c: 2 }
+  console.log(order); // [1, 2, 3]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object with key
+var order = [];
+var object = { a: 1, b: 3, c: 2 };
+var iterator = function(num, key, done) {
+  setTimeout(function() {
+    order.push([num, key]);
+    done(null, num);
+  }, num * 10);
+};
+async.mapValues(object, iterator, function(err, res) {
+  console.log(res); // { a: 1, b: 3, c: 2 }
+  console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b']]
+});</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".mapValuesLimit"><span class="type-signature">(static) </span>mapValuesLimit<span class="signature">(collection, limit, iterator, callback, thisArg<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>collection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>limit</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">limit >= 1</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>iterator</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>thisArg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="async.js.html">async.js</a>, <a href="async.js.html#line1919">line 1919</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// array
+var order = [];
+var array = [1, 5, 3, 4, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num);
+  }, num * 10);
+};
+async.mapValuesLimit(array, 2, iterator, function(err, res) {
+  console.log(res); // { '0': 1, '1': 5, '2': 3, '3': 4, '4': 2 }
+  console.log(order); // [1, 3, 5, 2, 4]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// array with index
+var order = [];
+var array = [1, 5, 3, 4, 2];
+var iterator = function(num, index, done) {
+  setTimeout(function() {
+    order.push([num, index]);
+    done(null, num);
+  }, num * 10);
+};
+async.mapValuesLimit(array, 2, iterator, function(err, res) {
+  console.log(res); // { '0': 1, '1': 5, '2': 3, '3': 4, '4': 2 }
+  console.log(order); // [[1, 0], [3, 2], [5, 1], [2, 4], [4, 3]]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object
+var order = [];
+var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num);
+  }, num * 10);
+};
+async.mapValuesLimit(object, 2, iterator, function(err, res) {
+  console.log(res); // { a: 1, b: 5, c: 3, d: 4, e: 2 }
+  console.log(order); // [1, 3, 5, 2, 4]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object with key
+var order = [];
+var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+var iterator = function(num, key, done) {
+  setTimeout(function() {
+    order.push([num, key]);
+    done(null, num);
+  }, num * 10);
+};
+async.mapValuesLimit(object, 2, iterator, function(err, res) {
+  console.log(res); // { a: 1, b: 5, c: 3, d: 4, e: 2 }
+  console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
+});</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".mapValuesSeries"><span class="type-signature">(static) </span>mapValuesSeries<span class="signature">(collection, iterator, callback, thisArg<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>collection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>iterator</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>thisArg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="async.js.html">async.js</a>, <a href="async.js.html#line1776">line 1776</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// array
+var order = [];
+var array = [1, 3, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num);
+  }, num * 10);
+};
+async.mapValuesSeries(array, iterator, function(err, res) {
+  console.log(res); // { '0': 1, '1': 3, '2': 2 }
+  console.log(order); // [1, 3, 2]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// array with index
+var order = [];
+var array = [1, 3, 2];
+var iterator = function(num, index, done) {
+  setTimeout(function() {
+    order.push([num, index]);
+    done(null, num);
+  }, num * 10);
+};
+async.mapValuesSeries(array, iterator, function(err, res) {
+  console.log(res); // { '0': 1, '1': 3, '2': 2 }
+  console.log(order); // [[1, 0], [3, 1], [2, 2]]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object
+var order = [];
+var object = { a: 1, b: 3, c: 2 };
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num);
+  }, num * 10);
+};
+async.mapValuesSeries(object, iterator, function(err, res) {
+  console.log(res); // { a: 1, b: 3, c: 2 }
+  console.log(order); // [1, 3, 2]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object with key
+var order = [];
+var object = { a: 1, b: 3, c: 2 };
+var iterator = function(num, key, done) {
+  setTimeout(function() {
+    order.push([num, key]);
+    done(null, num);
+  }, num * 10);
+};
+async.mapValuesSeries(object, iterator, function(err, res) {
+  console.log(res); // { a: 1, b: 3, c: 2 }
+  console.log(order); // [[1, 'a'], [3, 'b'], [2, 'c']]
+});</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".pick"><span class="type-signature">(static) </span>pick<span class="signature">(collection, iterator, callback, thisArg<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>collection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>iterator</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>thisArg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="async.js.html">async.js</a>, <a href="async.js.html#line3093">line 3093</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// array
+var order = [];
+var array = [1, 3, 2, 4];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(num % 2);
+  }, num * 10);
+};
+async.pick(array, iterator, function(res) {
+  console.log(res); // { '0': 1, '1': 3 }
+  console.log(order); // [1, 2, 3, 4]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// array with error
+var order = [];
+var array = [1, 3, 2, 4];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.pick(array, iterator, function(err, res) {
+  console.log(res); // { '0': 1, '1': 3 }
+  console.log(order); // [1, 2, 3, 4]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// array with index
+var order = [];
+var array = [1, 3, 2, 4];
+var iterator = function(num, index, done) {
+  setTimeout(function() {
+    order.push([num, index]);
+    done(num % 2);
+  }, num * 10);
+};
+async.pick(array, iterator, function(res) {
+  console.log(res); // { '0': 1, '1': 3 }
+  console.log(order); // [[0, 1], [2, 2], [3, 1], [4, 3]]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// array with index and error
+var order = [];
+var array = [1, 3, 2, 4];
+var iterator = function(num, index, done) {
+  setTimeout(function() {
+    order.push([num, index]);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.pick(array, iterator, function(err, res) {
+  console.log(res); // { '0': 1, '1': 3 }
+  console.log(order); // [[0, 1], [2, 2], [3, 1], [4, 3]]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object
+var order = [];
+var object = { a: 1, b: 3, c: 2, d: 4 };
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(num % 2);
+  }, num * 10);
+};
+async.pick(object, iterator, function(res) {
+  console.log(res); // { a: 1, b: 3 }
+  console.log(order); // [1, 2, 3, 4]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object with error
+var order = [];
+var object = { a: 1, b: 3, c: 2, d: 4 };
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.pick(object, iterator, function(err, res) {
+  console.log(res); // { a: 1, b: 3 }
+  console.log(order); // [1, 2, 3, 4]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object with key
+var order = [];
+var object = { a: 1, b: 3, c: 2, d: 4 };
+var iterator = function(num, key, done) {
+  setTimeout(function() {
+    order.push([num, key]);
+    done(num % 2);
+  }, num * 10);
+};
+async.pick(object, iterator, function(res) {
+  console.log(res); // { a: 1, b: 3 }
+  console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b'], [4, 'd']]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object with key and error
+var order = [];
+var object = { a: 1, b: 3, c: 2, d: 4 };
+var iterator = function(num, key, done) {
+  setTimeout(function() {
+    order.push([num, key]);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.pick(object, iterator, function(err, res) {
+  console.log(res); // { a: 1, b: 3 }
+  console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b'], [4, 'd']]
+});</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".reject"><span class="type-signature">(static) </span>reject<span class="signature">(collection, iterator, callback, thisArg<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>collection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>iterator</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>thisArg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="async.js.html">async.js</a>, <a href="async.js.html#line2305">line 2305</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// array
+var order = [];
+var array = [1, 3, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.reject(array, iterator, function(err, res) {
+  console.log(res); // [2];
+  console.log(order); // [1, 2, 3]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// array with index
+var order = [];
+var array = [1, 3, 2];
+var iterator = function(num, index, done) {
+  setTimeout(function() {
+    order.push([num, index]);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.reject(array, iterator, function(err, res) {
+  console.log(res); // [2];
+  console.log(order); // [[1, 0], [2, 2], [3, 1]]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object
+var order = [];
+var object = { a: 1, b: 3, c: 2 };
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.reject(object, iterator, function(err, res) {
+  console.log(res); // [2];
+  console.log(order); // [1, 2, 3]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object with key
+var order = [];
+var object = { a: 1, b: 3, c: 2 };
+var iterator = function(num, key, done) {
+  setTimeout(function() {
+    order.push([num, key]);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.reject(object, iterator, function(err, res) {
+  console.log(res); // [2];
+  console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b']]
+});</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".rejectLimit"><span class="type-signature">(static) </span>rejectLimit<span class="signature">(collection, limit, iterator, callback, thisArg<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>collection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>limit</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">limit >= 1</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>iterator</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>thisArg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="async.js.html">async.js</a>, <a href="async.js.html#line2456">line 2456</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// array
+var order = [];
+var array = [1, 5, 3, 4, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.rejectLimit(array, 2, iterator, function(err, res) {
+  console.log(res); // [4, 2]
+  console.log(order); // [1, 3, 5, 2, 4]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// array with index
+var order = [];
+var array = [1, 5, 3, 4, 2];
+var iterator = function(num, index, done) {
+  setTimeout(function() {
+    order.push([num, index]);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.rejectLimit(array, 2, iterator, function(err, res) {
+  console.log(res); // [4, 2]
+  console.log(order); // [[1, 0], [3, 2], [5, 1], [2, 4], [4, 3]]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object
+var order = [];
+var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.rejectLimit(object, 2, iterator, function(err, res) {
+  console.log(res); // [4, 2]
+  console.log(order); // [1, 3, 5, 2, 4]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object with key
+var order = [];
+var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+var iterator = function(num, key, done) {
+  setTimeout(function() {
+    order.push([num, key]);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.rejectLimit(object, 2, iterator, function(err, res) {
+  console.log(res); // [4, 2]
+  console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
+});</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".rejectSeries"><span class="type-signature">(static) </span>rejectSeries<span class="signature">(collection, iterator, callback, thisArg<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>collection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>iterator</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>thisArg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="async.js.html">async.js</a>, <a href="async.js.html#line2380">line 2380</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// array
+var order = [];
+var array = [1, 3, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.rejectSeries(array, iterator, function(err, res) {
+  console.log(res); // [2];
+  console.log(order); // [1, 3, 2]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// array with index
+var order = [];
+var array = [1, 3, 2];
+var iterator = function(num, index, done) {
+  setTimeout(function() {
+    order.push([num, index]);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.rejectSeries(array, iterator, function(err, res) {
+  console.log(res); // [2];
+  console.log(order); // [[1, 0], [3, 1], [2, 2]]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object
+var order = [];
+var object = { a: 1, b: 3, c: 2 };
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.rejectSeries(object, iterator, function(err, res) {
+  console.log(res); // [2];
+  console.log(order); // [1, 3, 2]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object with key
+var order = [];
+var object = { a: 1, b: 3, c: 2 };
+var iterator = function(num, key, done) {
+  setTimeout(function() {
+    order.push([num, key]);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.rejectSeries(object, iterator, function(err, res) {
+  console.log(res); // [2];
+  console.log(order); // [[1, 'a'], [3, 'b'], [2, 'c']]
+});</code></pre>
+
+
+
+        
     
 
     
@@ -1041,7 +5956,7 @@ async.eachSeries(object, iterator, function(err, res) {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a> on Sun Apr 19 2015 19:36:30 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a> on Fri Apr 24 2015 01:48:22 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>
