@@ -13,6 +13,9 @@ var jsbeautifier = require('gulp-jsbeautifier');
 
 var async = require('../');
 
+var config = JSON.parse(fs.readFileSync(path.resolve(__dirname, '..', '.jsdocrc'), {
+  encoding: 'utf8'
+}));
 var tasks = [
   './lib/async.js',
   './speed_test/**/*.js',
@@ -39,9 +42,6 @@ gulp.task('jsfmt', function() {
 });
 
 function createJSDoc(done) {
-  var config = JSON.parse(fs.readFileSync(path.resolve(__dirname, '..', '.jsdocrc'), {
-    encoding: 'utf8'
-  }));
   var dirpath = path.resolve(__dirname, '..', config.opts.destination);
   exec('rm -rf ' + dirpath);
   exec('$(npm bin)/jsdoc -c .jsdocrc ./lib/async.js', done);
@@ -49,8 +49,13 @@ function createJSDoc(done) {
 
 gulp.task('jsdoc', createJSDoc);
 
-gulp.task('gh-pages', ['jsdoc'], function(done) {
+gulp.task('gh-pages', function(done) {
 
+  var filepath = path.resolve(__dirname, '..', 'lib/async.js');
+  var options = {
+    encoding: 'utf8'
+  };
+  var asyncFile = fs.readFileSync(filepath, options);
   async.waterfall([
 
     function(next) {
@@ -64,6 +69,14 @@ gulp.task('gh-pages', ['jsdoc'], function(done) {
     },
 
     function(next) {
+      fs.writeFileSync(filepath, asyncFile, {
+        encoding: 'utf8'
+      });
+      createJSDoc(next);
+    },
+
+    function() {
+      var next = _.last(arguments);
       git.status({
         args: '-s ./doc'
       }, next);
@@ -71,11 +84,11 @@ gulp.task('gh-pages', ['jsdoc'], function(done) {
 
     function(result, next) {
       if (!result) {
-        gulp.log('[skip commit]');
+        console.log('[skip commit]');
         return checkoutMaster(done);
       }
       git.exec({
-        args: 'add ./doc'
+        args: 'add ./doc ./lib/async.js'
       }, next);
     },
 
