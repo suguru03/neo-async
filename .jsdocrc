@@ -1,0 +1,10 @@
+{
+  "opts": {
+    "destination": "./doc",
+    "recurse": true
+  },
+  "source": {
+    "includePattern": ".+\\.js(doc)?$",
+    "excludePattern": "(coverage/)|(doc/)|(node_modules/)"
+  }
+}
