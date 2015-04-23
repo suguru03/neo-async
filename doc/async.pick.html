@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Namespace: pick</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Namespace: pick</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+            <span class="ancestors"><a href="async.html">async</a>.</span>
+        
+        pick
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="async.js.html">async.js</a>, <a href="async.js.html#line2975">line 2975</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+            <h3>Examples</h3>
+            
+    <pre class="prettyprint"><code>// array
+var order = [];
+var array = [1, 3, 2, 4];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(num % 2);
+  }, num * 10);
+};
+async.pick(array, iterator, function(res) {
+  console.log(res); // { '0': 1, '1': 3 }
+  console.log(order); // [1, 2, 3, 4]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// array with error
+var order = [];
+var array = [1, 3, 2, 4];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.pick(array, iterator, function(err, res) {
+  console.log(res); // { '0': 1, '1': 3 }
+  console.log(order); // [1, 2, 3, 4]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// array with index
+var order = [];
+var array = [1, 3, 2, 4];
+var iterator = function(num, index, done) {
+  setTimeout(function() {
+    order.push([num, index]);
+    done(num % 2);
+  }, num * 10);
+};
+async.pick(array, iterator, function(res) {
+  console.log(res); // { '0': 1, '1': 3 }
+  console.log(order); // [[0, 1], [2, 2], [3, 1], [4, 3]]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// array with index and error
+var order = [];
+var array = [1, 3, 2, 4];
+var iterator = function(num, index, done) {
+  setTimeout(function() {
+    order.push([num, index]);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.pick(array, iterator, function(err, res) {
+  console.log(res); // { '0': 1, '1': 3 }
+  console.log(order); // [[0, 1], [2, 2], [3, 1], [4, 3]]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object
+var order = [];
+var object = { a: 1, b: 3, c: 2, d: 4 };
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(num % 2);
+  }, num * 10);
+};
+async.pick(object, iterator, function(res) {
+  console.log(res); // { a: 1, b: 3 }
+  console.log(order); // [1, 2, 3, 4]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object with error
+var order = [];
+var object = { a: 1, b: 3, c: 2, d: 4 };
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.pick(object, iterator, function(err, res) {
+  console.log(res); // { a: 1, b: 3 }
+  console.log(order); // [1, 2, 3, 4]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object with key
+var order = [];
+var object = { a: 1, b: 3, c: 2, d: 4 };
+var iterator = function(num, key, done) {
+  setTimeout(function() {
+    order.push([num, key]);
+    done(num % 2);
+  }, num * 10);
+};
+async.pick(object, iterator, function(res) {
+  console.log(res); // { a: 1, b: 3 }
+  console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b'], [4, 'd']]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object with key and error
+var order = [];
+var object = { a: 1, b: 3, c: 2, d: 4 };
+var iterator = function(num, key, done) {
+  setTimeout(function() {
+    order.push([num, key]);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.pick(object, iterator, function(err, res) {
+  console.log(res); // { a: 1, b: 3 }
+  console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b'], [4, 'd']]
+});</code></pre>
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="async.html">async</a></li><li><a href="async.detect.html">detect</a></li><li><a href="async.detectLimit.html">detectLimit</a></li><li><a href="async.detectSeries.html">detectSeries</a></li><li><a href="async.each.html">each</a></li><li><a href="async.eachLimit.html">eachLimit</a></li><li><a href="async.eachSeries.html">eachSeries</a></li><li><a href="async.filter.html">filter</a></li><li><a href="async.filterLimit.html">filterLimit</a></li><li><a href="async.filterSeries.html">filterSeries</a></li><li><a href="async.map.html">map</a></li><li><a href="async.mapLimit.html">mapLimit</a></li><li><a href="async.mapSeries.html">mapSeries</a></li><li><a href="async.mapValues.html">mapValues</a></li><li><a href="async.mapValuesLimit.html">mapValuesLimit</a></li><li><a href="async.mapValuesSeries.html">mapValuesSeries</a></li><li><a href="async.pick.html">pick</a></li><li><a href="async.reject.html">reject</a></li><li><a href="async.rejectLimit.html">rejectLimit</a></li><li><a href="async.rejectSeries.html">rejectSeries</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a> on Fri Apr 24 2015 02:04:19 GMT+0900 (JST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

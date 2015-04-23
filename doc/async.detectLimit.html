@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Namespace: async</title>
+    <title>JSDoc: Namespace: detectLimit</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Namespace: async</h1>
+    <h1 class="page-title">Namespace: detectLimit</h1>
 
     
 
@@ -29,7 +29,9 @@
 <header>
     
         <h2>
-        async
+            <span class="ancestors"><a href="async.html">async</a>.</span>
+        
+        detectLimit
         </h2>
         
     
@@ -45,9 +47,6 @@
 
 <dl class="details">
 
-    
-    <dt class="tag-version">Version:</dt>
-    <dd class="tag-version"><ul class="dummy"><li>0.6.4</li></ul></dd>
     
 
     
@@ -75,7 +74,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="async.js.html">async.js</a>, <a href="async.js.html#line18">line 18</a>
+        <a href="async.js.html">async.js</a>, <a href="async.js.html#line2782">line 2782</a>
     </li></ul></dd>
     
 
@@ -86,6 +85,65 @@
     
 </dl>
 
+
+        
+            <h3>Examples</h3>
+            
+    <pre class="prettyprint"><code>// array
+var order = [];
+var array = [1, 5, 3, 4, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.detectLimit(array, 2, iterator, function(err, res) {
+  console.log(res); // 1
+  console.log(order); // [1]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// array with index
+var order = [];
+var array = [1, 5, 3, 4, 2];
+var iterator = function(num, index, done) {
+  setTimeout(function() {
+    order.push([num, index]);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.detectLimit(array, 2, iterator, function(err, res) {
+  console.log(res); // 1
+  console.log(order); // [[1, 0]]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object
+var order = [];
+var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.detectLimit(object, 2, iterator, function(err, res) {
+  console.log(res); // 1
+  console.log(order); // [1]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object with key
+var order = [];
+var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+var iterator = function(num, key, done) {
+  setTimeout(function() {
+    order.push([num, key]);
+    done(null, num % 2);
+  }, num * 10);
+};
+async.detectLimit(object, 2, iterator, function(err, res) {
+  console.log(res); // 1
+  console.log(order); // [[1, 'a']]
+});</code></pre>
 
         
     
@@ -99,67 +157,6 @@
 
      
 
-    
-        <h3 class="subsection-title">Namespaces</h3>
-
-        <dl>
-            <dt><a href="async.detect.html">detect</a></dt>
-            <dd></dd>
-        
-            <dt><a href="async.detectLimit.html">detectLimit</a></dt>
-            <dd></dd>
-        
-            <dt><a href="async.detectSeries.html">detectSeries</a></dt>
-            <dd></dd>
-        
-            <dt><a href="async.each.html">each</a></dt>
-            <dd></dd>
-        
-            <dt><a href="async.eachLimit.html">eachLimit</a></dt>
-            <dd></dd>
-        
-            <dt><a href="async.eachSeries.html">eachSeries</a></dt>
-            <dd></dd>
-        
-            <dt><a href="async.filter.html">filter</a></dt>
-            <dd></dd>
-        
-            <dt><a href="async.filterLimit.html">filterLimit</a></dt>
-            <dd></dd>
-        
-            <dt><a href="async.filterSeries.html">filterSeries</a></dt>
-            <dd></dd>
-        
-            <dt><a href="async.map.html">map</a></dt>
-            <dd></dd>
-        
-            <dt><a href="async.mapLimit.html">mapLimit</a></dt>
-            <dd></dd>
-        
-            <dt><a href="async.mapSeries.html">mapSeries</a></dt>
-            <dd></dd>
-        
-            <dt><a href="async.mapValues.html">mapValues</a></dt>
-            <dd></dd>
-        
-            <dt><a href="async.mapValuesLimit.html">mapValuesLimit</a></dt>
-            <dd></dd>
-        
-            <dt><a href="async.mapValuesSeries.html">mapValuesSeries</a></dt>
-            <dd></dd>
-        
-            <dt><a href="async.pick.html">pick</a></dt>
-            <dd></dd>
-        
-            <dt><a href="async.reject.html">reject</a></dt>
-            <dd></dd>
-        
-            <dt><a href="async.rejectLimit.html">rejectLimit</a></dt>
-            <dd></dd>
-        
-            <dt><a href="async.rejectSeries.html">rejectSeries</a></dt>
-            <dd></dd>
-        </dl>
     
 
     
