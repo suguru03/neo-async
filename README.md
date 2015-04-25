@@ -7,7 +7,8 @@
 [![npm](https://img.shields.io/npm/dm/neo-async.svg)](https://www.npmjs.com/package/neo-async)
 
 Neo-Async is thought to be used as a drop-in replacement for [Async](https://github.com/caolan/async), it almost fully covers its functionality and runs [faster](#speed-comparison).  
-[Async](https://github.com/caolan/async) allows double callbacks in `waterfall`, but Neo-Async does not allow. ([test](https://github.com/suguru03/async/tree/neo-async/test))
+[Async](https://github.com/caolan/async) allows double callbacks in `waterfall`, but Neo-Async does not allow. ([test](https://github.com/suguru03/async/tree/neo-async/test))  
+PR is welcome ! Especially improvement for English documents :)
 
 ![Neo-Async](https://raw.githubusercontent.com/wiki/suguru03/neo-async/images/neo_async.png)
 
@@ -59,63 +60,62 @@ bower install neo-async
 
 ### Collections
 
-
-- [`each`](#each)
-- [`eachSeries`](#eachSeries)
-- [`eachLimit`](#eachLimit)
-- [`forEach`](#each) -> [`each`](#each)
-- [`forEachSeries`](#eachSeries) -> [`eachSeries`](#eachSeries)
-- [`forEachLimit`](#eachLimit) -> [`eachLimit`](#eachLimit)
-- [`map`](#map)
-- [`mapSeries`](#mapSeries)
-- [`mapLimit`](#mapLimit)
-- [`mapValues`](#mapValues) *
-- [`mapValuesSeries`](#mapValuesSeries) *
-- [`mapValuesLimit`](#mapValuesLimit) *
-- [`filter`](#filter)
-- [`filterSeries`](#filterSeries)
-- [`filterLimit`](#filterLimit) *
-- [`select`](#filter) -> [`filter`](#filter)
-- [`selectSeries`](#filterSeries) -> [`filterSeries`](#filterSeries)
-- [`selectLimit`](#filterLimit) -> [`filterLimit`](#filterlimit) *
-- [`reject`](#reject)
-- [`rejectSeries`](#rejectSeries)
-- [`rejectLimit`](#rejectLimit) *
-- [`detect`](#detect)
-- [`detectSeries`](#detectSeries)
-- [`detectLimit`](#detectLimit) *
-- [`pick`](#pick) *
-- [`pickSeries`](#pickSeries) *
-- [`pickLimit`](#pickLimit) *
-- [`reduce`](#reduce)
-- [`inject`](#reduce) -> [`reduce`](#reduce)
-- [`foldl`](#reduce) -> [`reduce`](#reduce)
-- [`reduceRight`](#reduceRight)
-- [`foldr`](#reduceRight) -> [`reduceRight`](#reduceRight)
-- [`transform`](#transform) *
-- [`transformSeries`](#transformSeries) *
-- [`transformLimit`](#transformLimit) *
-- [`sortBy`](#sortBy)
-- [`sortBySeries`](#sortBySeries) *
-- [`sortByLimit`](#sortByLimit) *
-- [`some`](#some)
-- [`someSeries`](#someSeries) *
-- [`someLimit`](#someLimit) *
-- [`any`](#some) -> [`some`](#some)
-- [`every`](#every)
-- [`everySeries`](#everySeries) *
-- [`everyLimit`](#everyLimit) *
-- [`all`](#every) -> [`every`](#every)
-- [`concat`](#concat)
-- [`concatSeries`](#concatSeries)
-- [`concatLimit`](#concatLimit) *
+- [`each`](http://suguru03.github.io/neo-async/doc/async.each.html)
+- [`eachSeries`](http://suguru03.github.io/neo-async/doc/async.eachSeries.html)
+- [`eachLimit`](http://suguru03.github.io/neo-async/doc/async.eachLimit.html)
+- [`forEach`](http://suguru03.github.io/neo-async/doc/async.each.html) -> [`each`](http://suguru03.github.io/neo-async/doc/async.each.html)
+- [`forEachSeries`](http://suguru03.github.io/neo-async/doc/async.eachSeries.html) -> [`eachSeries`](http://suguru03.github.io/neo-async/doc/async.eachSeries.html)
+- [`forEachLimit`](http://suguru03.github.io/neo-async/doc/async.eachLimit.html) -> [`eachLimit`](http://suguru03.github.io/neo-async/doc/async.eachLimit.html)
+- [`map`](http://suguru03.github.io/neo-async/doc/async.mp.html)
+- [`mapSeries`](http://suguru03.github.io/neo-async/doc/async.mapSeries.html)
+- [`mapLimit`](http://suguru03.github.io/neo-async/doc/async.mapLimit.html)
+- [`mapValues`](http://suguru03.github.io/neo-async/doc/async.mapValues.html) *
+- [`mapValuesSeries`](http://suguru03.github.io/neo-async/doc/async.mapValuesSeries.html) *
+- [`mapValuesLimit`](http://suguru03.github.io/neo-async/doc/async.mapValuesLimit.html) *
+- [`filter`](http://suguru03.github.io/neo-async/doc/async.filter.html)
+- [`filterSeries`](http://suguru03.github.io/neo-async/doc/async.filterSeries.html)
+- [`filterLimit`](http://suguru03.github.io/neo-async/doc/async.filterLimit.html) *
+- [`select`](http://suguru03.github.io/neo-async/doc/async.filter.html) -> [`filter`](http://suguru03.github.io/neo-async/doc/async.filter.html)
+- [`selectSeries`](http://suguru03.github.io/neo-async/doc/async.filterSeries.html) -> [`filterSeries`](http://suguru03.github.io/neo-async/doc/async.filterSeries.html)
+- [`selectLimit`](http://suguru03.github.io/neo-async/doc/async.filterLimit.html) -> [`filterLimit`](http://suguru03.github.io/neo-async/doc/async.filterLimit.html) *
+- [`reject`](http://suguru03.github.io/neo-async/doc/async.reject.html)
+- [`rejectSeries`](http://suguru03.github.io/neo-async/doc/async.rejectSeries.html)
+- [`rejectLimit`](http://suguru03.github.io/neo-async/doc/async.rejectLimit.html) *
+- [`detect`](http://suguru03.github.io/neo-async/doc/async.detect.html)
+- [`detectSeries`](http://suguru03.github.io/neo-async/doc/async.detectSeries.html)
+- [`detectLimit`](http://suguru03.github.io/neo-async/doc/async.detectLimit.html) *
+- [`pick`](http://suguru03.github.io/neo-async/doc/async.pick.html) *
+- [`pickSeries`](http://suguru03.github.io/neo-async/doc/async.pickSeries.html) *
+- [`pickLimit`](http://suguru03.github.io/neo-async/doc/async.pickLimit.html) *
+- [`reduce`](http://suguru03.github.io/neo-async/doc/async.reduce.html)
+- [`inject`](http://suguru03.github.io/neo-async/doc/async.reduce.html) -> [`reduce`](http://suguru03.github.io/neo-async/doc/async.reduce.html)
+- [`foldl`](http://suguru03.github.io/neo-async/doc/async.reduce.html) -> [`reduce`](http://suguru03.github.io/neo-async/doc/async.reduce.html)
+- [`reduceRight`](http://suguru03.github.io/neo-async/doc/async.reduceRight.html)
+- [`foldr`](http://suguru03.github.io/neo-async/doc/async.reduceRight.html) -> [`reduceRight`](http://suguru03.github.io/neo-async/doc/async.reduceRight.html)
+- [`transform`](http://suguru03.github.io/neo-async/doc/async.transform.html) *
+- [`transformSeries`](http://suguru03.github.io/neo-async/doc/async.transformSeries.html) *
+- [`transformLimit`](http://suguru03.github.io/neo-async/doc/async.transformLimit.html) *
+- [`sortBy`](http://suguru03.github.io/neo-async/doc/async.sortBy.html) *
+- [`sortBySeries`](http://suguru03.github.io/neo-async/doc/async.sortBySeries.html) *
+- [`sortByLimit`](http://suguru03.github.io/neo-async/doc/async.sortByLimit.html) *
+- [`some`](http://suguru03.github.io/neo-async/doc/async.some.html)
+- [`someSeries`](http://suguru03.github.io/neo-async/doc/async.someSeries.html) *
+- [`someLimit`](http://suguru03.github.io/neo-async/doc/async.someLimit.html) *
+- [`any`](http://suguru03.github.io/neo-async/doc/async.some.html) -> [`some`](http://suguru03.github.io/neo-async/doc/async.some.html)
+- [`every`](http://suguru03.github.io/neo-async/doc/async.every.html)
+- [`everySeries`](http://suguru03.github.io/neo-async/doc/async.everySeries.html) *
+- [`everyLimit`](http://suguru03.github.io/neo-async/doc/async.everyLimit.html) *
+- [`all`](http://suguru03.github.io/neo-async/doc/async.every.html) -> [`every`](http://suguru03.github.io/neo-async/doc/async.every.html)
+- [`concat`](http://suguru03.github.io/neo-async/doc/async.concat.html)
+- [`concatSeries`](http://suguru03.github.io/neo-async/doc/async.concatSeries.html)
+- [`concatLimit`](http://suguru03.github.io/neo-async/doc/async.concatLimit.html) *
 
 ### Control Flow
 
-- [`parallel`](#parallel)
-- [`series`](#series)
-- [`parallelLimit`](#parallelLimit)
-- [`waterfall`](#waterfall)
+- [`parallel`](http://suguru03.github.io/neo-async/doc/async.parallel.html)
+- [`series`](http://suguru03.github.io/neo-async/doc/async.series.html)
+- [`parallelLimit`](http://suguru03.github.io/neo-async/doc/async.series.html)
+- [`waterfall`](http://suguru03.github.io/neo-async/doc/async.waterfall.html)
 - [`whilst`](#whilst)
 - [`doWhilst`](#doWhilst)
 - [`until`](#until)
@@ -133,9 +133,9 @@ bower install neo-async
 - [`apply`](#apply)
 - [`nextTick`](#nextTick)
 - [`setImmediate`](#setImmediate)
-- [`times`](#times)
-- [`timesSeries`](#timesSeries)
-- [`timesLimit`](#timesLimit) *
+- [`times`](http://suguru03.github.io/neo-async/doc/async.times.html)
+- [`timesSeries`](http://suguru03.github.io/neo-async/doc/async.timesSeries.html)
+- [`timesLimit`](http://suguru03.github.io/neo-async/doc/async.timesLimit.html) *
 
 ### Utils
 - [`memoize`](#memoize)
@@ -144,7 +144,7 @@ bower install neo-async
 - [`dir`](#dir)
 - [`createLogger`](#createLogger)
 - [`noConflict`](#noConflict)
-- [`eventEmitter`](#eventEmitter) * 
+- [`eventEmitter`](#eventEmitter) *
 - [`EventEmitter`](#EventEmitter) *
 
 ## Speed Comparison
