@@ -4,6 +4,12 @@
 var assert = require('power-assert');
 var async = require('../../');
 var delay = require('../config').delay;
+var domain = require('domain').create();
+var errorCallCount = 0;
+domain.on('error', function(err) {
+  errorCallCount++;
+  assert.strictEqual(err.message, 'Callback was already called.');
+});
 
 function everyIterator(order) {
 
@@ -356,17 +362,23 @@ describe('#everySeries', function() {
 
   it('should throw error if double callback', function(done) {
 
-    var collection = [1, 3, 2, 4];
-    var iterator = function(num, callback) {
-      callback(true);
-      callback(true);
-    };
-    try {
+    errorCallCount = 0;
+    domain.run(function() {
+      var collection = [1, 3, 2, 4];
+      var iterator = function(num, callback) {
+        process.nextTick(function() {
+          callback(true);
+        });
+        process.nextTick(function() {
+          callback(true);
+        });
+      };
       async.everySeries(collection, iterator);
-    } catch (e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 4);
       done();
-    }
+    }, delay);
   });
 
   it('should return response immediately if collection is empty', function(done) {

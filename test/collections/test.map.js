@@ -4,6 +4,12 @@
 var assert = require('power-assert');
 var async = require('../../');
 var delay = require('../config').delay;
+var domain = require('domain').create();
+var errorCallCount = 0;
+domain.on('error', function(err) {
+  errorCallCount++;
+  assert.strictEqual(err.message, 'Callback was already called.');
+});
 
 function mapIterator(order) {
 
@@ -155,17 +161,23 @@ describe('#map', function() {
 
   it('should throw error if double callback', function(done) {
 
-    var collection = [1, 3];
-    var iterator = function(num, callback) {
-      callback(null, num);
-      callback(null, num);
-    };
-    try {
+    errorCallCount = 0;
+    domain.run(function() {
+      var collection = [1, 3];
+      var iterator = function(num, callback) {
+        process.nextTick(function() {
+          callback(null, num);
+        });
+        process.nextTick(function() {
+          callback(null, num);
+        });
+      };
       async.map(collection, iterator);
-    } catch (e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 2);
       done();
-    }
+    }, delay);
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -353,17 +365,23 @@ describe('#mapSeries', function() {
 
   it('should throw error if double callback', function(done) {
 
-    var collection = [1, 3];
-    var iterator = function(num, callback) {
-      callback(null, num);
-      callback(null, num);
-    };
-    try {
+    errorCallCount = 0;
+    domain.run(function() {
+      var collection = [1, 3];
+      var iterator = function(num, callback) {
+        process.nextTick(function() {
+          callback(null, num);
+        });
+        process.nextTick(function() {
+          callback(null, num);
+        });
+      };
       async.mapSeries(collection, iterator);
-    } catch (e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 2);
       done();
-    }
+    }, delay);
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -574,17 +592,23 @@ describe('#mapLimit', function() {
 
   it('should throw error if double callback', function(done) {
 
-    var collection = [1, 3, 2];
-    var iterator = function(num, callback) {
-      callback(null, num);
-      callback(null, num);
-    };
-    try {
+    errorCallCount = 0;
+    domain.run(function() {
+      var collection = [1, 3, 2];
+      var iterator = function(num, callback) {
+        process.nextTick(function() {
+          callback(null, num);
+        });
+        process.nextTick(function() {
+          callback(null, num);
+        });
+      };
       async.mapLimit(collection, 2, iterator);
-    } catch (e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 3);
       done();
-    }
+    }, delay);
   });
 
   it('should return response immediately if array is empty', function(done) {

@@ -239,6 +239,63 @@ describe('#filter', function() {
     }, Math);
   });
 
+  it('should throw error', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    var iterator = function(num, callback) {
+      setTimeout(function() {
+        order.push(num);
+        callback(num === 3, true);
+      }, num * delay);
+    };
+    async.filter(collection, iterator, function(err, res) {
+      assert.ok(err);
+      assert.deepEqual(res, [1, 2]);
+      done();
+    });
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    errorCallCount = 0;
+    domain.run(function() {
+      var collection = [1, 3, 2, 4];
+      var iterator = function(num, callback) {
+        process.nextTick(callback);
+        process.nextTick(callback);
+      };
+      async.filter(collection, iterator);
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 4);
+      done();
+    }, delay);
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    errorCallCount = 0;
+    domain.run(function() {
+      var collection = [1, 3, 2, 4];
+      var iterator = function(num, callback) {
+        process.nextTick(callback);
+        process.nextTick(callback);
+      };
+      async.filter(collection, iterator, function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+        assert.deepEqual(res, []);
+      });
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 4);
+      done();
+    }, delay);
+  });
+
   it('should return response immediately if collection is empty', function(done) {
 
     var order = [];
@@ -445,6 +502,63 @@ describe('#filterSeries', function() {
     }, Math);
   });
 
+  it('should throw error', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    var iterator = function(num, callback) {
+      setTimeout(function() {
+        order.push(num);
+        callback(num === 3, true);
+      }, num * delay);
+    };
+    async.filterSeries(collection, iterator, function(err, res) {
+      assert.ok(err);
+      assert.deepEqual(res, [1]);
+      done();
+    });
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    errorCallCount = 0;
+    domain.run(function() {
+      var collection = [1, 3, 2, 4];
+      var iterator = function(num, callback) {
+        process.nextTick(callback);
+        process.nextTick(callback);
+      };
+      async.filterSeries(collection, iterator);
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 4);
+      done();
+    }, delay);
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    errorCallCount = 0;
+    domain.run(function() {
+      var collection = [1, 3, 2, 4];
+      var iterator = function(num, callback) {
+        process.nextTick(callback);
+        process.nextTick(callback);
+      };
+      async.filterSeries(collection, iterator, function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+        assert.deepEqual(res, []);
+      });
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 4);
+      done();
+    }, delay);
+  });
+
   it('should return response immediately if collection is empty', function(done) {
 
     var order = [];
@@ -499,6 +613,7 @@ describe('#filterLimit', function() {
     var collection = [1, 5, 3, 2, 4];
 
     async.filterLimit(collection, 2, filterIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 5, 3]);
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
@@ -511,6 +626,7 @@ describe('#filterLimit', function() {
     var collection = [1, 5, 3, 2, 4];
 
     async.filterLimit(collection, 2, filterIteratorWithKey(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 5, 3]);
       assert.deepEqual(order, [
         [1, 0],
@@ -532,6 +648,7 @@ describe('#filterLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 5, 3]);
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
@@ -547,6 +664,7 @@ describe('#filterLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 5, 3]);
       assert.deepEqual(order, [
         [1, 0],
@@ -570,6 +688,7 @@ describe('#filterLimit', function() {
       e: 4
     };
     async.filterLimit(collection, 2, filterIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 5, 3]);
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
@@ -587,6 +706,7 @@ describe('#filterLimit', function() {
       e: 4
     };
     async.filterLimit(collection, 2, filterIteratorWithKey(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 5, 3]);
       assert.deepEqual(order, [
         [1, 'a'],
@@ -608,6 +728,7 @@ describe('#filterLimit', function() {
       c: 2.7
     };
     async.filterLimit(collection, 2, filterIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1.1, 2.7]);
       assert.deepEqual(order, [1, 4, 3]);
       done();
@@ -620,6 +741,7 @@ describe('#filterLimit', function() {
     var collection = [1, 3, 4, 2, 3, 1];
 
     async.filterLimit(collection, Infinity, filterIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3, 3, 1]);
       assert.deepEqual(order, [1, 1, 2, 3, 3, 4]);
       done();
@@ -639,6 +761,7 @@ describe('#filterLimit', function() {
 
     async.filterLimit(collection, 2, iterator, function(err, res) {
       assert.ok(err);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [
         [1, 0],
@@ -668,29 +791,32 @@ describe('#filterLimit', function() {
 
   it('should throw error if callback has 2rd argument and called twice', function(done) {
 
-    var collection = [1, 5, 3, 2, 4];
-    var iterator = function(num, index, callback) {
-      callback();
-      callback();
-    };
-
-    try {
+    errorCallCount = 0;
+    domain.run(function() {
+      var collection = [1, 5, 3, 2, 4];
+      var iterator = function(num, index, callback) {
+        process.nextTick(callback);
+        process.nextTick(callback);
+      };
       async.filterLimit(collection, 2, iterator, function(err, res) {
         if (err) {
           return done(err);
         }
+        assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
         assert.deepEqual(res, []);
       });
-    } catch (e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 5);
       done();
-    }
+    }, delay);
   });
 
   it('should return response immediately if collection is empty', function(done) {
 
     var order = [];
     async.filterLimit([], 2, filterIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -701,6 +827,7 @@ describe('#filterLimit', function() {
 
     var order = [];
     async.filterLimit({}, 2, filterIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -711,6 +838,7 @@ describe('#filterLimit', function() {
 
     var order = [];
     async.filterLimit(function() {}, 2, filterIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -721,6 +849,7 @@ describe('#filterLimit', function() {
 
     var order = [];
     async.filterLimit(undefined, 2, filterIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -731,6 +860,7 @@ describe('#filterLimit', function() {
 
     var order = [];
     async.filterLimit(null, 2, filterIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -742,6 +872,7 @@ describe('#filterLimit', function() {
     var order = [];
     var collection = [1, 3, 2];
     async.filterLimit(collection, 0, filterIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -753,6 +884,7 @@ describe('#filterLimit', function() {
     var order = [];
     var collection = [1, 3, 2];
     async.filterLimit(collection, undefined, filterIterator(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();

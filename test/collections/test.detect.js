@@ -4,6 +4,12 @@
 var assert = require('power-assert');
 var async = require('../../');
 var delay = require('../config').delay;
+var domain = require('domain').create();
+var errorCallCount = 0;
+domain.on('error', function(err) {
+  errorCallCount++;
+  assert.strictEqual(err.message, 'Callback was already called.');
+});
 
 function detectIterator(order) {
 
@@ -263,37 +269,41 @@ describe('#detect', function() {
 
   it('should throw error if double callback', function(done) {
 
-    var collection = [1, 3, 2, 4];
-    var iterator = function(num, callback) {
-      callback();
-      callback();
-    };
-
-    try {
+    errorCallCount = 0;
+    domain.run(function() {
+      var collection = [1, 3, 2, 4];
+      var iterator = function(num, callback) {
+        process.nextTick(callback);
+        process.nextTick(callback);
+      };
       async.detect(collection, iterator);
-    } catch (e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 4);
       done();
-    }
+    }, delay);
   });
 
   it('should throw error if double callback', function(done) {
 
-    var collection = [1, 3, 2, 4];
-    var iterator = function(num, callback) {
-      callback();
-      callback();
-    };
-
-    try {
+    errorCallCount = 0;
+    domain.run(function() {
+      var collection = [1, 3, 2, 4];
+      var iterator = function(num, callback) {
+        process.nextTick(callback);
+        process.nextTick(callback);
+      };
       async.detect(collection, iterator, function(err, res) {
-        assert.strictEqual(err, undefined);
+        if (err) {
+          return done(err);
+        }
         assert.strictEqual(res, undefined);
       });
-    } catch (e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 4);
       done();
-    }
+    }, delay);
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -474,35 +484,41 @@ describe('#detectSeries', function() {
 
   it('should throw error if double callback', function(done) {
 
-    var collection = [1, 3, 2, 4];
-    var iterator = function(num, callback) {
-      callback();
-      callback();
-    };
-    try {
+    errorCallCount = 0;
+    domain.run(function() {
+      var collection = [1, 3, 2, 4];
+      var iterator = function(num, callback) {
+        process.nextTick(callback);
+        process.nextTick(callback);
+      };
       async.detectSeries(collection, iterator);
-    } catch (e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 4);
       done();
-    }
+    }, delay);
   });
 
   it('should throw error if double callback', function(done) {
 
-    var collection = [1, 3, 2, 4];
-    var iterator = function(num, callback) {
-      callback();
-      callback();
-    };
-    try {
+    errorCallCount = 0;
+    domain.run(function() {
+      var collection = [1, 3, 2, 4];
+      var iterator = function(num, callback) {
+        process.nextTick(callback);
+        process.nextTick(callback);
+      };
       async.detectSeries(collection, iterator, function(err, res) {
-        assert.strictEqual(err, undefined);
+        if (err) {
+          return done(err);
+        }
         assert.strictEqual(res, undefined);
       });
-    } catch (e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 4);
       done();
-    }
+    }, delay);
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -700,35 +716,41 @@ describe('#detectLimit', function() {
 
   it('should throw error if double callback', function(done) {
 
-    var collection = [1, 3, 2, 4];
-    var iterator = function(num, callback) {
-      callback();
-      callback();
-    };
-    try {
+    errorCallCount = 0;
+    domain.run(function() {
+      var collection = [1, 3, 2, 4];
+      var iterator = function(num, callback) {
+        process.nextTick(callback);
+        process.nextTick(callback);
+      };
       async.detectLimit(collection, 2, iterator);
-    } catch (e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 4);
       done();
-    }
+    });
   });
 
   it('should throw error if double callback', function(done) {
 
-    var collection = [1, 3, 2, 4];
-    var iterator = function(num, callback) {
-      callback();
-      callback();
-    };
-    try {
+    errorCallCount = 0;
+    domain.run(function() {
+      var collection = [1, 3, 2, 4];
+      var iterator = function(num, callback) {
+        process.nextTick(callback);
+        process.nextTick(callback);
+      };
       async.detectLimit(collection, 2, iterator, function(err, res) {
-        assert.strictEqual(err, undefined);
+        if (err) {
+          return done(err);
+        }
         assert.strictEqual(res, undefined);
       });
-    } catch (e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 4);
       done();
-    }
+    });
   });
 
   it('should return response immediately if array is empty', function(done) {

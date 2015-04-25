@@ -268,7 +268,9 @@ describe('#pick', function() {
     };
     try {
       async.pick(collection, iterator, function(err, res) {
-        assert.strictEqual(err, undefined);
+        if (err) {
+          return done(err);
+        }
         assert.strictEqual(res, undefined);
       });
     } catch (e) {
@@ -309,7 +311,9 @@ describe('#pick', function() {
     };
     try {
       async.pick(collection, iterator, function(err, res) {
-        assert.strictEqual(err, undefined);
+        if (err) {
+          return done(err);
+        }
         assert.strictEqual(res, undefined);
       });
     } catch (e) {
