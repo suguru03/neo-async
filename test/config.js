@@ -1,5 +1,5 @@
 'use strict';
 
 module.exports = {
-  delay: 50
+  delay: 70
 };
