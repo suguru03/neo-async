@@ -4,6 +4,12 @@
 var assert = require('power-assert');
 var async = require('../../');
 var delay = require('../config').delay;
+var domain = require('domain').create();
+var errorCallCount = 0;
+domain.on('error', function(err) {
+  errorCallCount++;
+  assert.strictEqual(err.message, 'Callback was already called.');
+});
 
 function rejectIterator(order) {
 
@@ -72,17 +78,19 @@ describe('#reject', function() {
 
   it('should throw error if double callback', function(done) {
 
-    var collection = [1, 2, 3];
-    var iterator = function(num, callback) {
-      callback();
-      callback();
-    };
-    try {
+    errorCallCount = 0;
+    domain.run(function() {
+      var collection = [1, 2, 3];
+      var iterator = function(num, callback) {
+        process.nextTick(callback);
+        process.nextTick(callback);
+      };
       async.reject(collection, iterator);
-    } catch (e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 3);
       done();
-    }
+    }, delay);
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -192,17 +200,19 @@ describe('#rejectSeries', function() {
 
   it('should throw error if double callback', function(done) {
 
-    var collection = [1, 2, 3];
-    var iterator = function(num, callback) {
-      callback();
-      callback();
-    };
-    try {
+    errorCallCount = 0;
+    domain.run(function() {
+      var collection = [1, 2, 3];
+      var iterator = function(num, callback) {
+        process.nextTick(callback);
+        process.nextTick(callback);
+      };
       async.rejectSeries(collection, iterator);
-    } catch (e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 3);
       done();
-    }
+    }, delay);
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -275,7 +285,6 @@ describe('#rejectLimit', function() {
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
-
   });
 
   it('should execute iterator to series by collection of object', function(done) {
@@ -293,7 +302,6 @@ describe('#rejectLimit', function() {
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
-
   });
 
   it('should execute iterator to series with binding', function(done) {
@@ -304,13 +312,11 @@ describe('#rejectLimit', function() {
       b: 3.5,
       c: 2.7
     };
-
     async.rejectLimit(collection, 2, rejectIterator(order), function(res) {
       assert.deepEqual(res, [3.5]);
       assert.deepEqual(order, [1, 4, 3]);
       done();
     }, Math);
-
   });
 
   it('should execute like parallel if limit is Infinity', function(done) {
@@ -323,7 +329,6 @@ describe('#rejectLimit', function() {
       assert.deepEqual(order, [1, 1, 2, 3, 3, 4]);
       done();
     });
-
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -335,7 +340,6 @@ describe('#rejectLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if object is empty', function(done) {
@@ -347,7 +351,6 @@ describe('#rejectLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is function', function(done) {
@@ -358,7 +361,6 @@ describe('#rejectLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if collection is undefined', function(done) {
@@ -369,7 +371,6 @@ describe('#rejectLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if limit is zero', function(done) {
@@ -381,7 +382,6 @@ describe('#rejectLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should return response immediately if limit is undefined', function(done) {
@@ -393,23 +393,23 @@ describe('#rejectLimit', function() {
       assert.deepEqual(order, []);
       done();
     });
-
   });
 
   it('should throw error if double callback', function(done) {
 
-    var collection = [1, 2, 3];
-    var iterator = function(num, callback) {
-      callback();
-      callback();
-    };
-    try {
+    errorCallCount = 0;
+    domain.run(function() {
+      var collection = [1, 2, 3];
+      var iterator = function(num, callback) {
+        process.nextTick(callback);
+        process.nextTick(callback);
+      };
       async.rejectLimit(collection, 2, iterator);
-    } catch (e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 3);
       done();
-    }
-
+    }, delay);
   });
 
 });

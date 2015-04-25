@@ -246,80 +246,90 @@ describe('#pick', function() {
 
   it('should throw error if double callback', function(done) {
 
-    var collection = [2, 1, 3];
-    var iterator = function(item, callback) {
-      callback();
-      callback();
-    };
-    try {
+    errorCallCount = 0;
+    domain.run(function() {
+      var collection = [2, 1, 3];
+      var iterator = function(item, callback) {
+        process.nextTick(callback);
+        process.nextTick(callback);
+      };
       async.pick(collection, iterator);
-    } catch (e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 3);
       done();
-    }
+    }, delay);
   });
 
   it('should throw error if double callback', function(done) {
 
-    var collection = [2, 1, 3];
-    var iterator = function(item, callback) {
-      callback();
-      callback();
-    };
-    try {
+    errorCallCount = 0;
+    domain.run(function() {
+      var collection = [2, 1, 3];
+      var iterator = function(item, callback) {
+        process.nextTick(callback);
+        process.nextTick(callback);
+      };
       async.pick(collection, iterator, function(err, res) {
         if (err) {
           return done(err);
         }
-        assert.strictEqual(res, undefined);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+        assert.deepEqual(res, {});
       });
-    } catch (e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 3);
       done();
-    }
+    }, delay);
   });
 
   it('should throw error if double callback', function(done) {
 
-    var collection = {
-      a: 4,
-      b: 3,
-      c: 2
-    };
-    var iterator = function(item, callback) {
-      callback();
-      callback();
-    };
-    try {
+    errorCallCount = 0;
+    domain.run(function() {
+      var collection = {
+        a: 4,
+        b: 3,
+        c: 2
+      };
+      var iterator = function(item, callback) {
+        process.nextTick(callback);
+        process.nextTick(callback);
+      };
       async.pick(collection, iterator);
-    } catch (e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 3);
       done();
-    }
+    }, delay);
   });
 
   it('should throw error if double callback', function(done) {
 
-    var collection = {
-      a: 4,
-      b: 3,
-      c: 2
-    };
-    var iterator = function(item, callback) {
-      callback();
-      callback();
-    };
-    try {
+    errorCallCount = 0;
+    domain.run(function() {
+      var collection = {
+        a: 4,
+        b: 3,
+        c: 2
+      };
+      var iterator = function(item, callback) {
+        process.nextTick(callback);
+        process.nextTick(callback);
+      };
       async.pick(collection, iterator, function(err, res) {
         if (err) {
           return done(err);
         }
-        assert.strictEqual(res, undefined);
+        assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+        assert.deepEqual(res, {});
       });
-    } catch (e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 3);
       done();
-    }
+    }, delay);
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -451,7 +461,24 @@ describe('#pickSeries', function() {
       assert.deepEqual(order, [4, 3, 2]);
       done();
     });
+  });
 
+  it('should execute iterator to series by collection of object with passing key', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 4,
+      b: 3,
+      c: 2
+    };
+    async.pickSeries(collection, pickIteratorWithKey(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {
+        b: 3
+      });
+      assert.deepEqual(order, [[4, 'a'], [3, 'b'], [2, 'c']]);
+      done();
+    });
   });
 
   it('should execute iterator to series with binding', function(done) {

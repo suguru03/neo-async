@@ -728,7 +728,7 @@ describe('#detectLimit', function() {
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 4);
       done();
-    });
+    }, delay);
   });
 
   it('should throw error if double callback', function(done) {
@@ -750,7 +750,7 @@ describe('#detectLimit', function() {
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 4);
       done();
-    });
+    }, delay);
   });
 
   it('should return response immediately if array is empty', function(done) {
