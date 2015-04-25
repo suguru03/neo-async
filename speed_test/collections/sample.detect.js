@@ -17,13 +17,19 @@ var iterator = function(n, callback) {
 };
 var funcs = {
   'async': function(callback) {
-    async.detect(array, iterator, callback);
+    async.detect(array, iterator, function(res) {
+      callback(null, res);
+    });
   },
   'neo-async_v0': function(callback) {
-    neo_async_v0.detect(array, iterator, callback);
+    neo_async_v0.detect(array, iterator, function(res) {
+      callback(null, res);
+    });
   },
   'neo-async_v1': function(callback) {
-    neo_async_v1.detect(array, iterator, callback);
+    neo_async_v1.detect(array, iterator, function(res) {
+      callback(null, res);
+    });
   }
 };
 

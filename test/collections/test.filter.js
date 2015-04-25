@@ -4,6 +4,12 @@
 var assert = require('power-assert');
 var async = require('../../');
 var delay = require('../config').delay;
+var domain = require('domain').create();
+var errorCallCount = 0;
+domain.on('error', function(err) {
+  errorCallCount++;
+  assert.strictEqual(err.message, 'Callback was already called.');
+});
 
 function filterIterator(order) {
 
@@ -645,18 +651,19 @@ describe('#filterLimit', function() {
 
   it('should throw error if double callback', function(done) {
 
-    var collection = [1, 5, 3, 2, 4];
-    var iterator = function(num, callback) {
-      callback();
-      callback();
-    };
-
-    try {
+    errorCallCount = 0;
+    domain.run(function() {
+      var collection = [1, 5, 3, 2, 4];
+      var iterator = function(num, callback) {
+        process.nextTick(callback);
+        process.nextTick(callback);
+      };
       async.filterLimit(collection, 2, iterator);
-    } catch (e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 5);
       done();
-    }
+    }, delay);
   });
 
   it('should throw error if callback has 2rd argument and called twice', function(done) {

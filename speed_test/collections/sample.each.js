@@ -12,22 +12,17 @@ var count = 100;
 // sampling times
 var times = 100000;
 var array = _.shuffle(_.times(count));
-var c = 0;
 var iterator = function(n, callback) {
-  c++;
   callback();
 };
 var funcs = {
   'async': function(callback) {
-    c = 0;
     async.each(array, iterator, callback);
   },
   'neo-async_v0': function(callback) {
-    c = 0;
     neo_async_v0.each(array, iterator, callback);
   },
   'neo-async_v1': function(callback) {
-    c = 0;
     neo_async_v1.each(array, iterator, callback);
   }
 };
