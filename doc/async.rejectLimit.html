@@ -74,7 +74,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="async.js.html">async.js</a>, <a href="async.js.html#line2398">line 2398</a>
+        <a href="async.js.html">async.js</a>, <a href="async.js.html#line2702">line 2702</a>
     </li></ul></dd>
     
 
@@ -117,6 +117,34 @@ async.rejectLimit(array, 2, iterator, function(err, res) {
   console.log(order); // [[1, 0], [3, 2], [5, 1], [2, 4], [4, 3]]
 });</code></pre>
 
+    <pre class="prettyprint"><code>// array (not use error handling)
+var order = [];
+var array = [1, 5, 3, 4, 2];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(num % 2);
+  }, num * 10);
+};
+async.rejectLimit(array, 2, iterator, function(res) {
+  console.log(res); // [4, 2]
+  console.log(order); // [1, 3, 5, 2, 4]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// array with index (not use error handling)
+var order = [];
+var array = [1, 5, 3, 4, 2];
+var iterator = function(num, index, done) {
+  setTimeout(function() {
+    order.push([num, index]);
+    done(num % 2);
+  }, num * 10);
+};
+async.rejectLimit(array, 2, iterator, function(res) {
+  console.log(res); // [4, 2]
+  console.log(order); // [[1, 0], [3, 2], [5, 1], [2, 4], [4, 3]]
+});</code></pre>
+
     <pre class="prettyprint"><code>// object
 var order = [];
 var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
@@ -141,6 +169,34 @@ var iterator = function(num, key, done) {
   }, num * 10);
 };
 async.rejectLimit(object, 2, iterator, function(err, res) {
+  console.log(res); // [4, 2]
+  console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object (not use error handling)
+var order = [];
+var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(num % 2);
+  }, num * 10);
+};
+async.rejectLimit(object, 2, iterator, function(res) {
+  console.log(res); // [4, 2]
+  console.log(order); // [1, 3, 5, 2, 4]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object with key (not use error handling)
+var order = [];
+var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+var iterator = function(num, key, done) {
+  setTimeout(function() {
+    order.push([num, key]);
+    done(num % 2);
+  }, num * 10);
+};
+async.rejectLimit(object, 2, iterator, function(res) {
   console.log(res); // [4, 2]
   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
 });</code></pre>
@@ -176,13 +232,13 @@ async.rejectLimit(object, 2, iterator, function(err, res) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="async.html">async</a></li><li><a href="async.detect.html">detect</a></li><li><a href="async.detectLimit.html">detectLimit</a></li><li><a href="async.detectSeries.html">detectSeries</a></li><li><a href="async.each.html">each</a></li><li><a href="async.eachLimit.html">eachLimit</a></li><li><a href="async.eachSeries.html">eachSeries</a></li><li><a href="async.filter.html">filter</a></li><li><a href="async.filterLimit.html">filterLimit</a></li><li><a href="async.filterSeries.html">filterSeries</a></li><li><a href="async.map.html">map</a></li><li><a href="async.mapLimit.html">mapLimit</a></li><li><a href="async.mapSeries.html">mapSeries</a></li><li><a href="async.mapValues.html">mapValues</a></li><li><a href="async.mapValuesLimit.html">mapValuesLimit</a></li><li><a href="async.mapValuesSeries.html">mapValuesSeries</a></li><li><a href="async.pick.html">pick</a></li><li><a href="async.reject.html">reject</a></li><li><a href="async.rejectLimit.html">rejectLimit</a></li><li><a href="async.rejectSeries.html">rejectSeries</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="async.html">async</a></li><li><a href="async.apply.html">apply</a></li><li><a href="async.applyEach.html">applyEach</a></li><li><a href="async.auto.html">auto</a></li><li><a href="async.cargo.html">cargo</a></li><li><a href="async.compose.html">compose</a></li><li><a href="async.concat.html">concat</a></li><li><a href="async.concatLimit.html">concatLimit</a></li><li><a href="async.concatSeries.html">concatSeries</a></li><li><a href="async.createLogger.html">createLogger</a></li><li><a href="async.detect.html">detect</a></li><li><a href="async.detectLimit.html">detectLimit</a></li><li><a href="async.detectSeries.html">detectSeries</a></li><li><a href="async.doUntil.html">doUntil</a></li><li><a href="async.doWhilst.html">doWhilst</a></li><li><a href="async.each.html">each</a></li><li><a href="async.eachLimit.html">eachLimit</a></li><li><a href="async.eachSeries.html">eachSeries</a></li><li><a href="async.EventEmitter.html">EventEmitter</a></li><li><a href="async.eventEmitter_.html">eventEmitter</a></li><li><a href="async.every.html">every</a></li><li><a href="async.everyLimit.html">everyLimit</a></li><li><a href="async.everySeries.html">everySeries</a></li><li><a href="async.filter.html">filter</a></li><li><a href="async.filterLimit.html">filterLimit</a></li><li><a href="async.filterSeries.html">filterSeries</a></li><li><a href="async.forever.html">forever</a></li><li><a href="async.iterator.html">iterator</a></li><li><a href="async.map.html">map</a></li><li><a href="async.mapLimit.html">mapLimit</a></li><li><a href="async.mapSeries.html">mapSeries</a></li><li><a href="async.mapValues.html">mapValues</a></li><li><a href="async.mapValuesLimit.html">mapValuesLimit</a></li><li><a href="async.mapValuesSeries.html">mapValuesSeries</a></li><li><a href="async.memoize.html">memoize</a></li><li><a href="async.noConflict.html">noConflict</a></li><li><a href="async.parallel.html">parallel</a></li><li><a href="async.parallelLimit.html">parallelLimit</a></li><li><a href="async.pick.html">pick</a></li><li><a href="async.pickLimit.html">pickLimit</a></li><li><a href="async.pickSeries.html">pickSeries</a></li><li><a href="async.priorityQueue.html">priorityQueue</a></li><li><a href="async.queue.html">queue</a></li><li><a href="async.reduce.html">reduce</a></li><li><a href="async.reduceRight.html">reduceRight</a></li><li><a href="async.reject.html">reject</a></li><li><a href="async.rejectLimit.html">rejectLimit</a></li><li><a href="async.rejectSeries.html">rejectSeries</a></li><li><a href="async.retry.html">retry</a></li><li><a href="async.seq.html">seq</a></li><li><a href="async.series.html">series</a></li><li><a href="async.some.html">some</a></li><li><a href="async.someLimit.html">someLimit</a></li><li><a href="async.someSeries.html">someSeries</a></li><li><a href="async.sortBy.html">sortBy</a></li><li><a href="async.sortByLimit.html">sortByLimit</a></li><li><a href="async.sortBySeries.html">sortBySeries</a></li><li><a href="async.times.html">times</a></li><li><a href="async.timesLimit.html">timesLimit</a></li><li><a href="async.timesSeries.html">timesSeries</a></li><li><a href="async.transform.html">transform</a></li><li><a href="async.transformLimit.html">transformLimit</a></li><li><a href="async.transformSeries.html">transformSeries</a></li><li><a href="async.unmemoize.html">unmemoize</a></li><li><a href="async.until.html">until</a></li><li><a href="async.waterfall.html">waterfall</a></li><li><a href="async.whilst.html">whilst</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a> on Fri Apr 24 2015 02:04:19 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a> on Sun Apr 26 2015 00:53:09 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>
