@@ -4,6 +4,7 @@ var gulp = require('gulp');
 var exit = require('gulp-exit');
 var mocha = require('gulp-mocha');
 var gutil = require('gulp-util');
+var config = require('../test/config');
 
 var config = require('../test/config');
 

@@ -2,7 +2,7 @@
 'use strict';
 
 var assert = require('power-assert');
-var async = require('../../');
+var async = global.async || require('../../');
 var delay = require('../config').delay;
 var domain = require('domain').create();
 var errorCallCount = 0;
