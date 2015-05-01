@@ -16,11 +16,11 @@
   createImmediate();
 
   /**
-   * @version 1.0.0
+   * @version 1.0.1
    * @namespace async
    */
   var async = {
-    VERSION: '1.0.0',
+    VERSION: '1.0.1',
 
     // Collections
     each: each,
@@ -701,9 +701,6 @@
     var called = false;
     return function(err, res) {
       if (called) {
-        if (err) {
-          return func(err, res);
-        }
         throw new Error('Callback was already called.');
       }
       called = true;
@@ -5218,16 +5215,16 @@
     }
 
     function createCallback(callback) {
-      return function(err, res) {
+      return function(err, array) {
         if (err) {
           callback(err);
           callback = noop;
           return;
         }
-        var result = res.sort(function(a, b) {
-          return b.criteria < a.criteria;
+        array.sort(function(a, b) {
+          return a.criteria < b.criteria ? -1 : 1;
         });
-        callback(undefined, _pluck(result, 'value'));
+        callback(undefined, _pluck(array, 'value'));
       };
     }
 
@@ -7348,8 +7345,8 @@
           callback: callback
         };
         q.tasks.push(item);
-        q.tasks = q.tasks.sort(function(a, b) {
-          return b.priority < a.priority;
+        q.tasks.sort(function(a, b) {
+          return a.priority < b.priority ? -1 : 1;
         });
         if (typeof q.saturated === 'function' && q.length() === q.concurrency) {
           q.saturated();
@@ -7677,11 +7674,11 @@
    */
   function times(n, iterator, callback, thisArg) {
     callback = callback || noop;
-    if (!Number.isFinite(n) || n < 1) {
+    n = +n;
+    if (isNaN(n) || n < 1) {
       return callback(undefined, []);
     }
     var result = Array(n);
-    var completed = 0;
     var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
     _times(n, iterate);
@@ -7704,9 +7701,8 @@
           callback = noop;
           return;
         }
-        if (++completed === n) {
+        if (--n === 0) {
           callback(undefined, result);
-          callback = noop;
         }
       };
     }
@@ -7731,7 +7727,8 @@
    */
   function timesSeries(n, iterator, callback, thisArg) {
     callback = callback || noop;
-    if (!Number.isFinite(n) || n < 1) {
+    n = +n;
+    if (isNaN(n) || n < 1) {
       return callback(undefined, []);
     }
     var called;
@@ -7782,7 +7779,8 @@
    */
   function timesLimit(n, limit, iterator, callback, thisArg) {
     callback = callback || noop;
-    if (!Number.isFinite(n) || n < 1 || isNaN(limit) || limit < 1) {
+    n = +n;
+    if (isNaN(n) || n < 1 || isNaN(limit) || limit < 1) {
       return callback(undefined, []);
     }
     var result = Array(n);

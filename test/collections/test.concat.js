@@ -65,6 +65,7 @@ describe('#concat', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 2, 1, 3, 2, 1]);
       assert.deepEqual(order, [1, 2, 3]);
       done();
@@ -79,6 +80,7 @@ describe('#concat', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 2, 1, 3, 2, 1]);
       assert.deepEqual(order, [
         [1, 0],
@@ -101,6 +103,7 @@ describe('#concat', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 2, 1, 3, 2, 1]);
       assert.deepEqual(order, [1, 2, 3]);
       done();
@@ -119,6 +122,7 @@ describe('#concat', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 2, 1, 3, 2, 1]);
       assert.deepEqual(order, [
         [1, 'a'],
@@ -142,6 +146,7 @@ describe('#concat', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3, 2, 1, 4, 3, 2, 1]);
       assert.deepEqual(order, [1, 3, 4]);
       done();
@@ -160,6 +165,7 @@ describe('#concat', function() {
     };
     async.concat(collection, iterator, function(err, res) {
       assert.ok(err);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 2, 3]);
       assert.deepEqual(order, [1, 2, 3]);
       done();
@@ -174,6 +180,7 @@ describe('#concat', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -188,6 +195,7 @@ describe('#concat', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -201,6 +209,7 @@ describe('#concat', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -214,6 +223,7 @@ describe('#concat', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -227,6 +237,7 @@ describe('#concat', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -245,6 +256,7 @@ describe('#concatSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3, 2, 1, 2, 1]);
       assert.deepEqual(order, [1, 3, 2]);
       done();
@@ -259,6 +271,7 @@ describe('#concatSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3, 2, 1, 2, 1]);
       assert.deepEqual(order, [
         [1, 0],
@@ -281,6 +294,7 @@ describe('#concatSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3, 2, 1, 2, 1]);
       assert.deepEqual(order, [1, 3, 2]);
       done();
@@ -299,6 +313,7 @@ describe('#concatSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3, 2, 1, 2, 1]);
       assert.deepEqual(order, [
         [1, 'a'],
@@ -322,6 +337,7 @@ describe('#concatSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 4, 3, 2, 1, 3, 2, 1]);
       assert.deepEqual(order, [1, 4, 3]);
       done();
@@ -340,6 +356,7 @@ describe('#concatSeries', function() {
     };
     async.concatSeries(collection, iterator, function(err, res) {
       assert.ok(err);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [1, 3]);
       done();
@@ -371,6 +388,7 @@ describe('#concatSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -385,6 +403,7 @@ describe('#concatSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -398,6 +417,7 @@ describe('#concatSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -411,6 +431,7 @@ describe('#concatSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -424,6 +445,7 @@ describe('#concatSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -442,6 +464,7 @@ describe('#concatLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3, 2, 1, 5, 4, 3, 2, 1, 2, 1, 4, 3, 2, 1]);
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
@@ -456,6 +479,7 @@ describe('#concatLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3, 2, 1, 5, 4, 3, 2, 1, 2, 1, 4, 3, 2, 1]);
       assert.deepEqual(order, [
         [1, 0],
@@ -482,6 +506,7 @@ describe('#concatLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3, 2, 1, 5, 4, 3, 2, 1, 2, 1, 4, 3, 2, 1]);
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
@@ -502,6 +527,7 @@ describe('#concatLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3, 2, 1, 5, 4, 3, 2, 1, 2, 1, 4, 3, 2, 1]);
       assert.deepEqual(order, [
         [1, 'a'],
@@ -527,6 +553,7 @@ describe('#concatLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 4, 3, 2, 1, 3, 2, 1]);
       assert.deepEqual(order, [1, 4, 3]);
       done();
@@ -541,6 +568,7 @@ describe('#concatLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 2, 1, 3, 2, 1]);
       assert.deepEqual(order, [1, 2, 3]);
       done();
@@ -559,6 +587,7 @@ describe('#concatLimit', function() {
     };
     async.concatLimit(collection, 5, iterator, function(err, res) {
       assert.ok(err);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 2, 3]);
       assert.deepEqual(order, [1, 2, 3]);
       done();
@@ -573,6 +602,7 @@ describe('#concatLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -587,6 +617,7 @@ describe('#concatLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -600,6 +631,7 @@ describe('#concatLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -613,6 +645,7 @@ describe('#concatLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -626,6 +659,7 @@ describe('#concatLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -640,6 +674,7 @@ describe('#concatLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -654,6 +689,7 @@ describe('#concatLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();

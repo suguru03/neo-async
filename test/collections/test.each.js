@@ -155,8 +155,8 @@ describe('#each', function() {
     domain.run(function() {
       var collection = [1, 3, 2, 4];
       var iterator = function(num, callback) {
-        setImmediate(callback);
-        setImmediate(callback);
+        process.nextTick(callback);
+        process.nextTick(callback);
       };
       async.each(collection, iterator);
     });
@@ -164,20 +164,6 @@ describe('#each', function() {
       assert.strictEqual(errorCallCount, 4);
       done();
     }, delay);
-  });
-
-  it('should throw error to callback if callback was called twice and caused error', function(done) {
-
-    var collection = [1, 3, 2, 4];
-    var iterator = function(num, callback) {
-      callback();
-      callback('error');
-    };
-
-    async.each(collection, iterator, function(err) {
-      assert.ok(err);
-      done();
-    });
   });
 
   it('should break if respond equals false', function(done) {
