@@ -274,7 +274,7 @@ describe('#pick', function() {
         if (err) {
           return done(err);
         }
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+        assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
         assert.deepEqual(res, {});
       });
     });
@@ -476,7 +476,11 @@ describe('#pickSeries', function() {
       assert.deepEqual(res, {
         b: 3
       });
-      assert.deepEqual(order, [[4, 'a'], [3, 'b'], [2, 'c']]);
+      assert.deepEqual(order, [
+        [4, 'a'],
+        [3, 'b'],
+        [2, 'c']
+      ]);
       done();
     });
   });

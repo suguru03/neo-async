@@ -4,6 +4,7 @@
 var _ = require('lodash');
 var assert = require('power-assert');
 var async = global.async || require('../../');
+var delay = require('../config').delay;
 var domain = require('domain').create();
 var errorCallCount = 0;
 domain.on('error', function(err) {
@@ -197,7 +198,7 @@ describe('#waterfall', function() {
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 1);
       done();
-    }, 100);
+    }, delay);
   });
 
   it('should throw error if task is not collection', function(done) {
