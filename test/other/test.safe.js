@@ -31,6 +31,28 @@ describe('#safe', function() {
       });
     });
 
+    it('should execute safe iterator when iterator has extra arguments', function(done) {
+
+      var called = 0;
+      var times = 100;
+      var array = _.times(times);
+      var iterator = function(num, done, arg3, arg4, arg5, arg6) {
+        called++;
+        assert.strictEqual(arg3, undefined);
+        assert.strictEqual(arg4, undefined);
+        assert.strictEqual(arg5, undefined);
+        assert.strictEqual(arg6, undefined);
+        done();
+      };
+      async.each(array, iterator, function(err) {
+        if (err) {
+          return done(err);
+        }
+        assert.strictEqual(called, times);
+        done();
+      });
+    });
+
   });
 
   describe('#eachSeries', function() {
@@ -171,6 +193,54 @@ describe('#safe', function() {
       });
     });
 
+  });
+
+  describe('#auto', function() {
+
+    it('should execute in accordance with best order', function(done) {
+
+      var order = [];
+      var tasks = {
+        task1: ['task2', function(callback) {
+          setTimeout(function() {
+            order.push('task1');
+            callback();
+          }, 25);
+        }],
+        task2: function(callback) {
+          setTimeout(function() {
+            order.push('task2');
+            callback();
+          }, 50);
+        },
+        task3: ['task2', function(callback) {
+          order.push('task3');
+          callback();
+        }],
+        task4: ['task1', 'task2', function(callback) {
+          order.push('task4');
+          callback();
+        }],
+        task5: ['task2', function(callback) {
+          setTimeout(function() {
+            order.push('task5');
+            callback();
+          }, 0);
+        }],
+        task6: ['task2', function(callback) {
+          order.push('task6');
+          callback();
+        }]
+      };
+
+      safeAsync.auto(tasks, function(err) {
+        if (err) {
+          return done(err);
+        }
+        assert.deepEqual(order, ['task2', 'task6', 'task3', 'task5', 'task1', 'task4']);
+        done();
+      });
+    });
   });
 
 });
