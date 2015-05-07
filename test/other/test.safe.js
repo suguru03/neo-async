@@ -243,4 +243,13 @@ describe('#safe', function() {
     });
   });
 
+  describe('#safe', function() {
+
+    it('should create new safe function', function() {
+      var safe = safeAsync.safe();
+      assert.notStrictEqual(safeAsync, safe);
+      assert.deepEqual(_.keys(safeAsync), _.keys(safe));
+    });
+  });
+
 });
