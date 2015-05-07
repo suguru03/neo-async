@@ -66,7 +66,7 @@ bower install neo-async
 - [`forEach`](http://suguru03.github.io/neo-async/doc/async.each.html) -> [`each`](http://suguru03.github.io/neo-async/doc/async.each.html)
 - [`forEachSeries`](http://suguru03.github.io/neo-async/doc/async.eachSeries.html) -> [`eachSeries`](http://suguru03.github.io/neo-async/doc/async.eachSeries.html)
 - [`forEachLimit`](http://suguru03.github.io/neo-async/doc/async.eachLimit.html) -> [`eachLimit`](http://suguru03.github.io/neo-async/doc/async.eachLimit.html)
-- [`map`](http://suguru03.github.io/neo-async/doc/async.mp.html)
+- [`map`](http://suguru03.github.io/neo-async/doc/async.map.html)
 - [`mapSeries`](http://suguru03.github.io/neo-async/doc/async.mapSeries.html)
 - [`mapLimit`](http://suguru03.github.io/neo-async/doc/async.mapLimit.html)
 - [`mapValues`](http://suguru03.github.io/neo-async/doc/async.mapValues.html) *
