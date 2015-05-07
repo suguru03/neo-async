@@ -35,6 +35,9 @@ $ npm install neo-async
 ```
 ```js
 var async = require('neo-async');
+
+// safe mode
+var async = require('neo-async').safe; // avoid stack overflow if iterator is called on sync.
 ```
 
 #### replacement
@@ -133,6 +136,7 @@ bower install neo-async
 - [`apply`](#apply)
 - [`nextTick`](#nextTick)
 - [`setImmediate`](#setImmediate)
+- [`safeNextTick`](#safeNextTick)
 - [`times`](http://suguru03.github.io/neo-async/doc/async.times.html)
 - [`timesSeries`](http://suguru03.github.io/neo-async/doc/async.timesSeries.html)
 - [`timesLimit`](http://suguru03.github.io/neo-async/doc/async.timesLimit.html) *
@@ -146,6 +150,16 @@ bower install neo-async
 - [`noConflict`](#noConflict)
 - [`eventEmitter`](#eventEmitter) *
 - [`EventEmitter`](#EventEmitter) *
+- [`safe`](#safe) *
+
+### Safe
+
+```js
+var async = require('neo-async').safe;
+// or
+var async = require('neo-async');
+async.safe.each(collection, iterator, callback);
+```
 
 ## Speed Comparison
 
