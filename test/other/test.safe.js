@@ -6,6 +6,14 @@ var assert = require('power-assert');
 var async = global.async || require('../../').safe;
 var safeAsync = async === async.noConflict() ? async.safe : async;
 
+var delay = require('../config').delay;
+var domain = require('domain').create();
+var errorCallCount = 0;
+domain.on('error', function(err) {
+  errorCallCount++;
+  assert.strictEqual(err.message, 'Callback was already called.');
+});
+
 describe('#safe', function() {
 
   describe('#each', function() {
@@ -116,6 +124,30 @@ describe('#safe', function() {
         }
         assert.strictEqual(called, times);
         assert.strictEqual(sum, _.sum(array));
+        done();
+      });
+    });
+
+  });
+
+  describe('#transformLimit', function() {
+
+    it('should execute iterator in limited by collection of array', function(done) {
+
+      var called = 0;
+      var times = 100000;
+      var array = _.times(times);
+      var syncIterator = function(result, num, index, done) {
+        called++;
+        result[index] = num;
+        done();
+      };
+      safeAsync.transformLimit(array, 2, syncIterator, function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        assert.strictEqual(called, times);
+        assert.deepEqual(array, res);
         done();
       });
     });
@@ -238,6 +270,159 @@ describe('#safe', function() {
           return done(err);
         }
         assert.deepEqual(order, ['task2', 'task6', 'task3', 'task5', 'task1', 'task4']);
+        done();
+      });
+    });
+  });
+
+  describe('#waterfall', function() {
+
+    it('should execute tasks', function(done) {
+
+      var tasks = [
+        function(next) {
+          next(null, next);
+        },
+        function(next) {
+          next(null, 1, next);
+        },
+        function(arg1, next) {
+          next(null, arg1, 2, next);
+        },
+        function(arg1, arg2, next) {
+          next(null, arg1, arg2, 3, next);
+        },
+        function(arg1, arg2, arg3, next) {
+          next(null, arg1, arg2, arg3, 4, next);
+        },
+        function(arg1, arg2, arg3, arg4, next) {
+          next(null, arg1, arg2, arg3, arg4, 5, next);
+        },
+        function(arg1, arg2, arg3, arg4, arg5, next) {
+          next(null, arg1, arg2, arg3, arg4, arg5, 6, next);
+        },
+        function(arg1, arg2, arg3, arg4, arg5, arg6, next) {
+          next(null, arg1, arg2, arg3, arg4, arg5, arg6, 7, next);
+        },
+        function(arg1, arg2, arg3, arg4, arg5, arg6, arg7, next) {
+          next(null, arg1, arg2, arg3, arg4, arg5, arg6, arg7, 8, next);
+        }
+      ];
+      safeAsync.waterfall(tasks, function(err) {
+        if (err) {
+          return done(err);
+        }
+        var args = _.slice(arguments);
+        _.times(tasks.length, function(index) {
+          if (index === 0) {
+            return;
+          }
+          assert.strictEqual(index, args[index]);
+        });
+        done();
+      });
+    });
+
+    it('should throw error', function(done) {
+
+      var order = [];
+      var tasks = [
+        function(next) {
+          order.push(1);
+          next();
+        },
+        function(next) {
+          order.push(2);
+          next(new Error('error'));
+        },
+        function(next) {
+          order.push(3);
+          next();
+        }
+      ];
+      safeAsync.waterfall(tasks, function(err, res) {
+        assert.ok(err);
+        assert.strictEqual(res, undefined);
+        assert.deepEqual(order, [1, 2]);
+        done();
+      });
+    });
+
+    it('should throw error if callback is called twice', function(done) {
+
+      errorCallCount = 0;
+      domain.run(function() {
+        var array = [
+          function(next) {
+            setImmediate(function() {
+              next(null, 'one', 'two');
+            });
+            setImmediate(function() {
+              next(null, 'one', 'two');
+            });
+          },
+
+          function(arg1, arg2, next) {
+            next(null, arg1, arg2, 'three');
+          },
+
+          function(arg1, arg2, arg3, next) {
+            next(null, 'four');
+          },
+
+          function(arg1, next) {
+            next();
+          }
+        ];
+        safeAsync.waterfall(array);
+      });
+
+      setTimeout(function() {
+        assert.strictEqual(errorCallCount, 1);
+        done();
+      }, delay);
+    });
+
+    it('should throw error if task is not collection', function(done) {
+
+      safeAsync.waterfall(null, function(err) {
+        assert.strictEqual(err.message, 'First argument to waterfall must be an array of functions');
+        done();
+      });
+    });
+
+    it('should return response immediately if array task is empty', function(done) {
+
+      var tasks = [];
+      safeAsync.waterfall(tasks, function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        assert.strictEqual(res, undefined);
+        done();
+      });
+    });
+
+  });
+
+  describe('#forever', function() {
+
+    it('should execute until error occurs', function(done) {
+
+      var count = 0;
+      var limit = 5;
+      var order = [];
+      var iterator = function(callback) {
+        order.push(count++);
+        if (count === limit) {
+          return callback(new Error('end'));
+        }
+        callback();
+      };
+
+      safeAsync.forever(iterator, function(err) {
+        assert.ok(err);
+        assert.deepEqual(order, [0, 1, 2, 3, 4]);
         done();
       });
     });
