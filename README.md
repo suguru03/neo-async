@@ -136,7 +136,7 @@ bower install neo-async
 - [`apply`](#apply)
 - [`nextTick`](#nextTick)
 - [`setImmediate`](#setImmediate)
-- [`safeNextTick`](#safeNextTick)
+- [`safeNextTick`](#safeNextTick) *
 - [`times`](http://suguru03.github.io/neo-async/doc/async.times.html)
 - [`timesSeries`](http://suguru03.github.io/neo-async/doc/async.timesSeries.html)
 - [`timesLimit`](http://suguru03.github.io/neo-async/doc/async.timesLimit.html) *
