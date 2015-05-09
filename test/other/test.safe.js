@@ -177,6 +177,29 @@ describe('#safe', function() {
     });
   });
 
+  describe('#parallelLimit', function() {
+
+    it('should execute sync tasks many times', function(done) {
+
+      var called = 0;
+      var times = 100000;
+      var tasks = {};
+      _.times(times, function(n) {
+        tasks[n] = function(done) {
+          called++;
+          done();
+        };
+      });
+      safeAsync.parallelLimit(tasks, 4, function(err) {
+        if (err) {
+          return done(err);
+        }
+        assert.strictEqual(called, times);
+        done();
+      });
+    });
+  });
+
   describe('#series', function() {
 
     it('should execute sync tasks many times', function(done) {

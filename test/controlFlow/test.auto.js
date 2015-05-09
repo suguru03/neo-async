@@ -49,7 +49,6 @@ describe('#auto', function() {
       assert.deepEqual(order, ['task2', 'task6', 'task3', 'task5', 'task1', 'task4']);
       done();
     });
-
   });
 
   it('should execute in accordance with best order and get results', function(done) {
@@ -94,7 +93,6 @@ describe('#auto', function() {
       });
       done();
     });
-
   });
 
   it('should execute even if object is empty', function(done) {
@@ -113,7 +111,6 @@ describe('#auto', function() {
         done();
       }]
     });
-
   });
 
   it('should throw error and get safe results', function(done) {
@@ -154,7 +151,6 @@ describe('#auto', function() {
       });
       done();
     });
-
   });
 
 });
