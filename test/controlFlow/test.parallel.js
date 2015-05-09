@@ -3,7 +3,14 @@
 
 var _ = require('lodash');
 var assert = require('power-assert');
-var async = require('../../');
+var async = global.async || require('../../');
+var delay = require('../config').delay;
+var domain = require('domain').create();
+var errorCallCount = 0;
+domain.on('error', function(err) {
+  errorCallCount++;
+  assert.strictEqual(err.message, 'Callback was already called.');
+});
 
 function createTasks(order, numbers) {
 
@@ -17,7 +24,7 @@ function createTasks(order, numbers) {
           num = self.round(num);
         }
         callback(null, num * 2);
-      }, num * 30);
+      }, num * delay);
     };
   });
 }
@@ -33,7 +40,7 @@ describe('#parallel', function() {
       setTimeout(function() {
         order.push(5);
         cb(null, 5, 5);
-      }, 150);
+      }, delay * 5);
     });
 
     async.parallel(tasks, function(err, res) {
@@ -157,7 +164,7 @@ describe('#parallel', function() {
     var error = function(callback) {
       setTimeout(function() {
         callback('error');
-      }, 75);
+      }, delay * 2.5);
     };
     tasks.splice(2, 0, error);
 
@@ -171,18 +178,19 @@ describe('#parallel', function() {
 
   it('should throw error if double callback', function(done) {
 
-    var tasks = [function(next) {
-      next();
-      next();
-    }];
-
-    try {
+    errorCallCount = 0;
+    domain.run(function() {
+      var tasks = [function(next) {
+        process.nextTick(next);
+        process.nextTick(next);
+      }];
       async.parallel(tasks);
-    } catch (e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
-      done();
-    }
+    });
 
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 1);
+      done();
+    }, delay);
   });
 
   it('should throw error only once', function(done) {
@@ -190,7 +198,7 @@ describe('#parallel', function() {
     var error = function(callback) {
       setTimeout(function() {
         callback('error');
-      }, 25);
+      }, delay);
     };
     var called = false;
     var tasks = [error, error, error, error];
@@ -198,7 +206,7 @@ describe('#parallel', function() {
       assert.ok(err);
       assert.strictEqual(called, false);
       called = true;
-      setTimeout(done, 50);
+      setTimeout(done, delay * 2);
     });
   });
 });
@@ -214,7 +222,7 @@ describe('#parallelLimit', function() {
       setTimeout(function() {
         order.push(5);
         cb(null, 5, 5);
-      }, 50);
+      }, delay * 1.5);
     });
 
     async.parallelLimit(tasks, 2, function(err, res) {
@@ -343,7 +351,7 @@ describe('#parallelLimit', function() {
     var error = function(callback) {
       setTimeout(function() {
         callback('error');
-      }, 75);
+      }, delay * 2.5);
     };
     tasks.splice(2, 0, error);
 
@@ -357,17 +365,19 @@ describe('#parallelLimit', function() {
 
   it('should throw error if double callback', function(done) {
 
-    var tasks = [function(next) {
-      next();
-      next();
-    }];
-
-    try {
+    errorCallCount = 0;
+    domain.run(function() {
+      var tasks = [function(next) {
+        process.nextTick(next);
+        process.nextTick(next);
+      }];
       async.parallelLimit(tasks, 4);
-    } catch (e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
+    });
+
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 1);
       done();
-    }
+    }, delay);
 
   });
 

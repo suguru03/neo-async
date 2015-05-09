@@ -3,7 +3,7 @@
 
 var _ = require('lodash');
 var assert = require('power-assert');
-var async = require('../../');
+var async = global.async || require('../../');
 
 describe('#cargo', function() {
 

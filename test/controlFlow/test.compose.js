@@ -2,7 +2,7 @@
 'use strict';
 
 var assert = require('power-assert');
-var async = require('../../');
+var async = global.async || require('../../');
 
 describe('#compose', function() {
 

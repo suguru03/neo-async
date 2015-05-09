@@ -3,7 +3,8 @@
 
 var _ = require('lodash');
 var assert = require('power-assert');
-var async = require('../../');
+var async = global.async || require('../../');
+var delay = require('../config').delay;
 var domain = require('domain').create();
 var errorCallCount = 0;
 domain.on('error', function(err) {
@@ -86,8 +87,8 @@ describe('#waterfall', function() {
       assert.strictEqual(res, 10);
       done();
     });
-
   });
+
   it('should execute simple tasks', function(done) {
 
     var numbers = [1, 3, 2, 4, 7, 8, 6, 5];
@@ -99,7 +100,6 @@ describe('#waterfall', function() {
       assert.strictEqual(result, 36);
       done();
     });
-
   });
 
   it('should execute complex tasks', function(done) {
@@ -162,7 +162,6 @@ describe('#waterfall', function() {
       assert.ok(err);
       done();
     });
-
   });
 
   it('should throw error if callback is called twice', function(done) {
@@ -197,7 +196,7 @@ describe('#waterfall', function() {
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 1);
       done();
-    }, 100);
+    }, delay);
   });
 
   it('should throw error if task is not collection', function(done) {
@@ -206,7 +205,6 @@ describe('#waterfall', function() {
       assert.strictEqual(err.message, 'First argument to waterfall must be an array of functions');
       done();
     });
-
   });
 
   it('should throw error with binding', function(done) {
@@ -222,7 +220,6 @@ describe('#waterfall', function() {
       assert.ok(err);
       done();
     }, Math);
-
   });
 
   it('should return response immediately if array task is empty', function(done) {

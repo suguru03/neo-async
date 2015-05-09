@@ -3,24 +3,27 @@
 
 var _ = require('lodash');
 var assert = require('power-assert');
-var async = require('../../');
+var async = global.async || require('../../');
+var delay = require('../config').delay;
+var domain = require('domain').create();
+var errorCallCount = 0;
+domain.on('error', function(err) {
+  errorCallCount++;
+  assert.strictEqual(err.message, 'Callback was already called.');
+});
 
 function createTasks(order, numbers) {
 
   return _.transform(numbers, function(memo, num, index) {
-
     memo[index] = function(callback) {
-
       var self = this;
-
       setTimeout(function() {
-
         order.push(num);
         if (self && self.round) {
           num = self.round(num);
         }
         callback(null, num * 2);
-      }, num * 10);
+      }, num * delay);
     };
   });
 }
@@ -36,7 +39,7 @@ describe('#series', function() {
       setTimeout(function() {
         order.push(5);
         cb(null, 5, 5);
-      }, 50);
+      }, delay * 5);
     });
 
     async.series(tasks, function(err, res) {
@@ -47,7 +50,6 @@ describe('#series', function() {
       assert.deepEqual(order, [1, 3, 2, 4, 5]);
       done();
     });
-
   });
 
   it('should execute to series by tasks of object', function(done) {
@@ -74,7 +76,6 @@ describe('#series', function() {
       assert.deepEqual(order, [4, 2, 1, 3]);
       done();
     });
-
   });
 
   it('should execute to series by tasks of array with binding', function(done) {
@@ -91,7 +92,6 @@ describe('#series', function() {
       assert.deepEqual(order, [1.2, 2.4, 1.5, 3.6]);
       done();
     }, Math);
-
   });
 
   it('should execute to series by tasks of object with binding', function(done) {
@@ -118,7 +118,6 @@ describe('#series', function() {
       assert.deepEqual(order, [1.2, 2.4, 1.5, 3.6]);
       done();
     }, Math);
-
   });
 
   it('should return response immediately if array task is empty', function(done) {
@@ -143,7 +142,6 @@ describe('#series', function() {
       assert.deepEqual(res, {});
       done();
     });
-
   });
 
   it('should return response immediately if task is not collection', function(done) {
@@ -155,7 +153,6 @@ describe('#series', function() {
       assert.strictEqual(res, undefined);
       done();
     });
-
   });
 
   it('should throw error', function(done) {
@@ -172,23 +169,23 @@ describe('#series', function() {
       assert.ok(err);
       done();
     });
-
   });
 
   it('should throw error if double callback', function(done) {
 
-    var tasks = [function(next) {
-      next();
-      next();
-    }];
-
-    try {
+    errorCallCount = 0;
+    domain.run(function() {
+      var tasks = [function(next) {
+        process.nextTick(next);
+        process.nextTick(next);
+      }];
       async.series(tasks);
-    } catch (e) {
-      assert.strictEqual(e.message, 'Callback was already called.');
-      done();
-    }
+    });
 
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 1);
+      done();
+    }, delay);
   });
 
 });
