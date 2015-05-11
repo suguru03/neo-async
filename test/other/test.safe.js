@@ -3,7 +3,7 @@
 
 var _ = require('lodash');
 var assert = require('power-assert');
-var async = global.async || require('../../').safe;
+var async = require('../../').safe;
 var safeAsync = async === async.noConflict() ? async.safe : async;
 
 var delay = require('../config').delay;
@@ -52,7 +52,7 @@ describe('#safe', function() {
         assert.strictEqual(arg6, undefined);
         done();
       };
-      async.each(array, iterator, function(err) {
+      safeAsync.each(array, iterator, function(err) {
         if (err) {
           return done(err);
         }

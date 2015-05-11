@@ -5,7 +5,7 @@ define = function() {};
 var _ = require('lodash');
 var assert = require('power-assert');
 var async = global.async || require('../../');
-var path = require('path').resolve('./lib/async.js');
+var path = global.async_path || require('path').resolve('./lib/async.js');
 
 describe('#define', function() {
 
