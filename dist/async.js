@@ -17,11 +17,11 @@
   createImmediate();
 
   /**
-   * @version 1.1.0
+   * @version 1.1.1
    * @namespace async
    */
   var async = {
-    VERSION: '1.1.0',
+    VERSION: '1.1.1',
 
     // Collections
     each: each,
@@ -716,30 +716,89 @@
    * @namespace safe
    */
   function safe() {
+    // ['index', 'bindIndex']
+    var safeIteratorMap = {
+      each: [1, 3],
+      eachSeries: [1, 3],
+      eachLimit: [2, 4],
+      forEach: [1, 3],
+      forEachSeries: [1, 3],
+      forEachLimit: [2, 4],
+      map: [1, 3],
+      mapSeries: [1, 3],
+      mapLimit: [2, 4],
+      mapValues: [1, 3],
+      mapValuesSeries: [1, 3],
+      mapValuesLimit: [2, 4],
+      filter: [1, 3],
+      filterSeries: [1, 3],
+      filterLimit: [2, 4],
+      select: [1, 3],
+      selectSeries: [1, 3],
+      selectLimit: [2, 4],
+      reject: [1, 3],
+      rejectSeries: [1, 3],
+      rejectLimit: [2, 4],
+      detect: [1, 3],
+      detectSeries: [1, 3],
+      detectLimit: [2, 4],
+      pick: [1, 3],
+      pickSeries: [1, 3],
+      pickLimit: [2, 4],
+      reduce: [2, 4],
+      inject: [2, 4],
+      foldl: [2, 4],
+      reduceRight: [2, 4],
+      foldr: [2, 4],
+      transform: [1, 4],
+      transformSeries: [1, 4],
+      transformLimit: [2, 5],
+      sortBy: [1, 3],
+      sortBySeries: [1, 3],
+      sortByLimit: [2, 4],
+      some: [1, 3],
+      someSeries: [1, 3],
+      someLimit: [2, 4],
+      any: [1, 3],
+      every: [1, 3],
+      all: [1, 3],
+      everySeries: [1, 3],
+      everyLimit: [2, 4],
+      concat: [1, 3],
+      concatSeries: [1, 3],
+      concatLimit: [2, 4],
+      whilst: [1, 3],
+      doWhilst: [0, 3],
+      until: [1, 3],
+      doUntil: [0, 3],
+      forever: [0, 2],
+      times: [1, 3],
+      timesSeries: [1, 3],
+      timesLimit: [2, 4]
+    };
+    var safeTaskMap = {
+      parallel: [0, 2],
+      series: [0, 2],
+      parallelLimit: [0, 3],
+      waterfall: [0, -1],
+      auto: [0, -1]
+    };
+
     var safeAsync = {};
     _objectEach(async, function(func, key) {
       if (typeof func !== 'function') {
         safeAsync[key] = func;
         return;
       }
-      var fnText = func.toString();
-      var start = fnText.indexOf('(') + 1;
-      var end = fnText.indexOf(')') - start;
-      var items = fnText.substr(start, end).split(',');
-      _arrayEach(items, function(str, index) {
-        items[index] = str.replace(/ /g, '');
-      });
 
-      // collection
-      createSafeCollecion(func, key, items);
-      if (safeAsync[key]) {
-        return;
+      // iterator
+      if (safeIteratorMap[key]) {
+        return createSafeIterator(func, key);
       }
 
-      // control flow
-      createSafeTasks(func, key, items);
-      if (safeAsync[key]) {
-        return;
+      // tasks
+      if (safeTaskMap[key]) {
+        return createSafeTasks(func, key);
       }
 
       // not avaiable safe fucntion
@@ -748,13 +807,11 @@
     safeAsync.safe = safe;
     return safeAsync;
 
-    function createSafeCollecion(func, key, items) {
-      var index = items.indexOf('iterator');
-      var bindIndex = items.indexOf('thisArg');
-      if (index === -1) {
-        return;
-      }
-      var funcLength = items.length;
+    function createSafeIterator(func, key) {
+      var data = safeIteratorMap[key];
+      var index = data[0];
+      var bindIndex = data[1];
+      var funcLength = func.length;
       safeAsync[key] = safeCollection;
 
       function safeCollection() {
@@ -817,17 +874,15 @@
       }
     }
 
-    function createSafeTasks(func, key, items) {
-      var index = items.indexOf('tasks');
-      var bindIndex = items.indexOf('thisArg');
-      if (index === -1 || /^iterator$/.test(key)) {
-        return;
-      }
+    function createSafeTasks(func, key) {
+      var data = safeTaskMap[key];
+      var index = data[0];
+      var bindIndex = data[1];
       if (/^waterfall$/.test(key)) {
         safeAsync[key] = safeWaterfall;
         return;
       }
-      var funcLength = items.length;
+      var funcLength = func.length;
       safeAsync[key] = safeTasks;
 
       function safeTasks() {
