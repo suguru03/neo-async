@@ -460,4 +460,38 @@ describe('#safe', function() {
     });
   });
 
+  // not be able to use safe mode
+  describe('#iterator', function() {
+
+    it('should execute iterators', function(done) {
+
+      var order = [];
+      var iterator = async.iterator([
+        function() {
+          order.push(1);
+        },
+        function(arg1) {
+          assert.strictEqual(arg1, 'arg1');
+          order.push(2);
+        },
+        function(arg1, arg2) {
+          assert.strictEqual(arg1, 'arg1');
+          assert.strictEqual(arg2, 'arg2');
+          order.push(3);
+        }
+      ]);
+
+      iterator();
+      assert.deepEqual(order, [1]);
+      var iterator2 = iterator();
+      assert.deepEqual(order, [1, 1]);
+      var iterator3 = iterator2('arg1');
+      assert.deepEqual(order, [1, 1, 2]);
+      var iterator4 = iterator3('arg1', 'arg2');
+      assert.deepEqual(order, [1, 1, 2, 3]);
+      assert.strictEqual(iterator4, null);
+      done();
+    });
+  });
+
 });

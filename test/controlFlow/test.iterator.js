@@ -14,12 +14,12 @@ describe('#iterator', function() {
         order.push(1);
       },
       function(arg1) {
-        assert.equal(arg1, 'arg1');
+        assert.strictEqual(arg1, 'arg1');
         order.push(2);
       },
       function(arg1, arg2) {
-        assert.equal(arg1, 'arg1');
-        assert.equal(arg2, 'arg2');
+        assert.strictEqual(arg1, 'arg1');
+        assert.strictEqual(arg2, 'arg2');
         order.push(3);
       }
     ]);
@@ -32,9 +32,8 @@ describe('#iterator', function() {
     assert.deepEqual(order, [1, 1, 2]);
     var iterator4 = iterator3('arg1', 'arg2');
     assert.deepEqual(order, [1, 1, 2, 3]);
-    assert.equal(iterator4, undefined);
+    assert.strictEqual(iterator4, null);
     done();
-
   });
 
   it('should execute object iterators', function(done) {
@@ -45,12 +44,12 @@ describe('#iterator', function() {
         order.push(1);
       },
       b: function(arg1) {
-        assert.equal(arg1, 'arg1');
+        assert.strictEqual(arg1, 'arg1');
         order.push(2);
       },
       c: function(arg1, arg2) {
-        assert.equal(arg1, 'arg1');
-        assert.equal(arg2, 'arg2');
+        assert.strictEqual(arg1, 'arg1');
+        assert.strictEqual(arg2, 'arg2');
         order.push(3);
       }
     });
@@ -63,7 +62,7 @@ describe('#iterator', function() {
     assert.deepEqual(order, [1, 1, 2]);
     var iterator4 = iterator3('arg1', 'arg2');
     assert.deepEqual(order, [1, 1, 2, 3]);
-    assert.equal(iterator4, undefined);
+    assert.strictEqual(iterator4, null);
     done();
 
   });
@@ -84,12 +83,12 @@ describe('#iterator', function() {
         order.push(1);
       },
       function(arg1) {
-        assert.equal(arg1, 'arg1');
+        assert.strictEqual(arg1, 'arg1');
         order.push(2);
       },
       function(arg1, arg2) {
-        assert.equal(arg1, 'arg1');
-        assert.equal(arg2, 'arg2');
+        assert.strictEqual(arg1, 'arg1');
+        assert.strictEqual(arg2, 'arg2');
         order.push(3);
       }
     ]);
