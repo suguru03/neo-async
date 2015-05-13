@@ -396,6 +396,7 @@ describe('#filterSeries', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 2);
       assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [
         [1, 0],
