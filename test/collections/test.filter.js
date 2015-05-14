@@ -87,6 +87,7 @@ describe('#filter', function() {
     var collection = [1, 3, 2, 4];
     async.filter(collection, filterIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 2);
       assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [1, 2, 3, 4]);
       done();
@@ -99,6 +100,7 @@ describe('#filter', function() {
     var collection = [1, 3, 2, 4];
     async.filter(collection, filterIteratorWithKey(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 2);
       assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [
         [1, 0],
@@ -119,6 +121,7 @@ describe('#filter', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 2);
       assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [1, 2, 3, 4]);
       done();
@@ -134,6 +137,7 @@ describe('#filter', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 2);
       assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [
         [1, 0],
@@ -155,6 +159,7 @@ describe('#filter', function() {
     };
     async.filter(collection, filterIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 1);
       assert.deepEqual(res, [3]);
       assert.deepEqual(order, [2, 3, 4]);
       done();
@@ -171,6 +176,7 @@ describe('#filter', function() {
     };
     async.filter(collection, filterIteratorWithKey(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 1);
       assert.deepEqual(res, [3]);
       assert.deepEqual(order, [
         [2, 'c'],
@@ -194,6 +200,7 @@ describe('#filter', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 1);
       assert.deepEqual(res, [3]);
       assert.deepEqual(order, [2, 3, 4]);
       done();
@@ -213,6 +220,7 @@ describe('#filter', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 1);
       assert.deepEqual(res, [3]);
       assert.deepEqual(order, [
         [2, 'c'],
@@ -233,6 +241,7 @@ describe('#filter', function() {
     };
     async.filter(collection, filterIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 2);
       assert.deepEqual(res, [1.1, 2.6]);
       assert.deepEqual(order, [1, 3, 4]);
       done();
@@ -251,6 +260,7 @@ describe('#filter', function() {
     };
     async.filter(collection, iterator, function(err, res) {
       assert.ok(err);
+      assert.strictEqual(res.length, 2);
       assert.deepEqual(res, [1, 2]);
       done();
     });
@@ -287,6 +297,7 @@ describe('#filter', function() {
           return done(err);
         }
         assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+        assert.strictEqual(res.length, 0);
         assert.deepEqual(res, []);
       });
     });
@@ -301,6 +312,7 @@ describe('#filter', function() {
     var order = [];
     async.filter([], filterIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 0);
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -312,6 +324,7 @@ describe('#filter', function() {
     var order = [];
     async.filter(function() {}, filterIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 0);
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -323,6 +336,7 @@ describe('#filter', function() {
     var order = [];
     async.filter(undefined, filterIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 0);
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -334,6 +348,7 @@ describe('#filter', function() {
     var order = [];
     async.filter(null, filterIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 0);
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -349,6 +364,7 @@ describe('#filterSeries', function() {
     var collection = [1, 3, 2, 4];
     async.filterSeries(collection, filterIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 2);
       assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [1, 3, 2, 4]);
       done();
@@ -361,6 +377,7 @@ describe('#filterSeries', function() {
     var collection = [1, 3, 2, 4];
     async.filterSeries(collection, filterIteratorWithKey(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 2);
       assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [
         [1, 0],
@@ -381,6 +398,7 @@ describe('#filterSeries', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 2);
       assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [1, 3, 2, 4]);
       done();
@@ -418,6 +436,7 @@ describe('#filterSeries', function() {
     };
     async.filterSeries(collection, filterIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 2);
       assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [1, 3, 2]);
       done();
@@ -434,6 +453,7 @@ describe('#filterSeries', function() {
     };
     async.filterSeries(collection, filterIteratorWithKey(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 2);
       assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [
         [1, 'a'],
@@ -457,6 +477,7 @@ describe('#filterSeries', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 2);
       assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [1, 3, 2]);
       done();
@@ -476,6 +497,7 @@ describe('#filterSeries', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 2);
       assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [
         [1, 'a'],
@@ -497,6 +519,7 @@ describe('#filterSeries', function() {
 
     async.filterSeries(collection, filterIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 2);
       assert.deepEqual(res, [1.1, 2.6]);
       assert.deepEqual(order, [1, 4, 3]);
       done();
@@ -515,6 +538,7 @@ describe('#filterSeries', function() {
     };
     async.filterSeries(collection, iterator, function(err, res) {
       assert.ok(err);
+      assert.strictEqual(res.length, 1);
       assert.deepEqual(res, [1]);
       done();
     });
@@ -551,6 +575,7 @@ describe('#filterSeries', function() {
           return done(err);
         }
         assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+        assert.strictEqual(res.length, 0);
         assert.deepEqual(res, []);
       });
     });
@@ -565,6 +590,7 @@ describe('#filterSeries', function() {
     var order = [];
     async.filterSeries([], filterIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 0);
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -576,6 +602,7 @@ describe('#filterSeries', function() {
     var order = [];
     async.filterSeries(function() {}, filterIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 0);
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -587,6 +614,7 @@ describe('#filterSeries', function() {
     var order = [];
     async.filterSeries(undefined, filterIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 0);
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -598,6 +626,7 @@ describe('#filterSeries', function() {
     var order = [];
     async.filterSeries(null, filterIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 0);
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -615,6 +644,7 @@ describe('#filterLimit', function() {
 
     async.filterLimit(collection, 2, filterIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 3);
       assert.deepEqual(res, [1, 5, 3]);
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
@@ -628,6 +658,7 @@ describe('#filterLimit', function() {
 
     async.filterLimit(collection, 2, filterIteratorWithKey(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 3);
       assert.deepEqual(res, [1, 5, 3]);
       assert.deepEqual(order, [
         [1, 0],
@@ -650,6 +681,7 @@ describe('#filterLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 3);
       assert.deepEqual(res, [1, 5, 3]);
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
@@ -666,6 +698,7 @@ describe('#filterLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 3);
       assert.deepEqual(res, [1, 5, 3]);
       assert.deepEqual(order, [
         [1, 0],
@@ -690,6 +723,7 @@ describe('#filterLimit', function() {
     };
     async.filterLimit(collection, 2, filterIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 3);
       assert.deepEqual(res, [1, 5, 3]);
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
@@ -708,6 +742,7 @@ describe('#filterLimit', function() {
     };
     async.filterLimit(collection, 2, filterIteratorWithKey(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 3);
       assert.deepEqual(res, [1, 5, 3]);
       assert.deepEqual(order, [
         [1, 'a'],
@@ -730,6 +765,7 @@ describe('#filterLimit', function() {
     };
     async.filterLimit(collection, 2, filterIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 2);
       assert.deepEqual(res, [1.1, 2.7]);
       assert.deepEqual(order, [1, 4, 3]);
       done();
@@ -743,6 +779,7 @@ describe('#filterLimit', function() {
 
     async.filterLimit(collection, Infinity, filterIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 4);
       assert.deepEqual(res, [1, 3, 3, 1]);
       assert.deepEqual(order, [1, 1, 2, 3, 3, 4]);
       done();
@@ -763,6 +800,7 @@ describe('#filterLimit', function() {
     async.filterLimit(collection, 2, iterator, function(err, res) {
       assert.ok(err);
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 2);
       assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [
         [1, 0],
@@ -804,6 +842,7 @@ describe('#filterLimit', function() {
           return done(err);
         }
         assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+        assert.strictEqual(res.length, 0);
         assert.deepEqual(res, []);
       });
     });
@@ -818,6 +857,7 @@ describe('#filterLimit', function() {
     var order = [];
     async.filterLimit([], 2, filterIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 0);
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -829,6 +869,7 @@ describe('#filterLimit', function() {
     var order = [];
     async.filterLimit({}, 2, filterIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 0);
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -840,6 +881,7 @@ describe('#filterLimit', function() {
     var order = [];
     async.filterLimit(function() {}, 2, filterIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 0);
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -851,6 +893,7 @@ describe('#filterLimit', function() {
     var order = [];
     async.filterLimit(undefined, 2, filterIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 0);
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -862,6 +905,7 @@ describe('#filterLimit', function() {
     var order = [];
     async.filterLimit(null, 2, filterIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 0);
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -874,6 +918,7 @@ describe('#filterLimit', function() {
     var collection = [1, 3, 2];
     async.filterLimit(collection, 0, filterIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 0);
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -886,6 +931,7 @@ describe('#filterLimit', function() {
     var collection = [1, 3, 2];
     async.filterLimit(collection, undefined, filterIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 0);
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
