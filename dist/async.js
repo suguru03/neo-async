@@ -17,11 +17,11 @@
   createImmediate();
 
   /**
-   * @version 1.1.1
+   * @version 1.1.2
    * @namespace async
    */
   var async = {
-    VERSION: '1.1.1',
+    VERSION: '1.1.2',
 
     // Collections
     each: each,
@@ -525,7 +525,7 @@
         result[++resultCount] = value;
       }
       if (++completed === size) {
-        return callback(result);
+        return callback(_compact(result));
       }
       iterate();
     }
@@ -537,7 +537,7 @@
       called = true;
 
       if (err) {
-        callback(err, result);
+        callback(err, _compact(result));
         callback = noop;
         return;
       }
@@ -545,7 +545,7 @@
         result[++resultCount] = value;
       }
       if (++completed === size) {
-        return callback(undefined, result);
+        return callback(undefined, _compact(result));
       }
       iterate();
     }
