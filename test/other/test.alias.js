@@ -53,4 +53,10 @@ describe('#alias', function() {
     assert.strictEqual(async.all, async.every);
     done();
   });
+
+  it('should have alias of angelfall', function(done) {
+
+    assert.strictEqual(async.angelfall, async.angelFall);
+    done();
+  });
 });
