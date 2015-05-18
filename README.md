@@ -119,8 +119,8 @@ bower install neo-async
 - [`series`](http://suguru03.github.io/neo-async/doc/async.series.html)
 - [`parallelLimit`](http://suguru03.github.io/neo-async/doc/async.series.html)
 - [`waterfall`](http://suguru03.github.io/neo-async/doc/async.waterfall.html)
-- [`angelFall`](http://suguru03.github.io/neo-async/doc/async.angelFall.html)
-- [`angelfall`](http://suguru03.github.io/neo-async/doc/async.angelFall.html) -> [`angelFall`](http://suguru03.github.io/neo-async/doc/async.angelFall.html)
+- [`angelFall`](http://suguru03.github.io/neo-async/doc/async.angelFall.html) *
+- [`angelfall`](http://suguru03.github.io/neo-async/doc/async.angelFall.html) -> [`angelFall`](http://suguru03.github.io/neo-async/doc/async.angelFall.html) *
 - [`whilst`](#whilst)
 - [`doWhilst`](#doWhilst)
 - [`until`](#until)
