@@ -17,11 +17,11 @@
   createImmediate();
 
   /**
-   * @version 1.1.2
+   * @version 1.2.0
    * @namespace async
    */
   var async = {
-    VERSION: '1.1.2',
+    VERSION: '1.2.0',
 
     // Collections
     each: each,
@@ -79,6 +79,8 @@
     series: series,
     parallelLimit: parallelLimit,
     waterfall: waterfall,
+    angelFall: angelFall,
+    angelfall: angelFall,
     whilst: whilst,
     doWhilst: doWhilst,
     until: until,
@@ -7185,6 +7187,25 @@
   }
 
   /**
+   * check for waterfall tasks
+   * @private
+   * @param {Array} tasks
+   * @param {Function} callback
+   * @return {boolean}
+   */
+  function checkWaterfallTasks(tasks, callback) {
+    if (!Array.isArray(tasks)) {
+      callback(new Error('First argument to waterfall must be an array of functions'));
+      return false;
+    }
+    if (tasks.length === 0) {
+      callback();
+      return false;
+    }
+    return true;
+  }
+
+  /**
    * @memberof async
    * @namespace waterfall
    * @param {Array} tasks - functions
@@ -7225,17 +7246,12 @@
    */
   function waterfall(tasks, callback) {
     callback = callback || noop;
-    if (!Array.isArray(tasks)) {
-      var err = new Error('First argument to waterfall must be an array of functions');
-      return callback(err);
-    }
-
-    var size = tasks.length;
-    if (size === 0) {
-      return callback();
+    if (!checkWaterfallTasks(tasks, callback)) {
+      return;
     }
     var called;
     var completed = 0;
+    var size = tasks.length;
     var args = [];
     iterate();
 
@@ -7284,16 +7300,11 @@
    */
   function safeWaterfall(tasks, callback) {
     callback = callback || noop;
-    if (!Array.isArray(tasks)) {
-      var err = new Error('First argument to waterfall must be an array of functions');
-      return callback(err);
-    }
-
-    var size = tasks.length;
-    if (size === 0) {
-      return callback();
+    if (!checkWaterfallTasks(tasks, callback)) {
+      return;
     }
     var called;
+    var size = tasks.length;
     var args = [];
     iterate(0);
 
@@ -7335,6 +7346,95 @@
           iterate(completed);
         });
       }
+    }
+  }
+
+  /**
+   * `angelFall` is like `waterfall` and inject callback to last argument of next task.
+   *
+   * @memberof async
+   * @namespace angelFall
+   * @param {Array} tasks - functions
+   * @param {Function} callback
+   * @example
+   *
+   * var order = [];
+   * var tasks = [
+   *   function(next) {
+   *     setTimeout(function() {
+   *       order.push(1);
+   *       next(null, 1);
+   *     }, 10);
+   *   },
+   *   function(arg1, empty, next) {
+   *     setTimeout(function() {
+   *       order.push(2);
+   *       next(null, 1, 2);
+   *     }, 30);
+   *   },
+   *   function(next) {
+   *     setTimeout(function() {
+   *       order.push(3);
+   *       next(null, 3);
+   *     }, 20);
+   *   },
+   *   function(arg1, empty1, empty2, empty3, next) {
+   *     setTimeout(function() {
+   *       order.push(4);
+   *       next(null, 1, 2, 3, 4);
+   *     }, 40);
+   *   }
+   * ];
+   * async.angelFall(tasks, function(err, arg1, arg2, arg3, arg4) {
+   *   console.log(arg1, arg2, arg3, arg4); // 1 2 3 4
+   * });
+   *
+   */
+  function angelFall(tasks, callback) {
+    callback = callback || noop;
+    if (!checkWaterfallTasks(tasks, callback)) {
+      return;
+    }
+    var called;
+    var completed = 0;
+    var size = tasks.length;
+    var args = [];
+    iterate();
+
+    function iterate() {
+      called = false;
+      var func = tasks[completed];
+      switch (func.length) {
+        case 1:
+          return func(done);
+        case 2:
+          return func(args[0], done);
+        case 3:
+          return func(args[0], args[1], done);
+        case 4:
+          return func(args[0], args[1], args[2], done);
+        case 5:
+          return func(args[0], args[1], args[2], args[3], done);
+        default:
+          args[func.length - 1] = done;
+          return func.apply(null, args);
+      }
+    }
+
+    function done(err) {
+      if (called) {
+        throw new Error('Callback was already called.');
+      }
+      called = true;
+
+      if (err) {
+        return callback(err);
+      }
+      if (++completed === size) {
+        return callback.apply(null, _baseSlice(arguments));
+      }
+      args = _slice(arguments, 1);
+      iterate();
     }
   }
 

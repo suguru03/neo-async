@@ -1,7 +1,7 @@
 {
   "name": "neo-async",
   "main": "lib/async.js",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "homepage": "https://github.com/suguru03/neo-async",
   "authors": [
     "Suguru Motegi"
