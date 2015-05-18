@@ -12,75 +12,37 @@ domain.on('error', function(err) {
   assert.strictEqual(err.message, 'Callback was already called.');
 });
 
-function createTasks(type, numbers) {
+function createSimpleTasks(numbers) {
 
-  switch (type) {
-    case 'simple':
-      return createSimpleTasks();
-    case 'complex':
-      return createComplexTasks();
-  }
-
-  function createSimpleTasks() {
-
-    var first = true;
-    var tasks = _.transform(numbers, function(memo, num, key) {
-      if (first) {
-        first = false;
-        memo[key] = function(done) {
-          if (this === Math) {
-            num *= 2;
-          }
-          done(null, num);
-        };
-      } else {
-        memo[key] = function(sum, done) {
-          if (this === Math) {
-            num *= 2;
-          }
-          done(null, sum + num);
-        };
-      }
-    });
-    return tasks;
-  }
-
-  function createComplexTasks() {
-
-    var count = 0;
-    var tasks = _.transform(numbers, function(memo, num, key) {
-      if (count++ === 0) {
-        memo[key] = function(done) {
-          if (this === Math) {
-            num *= 2;
-          }
-          done(null, num);
-        };
-      } else {
-        memo[key] = function() {
-          if (this === Math) {
-            num *= 2;
-          }
-          var args = _.toArray(arguments);
-          var done = args.pop();
-          args.unshift(null);
-          args.push(num);
-          done.apply(null, args);
-        };
-      }
-    });
-    return tasks;
-  }
-
+  var first = true;
+  var tasks = _.transform(numbers, function(memo, num, key) {
+    if (first) {
+      first = false;
+      memo[key] = function(done) {
+        if (this === Math) {
+          num *= 2;
+        }
+        done(null, num);
+      };
+    } else {
+      memo[key] = function(sum, done) {
+        if (this === Math) {
+          num *= 2;
+        }
+        done(null, sum + num);
+      };
+    }
+  });
+  return tasks;
 }
 
-describe('#waterfall', function() {
+describe('#angelFall', function() {
 
   it('should execute to waterfall by collection of array', function(done) {
 
     var numbers = [1, 3, 2, 4];
-    var tasks = createTasks('simple', numbers);
-    async.waterfall(tasks, function(err, res) {
+    var tasks = createSimpleTasks(numbers);
+    async.angelFall(tasks, function(err, res) {
       if (err) {
         return done(err);
       }
@@ -92,8 +54,8 @@ describe('#waterfall', function() {
   it('should execute simple tasks', function(done) {
 
     var numbers = [1, 3, 2, 4, 7, 8, 6, 5];
-    var tasks = createTasks('simple', numbers);
-    async.waterfall(tasks, function(err, result) {
+    var tasks = createSimpleTasks(numbers);
+    async.angelFall(tasks, function(err, result) {
       if (err) {
         return done(err);
       }
@@ -104,21 +66,44 @@ describe('#waterfall', function() {
 
   it('should execute complex tasks', function(done) {
 
-    var numbers = [1, 3, 2, 4, 7, 8, 6, 5];
-    var tasks = createTasks('complex', numbers);
-    async.waterfall(tasks, function(err, a, b, c, d, e, f, g, h) {
+    var tasks = [
+      function(next) {
+        next(null, 1);
+      },
+      function(arg1, next) {
+        next(null, arg1, 2);
+      },
+      function(arg1, arg2, empty, next) {
+        next(null, arg1, arg2, 3);
+      },
+      function(arg1, arg2, arg3, empty1, empty2, empty3, empty4, next) {
+        next(null, arg1, arg2, arg3, 4);
+      },
+      function(arg1, next) {
+        next(null, arg1, 2, 3, 4, 5);
+      },
+      function(next) {
+        next(null, 1, 2, 3, 4, 5, 6, 7, 8);
+      },
+      function(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, empty, next) {
+        next(null, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, empty, next);
+      }
+    ];
+    async.angelFall(tasks, function(err, a, b, c, d, e, f, g, h, empty) {
       if (err) {
         return done(err);
       }
       assert.strictEqual(a, 1);
-      assert.strictEqual(b, 3);
-      assert.strictEqual(c, 2);
+      assert.strictEqual(b, 2);
+      assert.strictEqual(c, 3);
       assert.strictEqual(d, 4);
 
-      assert.strictEqual(e, 7);
-      assert.strictEqual(f, 8);
-      assert.strictEqual(g, 6);
-      assert.strictEqual(h, 5);
+      assert.strictEqual(e, 5);
+      assert.strictEqual(f, 6);
+      assert.strictEqual(g, 7);
+      assert.strictEqual(h, 8);
+
+      assert.strictEqual(empty, undefined);
 
       done();
     });
@@ -127,7 +112,7 @@ describe('#waterfall', function() {
   it('should execute with asynchronous', function(done) {
 
     var order = [];
-    async.waterfall([
+    async.angelFall([
       function(next) {
         order.push(1);
         setImmediate(next);
@@ -149,13 +134,13 @@ describe('#waterfall', function() {
   it('should throw error', function(done) {
 
     var numbers = [1, 3, 2, 4];
-    var tasks = createTasks('simple', numbers);
+    var tasks = createSimpleTasks(numbers);
     var errorTask = function(res, next) {
       next('error');
     };
     tasks.splice(2, 0, errorTask);
 
-    async.waterfall(tasks, function(err) {
+    async.angelFall(tasks, function(err) {
       assert.ok(err);
       done();
     });
@@ -174,20 +159,17 @@ describe('#waterfall', function() {
             next(null, 'one', 'two');
           });
         },
-
         function(arg1, arg2, next) {
           next(null, arg1, arg2, 'three');
         },
-
         function(arg1, arg2, arg3, next) {
           next(null, 'four');
         },
-
         function(arg1, next) {
           next();
         }
       ];
-      async.waterfall(array);
+      async.angelFall(array);
     });
 
     setTimeout(function() {
@@ -198,7 +180,7 @@ describe('#waterfall', function() {
 
   it('should throw error if task is not collection', function(done) {
 
-    async.waterfall(null, function(err) {
+    async.angelFall(null, function(err) {
       assert.strictEqual(err.message, 'First argument to waterfall must be an array of functions');
       done();
     });
@@ -207,13 +189,13 @@ describe('#waterfall', function() {
   it('should throw error with binding', function(done) {
 
     var numbers = [1, 3, 2, 4];
-    var tasks = createTasks('simple', numbers);
+    var tasks = createSimpleTasks(numbers);
     var errorTask = function(res, next) {
       next('error');
     };
     tasks.splice(2, 0, errorTask);
 
-    async.waterfall(tasks, function(err) {
+    async.angelFall(tasks, function(err) {
       assert.ok(err);
       done();
     }, Math);
@@ -222,7 +204,7 @@ describe('#waterfall', function() {
   it('should return response immediately if array task is empty', function(done) {
 
     var tasks = [];
-    async.waterfall(tasks, function(err, res) {
+    async.angelFall(tasks, function(err, res) {
       if (err) {
         return done(err);
       }
