@@ -4,8 +4,9 @@
 var comparator = require('func-comparator');
 var _ = require('lodash');
 var async = require('async');
-var neo_async_v0 = require('neo-async');
-var neo_async_v1 = require('../../');
+var _async = require('_async'); // current async (from npm link)
+// var neo_async_v0 = require('neo-async');
+// var neo_async_v1 = require('../../');
 
 // loop count
 var count = 100;
@@ -26,12 +27,15 @@ var funcs = {
   'async': function(callback) {
     async.waterfall(tasks, callback);
   },
-  'neo-async_v0': function(callback) {
-    neo_async_v0.waterfall(tasks, callback);
-  },
-  'neo-async_v1': function(callback) {
-    neo_async_v1.waterfall(tasks, callback);
+  '_async': function(callback) {
+    _async.waterfall(tasks, callback);
   }
+  // 'neo-async_v0': function(callback) {
+  //   neo_async_v0.waterfall(tasks, callback);
+  // },
+  // 'neo-async_v1': function(callback) {
+  //   neo_async_v1.waterfall(tasks, callback);
+  // }
 };
 
 comparator
