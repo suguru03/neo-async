@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Namespace: applyEach</title>
+    <title>JSDoc: Namespace: angelFall</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Namespace: applyEach</h1>
+    <h1 class="page-title">Namespace: angelFall</h1>
 
     
 
@@ -31,7 +31,7 @@
         <h2>
             <span class="ancestors"><a href="async.html">async</a>.</span>
         
-        applyEach
+        angelFall
         </h2>
         
     
@@ -40,6 +40,8 @@
 <article>
     <div class="container-overview">
     
+        
+            <div class="description">`angelFall` is like `waterfall` and inject callback to last argument of next task.</div>
         
 
         
@@ -74,7 +76,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="async.js.html">async.js</a>, <a href="async.js.html#line7597">line 7597</a>
+        <a href="async.js.html">async.js</a>, <a href="async.js.html#line7352">line 7352</a>
     </li></ul></dd>
     
 
@@ -85,6 +87,40 @@
     
 </dl>
 
+
+        
+            <h3>Example</h3>
+            
+    <pre class="prettyprint"><code>var order = [];
+var tasks = [
+  function(next) {
+    setTimeout(function() {
+      order.push(1);
+      next(null, 1);
+    }, 10);
+  },
+  function(arg1, empty, next) {
+    setTimeout(function() {
+      order.push(2);
+      next(null, 1, 2);
+    }, 30);
+  },
+  function(next) {
+    setTimeout(function() {
+      order.push(3);
+      next(null, 3);
+    }, 20);
+  },
+  function(arg1, empty1, empty2, empty3, next) {
+    setTimeout(function() {
+      order.push(4);
+      next(null, 1, 2, 3, 4);
+    }, 40);
+  }
+];
+async.angelFall(tasks, function(err, arg1, arg2, arg3, arg4) {
+  console.log(arg1, arg2, arg3, arg4); // 1 2 3 4
+});</code></pre>
 
         
     

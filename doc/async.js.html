@@ -40,15 +40,16 @@
   };
 
   var _nextTick;
+  var _safeNextTick;
   var _setImmediate;
   createImmediate();
 
   /**
-   * @version 1.0.0
+   * @version 1.2.0
    * @namespace async
    */
   var async = {
-    VERSION: '1.0.0',
+    VERSION: '1.2.0',
 
     // Collections
     each: each,
@@ -106,6 +107,8 @@
     series: series,
     parallelLimit: parallelLimit,
     waterfall: waterfall,
+    angelFall: angelFall,
+    angelfall: angelFall,
     whilst: whilst,
     doWhilst: doWhilst,
     until: until,
@@ -123,6 +126,7 @@
     iterator: iterator,
     apply: apply,
     nextTick: _nextTick,
+    safeNextTick: _safeNextTick,
     setImmediate: _setImmediate,
     times: times,
     timesSeries: timesSeries,
@@ -136,8 +140,12 @@
     createLogger: createLogger,
     noConflict: noConflict,
     eventEmitter: eventEmitter,
-    EventEmitter: EventEmitter
+    EventEmitter: EventEmitter,
+
+    safe: undefined
   };
+
+  async.safe = safe();
 
   if (objectTypes[typeof define] &amp;&amp; define &amp;&amp; define.amd) {
     // AMD / RequireJS
@@ -264,7 +272,6 @@
    * @param {Function} iterator - The function invoked per iteration.
    */
   function _arrayEachRight(array, iterator) {
-
     var length = array.length;
 
     while (length--) {
@@ -548,7 +555,7 @@
         result[++resultCount] = value;
       }
       if (++completed === size) {
-        return callback(result);
+        return callback(_compact(result));
       }
       iterate();
     }
@@ -560,7 +567,7 @@
       called = true;
 
       if (err) {
-        callback(err, result);
+        callback(err, _compact(result));
         callback = noop;
         return;
       }
@@ -568,7 +575,7 @@
         result[++resultCount] = value;
       }
       if (++completed === size) {
-        return callback(undefined, result);
+        return callback(undefined, _compact(result));
       }
       iterate();
     }
@@ -580,24 +587,22 @@
   function createImmediate() {
     if (!objectTypes[typeof process] || !process.nextTick) {
       if (objectTypes[typeof setImmediate]) {
-        _nextTick = function(func) {
-          setImmediate(func);
-        };
+        _nextTick = setImmediate;
       } else {
         _nextTick = function(func) {
           setTimeout(func, 0);
         };
       }
       _setImmediate = _nextTick;
+      _safeNextTick = _safeNextTick;
     } else {
       _nextTick = process.nextTick;
       if (objectTypes[typeof setImmediate]) {
-        _setImmediate = function(func) {
-          setImmediate(func);
-        };
+        _setImmediate = setImmediate;
       } else {
         _setImmediate = _nextTick;
       }
+      _safeNextTick = /^v0.10/.test(process.version) ? setImmediate : _nextTick;
     }
   }
 
@@ -729,14 +734,225 @@
     var called = false;
     return function(err, res) {
       if (called) {
-        if (err) {
-          return func(err, res);
-        }
         throw new Error('Callback was already called.');
       }
       called = true;
       func(err, res);
     };
+  }
+
+  /**
+   * @memberof async
+   * @namespace safe
+   */
+  function safe() {
+    // ['index', 'bindIndex']
+    var safeIteratorMap = {
+      each: [1, 3],
+      eachSeries: [1, 3],
+      eachLimit: [2, 4],
+      forEach: [1, 3],
+      forEachSeries: [1, 3],
+      forEachLimit: [2, 4],
+      map: [1, 3],
+      mapSeries: [1, 3],
+      mapLimit: [2, 4],
+      mapValues: [1, 3],
+      mapValuesSeries: [1, 3],
+      mapValuesLimit: [2, 4],
+      filter: [1, 3],
+      filterSeries: [1, 3],
+      filterLimit: [2, 4],
+      select: [1, 3],
+      selectSeries: [1, 3],
+      selectLimit: [2, 4],
+      reject: [1, 3],
+      rejectSeries: [1, 3],
+      rejectLimit: [2, 4],
+      detect: [1, 3],
+      detectSeries: [1, 3],
+      detectLimit: [2, 4],
+      pick: [1, 3],
+      pickSeries: [1, 3],
+      pickLimit: [2, 4],
+      reduce: [2, 4],
+      inject: [2, 4],
+      foldl: [2, 4],
+      reduceRight: [2, 4],
+      foldr: [2, 4],
+      transform: [1, 4],
+      transformSeries: [1, 4],
+      transformLimit: [2, 5],
+      sortBy: [1, 3],
+      sortBySeries: [1, 3],
+      sortByLimit: [2, 4],
+      some: [1, 3],
+      someSeries: [1, 3],
+      someLimit: [2, 4],
+      any: [1, 3],
+      every: [1, 3],
+      all: [1, 3],
+      everySeries: [1, 3],
+      everyLimit: [2, 4],
+      concat: [1, 3],
+      concatSeries: [1, 3],
+      concatLimit: [2, 4],
+      whilst: [1, 3],
+      doWhilst: [0, 3],
+      until: [1, 3],
+      doUntil: [0, 3],
+      forever: [0, 2],
+      times: [1, 3],
+      timesSeries: [1, 3],
+      timesLimit: [2, 4]
+    };
+    var safeTaskMap = {
+      parallel: [0, 2],
+      series: [0, 2],
+      parallelLimit: [0, 3],
+      waterfall: [0, -1],
+      auto: [0, -1]
+    };
+
+    var safeAsync = {};
+    _objectEach(async, function(func, key) {
+      if (typeof func !== 'function') {
+        safeAsync[key] = func;
+        return;
+      }
+
+      // iterator
+      if (safeIteratorMap[key]) {
+        return createSafeIterator(func, key);
+      }
+
+      // tasks
+      if (safeTaskMap[key]) {
+        return createSafeTasks(func, key);
+      }
+
+      // not avaiable safe fucntion
+      safeAsync[key] = func;
+    });
+    safeAsync.safe = safe;
+    return safeAsync;
+
+    function createSafeIterator(func, key) {
+      var data = safeIteratorMap[key];
+      var index = data[0];
+      var bindIndex = data[1];
+      var funcLength = func.length;
+      safeAsync[key] = safeCollection;
+
+      function safeCollection() {
+        var items = _baseSlice(arguments);
+        var iterator = items[index];
+        var thisArg = items[bindIndex];
+        switch (iterator.length) {
+          case 1:
+            items[index] = function(done) {
+              async.safeNextTick(function() {
+                iterator.call(thisArg, done);
+              });
+            };
+            break;
+          case 2:
+            items[index] = function(arg1, done) {
+              async.safeNextTick(function() {
+                iterator.call(thisArg, arg1, done);
+              });
+            };
+            break;
+          case 3:
+            items[index] = function(arg1, arg2, done) {
+              async.safeNextTick(function() {
+                iterator.call(thisArg, arg1, arg2, done);
+              });
+            };
+            break;
+          case 4:
+            items[index] = function(arg1, arg2, arg3, done) {
+              async.safeNextTick(function() {
+                iterator.call(thisArg, arg1, arg2, arg3, done);
+              });
+            };
+            break;
+          default:
+            items[index] = function() {
+              var args = _baseSlice(arguments);
+              async.safeNextTick(function() {
+                iterator.apply(thisArg, args);
+              });
+            };
+            break;
+        }
+
+        switch (funcLength) {
+          case 3:
+            func(items[0], items[1], items[2]);
+            break;
+          case 4:
+            func(items[0], items[1], items[2], items[3]);
+            break;
+          case 5:
+            func(items[0], items[1], items[2], items[3], items[4]);
+            break;
+          case 6:
+            func(items[0], items[1], items[2], items[3], items[4], items[5]);
+            break;
+        }
+      }
+    }
+
+    function createSafeTasks(func, key) {
+      var data = safeTaskMap[key];
+      var index = data[0];
+      var bindIndex = data[1];
+      if (/^waterfall$/.test(key)) {
+        safeAsync[key] = safeWaterfall;
+        return;
+      }
+      var funcLength = func.length;
+      safeAsync[key] = safeTasks;
+
+      function safeTasks() {
+        var items = _baseSlice(arguments);
+        var tasks = items[index];
+        var thisArg = items[bindIndex];
+        if (Array.isArray(tasks)) {
+          _arrayEach(tasks, function(task, index) {
+            tasks[index] = createSafeFunction(task);
+          });
+        } else if (tasks &amp;&amp; typeof tasks === 'object') {
+          _objectEach(tasks, function(task, key) {
+            tasks[key] = createSafeFunction(task);
+          });
+        }
+        switch (funcLength) {
+          case 2:
+            func(items[0], items[1]);
+            break;
+          case 3:
+            func(items[0], items[1], items[2]);
+            break;
+          case 4:
+            func(items[0], items[1], items[2], items[3]);
+            break;
+        }
+
+        function createSafeFunction(task) {
+          if (typeof task !== 'function') {
+            return task;
+          }
+          return function safeFuncion() {
+            var args = _baseSlice(arguments);
+            async.safeNextTick(function() {
+              task.apply(thisArg, args);
+            });
+          };
+        }
+      }
+    }
   }
 
   /**
@@ -4603,7 +4819,7 @@
    * };
    * async.transform(collection, iterator, function(err, res) {
    *   console.log(res); //  { a: 1, b: 3, c: 2, d: 4 }
-   *   console.log(order); // [[1, 'a'], [2, 'b'], [3, 'b'], [4, 'd']]
+   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b'], [4, 'd']]
    * });
    *
    */
@@ -5134,79 +5350,79 @@
       mapSeries(collection, _iterator, createCallback(callback));
     }
 
-  /**
-   * @memberof async
-   * @namespace sortByLimit
-   * @param {Array|Object} collection
-   * @param {number} limit - limit >= 1
-   * @param {Function} iterator
-   * @param {Function} callback
-   * @param {*} [thisArg]
-   * @example
-   *
-   * // array
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num);
-   *   }, num * 10);
-   * };
-   * async.sortByLimit(array, 2, iterator, function(err, res) {
-   *   console.log(res); // [1, 2, 3, 4, 5]
-   *   console.log(order); // [1, 3, 5, 2, 4]
-   * });
-   *
-   * @example
-   *
-   * // array with index
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(null, num);
-   *   }, num * 10);
-   * };
-   * async.sortByLimit(array, 2, iterator, function(err, res) {
-   *   console.log(res); // [1, 2, 3, 4, 5]
-   *   console.log(order); // [[1, 0], [3, 2], [5, 1], [2, 4], [4, 3]]
-   * });
-   *
-   * @example
-   *
-   * // object
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num);
-   *   }, num * 10);
-   * };
-   * async.sortByLimit(object, 2, iterator, function(err, res) {
-   *   console.log(res); // [1, 2, 3, 4, 5]
-   *   console.log(order); // [1, 3, 5, 2, 4]
-   * });
-   *
-   * @example
-   *
-   * // object with key
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(null, num);
-   *   }, num * 10);
-   * };
-   * async.sortByLimit(object, 2, iterator, function(err, res) {
-   *   console.log(res); // [1, 2, 3, 4, 5]
-   *   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
-   * });
-   *
-   */
+    /**
+     * @memberof async
+     * @namespace sortByLimit
+     * @param {Array|Object} collection
+     * @param {number} limit - limit >= 1
+     * @param {Function} iterator
+     * @param {Function} callback
+     * @param {*} [thisArg]
+     * @example
+     *
+     * // array
+     * var order = [];
+     * var array = [1, 5, 3, 4, 2];
+     * var iterator = function(num, done) {
+     *   setTimeout(function() {
+     *     order.push(num);
+     *     done(null, num);
+     *   }, num * 10);
+     * };
+     * async.sortByLimit(array, 2, iterator, function(err, res) {
+     *   console.log(res); // [1, 2, 3, 4, 5]
+     *   console.log(order); // [1, 3, 5, 2, 4]
+     * });
+     *
+     * @example
+     *
+     * // array with index
+     * var order = [];
+     * var array = [1, 5, 3, 4, 2];
+     * var iterator = function(num, index, done) {
+     *   setTimeout(function() {
+     *     order.push([num, index]);
+     *     done(null, num);
+     *   }, num * 10);
+     * };
+     * async.sortByLimit(array, 2, iterator, function(err, res) {
+     *   console.log(res); // [1, 2, 3, 4, 5]
+     *   console.log(order); // [[1, 0], [3, 2], [5, 1], [2, 4], [4, 3]]
+     * });
+     *
+     * @example
+     *
+     * // object
+     * var order = [];
+     * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+     * var iterator = function(num, done) {
+     *   setTimeout(function() {
+     *     order.push(num);
+     *     done(null, num);
+     *   }, num * 10);
+     * };
+     * async.sortByLimit(object, 2, iterator, function(err, res) {
+     *   console.log(res); // [1, 2, 3, 4, 5]
+     *   console.log(order); // [1, 3, 5, 2, 4]
+     * });
+     *
+     * @example
+     *
+     * // object with key
+     * var order = [];
+     * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+     * var iterator = function(num, key, done) {
+     *   setTimeout(function() {
+     *     order.push([num, key]);
+     *     done(null, num);
+     *   }, num * 10);
+     * };
+     * async.sortByLimit(object, 2, iterator, function(err, res) {
+     *   console.log(res); // [1, 2, 3, 4, 5]
+     *   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
+     * });
+     *
+     */
     function sortByLimit(collection, limit, iterator, callback, thisArg) {
       var _iterator = createIterator(iterator, thisArg);
       mapLimit(collection, limit, _iterator, createCallback(callback));
@@ -5246,16 +5462,16 @@
     }
 
     function createCallback(callback) {
-      return function(err, res) {
+      return function(err, array) {
         if (err) {
           callback(err);
           callback = noop;
           return;
         }
-        var result = res.sort(function(a, b) {
-          return b.criteria &lt; a.criteria;
+        array.sort(function(a, b) {
+          return a.criteria &lt; b.criteria ? -1 : 1;
         });
-        callback(undefined, _pluck(result, 'value'));
+        callback(undefined, _pluck(array, 'value'));
       };
     }
 
@@ -6999,9 +7215,28 @@
   }
 
   /**
+   * check for waterfall tasks
+   * @private
+   * @param {Array} tasks
+   * @param {Function} callback
+   * @return {boolean}
+   */
+  function checkWaterfallTasks(tasks, callback) {
+    if (!Array.isArray(tasks)) {
+      callback(new Error('First argument to waterfall must be an array of functions'));
+      return false;
+    }
+    if (tasks.length === 0) {
+      callback();
+      return false;
+    }
+    return true;
+  }
+
+  /**
    * @memberof async
    * @namespace waterfall
-   * @param {Array|Object} tasks - functions
+   * @param {Array} tasks - functions
    * @param {Function} callback
    * @example
    *
@@ -7039,17 +7274,12 @@
    */
   function waterfall(tasks, callback) {
     callback = callback || noop;
-    if (!Array.isArray(tasks)) {
-      var err = new Error('First argument to waterfall must be an array of functions');
-      return callback(err);
-    }
-
-    var size = tasks.length;
-    if (size === 0) {
-      return callback();
+    if (!checkWaterfallTasks(tasks, callback)) {
+      return;
     }
     var called;
     var completed = 0;
+    var size = tasks.length;
     var args = [];
     iterate();
 
@@ -7071,6 +7301,150 @@
           return func(args[0], args[1], args[2], args[3], args[4], done);
         default:
           args.push(done);
+          return func.apply(null, args);
+      }
+    }
+
+    function done(err) {
+      if (called) {
+        throw new Error('Callback was already called.');
+      }
+      called = true;
+
+      if (err) {
+        return callback(err);
+      }
+      if (++completed === size) {
+        return callback.apply(null, _baseSlice(arguments));
+      }
+      args = _slice(arguments, 1);
+      iterate();
+    }
+  }
+
+  /**
+   * @private
+   * @param {Array} tasks - functions
+   */
+  function safeWaterfall(tasks, callback) {
+    callback = callback || noop;
+    if (!checkWaterfallTasks(tasks, callback)) {
+      return;
+    }
+    var called;
+    var size = tasks.length;
+    var args = [];
+    iterate(0);
+
+    function iterate(completed) {
+      called = false;
+      var func = tasks[completed];
+      switch (args.length) {
+        case 0:
+          return func(done);
+        case 1:
+          return func(args[0], done);
+        case 2:
+          return func(args[0], args[1], done);
+        case 3:
+          return func(args[0], args[1], args[2], done);
+        case 4:
+          return func(args[0], args[1], args[2], args[3], done);
+        case 5:
+          return func(args[0], args[1], args[2], args[3], args[4], done);
+        default:
+          args.push(done);
+          return func.apply(null, args);
+      }
+
+      function done(err) {
+        if (called) {
+          throw new Error('Callback was already called.');
+        }
+        called = true;
+
+        if (err) {
+          return callback(err);
+        }
+        if (++completed === size) {
+          return callback.apply(null, _baseSlice(arguments));
+        }
+        args = _slice(arguments, 1);
+        async.safeNextTick(function() {
+          iterate(completed);
+        });
+      }
+    }
+  }
+
+  /**
+   * `angelFall` is like `waterfall` and inject callback to last argument of next task.
+   *
+   * @memberof async
+   * @namespace angelFall
+   * @param {Array} tasks - functions
+   * @param {Function} callback
+   * @example
+   *
+   * var order = [];
+   * var tasks = [
+   *   function(next) {
+   *     setTimeout(function() {
+   *       order.push(1);
+   *       next(null, 1);
+   *     }, 10);
+   *   },
+   *   function(arg1, empty, next) {
+   *     setTimeout(function() {
+   *       order.push(2);
+   *       next(null, 1, 2);
+   *     }, 30);
+   *   },
+   *   function(next) {
+   *     setTimeout(function() {
+   *       order.push(3);
+   *       next(null, 3);
+   *     }, 20);
+   *   },
+   *   function(arg1, empty1, empty2, empty3, next) {
+   *     setTimeout(function() {
+   *       order.push(4);
+   *       next(null, 1, 2, 3, 4);
+   *     }, 40);
+   *   }
+   * ];
+   * async.angelFall(tasks, function(err, arg1, arg2, arg3, arg4) {
+   *   console.log(arg1, arg2, arg3, arg4); // 1 2 3 4
+   * });
+   *
+   */
+  function angelFall(tasks, callback) {
+    callback = callback || noop;
+    if (!checkWaterfallTasks(tasks, callback)) {
+      return;
+    }
+    var called;
+    var completed = 0;
+    var size = tasks.length;
+    var args = [];
+    iterate();
+
+    function iterate() {
+      called = false;
+      var func = tasks[completed];
+      switch (func.length) {
+        case 1:
+          return func(done);
+        case 2:
+          return func(args[0], done);
+        case 3:
+          return func(args[0], args[1], done);
+        case 4:
+          return func(args[0], args[1], args[2], done);
+        case 5:
+          return func(args[0], args[1], args[2], args[3], done);
+        default:
+          args[func.length - 1] = done;
           return func.apply(null, args);
       }
     }
@@ -7376,8 +7750,8 @@
           callback: callback
         };
         q.tasks.push(item);
-        q.tasks = q.tasks.sort(function(a, b) {
-          return b.priority &lt; a.priority;
+        q.tasks.sort(function(a, b) {
+          return a.priority &lt; b.priority ? -1 : 1;
         });
         if (typeof q.saturated === 'function' &amp;&amp; q.length() === q.concurrency) {
           q.saturated();
@@ -7705,11 +8079,11 @@
    */
   function times(n, iterator, callback, thisArg) {
     callback = callback || noop;
-    if (!Number.isFinite(n) || n &lt; 1) {
+    n = +n;
+    if (isNaN(n) || n &lt; 1) {
       return callback(undefined, []);
     }
     var result = Array(n);
-    var completed = 0;
     var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
     _times(n, iterate);
@@ -7732,9 +8106,8 @@
           callback = noop;
           return;
         }
-        if (++completed === n) {
+        if (--n === 0) {
           callback(undefined, result);
-          callback = noop;
         }
       };
     }
@@ -7759,7 +8132,8 @@
    */
   function timesSeries(n, iterator, callback, thisArg) {
     callback = callback || noop;
-    if (!Number.isFinite(n) || n &lt; 1) {
+    n = +n;
+    if (isNaN(n) || n &lt; 1) {
       return callback(undefined, []);
     }
     var called;
@@ -7810,7 +8184,8 @@
    */
   function timesLimit(n, limit, iterator, callback, thisArg) {
     callback = callback || noop;
-    if (!Number.isFinite(n) || n &lt; 1 || isNaN(limit) || limit &lt; 1) {
+    n = +n;
+    if (isNaN(n) || n &lt; 1 || isNaN(limit) || limit &lt; 1) {
       return callback(undefined, []);
     }
     var result = Array(n);
@@ -8169,13 +8544,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="async.html">async</a></li><li><a href="async.apply.html">apply</a></li><li><a href="async.applyEach.html">applyEach</a></li><li><a href="async.auto.html">auto</a></li><li><a href="async.cargo.html">cargo</a></li><li><a href="async.compose.html">compose</a></li><li><a href="async.concat.html">concat</a></li><li><a href="async.concatLimit.html">concatLimit</a></li><li><a href="async.concatSeries.html">concatSeries</a></li><li><a href="async.createLogger.html">createLogger</a></li><li><a href="async.detect.html">detect</a></li><li><a href="async.detectLimit.html">detectLimit</a></li><li><a href="async.detectSeries.html">detectSeries</a></li><li><a href="async.doUntil.html">doUntil</a></li><li><a href="async.doWhilst.html">doWhilst</a></li><li><a href="async.each.html">each</a></li><li><a href="async.eachLimit.html">eachLimit</a></li><li><a href="async.eachSeries.html">eachSeries</a></li><li><a href="async.EventEmitter.html">EventEmitter</a></li><li><a href="async.eventEmitter_.html">eventEmitter</a></li><li><a href="async.every.html">every</a></li><li><a href="async.everyLimit.html">everyLimit</a></li><li><a href="async.everySeries.html">everySeries</a></li><li><a href="async.filter.html">filter</a></li><li><a href="async.filterLimit.html">filterLimit</a></li><li><a href="async.filterSeries.html">filterSeries</a></li><li><a href="async.forever.html">forever</a></li><li><a href="async.iterator.html">iterator</a></li><li><a href="async.map.html">map</a></li><li><a href="async.mapLimit.html">mapLimit</a></li><li><a href="async.mapSeries.html">mapSeries</a></li><li><a href="async.mapValues.html">mapValues</a></li><li><a href="async.mapValuesLimit.html">mapValuesLimit</a></li><li><a href="async.mapValuesSeries.html">mapValuesSeries</a></li><li><a href="async.memoize.html">memoize</a></li><li><a href="async.noConflict.html">noConflict</a></li><li><a href="async.parallel.html">parallel</a></li><li><a href="async.parallelLimit.html">parallelLimit</a></li><li><a href="async.pick.html">pick</a></li><li><a href="async.pickLimit.html">pickLimit</a></li><li><a href="async.pickSeries.html">pickSeries</a></li><li><a href="async.priorityQueue.html">priorityQueue</a></li><li><a href="async.queue.html">queue</a></li><li><a href="async.reduce.html">reduce</a></li><li><a href="async.reduceRight.html">reduceRight</a></li><li><a href="async.reject.html">reject</a></li><li><a href="async.rejectLimit.html">rejectLimit</a></li><li><a href="async.rejectSeries.html">rejectSeries</a></li><li><a href="async.retry.html">retry</a></li><li><a href="async.seq.html">seq</a></li><li><a href="async.series.html">series</a></li><li><a href="async.some.html">some</a></li><li><a href="async.someLimit.html">someLimit</a></li><li><a href="async.someSeries.html">someSeries</a></li><li><a href="async.sortBy.html">sortBy</a></li><li><a href="async.sortByLimit.html">sortByLimit</a></li><li><a href="async.sortBySeries.html">sortBySeries</a></li><li><a href="async.times.html">times</a></li><li><a href="async.timesLimit.html">timesLimit</a></li><li><a href="async.timesSeries.html">timesSeries</a></li><li><a href="async.transform.html">transform</a></li><li><a href="async.transformLimit.html">transformLimit</a></li><li><a href="async.transformSeries.html">transformSeries</a></li><li><a href="async.unmemoize.html">unmemoize</a></li><li><a href="async.until.html">until</a></li><li><a href="async.waterfall.html">waterfall</a></li><li><a href="async.whilst.html">whilst</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="async.html">async</a></li><li><a href="async.angelFall.html">angelFall</a></li><li><a href="async.apply.html">apply</a></li><li><a href="async.applyEach.html">applyEach</a></li><li><a href="async.auto.html">auto</a></li><li><a href="async.cargo.html">cargo</a></li><li><a href="async.compose.html">compose</a></li><li><a href="async.concat.html">concat</a></li><li><a href="async.concatLimit.html">concatLimit</a></li><li><a href="async.concatSeries.html">concatSeries</a></li><li><a href="async.createLogger.html">createLogger</a></li><li><a href="async.detect.html">detect</a></li><li><a href="async.detectLimit.html">detectLimit</a></li><li><a href="async.detectSeries.html">detectSeries</a></li><li><a href="async.doUntil.html">doUntil</a></li><li><a href="async.doWhilst.html">doWhilst</a></li><li><a href="async.each.html">each</a></li><li><a href="async.eachLimit.html">eachLimit</a></li><li><a href="async.eachSeries.html">eachSeries</a></li><li><a href="async.EventEmitter.html">EventEmitter</a></li><li><a href="async.eventEmitter_.html">eventEmitter</a></li><li><a href="async.every.html">every</a></li><li><a href="async.everyLimit.html">everyLimit</a></li><li><a href="async.everySeries.html">everySeries</a></li><li><a href="async.filter.html">filter</a></li><li><a href="async.filterLimit.html">filterLimit</a></li><li><a href="async.filterSeries.html">filterSeries</a></li><li><a href="async.forever.html">forever</a></li><li><a href="async.iterator.html">iterator</a></li><li><a href="async.map.html">map</a></li><li><a href="async.mapLimit.html">mapLimit</a></li><li><a href="async.mapSeries.html">mapSeries</a></li><li><a href="async.mapValues.html">mapValues</a></li><li><a href="async.mapValuesLimit.html">mapValuesLimit</a></li><li><a href="async.mapValuesSeries.html">mapValuesSeries</a></li><li><a href="async.memoize.html">memoize</a></li><li><a href="async.noConflict.html">noConflict</a></li><li><a href="async.parallel.html">parallel</a></li><li><a href="async.parallelLimit.html">parallelLimit</a></li><li><a href="async.pick.html">pick</a></li><li><a href="async.pickLimit.html">pickLimit</a></li><li><a href="async.pickSeries.html">pickSeries</a></li><li><a href="async.priorityQueue.html">priorityQueue</a></li><li><a href="async.queue.html">queue</a></li><li><a href="async.reduce.html">reduce</a></li><li><a href="async.reduceRight.html">reduceRight</a></li><li><a href="async.reject.html">reject</a></li><li><a href="async.rejectLimit.html">rejectLimit</a></li><li><a href="async.rejectSeries.html">rejectSeries</a></li><li><a href="async.retry.html">retry</a></li><li><a href="async.safe.html">safe</a></li><li><a href="async.seq.html">seq</a></li><li><a href="async.series.html">series</a></li><li><a href="async.some.html">some</a></li><li><a href="async.someLimit.html">someLimit</a></li><li><a href="async.someSeries.html">someSeries</a></li><li><a href="async.sortBy.html">sortBy</a></li><li><a href="async.sortByLimit.html">sortByLimit</a></li><li><a href="async.sortBySeries.html">sortBySeries</a></li><li><a href="async.times.html">times</a></li><li><a href="async.timesLimit.html">timesLimit</a></li><li><a href="async.timesSeries.html">timesSeries</a></li><li><a href="async.transform.html">transform</a></li><li><a href="async.transformLimit.html">transformLimit</a></li><li><a href="async.transformSeries.html">transformSeries</a></li><li><a href="async.unmemoize.html">unmemoize</a></li><li><a href="async.until.html">until</a></li><li><a href="async.waterfall.html">waterfall</a></li><li><a href="async.whilst.html">whilst</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a> on Sun Apr 26 2015 00:53:09 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a> on Wed May 20 2015 23:32:22 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>
