@@ -4,6 +4,7 @@
 var _ = require('lodash');
 var assert = require('power-assert');
 var async = global.async || require('../../');
+var domain = require('domain').create();
 
 describe('#queue', function() {
 
@@ -144,7 +145,30 @@ describe('#queue', function() {
         }
       });
     });
+  });
 
+  it('should throw error if concurrency is zero', function(done) {
+
+    domain.on('error', function(err) {
+      assert.strictEqual(err.message, 'concurrency must be more than 1');
+      done();
+    });
+    domain.run(function() {
+      var order = {
+        callback: [],
+        process: []
+      };
+      var delays = [160, 80, 240, 80];
+      var worker = function(data, callback) {
+        setTimeout(function() {
+          order.process.push(data);
+          callback('err', 'arg');
+        }, delays.shift());
+      };
+      setImmediate(function() {
+        async.queue(worker, 0);
+      });
+    });
   });
 
   it('should execute while changing concurrency', function(done) {
@@ -199,7 +223,6 @@ describe('#queue', function() {
       assert.strictEqual(queue.concurrency, 1);
       done();
     };
-
   });
 
   it('should execute using unshift', function(done) {
@@ -259,7 +282,6 @@ describe('#queue', function() {
       assert.strictEqual(queue.concurrency, 1);
       done();
     };
-
   });
 
   it('should execute drain immediately if insert task is empty', function(done) {
@@ -275,7 +297,6 @@ describe('#queue', function() {
       done();
     };
     queue.push();
-
   });
 
   it('should execute empty function if task is empty', function(done) {
@@ -299,7 +320,6 @@ describe('#queue', function() {
       assert.ok(called);
       done();
     };
-
   });
 
   it('should pause, resume and kill', function(done) {
@@ -330,7 +350,6 @@ describe('#queue', function() {
       assert.deepEqual(order, [1]);
       done();
     }, 200);
-
   });
 
   it('should kill process', function(done) {
@@ -576,7 +595,6 @@ describe('#priorityQueue', function() {
       assert.ok(called);
       done();
     };
-
   });
 
   it('should execute drain immediately if insert task is empty', function(done) {
@@ -592,7 +610,6 @@ describe('#priorityQueue', function() {
       done();
     };
     queue.push();
-
   });
 
 });
