@@ -6,12 +6,12 @@ var exec = require('child_process').exec;
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 
-gulp.task('speed_test', function() {
+gulp.task('perf', function() {
   var filename = gutil.env.file || '*';
   var gc = !!gutil.env.gc;
 
   gulp.src([
-    './speed_test/**/sample.' + filename + '.js'
+    './perf/func-comparator/**/sample.' + filename + '.js'
   ])
   .pipe(es.map(function(file, next) {
     var filepath = _.first(file.history);
