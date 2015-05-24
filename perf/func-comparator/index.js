@@ -15,7 +15,7 @@ var config = global.config || require('../config');
 var defaults = config.defaults;
 var tasks = _.omit(config, 'defaults');
 
-var args = _.slice(process.argv, 2);
+var args = global.argv || _.slice(process.argv, 2);
 if (!_.isEmpty(args)) {
   var regExps = _.map(args, function(arg) {
     return new RegExp('^' + arg);
