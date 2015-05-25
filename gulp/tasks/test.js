@@ -7,7 +7,7 @@ var exit = require('gulp-exit');
 var mocha = require('gulp-mocha');
 var gutil = require('gulp-util');
 
-var config = require('../test/config');
+var config = require('../../test/config');
 
 function test() {
   var filename = gutil.env.file || '*';
@@ -16,14 +16,14 @@ function test() {
     config.delay = delay;
   }
   gulp.src([
-    './test/**/test.' + filename + '.js'
-  ])
-  .pipe(mocha({
-    reporter: 'spec',
-    report: 'lcovonly',
-    timeout: 2000
-  }))
-  .pipe(exit());
+      './test/**/test.' + filename + '.js'
+    ])
+    .pipe(mocha({
+      reporter: 'spec',
+      report: 'lcovonly',
+      timeout: 2000
+    }))
+    .pipe(exit());
 }
 
 gulp.task('test', function() {
@@ -53,4 +53,3 @@ gulp.task('test:min:safe', function() {
   global.async_path = filepath;
   test();
 });
-

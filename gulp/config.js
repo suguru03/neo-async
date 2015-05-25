@@ -2,9 +2,9 @@
 
 module.exports = {
   jscs: {
-    dirnames: ['./lib/async', './perf/**', './test/**/*.js']
+    dirnames: ['./lib/async.js', './perf/**', './test/**/*.js', './gulp/**']
   },
   jsbeautifier: {
-    dirnames: ['./lib/async.js', './perf/**', './test/**/*.js']
+    dirnames: ['./lib/async.js', './perf/**', './test/**/*.js', './gulp/**']
   }
 };
