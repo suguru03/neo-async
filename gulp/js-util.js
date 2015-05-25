@@ -8,7 +8,6 @@ var _ = require('lodash');
 var es = require('event-stream');
 var gulp = require('gulp');
 var git = require('gulp-git');
-var jscs = require('gulp-jscs');
 var jsbeautifier = require('gulp-jsbeautifier');
 
 var async = require('../');
@@ -21,11 +20,6 @@ var tasks = [
   './speed_test/**/*.js',
   './test/**/*.js'
 ];
-
-gulp.task('jscs', function() {
-
-  return gulp.src(tasks).pipe(jscs('.jscsrc'));
-});
 
 gulp.task('jsfmt', function() {
 
