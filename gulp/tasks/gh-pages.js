@@ -1,6 +1,5 @@
 'use strict';
 
-var exec = require('child_process').exec;
 var fs = require('fs');
 var path = require('path');
 
@@ -8,23 +7,12 @@ var _ = require('lodash');
 var gulp = require('gulp');
 var git = require('gulp-git');
 
-var async = require('../');
-
-var config = JSON.parse(fs.readFileSync(path.resolve(__dirname, '..', '.jsdocrc'), {
-  encoding: 'utf8'
-}));
-
-function createJSDoc(done) {
-  var dirpath = path.resolve(__dirname, '..', config.opts.destination);
-  exec('rm -rf ' + dirpath);
-  exec('$(npm bin)/jsdoc -c .jsdocrc ./lib/async.js', done);
-}
-
-gulp.task('jsdoc', createJSDoc);
+var async = require('../../');
+var jsdoc = require('./jsdoc');
 
 gulp.task('gh-pages', function(done) {
 
-  var filepath = path.resolve(__dirname, '..', 'lib/async.js');
+  var filepath = path.resolve(__dirname, '../..', 'lib/async.js');
   var options = {
     encoding: 'utf8'
   };
@@ -45,7 +33,7 @@ gulp.task('gh-pages', function(done) {
       fs.writeFileSync(filepath, asyncFile, {
         encoding: 'utf8'
       });
-      createJSDoc(next);
+      jsdoc.create(next);
     },
 
     function() {
