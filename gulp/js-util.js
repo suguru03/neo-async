@@ -5,35 +5,14 @@ var fs = require('fs');
 var path = require('path');
 
 var _ = require('lodash');
-var es = require('event-stream');
 var gulp = require('gulp');
 var git = require('gulp-git');
-var jsbeautifier = require('gulp-jsbeautifier');
 
 var async = require('../');
 
 var config = JSON.parse(fs.readFileSync(path.resolve(__dirname, '..', '.jsdocrc'), {
   encoding: 'utf8'
 }));
-var tasks = [
-  './lib/async.js',
-  './speed_test/**/*.js',
-  './test/**/*.js'
-];
-
-gulp.task('jsfmt', function() {
-
-  var streams = _.map(tasks, function(task) {
-    var dirname = task.substr(0, _.lastIndexOf(task, '/'));
-    return gulp.src(task)
-      .pipe(jsbeautifier({
-        config: '.jsbeautifyrc',
-        mode: 'VERIFY_AND_WRITE'
-      }))
-      .pipe(gulp.dest(dirname.replace(/\/\*\*/g, '')));
-  });
-  return es.merge.apply(es, streams);
-});
 
 function createJSDoc(done) {
   var dirpath = path.resolve(__dirname, '..', config.opts.destination);

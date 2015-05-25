@@ -1,5 +1,10 @@
 'use strict';
 
 module.exports = {
-  dirnames: ['./lib/async', './perf/**', './test/**/*.js']
+  jscs: {
+    dirnames: ['./lib/async', './perf/**', './test/**/*.js']
+  },
+  jsbeautifier: {
+    dirnames: ['./lib/async.js', './perf/**', './test/**/*.js']
+  }
 };
