@@ -37,13 +37,24 @@ async.safe.eachSeries(tasks, function(task, name, next) {
   var setup = task.setup || defaults.setup;
 
   var func = task.func || defaults.func;
-  var useFunctions = task.functions || defaults.functions;
+  var useFunctions = defaults.functions;
+  if (task.functions) {
+    useFunctions = _.filter(useFunctions, function(func, index) {
+      return _.includes(task.functions, index);
+    });
+  }
 
   var funcs = _.chain(functions)
     .pick(useFunctions)
-    .mapValues(function(async) {
+    .mapValues(function(async, key) {
+      if (_.isFunction(func)) {
+        return function(callback) {
+          func(async, callback);
+        };
+      }
+      var _func = func[key] || func['default'];
       return function(callback) {
-        func(async, callback);
+        _func(async, callback);
       };
     })
     .value();

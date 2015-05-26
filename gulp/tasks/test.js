@@ -27,28 +27,28 @@ function test() {
 }
 
 gulp.task('test', function() {
-  var filepath = path.resolve(__dirname, '../lib/async.js');
+  var filepath = path.resolve(__dirname, '../../', 'lib/async.js');
   global.async = require(filepath);
   global.async_path = filepath;
   test();
 });
 
 gulp.task('test:safe', function() {
-  var filepath = path.resolve(__dirname, '../lib/async.js');
+  var filepath = path.resolve(__dirname, '../../', 'lib/async.js');
   global.async = require(filepath).safe;
   global.async_path = filepath;
   test();
 });
 
 gulp.task('test:min', function() {
-  var filepath = path.resolve(__dirname, '../lib/async.min.js');
+  var filepath = path.resolve(__dirname, '../../', '../lib/async.min.js');
   global.async = require(filepath);
   global.async_path = filepath;
   test();
 });
 
 gulp.task('test:min:safe', function() {
-  var filepath = path.resolve(__dirname, '../lib/async.min.js');
+  var filepath = path.resolve(__dirname, '../../', '../lib/async.min.js');
   global.async = require(filepath).safe;
   global.async_path = filepath;
   test();
