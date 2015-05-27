@@ -3,7 +3,8 @@
 var _ = require('lodash');
 
 var limit = 4;
-var collection, iterator, tasks;
+var current = 0;
+var collection, iterator, tasks, test;
 
 module.exports = {
   defaults: {
@@ -171,7 +172,7 @@ module.exports = {
     setup: function(count) {
       collection = createArrayCollection(count);
       iterator = function(n, callback) {
-        callback(true);
+        callback(n % 2);
       };
     },
     func: function(async, callback) {
@@ -185,7 +186,7 @@ module.exports = {
     setup: function(count) {
       collection = createObjectCollection(count);
       iterator = function(n, callback) {
-        callback(true);
+        callback(n % 2);
       };
     },
     func: function(async, callback) {
@@ -198,7 +199,7 @@ module.exports = {
     setup: function(count) {
       collection = createArrayCollection(count);
       iterator = function(n, callback) {
-        callback(true);
+        callback(n % 2);
       };
     },
     func: function(async, callback) {
@@ -212,7 +213,7 @@ module.exports = {
     setup: function(count) {
       collection = createObjectCollection(count);
       iterator = function(n, callback) {
-        callback(true);
+        callback(n % 2);
       };
     },
     func: function(async, callback) {
@@ -226,7 +227,7 @@ module.exports = {
     setup: function(count) {
       collection = createArrayCollection(count);
       iterator = function(n, callback) {
-        callback(true);
+        callback(n % 2);
       };
     },
     func: function(async, callback) {
@@ -240,13 +241,714 @@ module.exports = {
     setup: function(count) {
       collection = createObjectCollection(count);
       iterator = function(n, callback) {
-        callback(true);
+        callback(n % 2);
       };
     },
     func: function(async, callback) {
       async.filterLimit(collection, 4, iterator, function(res) {
         callback(null, res);
       });
+    }
+  },
+  'reject:array': {
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, callback) {
+        callback(n % 2);
+      };
+    },
+    func: function(async, callback) {
+      async.reject(collection, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'reject:object': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, callback) {
+        callback(n % 2);
+      };
+    },
+    func: function(async, callback) {
+      async.reject(collection, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'rejectSeries:array': {
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, callback) {
+        callback(n % 2);
+      };
+    },
+    func: function(async, callback) {
+      async.rejectSeries(collection, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'rejectSeries:object': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, callback) {
+        callback(n % 2);
+      };
+    },
+    func: function(async, callback) {
+      async.rejectSeries(collection, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'rejectLimit:array': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, callback) {
+        callback(n % 2);
+      };
+    },
+    func: function(async, callback) {
+      async.rejectLimit(collection, limit, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'rejectLimit:object': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, callback) {
+        callback(n % 2);
+      };
+    },
+    func: function(async, callback) {
+      async.rejectLimit(collection, limit, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'detect:array': {
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, callback) {
+        callback(false);
+      };
+    },
+    func: function(async, callback) {
+      async.detect(collection, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'detect:object': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, callback) {
+        callback(false);
+      };
+    },
+    func: function(async, callback) {
+      async.detect(collection, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'detectSeries:array': {
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, callback) {
+        callback(false);
+      };
+    },
+    func: function(async, callback) {
+      async.detectSeries(collection, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'detectSeries:object': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, callback) {
+        callback(false);
+      };
+    },
+    func: function(async, callback) {
+      async.detectSeries(collection, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'detectLimit:array': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, callback) {
+        callback(false);
+      };
+    },
+    func: function(async, callback) {
+      async.detectLimit(collection, limit, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'detectLimit:object': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, callback) {
+        callback(false);
+      };
+    },
+    func: function(async, callback) {
+      async.detectLimit(collection, limit, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'pick:array': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, callback) {
+        callback(n % 2);
+      };
+    },
+    func: function(async, callback) {
+      async.pick(collection, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'pick:object': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, callback) {
+        callback(n % 2);
+      };
+    },
+    func: function(async, callback) {
+      async.pick(collection, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'pickSeries:array': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, callback) {
+        callback(n % 2);
+      };
+    },
+    func: function(async, callback) {
+      async.pickSeries(collection, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'pickSeries:object': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, callback) {
+        callback(n % 2);
+      };
+    },
+    func: function(async, callback) {
+      async.pickSeries(collection, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'pickLimit:array': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, callback) {
+        callback(n % 2);
+      };
+    },
+    func: function(async, callback) {
+      async.pickLimit(collection, limit, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'pickLimit:object': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, callback) {
+        callback(n % 2);
+      };
+    },
+    func: function(async, callback) {
+      async.pickLimit(collection, limit, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'reduce:array': {
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(result, n, callback) {
+        callback(null, result + n);
+      };
+    },
+    func: function(async, callback) {
+      async.reduce(collection, 0, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'reduce:object': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(result, n, callback) {
+        callback(null, result + n);
+      };
+    },
+    func: function(async, callback) {
+      async.reduce(collection, 0, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'reduceRight:array': {
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(result, n, callback) {
+        callback(null, result + n);
+      };
+    },
+    func: function(async, callback) {
+      async.reduceRight(collection, 0, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'reduceRight:object': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(result, n, callback) {
+        callback(null, result + n);
+      };
+    },
+    func: function(async, callback) {
+      async.reduceRight(collection, 0, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'transform:array': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(result, n, index, callback) {
+        result[index] = n;
+        callback();
+      };
+    },
+    func: function(async, callback) {
+      async.transform(collection, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'transform:object': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(result, n, index, callback) {
+        result[index] = n;
+        callback();
+      };
+    },
+    func: function(async, callback) {
+      async.transform(collection, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'transformSeries:array': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(result, n, index, callback) {
+        result[index] = n;
+        callback();
+      };
+    },
+    func: function(async, callback) {
+      async.transformSeries(collection, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'transformSeries:object': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(result, n, index, callback) {
+        result[index] = n;
+        callback();
+      };
+    },
+    func: function(async, callback) {
+      async.transformSeries(collection, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'transformLimit:array': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(result, n, index, callback) {
+        result[index] = n;
+        callback();
+      };
+    },
+    func: function(async, callback) {
+      async.transformLimit(collection, limit, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'transformLimit:object': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(result, n, index, callback) {
+        result[index] = n;
+        callback();
+      };
+    },
+    func: function(async, callback) {
+      async.transformLimit(collection, limit, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'sortBy:array': {
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, callback) {
+        callback(null, n);
+      };
+    },
+    func: function(async, callback) {
+      async.sortBy(collection, iterator, callback);
+    }
+  },
+  'sortBy:object': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, callback) {
+        callback(null, n);
+      };
+    },
+    func: function(async, callback) {
+      async.sortBy(collection, iterator, callback);
+    }
+  },
+  'sortBySeries:array': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, callback) {
+        callback(null, n);
+      };
+    },
+    func: function(async, callback) {
+      async.sortBySeries(collection, iterator, callback);
+    }
+  },
+  'sortBySeries:object': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, callback) {
+        callback(null, n);
+      };
+    },
+    func: function(async, callback) {
+      async.sortBySeries(collection, iterator, callback);
+    }
+  },
+  'sortByLimit:array': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, callback) {
+        callback(null, n);
+      };
+    },
+    func: function(async, callback) {
+      async.sortByLimit(collection, limit, iterator, callback);
+    }
+  },
+  'sortByLimit:object': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, callback) {
+        callback(null, n);
+      };
+    },
+    func: function(async, callback) {
+      async.sortByLimit(collection, limit, iterator, callback);
+    }
+  },
+  'some:array': {
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, callback) {
+        callback(false);
+      };
+    },
+    func: function(async, callback) {
+      async.some(collection, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'some:object': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, callback) {
+        callback(false);
+      };
+    },
+    func: function(async, callback) {
+      async.some(collection, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'someSeries:array': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, callback) {
+        callback(false);
+      };
+    },
+    func: function(async, callback) {
+      async.someSeries(collection, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'someSeries:object': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, callback) {
+        callback(false);
+      };
+    },
+    func: function(async, callback) {
+      async.someSeries(collection, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'someLimit:array': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, callback) {
+        callback(false);
+      };
+    },
+    func: function(async, callback) {
+      async.someLimit(collection, limit, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'someLimit:object': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, callback) {
+        callback(false);
+      };
+    },
+    func: function(async, callback) {
+      async.someLimit(collection, limit, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'every:array': {
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, callback) {
+        callback(true);
+      };
+    },
+    func: function(async, callback) {
+      async.every(collection, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'every:object': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, callback) {
+        callback(true);
+      };
+    },
+    func: function(async, callback) {
+      async.every(collection, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'everySeries:array': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, callback) {
+        callback(true);
+      };
+    },
+    func: function(async, callback) {
+      async.everySeries(collection, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'everySeries:object': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, callback) {
+        callback(true);
+      };
+    },
+    func: function(async, callback) {
+      async.everySeries(collection, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'everyLimit:array': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, callback) {
+        callback(true);
+      };
+    },
+    func: function(async, callback) {
+      async.everyLimit(collection, limit, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'everyLimit:object': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, callback) {
+        callback(true);
+      };
+    },
+    func: function(async, callback) {
+      async.everyLimit(collection, limit, iterator, function(res) {
+        callback(null, res);
+      });
+    }
+  },
+  'concat:array': {
+    times: 10000,
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, callback) {
+        callback(null, n);
+      };
+    },
+    func: function(async, callback) {
+      async.concat(collection, iterator, callback);
+    }
+  },
+  'concat:object': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, callback) {
+        callback(null, n);
+      };
+    },
+    func: function(async, callback) {
+      async.concat(collection, iterator, callback);
+    }
+  },
+  'concatSeries:array': {
+    times: 10000,
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, callback) {
+        callback(null, n);
+      };
+    },
+    func: function(async, callback) {
+      async.concatSeries(collection, iterator, callback);
+    }
+  },
+  'concatSeries:object': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, callback) {
+        callback(null, n);
+      };
+    },
+    func: function(async, callback) {
+      async.concatSeries(collection, iterator, callback);
+    }
+  },
+  'concatLimit:array': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, callback) {
+        callback(null, n);
+      };
+    },
+    func: function(async, callback) {
+      async.concatLimit(collection, limit, iterator, callback);
+    }
+  },
+  'concatLimit:object': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, callback) {
+        callback(null, n);
+      };
+    },
+    func: function(async, callback) {
+      async.concatLimit(collection, limit, iterator, callback);
     }
   },
   'parallel:array': {
@@ -322,9 +1024,10 @@ module.exports = {
     }
   },
   'waterfall': {
+    times: 10000,
     setup: function(count) {
       tasks = _.times(count, function(n) {
-        if (!n) {
+        if (n === 0) {
           return function(done) {
             done(null, n);
           };
@@ -336,6 +1039,96 @@ module.exports = {
     },
     func: function(async, callback) {
       async.waterfall(tasks, callback);
+    }
+  },
+  'waterfall:multiple': {
+    times: 10000,
+    setup: function(count) {
+      var argMax = 10;
+      tasks = _.times(count, function(n) {
+        return function() {
+          var done = _.last(arguments);
+          var args = Array((arguments.length + 1) % argMax);
+          if (args.length) {
+            args[args.length - 1] = n;
+            done.apply(null, args);
+          } else {
+            done();
+          }
+        };
+      });
+    },
+    func: function(async, callback) {
+      async.waterfall(tasks, callback);
+    }
+  },
+  'whilst': {
+    setup: function(count) {
+      test = function() {
+        return current++ < count;
+      };
+      iterator = function(callback) {
+        callback();
+      };
+    },
+    func: function(async, callback) {
+      current = 0;
+      async.whilst(test, iterator, callback);
+    }
+  },
+  'doWhilst': {
+    setup: function(count) {
+      test = function() {
+        return ++current < count;
+      };
+      iterator = function(callback) {
+        callback();
+      };
+    },
+    func: function(async, callback) {
+      current = 0;
+      async.doWhilst(iterator, test, callback);
+    }
+  },
+  'until': {
+    setup: function(count) {
+      test = function() {
+        return current++ === count;
+      };
+      iterator = function(callback) {
+        callback();
+      };
+    },
+    func: function(async, callback) {
+      current = 0;
+      async.until(test, iterator, callback);
+    }
+  },
+  'doUntil': {
+    setup: function(count) {
+      test = function() {
+        return current++ === count;
+      };
+      iterator = function(callback) {
+        callback();
+      };
+    },
+    func: function(async, callback) {
+      current = 0;
+      async.doUntil(iterator, test, callback);
+    }
+  },
+  'forever': {
+    setup: function(count) {
+      iterator = function(callback) {
+        callback(++current === count);
+      };
+    },
+    func: function(async, callback) {
+      current = 0;
+      async.forever(iterator, function() {
+        callback();
+      });
     }
   }
 };
