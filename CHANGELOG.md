@@ -1,3 +1,38 @@
+<a name"v1.2.1"></a>
+### v1.2.1 (2015-05-28)
+
+
+#### Bug Fixes
+
+* **forever:** fix `forever` to improve response ([0478de5b](git@github.com:suguru03/Neo-Async.git/commit/0478de5b))
+* **jsbeautifier:** fix gulp task of jsbeautifier ([895486d4](git@github.com:suguru03/Neo-Async.git/commit/895486d4))
+* **jscs:** fix gulp task of jscs ([b6a3d6a6](git@github.com:suguru03/Neo-Async.git/commit/b6a3d6a6))
+* **jsdoc:**
+  * fix gulp task of jsdoc ([6b1dc2d6](git@github.com:suguru03/Neo-Async.git/commit/6b1dc2d6))
+  * fix `transform` document ([a194a7c8](git@github.com:suguru03/Neo-Async.git/commit/a194a7c8))
+* **perf:**
+  * fix gulp task of perf and test ([a876cb77](git@github.com:suguru03/Neo-Async.git/commit/a876cb77))
+  * fix perf task and move files ([1aab15c8](git@github.com:suguru03/Neo-Async.git/commit/1aab15c8))
+* **queue:** fix `queue` not to call the drain when task name is `0` ([de0eb48b](git@github.com:suguru03/Neo-Async.git/commit/de0eb48b))
+
+
+#### Features
+
+* **perf:**
+  * add gulp task ([048f22b0](git@github.com:suguru03/Neo-Async.git/commit/048f22b0))
+  * add some functions ([1d9665a1](git@github.com:suguru03/Neo-Async.git/commit/1d9665a1))
+  * add common comparator ([b3ca50f8](git@github.com:suguru03/Neo-Async.git/commit/b3ca50f8))
+
+
+#### Other Changes
+
+* **changelog:** add changelog task ([1da015e6](git@github.com:suguru03/Neo-Async.git/commit/1da015e6))
+* **perf:**
+  * update perf config ([1b402198](git@github.com:suguru03/Neo-Async.git/commit/1b402198))
+  * update perf task and config ([70f51412](git@github.com:suguru03/Neo-Async.git/commit/70f51412))
+* **queue:** add check of concurency to `queue` ([b39a9497](git@github.com:suguru03/Neo-Async.git/commit/b39a9497))
+* **seq:** improve `seq` performance ([cd7b8622](git@github.com:suguru03/Neo-Async.git/commit/cd7b8622))
+
 <a name"v1.2.0"></a>
 ## v1.2.0 (2015-05-19)
 
