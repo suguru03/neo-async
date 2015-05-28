@@ -16,7 +16,7 @@
   createImmediate();
 
   var async = {
-    VERSION: '0.6.4',
+    VERSION: '0.6.5',
 
     // Collections
     each: each,
@@ -2460,7 +2460,7 @@
       q.started = true;
       var _tasks = Array.isArray(tasks) ? tasks : [tasks];
 
-      if (!tasks || !_tasks.length) {
+      if (tasks === undefined || !_tasks.length) {
         if (q.idle()) {
           async.nextTick(function() {
             if (typeof q.drain === 'function') {
@@ -2525,7 +2525,7 @@
       q.started = true;
       var _tasks = Array.isArray(tasks) ? tasks : [tasks];
 
-      if (!tasks || !_tasks.length) {
+      if (tasks === undefined || !_tasks.length) {
         if (q.idle()) {
           async.nextTick(function() {
             if (typeof q.drain === 'function') {
