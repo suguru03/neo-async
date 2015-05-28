@@ -17,11 +17,11 @@
   createImmediate();
 
   /**
-   * @version 1.2.0
+   * @version 1.2.1
    * @namespace async
    */
   var async = {
-    VERSION: '1.2.0',
+    VERSION: '1.2.1',
 
     // Collections
     each: each,
@@ -88,8 +88,8 @@
     forever: forever,
     compose: compose,
     seq: seq,
-    applyEach: createApplyEach(),
-    applyEachSeries: createApplyEach('series'),
+    applyEach: createApplyEach(each),
+    applyEachSeries: createApplyEach(eachSeries),
     queue: queue,
     priorityQueue: priorityQueue,
     cargo: cargo,
@@ -4791,7 +4791,7 @@
    * };
    * async.transform(collection, iterator, function(err, res) {
    *   console.log(res); //  { a: 1, b: 3, c: 2, d: 4 }
-   *   console.log(order); // [[1, 'a'], [2, 'b'], [3, 'b'], [4, 'd']]
+   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b'], [4, 'd']]
    * });
    *
    */
@@ -7537,15 +7537,16 @@
   function forever(iterator, callback, thisArg) {
     callback = callback || noop;
     var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
-    iterate();
+    _iterator(next);
 
-    function iterate() {
-      _iterator(function(err) {
-        if (err) {
+    function next(err) {
+      if (err) {
+        if (callback) {
           return callback(err);
         }
-        iterate();
-      });
+        throw err;
+      }
+      _iterator(next);
     }
   }
 
@@ -7562,7 +7563,7 @@
    * @namespace seq
    */
   function seq( /* functions... */ ) {
-    var fns = arguments;
+    var fns = _baseSlice(arguments);
 
     return function() {
 
@@ -7587,12 +7588,9 @@
         callback.apply(self, res);
       }
     };
-
   }
 
-  function createApplyEach(type) {
-
-    var func = type === 'series' ? eachSeries : each;
+  function createApplyEach(func) {
 
     /**
      * @memberof async
@@ -7641,7 +7639,7 @@
       q.started = true;
       var _tasks = Array.isArray(tasks) ? tasks : [tasks];
 
-      if (!tasks || !_tasks.length) {
+      if (tasks === undefined || !_tasks.length) {
         if (q.idle()) {
           async.nextTick(function() {
             if (typeof q.drain === 'function') {
@@ -7676,7 +7674,12 @@
    * @namespace priorityQueue
    */
   function priorityQueue(worker, concurrency, thisArg) {
-    concurrency = concurrency || 1;
+    if (concurrency === undefined) {
+      concurrency = 1;
+    } else if (isNaN(concurrency) || concurrency < 1) {
+      throw new Error('concurrency must be more than 1');
+    }
+
     var workers = 0;
     var q = {
       tasks: [],
@@ -7703,7 +7706,7 @@
       q.started = true;
       var _tasks = Array.isArray(tasks) ? tasks : [tasks];
 
-      if (!tasks || !_tasks.length) {
+      if (tasks === undefined || !_tasks.length) {
         if (q.idle()) {
           async.nextTick(function() {
             if (typeof q.drain === 'function') {
