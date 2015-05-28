@@ -60,6 +60,37 @@ describe('#queue', function() {
     };
   });
 
+  it('should execute even if task name is zero', function(done) {
+
+    var order = {
+      callback: [],
+      process: []
+    };
+    var worker = function(data, callback) {
+      order.process.push(data);
+      callback('err', 'arg');
+    };
+    var queue = async.queue(worker);
+    queue.push(0, function(err, arg) {
+      assert.strictEqual(err, 'err');
+      assert.strictEqual(arg, 'arg');
+      assert.strictEqual(queue.length(), 1);
+      order.callback.push(0);
+    });
+    queue.push(1, function(err, arg) {
+      assert.strictEqual(err, 'err');
+      assert.strictEqual(arg, 'arg');
+      assert.strictEqual(queue.length(), 0);
+      order.callback.push(1);
+    });
+    queue.drain = function() {
+      assert.deepEqual(order.callback, [0, 1]);
+      assert.deepEqual(order.process, [0, 1]);
+      assert.strictEqual(queue.length(), 0);
+      done();
+    };
+  });
+
   it('should execute queue with default concurrency', function(done) {
 
     var order = {
