@@ -27,6 +27,7 @@
   "dependencies": {},
   "devDependencies": {
     "async": "^1.0.0",
+    "changelog-generator": "0.0.2",
     "codecov.io": "^0.1.0",
     "event-stream": "^3.3.0",
     "func-comparator": "^0.6.1",
