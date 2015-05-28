@@ -4,7 +4,8 @@ var _ = require('lodash');
 
 var limit = 4;
 var current = 0;
-var collection, iterator, tasks, test;
+var concurrency = 1;
+var collection, iterator, tasks, test, worker;
 
 module.exports = {
   defaults: {
@@ -1128,6 +1129,96 @@ module.exports = {
       current = 0;
       async.forever(iterator, function() {
         callback();
+      });
+    }
+  },
+  'compose': {
+    setup: function(count) {
+      tasks = _.times(count, function(n) {
+        return function(sum, done) {
+          done(null, sum + n);
+        };
+      });
+    },
+    func: function(async, callback) {
+      async.compose.apply(async, tasks)(0, callback);
+    }
+  },
+  'seq': {
+    setup: function(count) {
+      tasks = _.times(count, function(n) {
+        return function(sum, done) {
+          done(null, sum + n);
+        };
+      });
+    },
+    func: function(async, callback) {
+      async.seq.apply(async, tasks)(0, callback);
+    }
+  },
+  'applyEach': {
+    setup: function(count) {
+      tasks = _.times(count, function() {
+        return function(num, done) {
+          done();
+        };
+      });
+    },
+    func: function(async, callback) {
+      async.applyEach(tasks, 0, callback);
+    }
+  },
+  'applyEach:partial': {
+    setup: function(count) {
+      tasks = _.times(count, function() {
+        return function(num, done) {
+          done();
+        };
+      });
+    },
+    func: function(async, callback) {
+      async.applyEach(tasks)(0, callback);
+    }
+  },
+  'applyEachSeries': {
+    setup: function(count) {
+      tasks = _.times(count, function() {
+        return function(num, done) {
+          done();
+        };
+      });
+    },
+    func: function(async, callback) {
+      async.applyEachSeries(tasks, 0, callback);
+    }
+  },
+  'applyEachSeries:partial': {
+    setup: function(count) {
+      tasks = _.times(count, function() {
+        return function(num, done) {
+          done();
+        };
+      });
+    },
+    func: function(async, callback) {
+      async.applyEachSeries(tasks, 0, callback);
+    }
+  },
+  'queue': {
+    times: 10000,
+    setup: function() {
+      worker = function(data, callback) {
+        callback();
+      };
+    },
+    func: function(async, callback) {
+      var q = async.queue(worker, concurrency);
+      q.drain = function() {
+        callback();
+      };
+      _.times(100, function(n) {
+        q.push(n, function() {
+        });
       });
     }
   }
