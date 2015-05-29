@@ -55,7 +55,7 @@ gulp.task('gh-pages', function(done) {
 
     function(result, next) {
       git.exec({
-        args: 'commit -m "update(jsdoc): update jsdoc [v' + async.VERSION + ']"'
+        args: 'commit -m "docs(jsdoc): update jsdoc [v' + async.VERSION + ']"'
       }, next);
     },
 

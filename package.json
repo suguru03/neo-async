@@ -10,9 +10,9 @@
   "keywords": "async, util",
   "repository": {
     "type": "git",
-    "url": "git@github.com:suguru03/Neo-Async.git"
+    "url": "git@github.com:suguru03/neo-async.git"
   },
-  "homepage": "https://github.com/suguru03/Neo-Async",
+  "homepage": "https://github.com/suguru03/neo-async",
   "files": [
     "LICENSE",
     "index.js",
@@ -43,7 +43,7 @@
     "jsdoc": "^3.3.0-beta3",
     "lodash": "^3.6.0",
     "mocha": "^2.0.1",
-    "neo-async": "^0.6.4",
+    "neo-async": "^0.6.5",
     "power-assert": "^0.10.0",
     "require-dir": "^0.3.0"
   }
