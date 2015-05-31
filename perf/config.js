@@ -1217,8 +1217,25 @@ module.exports = {
         callback();
       };
       _.times(100, function(n) {
-        q.push(n, function() {
-        });
+        q.push(n, function() {});
+      });
+    }
+  },
+  'priorityQueue': {
+    times: 2000,
+    setup: function() {
+      worker = function(data, callback) {
+        callback();
+      };
+    },
+    func: function(async, callback) {
+      var q = async.priorityQueue(worker, concurrency);
+      q.drain = function() {
+        callback();
+      };
+      var max = 100;
+      _.times(max, function(n) {
+        q.push(n, max - n, function() {});
       });
     }
   }
