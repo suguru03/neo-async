@@ -27,6 +27,7 @@
   "dependencies": {},
   "devDependencies": {
     "async": "^1.0.0",
+    "benchmark": "^1.0.0",
     "changelog-generator": "0.0.2",
     "codecov.io": "^0.1.0",
     "event-stream": "^3.3.0",
@@ -42,6 +43,7 @@
     "istanbul": "^0.3.4",
     "jsdoc": "^3.3.0-beta3",
     "lodash": "^3.6.0",
+    "minimist": "^1.1.1",
     "mocha": "^2.0.1",
     "neo-async": "^0.6.5",
     "power-assert": "^0.10.0",

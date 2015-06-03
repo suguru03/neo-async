@@ -1,7 +1,8 @@
 'use strict';
 
 var _ = require('lodash');
-var Comparator = require('func-comparator').Comparator;
+
+var Benchmark = require('benchmark');
 
 var async = require('../../');
 var functions = {
@@ -33,7 +34,6 @@ async.safe.eachSeries(tasks, function(task, name, next) {
     return next();
   }
   var count = task.count || defaults.count;
-  var times = task.times || defaults.times;
   var setup = task.setup || defaults.setup;
 
   var func = task.func || defaults.func;
@@ -61,19 +61,38 @@ async.safe.eachSeries(tasks, function(task, name, next) {
 
   setup(count);
 
+  var suite = new Benchmark.Suite();
+  var total = {};
+  _.forEach(funcs, function(func, key) {
+    total[key] = {
+      count: 0,
+      time: 0
+    };
+    suite.add(key, {
+      defer: true,
+      fn: function(deferred) {
+        var start = process.hrtime();
+        func(function() {
+          var diff = process.hrtime(start);
+          total[key].time += (diff[0] * 1e9 + diff[1]) / 1000;
+          total[key].count++;
+          deferred.resolve();
+        });
+      }
+    });
+  });
+
   console.log('--------------------------------------');
   console.log('[' + name + '] Comparating... ', useFunctions);
-  new Comparator()
-    .set(funcs)
-    .async()
-    .times(times)
-    .start()
-    .result(function(err, res) {
-      _.chain(res)
-        .map(function(data, name) {
+  suite
+    .on('complete', function() {
+      _.chain(this)
+        .map(function(data) {
+          var name = data.name;
+          var time = total[name];
           return {
             name: name,
-            mean: data.average
+            mean: time.time / time.count
           };
         })
         .sortBy('mean')
@@ -85,5 +104,8 @@ async.safe.eachSeries(tasks, function(task, name, next) {
         })
         .value();
       next();
+    })
+    .run({
+      async: true
     });
 });
