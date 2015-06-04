@@ -11,7 +11,7 @@ module.exports = {
   defaults: {
     avaiable: true,
     count: 100,
-    times: 100000,
+    times: 500000,
     functions: ['async', 'neo-async_v0', 'neo-async_v1']
   },
   'each:array': {
