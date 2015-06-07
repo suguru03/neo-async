@@ -131,6 +131,28 @@ describe('#each', function() {
     }, Math);
   });
 
+  it('should execute iterator with binding with passing key', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 1.1,
+      b: 3.5,
+      c: 2.7
+    };
+
+    async.each(collection, eachIteratorWithKey(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, [
+        [1, 'a'],
+        [3, 'c'],
+        [4, 'b']
+      ]);
+      done();
+    }, Math);
+  });
+
   it('should throw error', function(done) {
 
     var order = [];
