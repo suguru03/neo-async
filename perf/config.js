@@ -193,6 +193,30 @@ module.exports = {
       async.mapValues(collection, iterator, callback);
     }
   },
+  'mapValuesSeries:array': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, callback) {
+        callback(null, n);
+      };
+    },
+    func: function(async, callback) {
+      async.mapValuesSeries(collection, iterator, callback);
+    }
+  },
+  'mapValuesSeries:object': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, callback) {
+        callback(null, n);
+      };
+    },
+    func: function(async, callback) {
+      async.mapValuesSeries(collection, iterator, callback);
+    }
+  },
   'filter:array': {
     setup: function(count) {
       collection = createArrayCollection(count);
