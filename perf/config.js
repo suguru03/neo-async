@@ -217,6 +217,30 @@ module.exports = {
       async.mapValuesSeries(collection, iterator, callback);
     }
   },
+  'mapValuesLimit:array': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, callback) {
+        callback(null, n);
+      };
+    },
+    func: function(async, callback) {
+      async.mapValuesLimit(collection, limit, iterator, callback);
+    }
+  },
+  'mapValuesLimit:object': {
+    functions: [1, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, callback) {
+        callback(null, n);
+      };
+    },
+    func: function(async, callback) {
+      async.mapValuesLimit(collection, limit, iterator, callback);
+    }
+  },
   'filter:array': {
     setup: function(count) {
       collection = createArrayCollection(count);
