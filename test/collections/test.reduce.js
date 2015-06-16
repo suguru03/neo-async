@@ -109,7 +109,7 @@ describe('#reduce', function() {
     });
   });
 
-  it('should get object  by collection of object', function(done) {
+  it('should get object by collection of object', function(done) {
 
     var order = [];
     var collection = {
@@ -131,7 +131,7 @@ describe('#reduce', function() {
     });
   });
 
-  it('should get object  by collection of object with passing key', function(done) {
+  it('should get object by collection of object with passing key', function(done) {
 
     var order = [];
     var collection = {
@@ -334,7 +334,7 @@ describe('#reduceRight', function() {
     });
   });
 
-  it('should get object  by collection of object', function(done) {
+  it('should get object by collection of object', function(done) {
 
     var order = [];
     var collection = {
@@ -356,7 +356,7 @@ describe('#reduceRight', function() {
     });
   });
 
-  it('should get object  by collection of object with passing key', function(done) {
+  it('should get object by collection of object with passing key', function(done) {
 
     var order = [];
     var collection = {
