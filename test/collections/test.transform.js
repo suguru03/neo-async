@@ -71,6 +71,7 @@ describe('#transform', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3, 5]);
       assert.deepEqual(order, [1, 2, 3, 4, 5]);
       done();
@@ -85,6 +86,7 @@ describe('#transform', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3, 5]);
       assert.deepEqual(order, [
         [1, 0],
@@ -109,6 +111,7 @@ describe('#transform', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [3, 5]);
       assert.deepEqual(order, [2, 3, 5]);
       done();
@@ -127,6 +130,7 @@ describe('#transform', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         b: 3,
         a: 5
@@ -155,6 +159,7 @@ describe('#transform', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [2, 3]);
       assert.deepEqual(order, [2, 3]);
       done();
@@ -175,6 +180,7 @@ describe('#transform', function() {
         return done(err);
       }
 
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [3]);
       assert.deepEqual(order, [
         [2, 'c'],
@@ -198,6 +204,7 @@ describe('#transform', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         a: 1,
         c: 3
@@ -224,6 +231,7 @@ describe('#transform', function() {
     };
     async.transform(collection, iterator, function(err, res) {
       assert.ok(err);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 2, 3, 4]);
       assert.deepEqual(order, [1, 2, 3, 4]);
       done();
@@ -239,6 +247,7 @@ describe('#transform', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       done();
     });
@@ -253,6 +262,7 @@ describe('#transform', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       done();
     });
@@ -265,6 +275,7 @@ describe('#transform', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
@@ -278,6 +289,7 @@ describe('#transform', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
@@ -291,10 +303,41 @@ describe('#transform', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
     });
+  });
+
+  it('should return accumulator immediately if array is empty', function(done) {
+
+    var iterator = function(memo, value, key, callback) {
+      callback();
+    };
+    async.transform([], iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {});
+      done();
+    }, {});
+  });
+
+  it('should return accumulator immediately if object is empty', function(done) {
+
+    var iterator = function(memo, value, key, callback) {
+      callback();
+    };
+    async.transform({}, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.deepEqual(res, []);
+      done();
+    }, []);
   });
 
 });
@@ -309,6 +352,7 @@ describe('#transformSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [1, 3, 2, 4]);
       done();
@@ -323,6 +367,7 @@ describe('#transformSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [
         [1, 0],
@@ -346,6 +391,7 @@ describe('#transformSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [5, 3]);
       assert.deepEqual(order, [5, 3, 2]);
       done();
@@ -365,7 +411,7 @@ describe('#transformSeries', function() {
       if (err) {
         return done(err);
       }
-
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         a: 5
       });
@@ -390,6 +436,7 @@ describe('#transformSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         a: 1,
         c: 3
@@ -416,6 +463,7 @@ describe('#transformSeries', function() {
     };
     async.transformSeries(collection, iterator, function(err, res) {
       assert.ok(err);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 5, 3, 2, 4]);
       assert.deepEqual(order, [1, 5, 3, 2, 4]);
       done();
@@ -448,6 +496,7 @@ describe('#transformSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       done();
     });
@@ -462,6 +511,7 @@ describe('#transformSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       done();
     });
@@ -474,6 +524,7 @@ describe('#transformSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
@@ -487,6 +538,7 @@ describe('#transformSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
@@ -500,10 +552,41 @@ describe('#transformSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
     });
+  });
+
+  it('should return accumulator immediately if array is empty', function(done) {
+
+    var iterator = function(memo, value, key, callback) {
+      callback();
+    };
+    async.transformSeries([], iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {});
+      done();
+    }, {});
+  });
+
+  it('should return accumulator immediately if object is empty', function(done) {
+
+    var iterator = function(memo, value, key, callback) {
+      callback();
+    };
+    async.transformSeries({}, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.deepEqual(res, []);
+      done();
+    }, []);
   });
 
 });
@@ -519,6 +602,7 @@ describe('#transformLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3, 5]);
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
@@ -534,6 +618,7 @@ describe('#transformLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3, 5]);
       assert.deepEqual(order, [
         [1, 0],
@@ -560,6 +645,7 @@ describe('#transformLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3, 5]);
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
@@ -580,6 +666,7 @@ describe('#transformLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         a: 1,
         b: 5,
@@ -610,7 +697,7 @@ describe('#transformLimit', function() {
       if (err) {
         return done(err);
       }
-
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         b: 3
       });
@@ -637,6 +724,7 @@ describe('#transformLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [1, 4, 3]);
       done();
@@ -652,6 +740,7 @@ describe('#transformLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 1, 1, 3, 3]);
       assert.deepEqual(order, [1, 1, 1, 2, 3, 3, 4]);
       done();
@@ -671,6 +760,7 @@ describe('#transformLimit', function() {
     };
     async.transformLimit(collection, 2, iterator, function(err, res) {
       assert.ok(err);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [1, 3]);
       done();
@@ -686,6 +776,7 @@ describe('#transformLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       done();
     });
@@ -700,6 +791,7 @@ describe('#transformLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       done();
     });
@@ -708,10 +800,12 @@ describe('#transformLimit', function() {
   it('should return response immediately if collection is function', function(done) {
 
     var order = [];
-    async.transformLimit(function() {}, 2, transformIterator(order), function(err) {
+    async.transformLimit(function() {}, 2, transformIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
     });
@@ -720,10 +814,12 @@ describe('#transformLimit', function() {
   it('should return response immediately if collection is undefined', function(done) {
 
     var order = [];
-    async.transformLimit(undefined, 2, transformIterator(order), function(err) {
+    async.transformLimit(undefined, 2, transformIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
     });
@@ -732,10 +828,12 @@ describe('#transformLimit', function() {
   it('should return response immediately if collection is null', function(done) {
 
     var order = [];
-    async.transformLimit(null, 2, transformIterator(order), function(err) {
+    async.transformLimit(null, 2, transformIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
     });
@@ -749,6 +847,8 @@ describe('#transformLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.deepEqual(order, []);
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -763,10 +863,42 @@ describe('#transformLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.deepEqual(order, []);
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
     });
+  });
+
+  it('should return accumulator immediately if array is empty', function(done) {
+
+    var iterator = function(memo, value, key, callback) {
+      callback();
+    };
+    async.transformLimit([], 4, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {});
+      done();
+    }, {});
+  });
+
+  it('should return accumulator immediately if object is empty', function(done) {
+
+    var iterator = function(memo, value, key, callback) {
+      callback();
+    };
+    async.transformLimit({}, 4, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.deepEqual(res, []);
+      done();
+    }, []);
   });
 
 });
