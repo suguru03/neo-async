@@ -953,7 +953,7 @@ module.exports = {
     }
   },
   'concat:array': {
-    times: 10000,
+    times: 100000,
     setup: function(count) {
       collection = createArrayCollection(count);
       iterator = function(n, callback) {
