@@ -1136,6 +1136,29 @@ module.exports = {
       async.waterfall(tasks, callback);
     }
   },
+  'angelFall:simple': {
+    times: 10000,
+    setup: function(count) {
+      tasks = _.times(count, function(n) {
+        if (n === 0) {
+          return function(done) {
+            done(null, n);
+          };
+        }
+        return function(arg, done) {
+          done(null, n);
+        };
+      });
+    },
+    func: {
+      'default': function(async, callback) {
+        async.waterfall(tasks, callback);
+      },
+      'neo-async_v1': function(async, callback) {
+        async.angelFall(tasks, callback);
+      }
+    }
+  },
   'whilst': {
     setup: function(count) {
       test = function() {
