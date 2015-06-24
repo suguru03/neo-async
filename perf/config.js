@@ -1097,7 +1097,7 @@ module.exports = {
       async.parallelLimit(tasks, limit, callback);
     }
   },
-  'waterfall': {
+  'waterfall:simple': {
     times: 10000,
     setup: function(count) {
       tasks = _.times(count, function(n) {
