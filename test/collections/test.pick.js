@@ -175,6 +175,28 @@ describe('#pick', function() {
     });
   });
 
+  it('should execute iterator by collection of object with passing key', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 4,
+      b: 3,
+      c: 2
+    };
+    async.pick(collection, pickIteratorWithKey(order), function(res) {
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {
+        b: 3
+      });
+      assert.deepEqual(order, [
+        [2, 'c'],
+        [3, 'b'],
+        [4, 'a']
+      ]);
+      done();
+    });
+  });
+
   it('should execute iterator with binding', function(done) {
 
     var order = [];
