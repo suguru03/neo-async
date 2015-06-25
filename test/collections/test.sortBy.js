@@ -4,6 +4,12 @@
 var assert = require('power-assert');
 var async = global.async || require('../../');
 var delay = require('../config').delay;
+var domain = require('domain').create();
+var errorCallCount = 0;
+domain.on('error', function(err) {
+  errorCallCount++;
+  assert.strictEqual(err.message, 'Callback was already called.');
+});
 
 function sortByIterator(order) {
 
@@ -150,26 +156,21 @@ describe('#sortBy', function() {
     });
   });
 
-  it('should throw error', function(done) {
+  it('should throw error if double callback', function(done) {
 
-    var order = [];
-    var collection = [1, 3, 2];
-    var iterator = function(num, index, callback) {
-      setTimeout(function() {
-        order.push([num, index]);
-        callback(num === 3, num);
-      }, num * delay);
-    };
-    async.sortBy(collection, iterator, function(err, res) {
-      assert.ok(err);
-      assert.strictEqual(res, undefined);
-      assert.deepEqual(order, [
-        [1, 0],
-        [2, 2],
-        [3, 1]
-      ]);
-      done();
+    errorCallCount = 0;
+    domain.run(function() {
+      var collection = [1, 3, 2];
+      var iterator = function(num, index, callback) {
+        process.nextTick(callback);
+        process.nextTick(callback);
+      };
+      async.sortBy(collection, iterator);
     });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 3);
+      done();
+    }, delay);
   });
 
   it('should return response immediately if collection is function', function(done) {
@@ -322,6 +323,23 @@ describe('#sortBySeries', function() {
       assert.deepEqual(order, [1, 3]);
       done();
     });
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    errorCallCount = 0;
+    domain.run(function() {
+      var collection = [1, 3, 2];
+      var iterator = function(num, index, callback) {
+        process.nextTick(callback);
+        process.nextTick(callback);
+      };
+      async.sortBySeries(collection, iterator);
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 3);
+      done();
+    }, delay);
   });
 
   it('should throw error', function(done) {
@@ -517,6 +535,23 @@ describe('#sortByLimit', function() {
       assert.deepEqual(order, [1, 3]);
       done();
     });
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    errorCallCount = 0;
+    domain.run(function() {
+      var collection = [1, 3, 2];
+      var iterator = function(num, index, callback) {
+        process.nextTick(callback);
+        process.nextTick(callback);
+      };
+      async.sortByLimit(collection, 2, iterator);
+    });
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 3);
+      done();
+    }, delay);
   });
 
   it('should throw error', function(done) {
