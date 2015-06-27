@@ -24,6 +24,42 @@ describe('#alias', function() {
     done();
   });
 
+  it('should have alias of eachOf', function(done) {
+
+    assert.strictEqual(async.eachOf, async.each);
+    done();
+  });
+
+  it('should have alias of eachOfSeries', function(done) {
+
+    assert.strictEqual(async.eachOfSeries, async.eachSeries);
+    done();
+  });
+
+  it('should have alias of eachLimit', function(done) {
+
+    assert.strictEqual(async.eachOfLimit, async.eachLimit);
+    done();
+  });
+
+  it('should have alias of forEachOf', function(done) {
+
+    assert.strictEqual(async.forEachOf, async.each);
+    done();
+  });
+
+  it('should have alias of forEachOfSeries', function(done) {
+
+    assert.strictEqual(async.forEachOfSeries, async.eachSeries);
+    done();
+  });
+
+  it('should have alias of forEachOfLimit', function(done) {
+
+    assert.strictEqual(async.forEachOfLimit, async.eachLimit);
+    done();
+  });
+
   it('should have alias of inject', function(done) {
 
     assert.strictEqual(async.inject, async.reduce);
