@@ -100,6 +100,78 @@ module.exports = {
       async.eachLimit(collection, limit, iterator, callback);
     }
   },
+  'eachOf:array': {
+    functions: [0, 2],
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, key, callback) {
+        callback();
+      };
+    },
+    func: function(async, callback) {
+      async.eachOf(collection, iterator, callback);
+    }
+  },
+  'eachOf:object': {
+    functions: [0, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, key, callback) {
+        callback();
+      };
+    },
+    func: function(async, callback) {
+      async.eachOf(collection, iterator, callback);
+    }
+  },
+  'eachOfSeries:array': {
+    functions: [0, 2],
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, key, callback) {
+        callback();
+      };
+    },
+    func: function(async, callback) {
+      async.eachOfSeries(collection, iterator, callback);
+    }
+  },
+  'eachOfSeries:object': {
+    functions: [0, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, key, callback) {
+        callback();
+      };
+    },
+    func: function(async, callback) {
+      async.eachOfSeries(collection, iterator, callback);
+    }
+  },
+  'eachOfLimit:array': {
+    functions: [0, 2],
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, key, callback) {
+        callback();
+      };
+    },
+    func: function(async, callback) {
+      async.eachOfLimit(collection, limit, iterator, callback);
+    }
+  },
+  'eachOfLimit:object': {
+    functions: [0, 2],
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, key, callback) {
+        callback();
+      };
+    },
+    func: function(async, callback) {
+      async.eachOfLimit(collection, limit, iterator, callback);
+    }
+  },
   'map:array': {
     setup: function(count) {
       collection = createArrayCollection(count);
