@@ -1287,6 +1287,21 @@ module.exports = {
       async.doUntil(iterator, test, callback);
     }
   },
+  'during': {
+    functions: [0, 2],
+    setup: function(count) {
+      test = function(callback) {
+        callback(null, ++current < count);
+      };
+      iterator = function(callback) {
+        callback();
+      };
+    },
+    func: function(async, callback) {
+      current = 0;
+      async.during(test, iterator, callback);
+    }
+  },
   'forever': {
     setup: function(count) {
       iterator = function(callback) {
