@@ -1302,6 +1302,21 @@ module.exports = {
       async.during(test, iterator, callback);
     }
   },
+  'doDuring': {
+    functions: [0, 2],
+    setup: function(count) {
+      test = function(callback) {
+        callback(null, ++current < count);
+      };
+      iterator = function(callback) {
+        callback();
+      };
+    },
+    func: function(async, callback) {
+      current = 0;
+      async.doDuring(iterator, test, callback);
+    }
+  },
   'forever': {
     setup: function(count) {
       iterator = function(callback) {
