@@ -1,6 +1,7 @@
 /* global describe, it */
 'use strict';
 
+var _ = require('lodash');
 var assert = require('power-assert');
 var async = global.async || require('../../');
 
@@ -181,6 +182,51 @@ describe('#doDuring', function() {
       done();
     }, {
       num: 2
+    });
+  });
+
+  it('should execute with some arguments', function(done) {
+
+    var order = [];
+    var count = 0;
+    var test = function() {
+      order.push(['test', count]);
+      if (count % 2) {
+        assert.strictEqual(arguments.length, 2);
+      } else {
+        assert.strictEqual(arguments.length, 3);
+      }
+      var callback = _.slice(arguments).pop();
+      callback(null, count < 5);
+    };
+    var iterator = function(callback) {
+      order.push(['iterator', count]);
+      count++;
+      setTimeout(function() {
+        if (count % 2) {
+          callback(null, 1);
+        } else {
+          callback(null, 1, 2);
+        }
+      }, 10);
+    };
+    async.doDuring(iterator, test, function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, [
+        ['iterator', 0],
+        ['test', 1],
+        ['iterator', 1],
+        ['test', 2],
+        ['iterator', 2],
+        ['test', 3],
+        ['iterator', 3],
+        ['test', 4],
+        ['iterator', 4],
+        ['test', 5]
+      ]);
+      done();
     });
   });
 
