@@ -49,4 +49,24 @@ describe('#forever', function() {
     }, Math);
   });
 
+  it('should throw error', function() {
+
+    var count = 0;
+    var limit = 5;
+    var order = [];
+    var iterator = function(callback) {
+      order.push(count++);
+      if (count === limit) {
+        return callback(new Error('end'));
+      }
+      callback();
+    };
+    try {
+      async.forever(iterator);
+    } catch(e) {
+      assert.strictEqual(e.message, 'end');
+    }
+    assert.deepEqual(order, [0, 1, 2, 3, 4]);
+  });
+
 });
