@@ -95,4 +95,10 @@ describe('#alias', function() {
     assert.strictEqual(async.angelfall, async.angelFall);
     done();
   });
+
+  it('should have alias of wrapSync', function(done) {
+
+    assert.strictEqual(async.wrapSync, async.asyncify);
+    done();
+  });
 });
