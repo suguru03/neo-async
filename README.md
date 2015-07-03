@@ -1,4 +1,4 @@
-# Neo-Async v1.2.1
+# Neo-Async v1.3.0
 
 [![npm](https://img.shields.io/npm/v/neo-async.svg)](https://www.npmjs.com/package/neo-async)
 [![Travis](https://img.shields.io/travis/suguru03/neo-async.svg)](https://travis-ci.org/suguru03/neo-async)
@@ -220,9 +220,9 @@ __execute__
 
 Execution environment are as follows.
 
-* node v0.10.38
-* node v0.12.2
-* iojs v1.8.1
+* node v0.10.39
+* node v0.12.5
+* iojs v2.3.2
 
 ```bash
 $ gulp speed_test --file parallel
@@ -233,31 +233,21 @@ The value is the ratio (Neo-Async/Async) of the average speed per n times.
 
 ##### control flow
 
-|function|node v0.10.38|node v0.12.2|iojs v1.8.1|
+|function|node v0.10.39|node v0.12.5|iojs v2.3.1|
 |---|---|---|---|
-|parallel|5.97|6.44|6.68|
-|series|6.99|7.82|7.66|
-|parallelLimit|5.56|4.99|6.15|
-|waterfall|23.38|33.99|36.93|
-|times|4.36|4.22|4.15|
-|timesSeries|5.05|4.32|3.72|
+|parallel|4.13|4.16|3.29|
+|series|9.13|10.9|8.29|
+|parallelLimit|4.89|4.24|3.77|
+|waterfall|38.4|58.4|62.5|
 
 ##### collections
 
-|function|node v0.10.38|node v0.12.2|iojs v1.8.1|
+|function|node v0.10.39|node v0.12.5|iojs v2.3.2|
 |---|---|---|---|
-|each|2.10|2.32|2.56|
-|eachSeries|1.04|1.22|1.23|
-|eachLimit|1.68|0.91|1.08|
-|map|3.90|4.03|4.56|
-|mapSeries|3.98|5.10|4.65|
-|mapLimit|3.60|2.85|3.44|
-|filter|3.21|3.12|3.26|
-|filterSeries|5.29|7.00|5.58|
-|reduce|2.05|1.96|2.49|
-|reduceRight|3.71|4.01|4.09|
-|sortBy|1.06|1.54|1.42|
-|some|2.63|2.64|3.03|
-|every|2.70|2.66|3.09|
-|concat|3.02|2.34|2.67|
-|concatSeries|2.56|2.42|2.65|
+|each|2.01|2.08|2.16|
+|eachSeries|7.11|13.6|6.86|
+|eachLimit|5.84|3.71|4.04|
+|map|3.11|3.01|3.47|
+|mapSeries|9.79|13.9|10.6|
+|mapLimit|4.74|2.95|3.14|
+|filter|2.34|3.64|5.76|

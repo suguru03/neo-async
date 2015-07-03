@@ -1170,7 +1170,6 @@ module.exports = {
     }
   },
   'waterfall:simple': {
-    times: 10000,
     setup: function(count) {
       tasks = _.times(count, function(n) {
         if (n === 0) {
@@ -1188,7 +1187,6 @@ module.exports = {
     }
   },
   'waterfall:multiple': {
-    times: 10000,
     setup: function(count) {
       var argMax = 10;
       tasks = _.times(count, function(n) {
