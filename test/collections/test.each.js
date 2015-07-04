@@ -379,6 +379,27 @@ describe('#eachSeries', function() {
     }, Math);
   });
 
+  it('should execute on asynchronous', function(done) {
+
+    var sync = true;
+    var collection = {
+      a: 1,
+      b: 3,
+      c: 2
+    };
+    var iterator = function(n, callback) {
+      callback();
+    };
+    async.eachSeries(collection, iterator, function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(sync, false);
+      done();
+    });
+    sync = false;
+  });
+
   it('should throw error', function(done) {
 
     var order = [];
@@ -609,6 +630,23 @@ describe('#eachLimit', function() {
       assert.deepEqual(order, [1, 2, 3, 3, 4]);
       done();
     });
+  });
+
+  it('should execute on asynchronous', function(done) {
+
+    var sync = true;
+    var collection = [1, 3, 4, 2, 3];
+    var iterator = function(n, callback) {
+      callback();
+    };
+    async.eachLimit(collection, 2, iterator, function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(sync, false);
+      done();
+    });
+    sync = false;
   });
 
   it('should throw error', function(done) {
