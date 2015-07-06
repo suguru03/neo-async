@@ -593,6 +593,31 @@ describe('#mapLimit', function() {
     });
   });
 
+  it('should execute on asynchronous', function(done) {
+
+    var sync = true;
+    var collection = {
+      a: 1,
+      b: 5,
+      c: 3,
+      d: 4,
+      e: 2
+    };
+    var iterator = function(n, callback) {
+      callback(null, n);
+    };
+    async.mapLimit(collection, 2, iterator, function(err, result) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(sync, false);
+      assert.deepEqual(result, [1, 5, 3, 4, 2]);
+      done();
+    });
+    sync = false;
+  });
+
+
   it('should throw error', function(done) {
 
     var order = [];
