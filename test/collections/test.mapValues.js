@@ -399,12 +399,12 @@ describe('#mapValuesSeries', function() {
     var iterator = function(n, callback) {
       callback(null, n);
     };
-    async.mapValuesSeries(collection, iterator, function(err, result) {
+    async.mapValuesSeries(collection, iterator, function(err, res) {
       if (err) {
         return done(err);
       }
       assert.strictEqual(sync, false);
-      assert.deepEqual(result, {
+      assert.deepEqual(res, {
         a: 1,
         b: 3,
         c: 2
@@ -676,6 +676,31 @@ describe('#mapValuesLimit', function() {
       assert.deepEqual(order, [1, 2, 3, 3, 4]);
       done();
     });
+  });
+
+  it('should execute on asynchronous', function(done) {
+
+    var sync = true;
+    var collection = [1, 3, 4, 2, 3];
+    var iterator = function(n, callback) {
+      callback(null, n);
+    };
+    async.mapValuesSeries(collection, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(sync, false);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {
+        '0': 1,
+        '1': 3,
+        '2': 4,
+        '3': 2,
+        '4': 3
+      });
+      done();
+    });
+    sync = false;
   });
 
   it('should throw error', function(done) {
