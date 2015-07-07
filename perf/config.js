@@ -388,7 +388,9 @@ module.exports = {
     setup: function(count) {
       collection = createArrayCollection(count);
       iterator = function(n, callback) {
-        callback(n % 2);
+        process.nextTick(function() {
+          callback(n % 2);
+        });
       };
     },
     func: function(async, callback) {
@@ -402,7 +404,9 @@ module.exports = {
     setup: function(count) {
       collection = createObjectCollection(count);
       iterator = function(n, callback) {
-        callback(n % 2);
+        process.nextTick(function() {
+          callback(n % 2);
+        });
       };
     },
     func: function(async, callback) {
