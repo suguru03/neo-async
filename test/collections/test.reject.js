@@ -209,6 +209,47 @@ describe('#rejectSeries', function() {
     }, Math);
   });
 
+  it('should execute on asynchronous', function(done) {
+
+    var sync = true;
+    var collection = {
+      a: 1,
+      b: 3,
+      c: 2
+    };
+    var iterator = function(n, callback) {
+      callback(false);
+    };
+    async.rejectSeries(collection, iterator, function(res) {
+      assert.strictEqual(sync, false);
+      done();
+    });
+    sync = false;
+  });
+
+  it('should execute on asynchronous and get 2rd callback argument', function(done) {
+
+    var sync = true;
+    var collection = {
+      a: 1,
+      b: 3,
+      c: 2
+    };
+    var iterator = function(n, callback) {
+      callback(null, false);
+    };
+    async.rejectSeries(collection, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(sync, false);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.deepEqual(res, [1, 3, 2]);
+      done();
+    });
+    sync = false;
+  });
+
   it('should throw error if double callback', function(done) {
 
     errorCallCount = 0;
@@ -353,6 +394,73 @@ describe('#rejectLimit', function() {
       assert.deepEqual(order, [1, 1, 2, 3, 3, 4]);
       done();
     });
+  });
+
+  it('should execute on asynchronous', function(done) {
+
+    var sync = true;
+    var collection = [1, 3, 4, 2, 3, 1];
+    var iterator = function(n, callback) {
+      callback(n % 2);
+    };
+    async.rejectLimit(collection, 2, iterator, function(res) {
+      assert.strictEqual(sync, false);
+      assert.deepEqual(res, [4, 2]);
+      done();
+    });
+    sync = false;
+  });
+
+  it('should execute on asynchronous and get 2rd callback argument', function(done) {
+
+    var sync = true;
+    var collection = [1, 3, 4, 2, 3, 1];
+    var iterator = function(n, callback) {
+      callback(null, n % 2);
+    };
+    async.rejectLimit(collection, 2, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(sync, false);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.deepEqual(res, [4, 2]);
+      done();
+    });
+    sync = false;
+  });
+  it('should execute on asynchronous', function(done) {
+
+    var sync = true;
+    var collection = [1, 3, 4, 2, 3, 1];
+    var iterator = function(n, callback) {
+      callback(n % 2);
+    };
+    async.filterLimit(collection, 2, iterator, function(res) {
+      assert.strictEqual(sync, false);
+      assert.deepEqual(res, [1, 3, 3, 1]);
+      done();
+    });
+    sync = false;
+  });
+
+  it('should execute on asynchronous and get 2rd callback argument', function(done) {
+
+    var sync = true;
+    var collection = [1, 3, 4, 2, 3, 1];
+    var iterator = function(n, callback) {
+      callback(null, n % 2);
+    };
+    async.filterSeries(collection, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(sync, false);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.deepEqual(res, [1, 3, 3, 1]);
+      done();
+    });
+    sync = false;
   });
 
   it('should return response immediately if array is empty', function(done) {

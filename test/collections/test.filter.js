@@ -849,7 +849,7 @@ describe('#filterLimit', function() {
     var iterator = function(n, callback) {
       callback(null, n % 2);
     };
-    async.filterSeries(collection, iterator, function(err, res) {
+    async.filterLimit(collection, 2, iterator, function(err, res) {
       if (err) {
         return done(err);
       }
