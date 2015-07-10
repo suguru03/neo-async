@@ -527,6 +527,53 @@ describe('#pickSeries', function() {
     }, Math);
   });
 
+  it('should execute on asynchronous', function(done) {
+
+    var sync = true;
+    var collection = {
+      a: 1,
+      b: 3,
+      c: 2
+    };
+    var iterator = function(n, key, callback) {
+      callback(n % 2);
+    };
+    async.pickSeries(collection, iterator, function(res) {
+      assert.strictEqual(sync, false);
+      assert.deepEqual(res, {
+        a: 1,
+        b: 3
+      });
+      done();
+    });
+    sync = false;
+  });
+
+  it('should execute on asynchronous and get 2rd callback argument', function(done) {
+
+    var sync = true;
+    var collection = {
+      a: 1,
+      b: 3,
+      c: 2
+    };
+    var iterator = function(n, key, callback) {
+      callback(null, n % 2);
+    };
+    async.pickSeries(collection, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(sync, false);
+      assert.deepEqual(res, {
+        a: 1,
+        b: 3
+      });
+      done();
+    });
+    sync = false;
+  });
+
   it('should throw error', function(done) {
 
     var order = [];
