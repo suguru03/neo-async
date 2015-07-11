@@ -120,6 +120,26 @@ describe('#series', function() {
     }, Math);
   });
 
+  it('should execute on asynchronous', function(done) {
+
+    var sync = true;
+    var numbers = [1, 3, 2, 4];
+    var tasks = _.map(numbers, function(n) {
+      return function(next) {
+        next(null, n);
+      };
+    });
+    async.series(tasks, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(sync, false);
+      assert.deepEqual(res, [1, 3, 2, 4]);
+      done();
+    });
+    sync = false;
+  });
+
   it('should return response immediately if array task is empty', function(done) {
 
     var tasks = [];

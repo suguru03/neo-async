@@ -1196,8 +1196,8 @@ module.exports = {
   'series:array': {
     setup: function(count) {
       tasks = _.times(count, function() {
-        return function(done) {
-          done();
+        return function(next) {
+          process.nextTick(next);
         };
       });
     },
@@ -1208,8 +1208,8 @@ module.exports = {
   'series:object': {
     setup: function(count) {
       tasks = _.mapValues(_.times(count, function() {
-        return function(done) {
-          done();
+        return function(next) {
+          process.nextTick(next);
         };
       }));
     },
