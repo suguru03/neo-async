@@ -691,7 +691,9 @@ module.exports = {
     setup: function(count) {
       collection = createArrayCollection(count);
       iterator = function(result, n, callback) {
-        callback(null, result + n);
+        process.nextTick(function() {
+          callback(null, result + n);
+        });
       };
     },
     func: function(async, callback) {
@@ -705,7 +707,9 @@ module.exports = {
     setup: function(count) {
       collection = createObjectCollection(count);
       iterator = function(result, n, callback) {
-        callback(null, result + n);
+        process.nextTick(function() {
+          callback(null, result + n);
+        });
       };
     },
     func: function(async, callback) {
@@ -718,7 +722,9 @@ module.exports = {
     setup: function(count) {
       collection = createArrayCollection(count);
       iterator = function(result, n, callback) {
-        callback(null, result + n);
+        process.nextTick(function() {
+          callback(null, result + n);
+        });
       };
     },
     func: function(async, callback) {
@@ -732,7 +738,9 @@ module.exports = {
     setup: function(count) {
       collection = createObjectCollection(count);
       iterator = function(result, n, callback) {
-        callback(null, result + n);
+        process.nextTick(function() {
+          callback(null, result + n);
+        });
       };
     },
     func: function(async, callback) {

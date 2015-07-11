@@ -180,6 +180,30 @@ describe('#reduce', function() {
     }, Math);
   });
 
+  it('should execute on asynchronous', function(done) {
+
+    var sync = true;
+    var collection = {
+      a: 1,
+      b: 3,
+      c: 2,
+      d: 4,
+      e: 5
+    };
+    var iterator = function(memo, num, key, callback) {
+      callback(null, memo + num);
+    };
+    async.reduce(collection, 0, iterator, function(err, sum) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(sync, false);
+      assert.strictEqual(sum, 15);
+      done();
+    });
+    sync = false;
+  });
+
   it('should throw error', function(done) {
 
     var order = [];
@@ -399,6 +423,30 @@ describe('#reduceRight', function() {
       assert.deepEqual(order, [3, 4, 1]);
       done();
     }, Math);
+  });
+
+  it('should execute on asynchronous', function(done) {
+
+    var sync = true;
+    var collection = {
+      a: 1,
+      b: 3,
+      c: 2,
+      d: 4,
+      e: 5
+    };
+    var iterator = function(memo, num, key, callback) {
+      callback(null, memo + num);
+    };
+    async.reduceRight(collection, 0, iterator, function(err, sum) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(sync, false);
+      assert.strictEqual(sum, 15);
+      done();
+    });
+    sync = false;
   });
 
   it('should throw error', function(done) {
