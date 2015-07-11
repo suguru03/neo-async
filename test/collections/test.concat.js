@@ -344,6 +344,28 @@ describe('#concatSeries', function() {
     }, Math);
   });
 
+  it('should execute on asynchronous', function(done) {
+
+    var sync = true;
+    var collection = {
+      a: 1,
+      b: 3,
+      c: 2
+    };
+    var iterator = function(n, key, callback) {
+      callback(null, n);
+    };
+    async.concatSeries(collection, iterator, function(err, result) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(sync, false);
+      assert.deepEqual(result, [1, 3, 2]);
+      done();
+    });
+    sync = false;
+  });
+
   it('should throw error', function(done) {
 
     var order = [];
