@@ -401,6 +401,47 @@ describe('#someSeries', function() {
     }, Math);
   });
 
+  it('should execute on asynchronous', function(done) {
+
+    var sync = true;
+    var collection = {
+      a: 1,
+      b: 3,
+      c: 2
+    };
+    var iterator = function(n, key, callback) {
+      callback(key === 'c');
+    };
+    async.someSeries(collection, iterator, function(res) {
+      assert.strictEqual(sync, false);
+      assert.strictEqual(res, true);
+      done();
+    });
+    sync = false;
+  });
+
+  it('should execute on asynchronous and get 2rd callback argument', function(done) {
+
+    var sync = true;
+    var collection = {
+      a: 1,
+      b: 3,
+      c: 2
+    };
+    var iterator = function(n, key, callback) {
+      callback(null, key === 'c');
+    };
+    async.someSeries(collection, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(sync, false);
+      assert.strictEqual(res, true);
+      done();
+    });
+    sync = false;
+  });
+
   it('should return response immediately if collection is empty', function(done) {
 
     var order = [];
@@ -612,6 +653,51 @@ describe('#someLimit', function() {
       assert.deepEqual(order, [1]);
       done();
     });
+  });
+
+  it('should execute on asynchronous', function(done) {
+
+    var sync = true;
+    var collection = {
+      a: 1,
+      b: 3,
+      c: 2,
+      d: 4,
+      e: 5
+    };
+    var iterator = function(n, key, callback) {
+      callback(key === 'e');
+    };
+    async.someLimit(collection, 2, iterator, function(res) {
+      assert.strictEqual(sync, false);
+      assert.strictEqual(res, true);
+      done();
+    });
+    sync = false;
+  });
+
+  it('should execute on asynchronous and get 2rd callback argument', function(done) {
+
+    var sync = true;
+    var collection = {
+      a: 1,
+      b: 3,
+      c: 2,
+      d: 4,
+      e: 5
+    };
+    var iterator = function(n, key, callback) {
+      callback(null, key === 'e');
+    };
+    async.someLimit(collection, 2, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(sync, false);
+      assert.strictEqual(res, true);
+      done();
+    });
+    sync = false;
   });
 
   it('should return response immediately if collection is empty', function(done) {
