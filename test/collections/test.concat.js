@@ -597,6 +597,30 @@ describe('#concatLimit', function() {
     });
   });
 
+  it('should execute on asynchronous', function(done) {
+
+    var sync = true;
+    var collection = {
+      a: 1,
+      b: 3,
+      c: 2,
+      d: 4,
+      e: 5
+    };
+    var iterator = function(n, key, callback) {
+      callback(null, n);
+    };
+    async.concatLimit(collection, 2, iterator, function(err, result) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(sync, false);
+      assert.deepEqual(result, [1, 3, 2, 4, 5]);
+      done();
+    });
+    sync = false;
+  });
+
   it('should throw error', function(done) {
 
     var order = [];
