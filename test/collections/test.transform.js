@@ -778,6 +778,37 @@ describe('#transformLimit', function() {
     });
   });
 
+  it('should execute on asynchronous', function(done) {
+
+    var sync = true;
+    var collection = {
+      a: 1,
+      b: 3,
+      c: 2,
+      d: 4,
+      e: 5
+    };
+    var iterator = function(result, num, key, callback) {
+      result[key] = num * 2;
+      callback();
+    };
+    async.transformLimit(collection, 2, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(sync, false);
+      assert.deepEqual(res, {
+        a: 2,
+        b: 6,
+        c: 4,
+        d: 8,
+        e: 10
+      });
+      done();
+    });
+    sync = false;
+  });
+
   it('should throw error', function(done) {
 
     var order = [];

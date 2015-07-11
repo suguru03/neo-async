@@ -815,7 +815,7 @@ module.exports = {
       collection = createArrayCollection(count);
       iterator = function(result, n, index, callback) {
         result[index] = n;
-        callback();
+        process.nextTick(callback);
       };
     },
     func: function(async, callback) {
@@ -830,7 +830,7 @@ module.exports = {
       collection = createObjectCollection(count);
       iterator = function(result, n, index, callback) {
         result[index] = n;
-        callback();
+        process.nextTick(callback);
       };
     },
     func: function(async, callback) {
