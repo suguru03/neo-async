@@ -1291,11 +1291,15 @@ module.exports = {
       tasks = _.times(count, function(n) {
         if (n === 0) {
           return function(done) {
-            done(null, n);
+            process.nextTick(function() {
+              done(null, n);
+            });
           };
         }
         return function(arg, done) {
-          done(null, n);
+          process.nextTick(function() {
+            done(null, n);
+          });
         };
       });
     },

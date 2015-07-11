@@ -151,24 +151,27 @@ describe('#angelFall', function() {
 
   it('should execute with asynchronous', function(done) {
 
+    var sync = true;
     var order = [];
     async.angelFall([
       function(next) {
         order.push(1);
-        setImmediate(next);
+        next();
         order.push(2);
       },
       function(next) {
         order.push(3);
-        setImmediate(next);
+        next();
       }
     ], function(err) {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(sync, false);
       assert.deepEqual(order, [1, 2, 3]);
       done();
     });
+    sync = false;
   });
 
   it('should throw error', function(done) {
