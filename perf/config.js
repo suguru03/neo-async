@@ -1221,7 +1221,7 @@ module.exports = {
     setup: function(count) {
       tasks = _.times(count, function() {
         return function(done) {
-          done();
+          process.nextTick(done);
         };
       });
     },
@@ -1233,7 +1233,7 @@ module.exports = {
     setup: function(count) {
       tasks = _.mapValues(_.times(count, function() {
         return function(done) {
-          done();
+          process.nextTick(done);
         };
       }));
     },

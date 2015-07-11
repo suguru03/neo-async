@@ -305,6 +305,39 @@ describe('#parallelLimit', function() {
     }, Math);
   });
 
+  it('should execute on asynchronous', function(done) {
+
+    var sync = true;
+    var numbers = {
+      a: 4,
+      b: 2,
+      c: 1,
+      d: 3,
+      e: 1
+    };
+    var tasks = _.mapValues(numbers, function(value) {
+      return function(done) {
+        done(null, value * 2);
+      };
+    });
+
+    async.parallelLimit(tasks, 2, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(sync, false);
+      assert.deepEqual(res, {
+        b: 4,
+        a: 8,
+        c: 2,
+        d: 6,
+        e: 2
+      });
+      done();
+    });
+    sync = false;
+  });
+
   it('should return response immediately if array task is empty', function(done) {
 
     var tasks = [];
