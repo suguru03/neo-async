@@ -139,7 +139,6 @@ describe('#sortBy', function() {
   });
 
   it('should throw error', function(done) {
-
     var order = [];
     var collection = [1, 3, 2];
     var iterator = function(num, callback) {
@@ -306,6 +305,29 @@ describe('#sortBySeries', function() {
       done();
     }, Math);
   });
+
+  it('should execute on asynchronous', function(done) {
+
+    var sync = true;
+    var collection = {
+      a: 1,
+      b: 3,
+      c: 2
+    };
+    var iterator = function(num, key, callback) {
+      callback(null, num % 2);
+    };
+    async.sortBySeries(collection, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(sync, false);
+      assert.deepEqual(res, [2, 1, 3]);
+      done();
+    });
+    sync = false;
+  });
+
 
   it('should throw error', function(done) {
 
