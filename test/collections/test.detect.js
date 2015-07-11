@@ -710,6 +710,51 @@ describe('#detectLimit', function() {
     });
   });
 
+  it('should execute on asynchronous', function(done) {
+
+    var sync = true;
+    var collection = {
+      a: 1,
+      b: 3,
+      c: 2,
+      d: 4,
+      e: 5
+    };
+    var iterator = function(n, key, callback) {
+      callback(key === 'e');
+    };
+    async.detectLimit(collection, 2, iterator, function(res) {
+      assert.strictEqual(sync, false);
+      assert.strictEqual(res, 5);
+      done();
+    });
+    sync = false;
+  });
+
+  it('should execute on asynchronous and get 2rd callback argument', function(done) {
+
+    var sync = true;
+    var collection = {
+      a: 1,
+      b: 3,
+      c: 2,
+      d: 4,
+      e: 5
+    };
+    var iterator = function(n, key, callback) {
+      callback(null, key === 'e');
+    };
+    async.detectLimit(collection, 2, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(sync, false);
+      assert.strictEqual(res, 5);
+      done();
+    });
+    sync = false;
+  });
+
   it('should not get item', function(done) {
 
     var order = [];
