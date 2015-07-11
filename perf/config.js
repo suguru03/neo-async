@@ -1242,15 +1242,20 @@ module.exports = {
     }
   },
   'waterfall:simple': {
+    functions: [1, 2],
     setup: function(count) {
       tasks = _.times(count, function(n) {
         if (n === 0) {
           return function(done) {
-            done(null, n);
+            process.nextTick(function() {
+              done(null, n);
+            });
           };
         }
         return function(arg, done) {
-          done(null, n);
+          process.nextTick(function() {
+            done(null, n);
+          });
         };
       });
     },
@@ -1267,9 +1272,11 @@ module.exports = {
           var args = Array((arguments.length + 1) % argMax);
           if (args.length) {
             args[args.length - 1] = n;
-            done.apply(null, args);
+            process.nextTick(function() {
+              done.apply(null, args);
+            });
           } else {
-            done();
+            process.nextTick(done);
           }
         };
       });
