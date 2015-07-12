@@ -1346,7 +1346,7 @@ module.exports = {
         return current++ === count;
       };
       iterator = function(callback) {
-        callback();
+        process.nextTick(callback);
       };
     },
     func: function(async, callback) {
@@ -1360,7 +1360,7 @@ module.exports = {
         return current++ === count;
       };
       iterator = function(callback) {
-        callback();
+        process.nextTick(callback);
       };
     },
     func: function(async, callback) {
