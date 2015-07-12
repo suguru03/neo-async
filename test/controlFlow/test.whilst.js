@@ -32,7 +32,6 @@ describe('#whilst', function() {
       assert.deepEqual(order.test, [0, 1, 2, 3, 4, 5]);
       done();
     });
-
   });
 
   it('should execute with binding until test is false', function(done) {
@@ -64,7 +63,28 @@ describe('#whilst', function() {
       assert.deepEqual(result, [0, 1, 4, 9, 16]);
       done();
     }, Math);
+  });
 
+  it('should execute on asynchronous', function(done) {
+
+    var sync = true;
+    var count = 0;
+    var limit = 5;
+    var test = function() {
+      return count < limit;
+    };
+    var iterator = function(callback) {
+      count++;
+      callback();
+    };
+    async.whilst(test, iterator, function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(sync, false);
+      done();
+    });
+    sync = false;
   });
 
   it('should throw error', function(done) {
@@ -93,7 +113,6 @@ describe('#whilst', function() {
       assert.deepEqual(result, [0, 1, 4]);
       done();
     }, Math);
-
   });
 
 });
