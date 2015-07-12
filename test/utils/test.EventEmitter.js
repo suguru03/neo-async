@@ -1,9 +1,10 @@
 /* global describe, it */
 'use strict';
 
+var _ = require('lodash');
 var assert = require('power-assert');
 var async = require('../../');
-var _ = require('lodash');
+var delay = require('../config').delay;
 
 function createTasks(order, numbers) {
   return _.map(numbers, function(num) {
@@ -292,27 +293,29 @@ describe('#eventEmitter', function() {
     });
     eventEmitter.emit('event', function(err) {
       assert.strictEqual(err.message, 'error');
-      eventEmitter.emit('event');
-      assert.deepEqual(order, [
-        'event1',
-        'event2',
-        'event1',
-        'event2'
-      ]);
-      done();
+      eventEmitter.emit('event', function(err) {
+        assert.strictEqual(err.message, 'error');
+        assert.deepEqual(order, [
+          'event1',
+          'event2',
+          'event1',
+          'event2'
+        ]);
+        done();
+      });
     });
   });
 
-  it('should remove once event', function() {
+  it('should remove once event', function(done) {
     var order = [];
     var eventEmitter = new async.EventEmitter();
-    eventEmitter.on('event', function() {
+    eventEmitter.on('event', function e1() {
       order.push('event1');
     });
-    var event2 = function() {
+    var event2 = function e2() {
       order.push('event2');
     };
-    var event3 = function() {
+    var event3 = function e3() {
       order.push('event3');
     };
     eventEmitter.on('event', event2);
@@ -326,14 +329,17 @@ describe('#eventEmitter', function() {
       'event': [event3]
     });
     eventEmitter.emit('event');
-    assert.deepEqual(order, [
-      'event1',
-      'event2',
-      'event3',
-      'event1',
-      'event2',
-      'event1'
-    ]);
+    setTimeout(function() {
+      assert.deepEqual(order, [
+        'event1',
+        'event2',
+        'event3',
+        'event1',
+        'event2',
+        'event1'
+      ]);
+      done();
+    }, delay);
   });
 
   it('should remove all events in this key', function() {
