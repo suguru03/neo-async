@@ -685,7 +685,7 @@ describe('#mapValuesLimit', function() {
     var iterator = function(n, callback) {
       callback(null, n);
     };
-    async.mapValuesSeries(collection, iterator, function(err, res) {
+    async.mapValuesLimit(collection, 2, iterator, function(err, res) {
       if (err) {
         return done(err);
       }
