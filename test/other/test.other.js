@@ -75,3 +75,14 @@ describe('#setImmediate', function() {
     async.setImmediate(done);
   });
 });
+
+describe('#check functions', function() {
+
+  'use strict';
+
+  it('should have async functions', function() {
+    _.forOwn(require('async'), function(func, key) {
+      assert.ok(async[key]);
+    });
+  });
+});
