@@ -321,6 +321,7 @@ describe('#eventEmitter', function() {
     eventEmitter.on('event', event2);
     eventEmitter.once('event', event3);
     eventEmitter.emit('event');
+    eventEmitter.once('event', event3);
     eventEmitter.emit('event');
     eventEmitter.off('event', event2);
     eventEmitter.off('event', event2);
@@ -336,6 +337,7 @@ describe('#eventEmitter', function() {
         'event3',
         'event1',
         'event2',
+        'event3',
         'event1'
       ]);
       done();
