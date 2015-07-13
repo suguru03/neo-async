@@ -5,7 +5,7 @@ var _ = require('lodash');
 var limit = 4;
 var current = 0;
 var concurrency = 1;
-var collection, iterator, tasks, test, worker;
+var collection, iterator, tasks, test, worker, times;
 
 module.exports = {
   defaults: {
@@ -1516,6 +1516,30 @@ module.exports = {
       _.times(max, function(n) {
         q.push(n, max - n, function() {});
       });
+    }
+  },
+  'times': {
+    setup: function(count) {
+      times = count;
+      iterator = function(n, done) {
+        done(null, n);
+      };
+    },
+    func: function(async, callback) {
+      async.times(times, iterator, callback);
+    }
+  },
+  'timesSeries': {
+    setup: function(count) {
+      times = count;
+      iterator = function(n, done) {
+        process.nextTick(function() {
+          done(null, n);
+        });
+      };
+    },
+    func: function(async, callback) {
+      async.timesSeries(times, iterator, callback);
     }
   }
 };

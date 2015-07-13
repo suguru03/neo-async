@@ -168,6 +168,24 @@ describe('#timesSeries', function() {
     }, Math);
   });
 
+  it('should execute on asynchronous', function(done) {
+
+    var sync = true;
+    var n = 3;
+    var iterator = function(n, callback) {
+      callback(null, n);
+    };
+    async.timesSeries(n, iterator, function(err, result) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(sync, false);
+      assert.deepEqual(result, [0, 1, 2]);
+      done();
+    });
+    sync = false;
+  });
+
   it('should return response immediately', function(done) {
 
     var n = 0;
