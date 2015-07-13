@@ -314,6 +314,24 @@ describe('#timesLimit', function() {
     });
   });
 
+  it('should execute on asynchronous', function(done) {
+
+    var sync = true;
+    var n = 5;
+    var iterator = function(n, callback) {
+      callback(null, n);
+    };
+    async.timesLimit(n, 2, iterator, function(err, result) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(sync, false);
+      assert.deepEqual(result, [0, 1, 2, 3, 4]);
+      done();
+    });
+    sync = false;
+  });
+
   it('should throw error', function(done) {
 
     var n = 6;

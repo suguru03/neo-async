@@ -1541,6 +1541,19 @@ module.exports = {
     func: function(async, callback) {
       async.timesSeries(times, iterator, callback);
     }
+  },
+  'timesLimit': {
+    setup: function(count) {
+      times = count;
+      iterator = function(n, done) {
+        process.nextTick(function() {
+          done(null, n);
+        });
+      };
+    },
+    func: function(async, callback) {
+      async.timesLimit(times, limit, iterator, callback);
+    }
   }
 };
 
