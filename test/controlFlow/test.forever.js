@@ -3,6 +3,7 @@
 
 var assert = require('power-assert');
 var async = global.async || require('../../');
+var domain = require('domain').create();
 
 describe('#forever', function() {
 
@@ -49,7 +50,26 @@ describe('#forever', function() {
     }, Math);
   });
 
-  it('should throw error', function() {
+  it('should execute on asynchronous', function(done) {
+
+    var sync = true;
+    var count = 0;
+    var limit = 5;
+    var iterator = function(callback) {
+      if (count++ === limit) {
+        return callback(new Error('end'));
+      }
+      callback();
+    };
+    async.forever(iterator, function(err) {
+      assert.ok(err);
+      assert.strictEqual(sync, false);
+      done();
+    });
+    sync = false;
+  });
+
+  it('should throw error', function(done) {
 
     var count = 0;
     var limit = 5;
@@ -61,12 +81,14 @@ describe('#forever', function() {
       }
       callback();
     };
-    try {
+    domain.on('error', function(err) {
+      assert.strictEqual(err.message, 'end');
+      assert.deepEqual(order, [0, 1, 2, 3, 4]);
+      done();
+    });
+    domain.run(function() {
       async.forever(iterator);
-    } catch(e) {
-      assert.strictEqual(e.message, 'end');
-    }
-    assert.deepEqual(order, [0, 1, 2, 3, 4]);
+    });
   });
 
 });
