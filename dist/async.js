@@ -5,6 +5,9 @@
   var root = this;
   var previos_async = root && root.async;
   var noop = function() {};
+  var throwError = function() {
+    throw new Error('Callback was already called.');
+  };
 
   var objectTypes = {
     'function': true,
@@ -17,11 +20,2260 @@
   createImmediate();
 
   /**
-   * @version 1.2.1
+   * @memberof async
+   * @namespace each
+   * @param {Array|Object} collection
+   * @param {Function} iterator
+   * @param {Function} callback
+   * @param {*} [thisArg]
+   * @example
+   *
+   * // array
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done();
+   *   }, num * 10);
+   * };
+   * async.each(array, iterator, function(err, res) {
+   *   console.log(res); // undefined
+   *   console.log(order); // [1, 2, 3]
+   * });
+   *
+   * @example
+   *
+   * // array with index
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done();
+   *   }, num * 10);
+   * };
+   * async.each(array, iterator, function(err, res) {
+   *   console.log(res); // undefined
+   *   console.log(order); // [[1, 0], [2, 2], [3, 1]]
+   * });
+   *
+   * @example
+   *
+   * // object
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done();
+   *   }, num * 10);
+   * };
+   * async.each(object, iterator, function(err, res) {
+   *   console.log(res); // undefined
+   *   console.log(order); // [1, 2, 3]
+   * });
+   *
+   * @example
+   *
+   * // object with key
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done();
+   *   }, num * 10);
+   * };
+   * async.each(object, iterator, function(err, res) {
+   *   console.log(res); // undefined
+   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b']]
+   * });
+   *
+   */
+  var each = createEach(arrayEach, baseEach);
+
+  /**
+   * @memberof async
+   * @namespace map
+   * @param {Array|Object} collection
+   * @param {Function} iterator
+   * @param {Function} callback
+   * @param {*} [thisArg]
+   * @example
+   *
+   * // array
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num);
+   *   }, num * 10);
+   * };
+   * async.map(array, iterator, function(err, res) {
+   *   console.log(res); // [1, 3, 2];
+   *   console.log(order); // [1, 2, 3]
+   * });
+   *
+   * @example
+   *
+   * // array with index
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(null, num);
+   *   }, num * 10);
+   * };
+   * async.map(array, iterator, function(err, res) {
+   *   console.log(res); // [1, 3, 2]
+   *   console.log(order); // [[1, 0], [2, 2], [3, 1]]
+   * });
+   *
+   * @example
+   *
+   * // object
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num);
+   *   }, num * 10);
+   * };
+   * async.map(object, iterator, function(err, res) {
+   *   console.log(res); // [1, 3, 2]
+   *   console.log(order); // [1, 2, 3]
+   * });
+   *
+   * @example
+   *
+   * // object with key
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(null, num);
+   *   }, num * 10);
+   * };
+   * async.map(object, iterator, function(err, res) {
+   *   console.log(res); // [1, 3, 2]
+   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b']]
+   * });
+   *
+   */
+  var map = createMap(arrayEachIndex, baseEachIndex);
+
+  /**
+   * @memberof async
+   * @namespace mapValues
+   * @param {Array|Object} collection
+   * @param {Function} iterator
+   * @param {Function} callback
+   * @param {*} [thisArg]
+   * @example
+   *
+   * // array
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num);
+   *   }, num * 10);
+   * };
+   * async.mapValues(array, iterator, function(err, res) {
+   *   console.log(res); // { '0': 1, '1': 3, '2': 2 }
+   *   console.log(order); // [1, 2, 3]
+   * });
+   *
+   * @example
+   *
+   * // array with index
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(null, num);
+   *   }, num * 10);
+   * };
+   * async.mapValues(array, iterator, function(err, res) {
+   *   console.log(res); // { '0': 1, '1': 3, '2': 2 }
+   *   console.log(order); // [[1, 0], [2, 2], [3, 1]]
+   * });
+   *
+   * @example
+   *
+   * // object
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num);
+   *   }, num * 10);
+   * };
+   * async.mapValues(object, iterator, function(err, res) {
+   *   console.log(res); // { a: 1, b: 3, c: 2 }
+   *   console.log(order); // [1, 2, 3]
+   * });
+   *
+   * @example
+   *
+   * // object with key
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(null, num);
+   *   }, num * 10);
+   * };
+   * async.mapValues(object, iterator, function(err, res) {
+   *   console.log(res); // { a: 1, b: 3, c: 2 }
+   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b']]
+   * });
+   *
+   */
+  var mapValues = createMapValues(arrayEachIndex, baseEachKey);
+
+  /**
+   * @memberof async
+   * @namespace filter
+   * @param {Array|Object} collection
+   * @param {Function} iterator
+   * @param {Function} callback
+   * @param {*} [thisArg]
+   * @example
+   *
+   * // array
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.filter(array, iterator, function(err, res) {
+   *   console.log(res); // [1, 3];
+   *   console.log(order); // [1, 2, 3]
+   * });
+   *
+   * @example
+   *
+   * // array with index
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.filter(array, iterator, function(err, res) {
+   *   console.log(res); // [1, 3];
+   *   console.log(order); // [[1, 0], [2, 2], [3, 1]]
+   * });
+   *
+   * @example
+   *
+   * // array (not use error handling)
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.filter(array, iterator, function(res) {
+   *   console.log(res); // [1, 3];
+   *   console.log(order); // [1, 2, 3]
+   * });
+   *
+   * @example
+   *
+   * // array with index (not use error handling)
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.filter(array, iterator, function(res) {
+   *   console.log(res); // [1, 3];
+   *   console.log(order); // [[1, 0], [2, 2], [3, 1]]
+   * });
+   *
+   * @example
+   *
+   * // object
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.filter(object, iterator, function(err, res) {
+   *   console.log(res); // [1, 3];
+   *   console.log(order); // [1, 2, 3]
+   * });
+   *
+   * @example
+   *
+   * // object with key
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.filter(object, iterator, function(err, res) {
+   *   console.log(res); // [1, 3];
+   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b']]
+   * });
+   *
+   * @example
+   *
+   * // object (not use error handling)
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.filter(object, iterator, function(res) {
+   *   console.log(res); // [1, 3];
+   *   console.log(order); // [1, 2, 3]
+   * });
+   *
+   * @example
+   *
+   * // object with key (not use error handling)
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.filter(object, iterator, function(res) {
+   *   console.log(res); // [1, 3];
+   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b']]
+   * });
+   *
+   */
+  var filter = createFilter(arrayEachIndexValue, baseEachIndexValue, true);
+
+  /**
+   * @memberof async
+   * @namespace filterSeries
+   * @param {Array|Object} collection
+   * @param {Function} iterator
+   * @param {Function} callback
+   * @param {*} [thisArg]
+   * @example
+   *
+   * // array
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.filterSeries(array, iterator, function(err, res) {
+   *   console.log(res); // [1, 3];
+   *   console.log(order); // [1, 3, 2]
+   * });
+   *
+   * @example
+   *
+   * // array with index
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.filterSeries(array, iterator, function(err, res) {
+   *   console.log(res); // [1, 3]
+   *   console.log(order); // [[1, 0], [3, 1], [2, 2]]
+   * });
+   *
+   * @example
+   *
+   * // array (not use error handling)
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.filterSeries(array, iterator, function(res) {
+   *   console.log(res); // [1, 3];
+   *   console.log(order); // [1, 3, 2]
+   * });
+   *
+   * @example
+   *
+   * // array with index (not use error handling)
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.filterSeries(array, iterator, function(res) {
+   *   console.log(res); // [1, 3]
+   *   console.log(order); // [[1, 0], [3, 1], [2, 2]]
+   * });
+   *
+   * @example
+   *
+   * // object
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.filterSeries(object, iterator, function(err, res) {
+   *   console.log(res); // [1, 3]
+   *   console.log(order); // [1, 3, 2]
+   * });
+   *
+   * @example
+   *
+   * // object with key
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.filterSeries(object, iterator, function(err, res) {
+   *   console.log(res); // [1, 3]
+   *   console.log(order); // [[1, 'a'], [3, 'b'], [2, 'c']]
+   * });
+   *
+   * @example
+   *
+   * // object (not use error handling)
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.filterSeries(object, iterator, function(res) {
+   *   console.log(res); // [1, 3]
+   *   console.log(order); // [1, 3, 2]
+   * });
+   *
+   * @example
+   *
+   * // object with key (not use error handling)
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.filterSeries(object, iterator, function(res) {
+   *   console.log(res); // [1, 3]
+   *   console.log(order); // [[1, 'a'], [3, 'b'], [2, 'c']]
+   * });
+   *
+   */
+  var filterSeries = createFilterSeries(true);
+
+  /**
+   * @memberof async
+   * @namespace filterLimit
+   * @param {Array|Object} collection
+   * @param {number} limit - limit >= 1
+   * @param {Function} iterator
+   * @param {Function} callback
+   * @param {*} [thisArg]
+   * @example
+   *
+   * // array
+   * var order = [];
+   * var array = [1, 5, 3, 4, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.filterLimit(array, 2, iterator, function(err, res) {
+   *   console.log(res); // [1, 5, 3]
+   *   console.log(order); // [1, 3, 5, 2, 4]
+   * });
+   *
+   * @example
+   *
+   * // array with index
+   * var order = [];
+   * var array = [1, 5, 3, 4, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.filterLimit(array, 2, iterator, function(err, res) {
+   *   console.log(res); // [1, 5, 3]
+   *   console.log(order); // [[1, 0], [3, 2], [5, 1], [2, 4], [4, 3]]
+   * });
+   *
+   * @example
+   *
+   * // array (not use error handling)
+   * var order = [];
+   * var array = [1, 5, 3, 4, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.filterLimit(array, 2, iterator, function(res) {
+   *   console.log(res); // [1, 5, 3]
+   *   console.log(order); // [1, 3, 5, 2, 4]
+   * });
+   *
+   * @example
+   *
+   * // array with index (not use error handling)
+   * var order = [];
+   * var array = [1, 5, 3, 4, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.filterLimit(array, 2, iterator, function(res) {
+   *   console.log(res); // [1, 5, 3]
+   *   console.log(order); // [[1, 0], [3, 2], [5, 1], [2, 4], [4, 3]]
+   * });
+   *
+   * @example
+   *
+   * // object
+   * var order = [];
+   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.filterLimit(object, 2, iterator, function(err, res) {
+   *   console.log(res); // [1, 5, 3]
+   *   console.log(order); // [1, 3, 5, 2, 4]
+   * });
+   *
+   * @example
+   *
+   * // object with key
+   * var order = [];
+   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.filterLimit(object, 2, iterator, function(err, res) {
+   *   console.log(res); // [1, 5, 3]
+   *   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
+   * });
+   *
+   * @example
+   *
+   * // object (not use error handling)
+   * var order = [];
+   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.filterLimit(object, 2, iterator, function(res) {
+   *   console.log(res); // [1, 5, 3]
+   *   console.log(order); // [1, 3, 5, 2, 4]
+   * });
+   *
+   * @example
+   *
+   * // object with key (not use error handling)
+   * var order = [];
+   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.filterLimit(object, 2, iterator, function(res) {
+   *   console.log(res); // [1, 5, 3]
+   *   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
+   * });
+   *
+   */
+  var filterLimit = createFilterLimit(true);
+
+  /**
+   * @memberof async
+   * @namespace reject
+   * @param {Array|Object} collection
+   * @param {Function} iterator
+   * @param {Function} callback
+   * @param {*} [thisArg]
+   * @example
+   *
+   * // array
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.reject(array, iterator, function(err, res) {
+   *   console.log(res); // [2];
+   *   console.log(order); // [1, 2, 3]
+   * });
+   *
+   * @example
+   *
+   * // array with index
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.reject(array, iterator, function(err, res) {
+   *   console.log(res); // [2];
+   *   console.log(order); // [[1, 0], [2, 2], [3, 1]]
+   * });
+   *
+   * @example
+   *
+   * // array (not use error handling)
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.reject(array, iterator, function(res) {
+   *   console.log(res); // [2];
+   *   console.log(order); // [1, 2, 3]
+   * });
+   *
+   * @example
+   *
+   * // array with index (not use error handling)
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.reject(array, iterator, function(res) {
+   *   console.log(res); // [2];
+   *   console.log(order); // [[1, 0], [2, 2], [3, 1]]
+   * });
+   *
+   * @example
+   *
+   * // object
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.reject(object, iterator, function(err, res) {
+   *   console.log(res); // [2];
+   *   console.log(order); // [1, 2, 3]
+   * });
+   *
+   * @example
+   *
+   * // object with key
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.reject(object, iterator, function(err, res) {
+   *   console.log(res); // [2];
+   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b']]
+   * });
+   *
+   * @example
+   *
+   * // object (not use error handling)
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.reject(object, iterator, function(res) {
+   *   console.log(res); // [2];
+   *   console.log(order); // [1, 2, 3]
+   * });
+   *
+   * @example
+   *
+   * // object with key (not use error handling)
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.reject(object, iterator, function(res) {
+   *   console.log(res); // [2];
+   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b']]
+   * });
+   *
+   */
+  var reject = createFilter(arrayEachIndexValue, baseEachIndexValue, false);
+
+  /**
+   * @memberof async
+   * @namespace rejectSeries
+   * @param {Array|Object} collection
+   * @param {Function} iterator
+   * @param {Function} callback
+   * @param {*} [thisArg]
+   * @example
+   *
+   * // array
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.rejectSeries(array, iterator, function(err, res) {
+   *   console.log(res); // [2];
+   *   console.log(order); // [1, 3, 2]
+   * });
+   *
+   * @example
+   *
+   * // array (not use error handling)
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.rejectSeries(array, iterator, function(res) {
+   *   console.log(res); // [2];
+   *   console.log(order); // [1, 3, 2]
+   * });
+   *
+   * @example
+   *
+   * // array with index (not use error handling)
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.rejectSeries(array, iterator, function(res) {
+   *   console.log(res); // [2];
+   *   console.log(order); // [[1, 0], [3, 1], [2, 2]]
+   * });
+   *
+   * @example
+   *
+   * // array with index (not use error handling)
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.rejectSeries(array, iterator, function(res) {
+   *   console.log(res); // [2];
+   *   console.log(order); // [[1, 0], [3, 1], [2, 2]]
+   * });
+   *
+   * @example
+   *
+   * // object
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.rejectSeries(object, iterator, function(err, res) {
+   *   console.log(res); // [2];
+   *   console.log(order); // [1, 3, 2]
+   * });
+   *
+   * @example
+   *
+   * // object with key
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.rejectSeries(object, iterator, function(err, res) {
+   *   console.log(res); // [2];
+   *   console.log(order); // [[1, 'a'], [3, 'b'], [2, 'c']]
+   * });
+   *
+   * @example
+   *
+   * // object (not use error handling)
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.rejectSeries(object, iterator, function(res) {
+   *   console.log(res); // [2];
+   *   console.log(order); // [1, 3, 2]
+   * });
+   *
+   * @example
+   *
+   * // object with key (not use error handling)
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.rejectSeries(object, iterator, function(res) {
+   *   console.log(res); // [2];
+   *   console.log(order); // [[1, 'a'], [3, 'b'], [2, 'c']]
+   * });
+   *
+   */
+  var rejectSeries = createFilterSeries(false);
+
+  /**
+   * @memberof async
+   * @namespace rejectLimit
+   * @param {Array|Object} collection
+   * @param {number} limit - limit >= 1
+   * @param {Function} iterator
+   * @param {Function} callback
+   * @param {*} [thisArg]
+   * @example
+   *
+   * // array
+   * var order = [];
+   * var array = [1, 5, 3, 4, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.rejectLimit(array, 2, iterator, function(err, res) {
+   *   console.log(res); // [4, 2]
+   *   console.log(order); // [1, 3, 5, 2, 4]
+   * });
+   *
+   * @example
+   *
+   * // array with index
+   * var order = [];
+   * var array = [1, 5, 3, 4, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.rejectLimit(array, 2, iterator, function(err, res) {
+   *   console.log(res); // [4, 2]
+   *   console.log(order); // [[1, 0], [3, 2], [5, 1], [2, 4], [4, 3]]
+   * });
+   *
+   * @example
+   *
+   * // array (not use error handling)
+   * var order = [];
+   * var array = [1, 5, 3, 4, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.rejectLimit(array, 2, iterator, function(res) {
+   *   console.log(res); // [4, 2]
+   *   console.log(order); // [1, 3, 5, 2, 4]
+   * });
+   *
+   * @example
+   *
+   * // array with index (not use error handling)
+   * var order = [];
+   * var array = [1, 5, 3, 4, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.rejectLimit(array, 2, iterator, function(res) {
+   *   console.log(res); // [4, 2]
+   *   console.log(order); // [[1, 0], [3, 2], [5, 1], [2, 4], [4, 3]]
+   * });
+   *
+   * @example
+   *
+   * // object
+   * var order = [];
+   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.rejectLimit(object, 2, iterator, function(err, res) {
+   *   console.log(res); // [4, 2]
+   *   console.log(order); // [1, 3, 5, 2, 4]
+   * });
+   *
+   * @example
+   *
+   * // object with key
+   * var order = [];
+   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.rejectLimit(object, 2, iterator, function(err, res) {
+   *   console.log(res); // [4, 2]
+   *   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
+   * });
+   *
+   * @example
+   *
+   * // object (not use error handling)
+   * var order = [];
+   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.rejectLimit(object, 2, iterator, function(res) {
+   *   console.log(res); // [4, 2]
+   *   console.log(order); // [1, 3, 5, 2, 4]
+   * });
+   *
+   * @example
+   *
+   * // object with key (not use error handling)
+   * var order = [];
+   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.rejectLimit(object, 2, iterator, function(res) {
+   *   console.log(res); // [4, 2]
+   *   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
+   * });
+   *
+   */
+  var rejectLimit = createFilterLimit(false);
+
+  /**
+   * @memberof async
+   * @namespace detect
+   * @param {Array|Object} collection
+   * @param {Function} iterator
+   * @param {Function} callback
+   * @param {*} [thisArg]
+   * @example
+   *
+   * // array
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.detect(array, iterator, function(err, res) {
+   *   console.log(res); // 1
+   *   console.log(order); // [1]
+   * });
+   *
+   * @example
+   *
+   * // array with index
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.detect(array, iterator, function(err, res) {
+   *   console.log(res); // 1
+   *   console.log(order); // [[1, 0]]
+   * });
+   *
+   * @example
+   *
+   * // array (not use error handling)
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.detect(array, iterator, function(res) {
+   *   console.log(res); // 1
+   *   console.log(order); // [1]
+   * });
+   *
+   * @example
+   *
+   * // array with index (not use error handling)
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.detect(array, iterator, function(res) {
+   *   console.log(res); // 1
+   *   console.log(order); // [[1, 0]]
+   * });
+   *
+   * @example
+   *
+   * // object
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.detect(object, iterator, function(err, res) {
+   *   console.log(res); // 1
+   *   console.log(order); // [1]
+   * });
+   *
+   * @example
+   *
+   * // object with key
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.detect(object, iterator, function(err, res) {
+   *   console.log(res); // 1
+   *   console.log(order); // [[1, 'a']]
+   * });
+   *
+   * @example
+   *
+   * // object (not use error handling)
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.detect(object, iterator, function(res) {
+   *   console.log(res); // 1
+   *   console.log(order); // [1]
+   * });
+   *
+   * @example
+   *
+   * // object with key (not use error handling)
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.detect(object, iterator, function(res) {
+   *   console.log(res); // 1
+   *   console.log(order); // [[1, 'a']]
+   * });
+   *
+   */
+  var detect = createDetect(arrayEachValue, baseEachValue, true);
+
+  /**
+   * @memberof async
+   * @namespace detectSeries
+   * @param {Array|Object} collection
+   * @param {Function} iterator
+   * @param {Function} callback
+   * @param {*} [thisArg]
+   * @example
+   *
+   * // array
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.detectSeries(array, iterator, function(err, res) {
+   *   console.log(res); // 1
+   *   console.log(order); // [1]
+   * });
+   *
+   * @example
+   *
+   * // array with index
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.detectSeries(array, iterator, function(err, res) {
+   *   console.log(res); // 1
+   *   console.log(order); // [[1, 0]]
+   * });
+   *
+   * @example
+   *
+   * // array (not use error handling)
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.detectSeries(array, iterator, function(res) {
+   *   console.log(res); // 1
+   *   console.log(order); // [1]
+   * });
+   *
+   * @example
+   *
+   * // array with index (not use error handling)
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.detectSeries(array, iterator, function(res) {
+   *   console.log(res); // 1
+   *   console.log(order); // [[1, 0]]
+   * });
+   *
+   * @example
+   *
+   * // object
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.detectSeries(object, iterator, function(err, res) {
+   *   console.log(res); // 1
+   *   console.log(order); // [1]
+   * });
+   *
+   * @example
+   *
+   * // object with key
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.detectSeries(object, iterator, function(err, res) {
+   *   console.log(res); // 1
+   *   console.log(order); // [[1, 'a']]
+   * });
+   *
+   * @example
+   *
+   * // object (not use error handling)
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.detectSeries(object, iterator, function(res) {
+   *   console.log(res); // 1
+   *   console.log(order); // [1]
+   * });
+   *
+   * @example
+   *
+   * // object with key (not use error handling)
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.detectSeries(object, iterator, function(res) {
+   *   console.log(res); // 1
+   *   console.log(order); // [[1, 'a']]
+   * });
+   *
+   */
+  var detectSeries = createDetectSeries(true);
+
+  /**
+   * @memberof async
+   * @namespace detectLimit
+   * @param {Array|Object} collection
+   * @param {number} limit - limit >= 1
+   * @param {Function} iterator
+   * @param {Function} callback
+   * @param {*} [thisArg]
+   * @example
+   *
+   * // array
+   * var order = [];
+   * var array = [1, 5, 3, 4, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.detectLimit(array, 2, iterator, function(err, res) {
+   *   console.log(res); // 1
+   *   console.log(order); // [1]
+   * });
+   *
+   * @example
+   *
+   * // array with index
+   * var order = [];
+   * var array = [1, 5, 3, 4, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.detectLimit(array, 2, iterator, function(err, res) {
+   *   console.log(res); // 1
+   *   console.log(order); // [[1, 0]]
+   * });
+   *
+   * @example
+   *
+   * // array (not use error handling)
+   * var order = [];
+   * var array = [1, 5, 3, 4, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.detectLimit(array, 2, iterator, function(res) {
+   *   console.log(res); // 1
+   *   console.log(order); // [1]
+   * });
+   *
+   * @example
+   *
+   * // array with index (not use error handling)
+   * var order = [];
+   * var array = [1, 5, 3, 4, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.detectLimit(array, 2, iterator, function(res) {
+   *   console.log(res); // 1
+   *   console.log(order); // [[1, 0]]
+   * });
+   *
+   * @example
+   *
+   * // object
+   * var order = [];
+   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.detectLimit(object, 2, iterator, function(err, res) {
+   *   console.log(res); // 1
+   *   console.log(order); // [1]
+   * });
+   *
+   * @example
+   *
+   * // object with key
+   * var order = [];
+   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.detectLimit(object, 2, iterator, function(err, res) {
+   *   console.log(res); // 1
+   *   console.log(order); // [[1, 'a']]
+   * });
+   *
+   * @example
+   *
+   * // object (not use error handling)
+   * var order = [];
+   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.detectLimit(object, 2, iterator, function(res) {
+   *   console.log(res); // 1
+   *   console.log(order); // [1]
+   * });
+   *
+   * @example
+   *
+   * // object with key (not use error handling)
+   * var order = [];
+   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.detectLimit(object, 2, iterator, function(res) {
+   *   console.log(res); // 1
+   *   console.log(order); // [[1, 'a']]
+   * });
+   *
+   */
+  var detectLimit = createDetectLimit(true);
+
+  /**
+   * @memberof async
+   * @namespace every
+   * @param {Array|Object} collection
+   * @param {Function} iterator
+   * @param {Function} callback
+   * @param {*} [thisArg]
+   * @example
+   *
+   * // array
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.every(array, iterator, function(err, res) {
+   *   console.log(res); // false
+   *   console.log(order); // [1, 2]
+   * });
+   *
+   * @example
+   *
+   * // array with index
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.every(array, iterator, function(err, res) {
+   *   console.log(res); // false
+   *   console.log(order); // [[1, 0], [2, 2]]
+   * });
+   *
+   * @example
+   *
+   * // array (not use error handling)
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.every(array, iterator, function(res) {
+   *   console.log(res); // false
+   *   console.log(order); // [1, 2]
+   * });
+   *
+   * @example
+   *
+   * // array with index (not use error handling)
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.every(array, iterator, function(res) {
+   *   console.log(res); // false
+   *   console.log(order); // [[1, 0], [2, 2]]
+   * });
+   *
+   * @example
+   *
+   * // object
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.every(object, iterator, function(err, res) {
+   *   console.log(res); // false
+   *   console.log(order); // [1, 2]
+   * });
+   *
+   * @example
+   *
+   * // object with key
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.every(object, iterator, function(err, res) {
+   *   console.log(res); // false
+   *   console.log(order); // [[1, 'a'], [2, 'c']]
+   * });
+   *
+   * @example
+   *
+   * // object (not use error handling)
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.every(object, iterator, function(res) {
+   *   console.log(res); // false
+   *   console.log(order); // [1, 2]
+   * });
+   *
+   * @example
+   *
+   * // object with key (not use error handling)
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.every(object, iterator, function(res) {
+   *   console.log(res); // false
+   *   console.log(order); // [[1, 'a'], [2, 'c']]
+   * });
+   *
+   */
+  var every = createEvery(arrayEachValue, baseEachValue);
+
+  /**
+   * @memberof async
+   * @namespace everySeries
+   * @param {Array|Object} collection
+   * @param {Function} iterator
+   * @param {Function} callback
+   * @param {*} [thisArg]
+   * @example
+   *
+   * // array
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.everySeries(array, iterator, function(err, res) {
+   *   console.log(res); // false
+   *   console.log(order); // [1, 3, 2]
+   * });
+   *
+   * @example
+   *
+   * // array with index
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.everySeries(array, iterator, function(err, res) {
+   *   console.log(res); // false
+   *   console.log(order); // [[1, 0], [3, 1], [2, 2]]
+   * });
+   *
+   * @example
+   *
+   * // array (not use error handling)
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.everySeries(array, iterator, function(res) {
+   *   console.log(res); // false
+   *   console.log(order); // [1, 3, 2]
+   * });
+   *
+   * @example
+   *
+   * // array with index (not use error handling)
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.everySeries(array, iterator, function(res) {
+   *   console.log(res); // false
+   *   console.log(order); // [[1, 0], [3, 1], [2, 2]]
+   * });
+   *
+   * @example
+   *
+   * // object
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.everySeries(object, iterator, function(err, res) {
+   *   console.log(res); // false
+   *   console.log(order); // [1, 3, 2]
+   * });
+   *
+   * @example
+   *
+   * // object with key
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.everySeries(object, iterator, function(err, res) {
+   *   console.log(res); // false
+   *   console.log(order); // [[1, 'a'], [3, 'b'] [2, 'c']]
+   * });
+   *
+   * @example
+   *
+   * // object (not use error handling)
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.every(object, iterator, function(res) {
+   *   console.log(res); // false
+   *   console.log(order); // [1, 2]
+   * });
+   *
+   * @example
+   *
+   * // object with key (not use error handling)
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.every(object, iterator, function(res) {
+   *   console.log(res); // false
+   *   console.log(order); // [[1, 'a'], [2, 'c']]
+   * });
+   *
+   */
+  var everySeries = createEverySeries();
+
+  /**
+   * @memberof async
+   * @namespace everyLimit
+   * @param {Array|Object} collection
+   * @param {number} limit - limit >= 1
+   * @param {Function} iterator
+   * @param {Function} callback
+   * @param {*} [thisArg]
+   * @example
+   *
+   * // array
+   * var order = [];
+   * var array = [1, 5, 3, 4, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.everyLimit(array, 2, iterator, function(err, res) {
+   *   console.log(res); // false
+   *   console.log(order); // [1, 3, 5, 2]
+   * });
+   *
+   * @example
+   *
+   * // array with index
+   * var order = [];
+   * var array = [1, 5, 3, 4, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.everyLimit(array, 2, iterator, function(err, res) {
+   *   console.log(res); // false
+   *   console.log(order); // [[1, 0], [3, 2], [5, 1], [2, 4]]
+   * });
+   *
+   * @example
+   *
+   * // array (not use error handling)
+   * var order = [];
+   * var array = [1, 5, 3, 4, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.everyLimit(array, 2, iterator, function(res) {
+   *   console.log(res); // false
+   *   console.log(order); // [1, 3, 5, 2]
+   * });
+   *
+   * @example
+   *
+   * // array with index (not use error handling)
+   * var order = [];
+   * var array = [1, 5, 3, 4, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.everyLimit(array, 2, iterator, function(res) {
+   *   console.log(res); // false
+   *   console.log(order); // [[1, 0], [3, 2], [5, 1], [2, 4]]
+   * });
+   *
+   * @example
+   *
+   * // object
+   * var order = [];
+   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.everyLimit(object, 2, iterator, function(err, res) {
+   *   console.log(res); // false
+   *   console.log(order); // [1, 3, 5, 2]
+   * });
+   *
+   * @example
+   *
+   * // object with key
+   * var order = [];
+   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.everyLimit(object, 2, iterator, function(err, res) {
+   *   console.log(res); // false
+   *   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e']]
+   * });
+   *
+   * @example
+   *
+   * // object (not use error handling)
+   * var order = [];
+   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.everyLimit(object, 2, iterator, function(res) {
+   *   console.log(res); // false
+   *   console.log(order); // [1, 3, 5, 2]
+   * });
+   *
+   * @example
+   *
+   * // object with key (not use error handling)
+   * var order = [];
+   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.everyLimit(object, 2, iterator, function(res) {
+   *   console.log(res); // false
+   *   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e']]
+   * });
+   *
+   */
+  var everyLimit = createEveryLimit();
+
+  /**
+   * @memberof async
+   * @namespace pick
+   * @param {Array|Object} collection
+   * @param {Function} iterator
+   * @param {Function} callback
+   * @param {*} [thisArg]
+   * @example
+   *
+   * // array
+   * var order = [];
+   * var array = [1, 3, 2, 4];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.pick(array, iterator, function(err, res) {
+   *   console.log(res); // { '0': 1, '1': 3 }
+   *   console.log(order); // [1, 2, 3, 4]
+   * });
+   *
+   * @example
+   *
+   * // array with index
+   * var order = [];
+   * var array = [1, 3, 2, 4];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.pick(array, iterator, function(err, res) {
+   *   console.log(res); // { '0': 1, '1': 3 }
+   *   console.log(order); // [[0, 1], [2, 2], [3, 1], [4, 3]]
+   * });
+   *
+   * @example
+   *
+   * // array (not use error handling)
+   * var order = [];
+   * var array = [1, 3, 2, 4];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.pick(array, iterator, function(res) {
+   *   console.log(res); // { '0': 1, '1': 3 }
+   *   console.log(order); // [1, 2, 3, 4]
+   * });
+   *
+   * @example
+   *
+   * // array with index (not use error handling)
+   * var order = [];
+   * var array = [1, 3, 2, 4];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.pick(array, iterator, function(res) {
+   *   console.log(res); // { '0': 1, '1': 3 }
+   *   console.log(order); // [[0, 1], [2, 2], [3, 1], [4, 3]]
+   * });
+   *
+   * @example
+   *
+   * // object
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2, d: 4 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.pick(object, iterator, function(err, res) {
+   *   console.log(res); // { a: 1, b: 3 }
+   *   console.log(order); // [1, 2, 3, 4]
+   * });
+   *
+   * @example
+   *
+   * // object with key
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2, d: 4 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(null, num % 2);
+   *   }, num * 10);
+   * };
+   * async.pick(object, iterator, function(err, res) {
+   *   console.log(res); // { a: 1, b: 3 }
+   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b'], [4, 'd']]
+   * });
+   *
+   * @example
+   *
+   * // object (not use error handling)
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2, d: 4 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.pick(object, iterator, function(res) {
+   *   console.log(res); // { a: 1, b: 3 }
+   *   console.log(order); // [1, 2, 3, 4]
+   * });
+   *
+   * @example
+   *
+   * // object with key (not use error handling)
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2, d: 4 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(num % 2);
+   *   }, num * 10);
+   * };
+   * async.pick(object, iterator, function(res) {
+   *   console.log(res); // { a: 1, b: 3 }
+   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b'], [4, 'd']]
+   * });
+   *
+   */
+  var pick = createPick(arrayEachIndexValue, baseEachKeyValue);
+
+  /**
+   * @memberof async
+   * @namespace transform
+   * @param {Array|Object} collection
+   * @param {Function} iterator
+   * @param {Function} callback
+   * @param {Array|Object} [accumulator]
+   * @param {*} [thisArg]
+   * @example
+   *
+   * // array
+   * var order = [];
+   * var collection = [1, 3, 2, 4];
+   * var iterator = function(result, num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     result.push(num)
+   *     done();
+   *   }, num * 10);
+   * };
+   * async.transform(collection, iterator, function(err, res) {
+   *   console.log(res); // [1, 2, 3, 4]
+   *   console.log(order); // [1, 2, 3, 4]
+   * });
+   *
+   * @example
+   *
+   * // array with index and accumulator
+   * var order = [];
+   * var collection = [1, 3, 2, 4];
+   * var iterator = function(result, num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     result[index] = num;
+   *     done();
+   *   }, num * 10);
+   * };
+   * async.transform(collection, iterator, function(err, res) {
+   *   console.log(res); // { '0': 1, '1': 3, '2': 2, '3': 4 }
+   *   console.log(order); // [[1, 0], [2, 2], [3, 1], [4, 3]]
+   * }, {});
+   *
+   * @example
+   *
+   * // object with accumulator
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2, d: 4 };
+   * var iterator = function(result, num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     result.push(num);
+   *     done();
+   *   }, num * 10);
+   * };
+   * async.transform(collection, iterator, function(err, res) {
+   *   console.log(res); // [1, 2, 3, 4]
+   *   console.log(order); // [1, 2, 3, 4]
+   * }, []);
+   *
+   * @example
+   *
+   * // object with key
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2, d: 4 };
+   * var iterator = function(result, num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     result[key] = num;
+   *     done();
+   *   }, num * 10);
+   * };
+   * async.transform(collection, iterator, function(err, res) {
+   *   console.log(res); //  { a: 1, b: 3, c: 2, d: 4 }
+   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b'], [4, 'd']]
+   * });
+   *
+   */
+  var transform = createTransform(arrayEachResult, baseEachResult);
+
+  /**
+   * @memberof async
+   * @namespace sortBy
+   * @param {Array|Object} collection
+   * @param {Function} iterator
+   * @param {Function} callback
+   * @param {*} [thisArg]
+   * @example
+   *
+   * // array
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num);
+   *   }, num * 10);
+   * };
+   * async.sortBy(array, iterator, function(err, res) {
+   *   console.log(res); // [1, 2, 3];
+   *   console.log(order); // [1, 2, 3]
+   * });
+   *
+   * @example
+   *
+   * // array with index
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(null, num);
+   *   }, num * 10);
+   * };
+   * async.sortBy(array, iterator, function(err, res) {
+   *   console.log(res); // [1, 2, 3]
+   *   console.log(order); // [[1, 0], [2, 2], [3, 1]]
+   * });
+   *
+   * @example
+   *
+   * // object
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num);
+   *   }, num * 10);
+   * };
+   * async.sortBy(object, iterator, function(err, res) {
+   *   console.log(res); // [1, 2, 3]
+   *   console.log(order); // [1, 2, 3]
+   * });
+   *
+   * @example
+   *
+   * // object with key
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(null, num);
+   *   }, num * 10);
+   * };
+   * async.sortBy(object, iterator, function(err, res) {
+   *   console.log(res); // [1, 2, 3]
+   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b']]
+   * });
+   *
+   */
+  var sortBy = createSortBy(arrayEachValue, baseEachValue);
+
+  /**
+   * @memberof async
+   * @namespace concat
+   * @param {Array|Object} collection
+   * @param {Function} iterator
+   * @param {Function} callback
+   * @param {*} [thisArg]
+   * @example
+   *
+   * // array
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, [num]);
+   *   }, num * 10);
+   * };
+   * async.concat(array, iterator, function(err, res) {
+   *   console.log(res); // [1, 2, 3];
+   *   console.log(order); // [1, 2, 3]
+   * });
+   *
+   * @example
+   *
+   * // array with index
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(null, [num]);
+   *   }, num * 10);
+   * };
+   * async.concat(array, iterator, function(err, res) {
+   *   console.log(res); // [1, 2, 3]
+   *   console.log(order); // [[1, 0], [2, 2], [3, 1]]
+   * });
+   *
+   * @example
+   *
+   * // object
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, [num]);
+   *   }, num * 10);
+   * };
+   * async.concat(object, iterator, function(err, res) {
+   *   console.log(res); // [1, 2, 3]
+   *   console.log(order); // [1, 2, 3]
+   * });
+   *
+   * @example
+   *
+   * // object with key
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(null, [num]);
+   *   }, num * 10);
+   * };
+   * async.concat(object, iterator, function(err, res) {
+   *   console.log(res); // [1, 2, 3]
+   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b']]
+   * });
+   *
+   */
+  var concat = createConcat(arrayEach, baseEach);
+
+  var parallel = createParallel(arrayEachFunc, baseEachFunc);
+
+  /**
+   * @version 1.3.0
    * @namespace async
    */
   var async = {
-    VERSION: '1.2.1',
+    VERSION: '1.3.0',
 
     // Collections
     each: each,
@@ -30,6 +2282,12 @@
     forEach: each,
     forEachSeries: eachSeries,
     forEachLimit: eachLimit,
+    eachOf: each,
+    eachOfSeries: eachSeries,
+    eachOfLimit: eachLimit,
+    forEachOf: each,
+    forEachOfSeries: eachSeries,
+    forEachOfLimit: eachLimit,
     map: map,
     mapSeries: mapSeries,
     mapLimit: mapLimit,
@@ -59,9 +2317,9 @@
     transform: transform,
     transformSeries: transformSeries,
     transformLimit: transformLimit,
-    sortBy: createSortBy(),
-    sortBySeries: createSortBy('series'),
-    sortByLimit: createSortBy('limit'),
+    sortBy: sortBy,
+    sortBySeries: sortBySeries,
+    sortByLimit: sortByLimit,
     some: some,
     someSeries: someSeries,
     someLimit: someLimit,
@@ -85,6 +2343,8 @@
     doWhilst: doWhilst,
     until: until,
     doUntil: doUntil,
+    during: during,
+    doDuring: doDuring,
     forever: forever,
     compose: compose,
     seq: seq,
@@ -107,6 +2367,10 @@
     // Utils
     memoize: memoize,
     unmemoize: unmemoize,
+    ensureAsync: ensureAsync,
+    constant: constant,
+    asyncify: asyncify,
+    wrapSync: asyncify,
     log: createLogger('log'),
     dir: createLogger('dir'),
     createLogger: createLogger,
@@ -131,6 +2395,22 @@
     root.neo_async = async;
   } else {
     root.async = async;
+  }
+
+  /**
+   * @private
+   */
+  function createImmediate() {
+    var delay = function delay(fn) {
+      setTimeout(fn, 0);
+    };
+    _setImmediate = typeof setImmediate === 'function' ? setImmediate : delay;
+    if (typeof process === 'object' && typeof process.nextTick === 'function') {
+      _nextTick = process.nextTick;
+      _safeNextTick = /^v0.10/.test(process.version) ? _setImmediate : _nextTick;
+    } else {
+      _nextTick = _safeNextTick = _setImmediate;
+    }
   }
 
   // base on lodash
@@ -221,6 +2501,289 @@
    */
   function _has(object, key) {
     return object.hasOwnProperty(key);
+  }
+
+  /**
+   * @private
+   */
+  function arrayEach(array, iterator, callback) {
+    var index = -1;
+    var length = array.length;
+
+    if (iterator.length === 3) {
+      while (++index < length) {
+        iterator(array[index], index, once(callback));
+      }
+    } else {
+      while (++index < length) {
+        iterator(array[index], once(callback));
+      }
+    }
+  }
+
+  /**
+   * @private
+   */
+  function baseEach(object, iterator, callback, keys) {
+    var key;
+    var index = -1;
+    var length = keys.length;
+
+    if (iterator.length === 3) {
+      while (++index < length) {
+        key = keys[index];
+        iterator(object[key], key, once(callback));
+      }
+    } else {
+      while (++index < length) {
+        iterator(object[keys[index]], once(callback));
+      }
+    }
+  }
+
+  /**
+   * @private
+   */
+  function arrayEachResult(array, result, iterator, callback) {
+    var index = -1;
+    var length = array.length;
+
+    if (iterator.length === 4) {
+      while (++index < length) {
+        iterator(result, array[index], index, once(callback));
+      }
+    } else {
+      while (++index < length) {
+        iterator(result, array[index], once(callback));
+      }
+    }
+  }
+
+  /**
+   * @private
+   */
+  function baseEachResult(object, result, iterator, callback, keys) {
+    var key;
+    var index = -1;
+    var length = keys.length;
+
+    if (iterator.length === 4) {
+      while (++index < length) {
+        key = keys[index];
+        iterator(result, object[key], key, once(callback));
+      }
+    } else {
+      while (++index < length) {
+        iterator(result, object[keys[index]], once(callback));
+      }
+    }
+  }
+
+  /**
+   * @private
+   */
+  function arrayEachFunc(array, createCallback, thisArg) {
+    var index = -1;
+    var length = array.length;
+
+    if (thisArg) {
+      while (++index < length) {
+        array[index].call(thisArg, createCallback(index));
+      }
+    } else {
+      while (++index < length) {
+        array[index](createCallback(index));
+      }
+    }
+  }
+
+  /**
+   * @private
+   */
+  function baseEachFunc(object, createCallback, keys, thisArg) {
+    var key;
+    var index = -1;
+    var length = keys.length;
+
+    if (thisArg) {
+      while (++index < length) {
+        key = keys[index];
+        object[key].call(thisArg, createCallback(key));
+      }
+    } else {
+      while (++index < length) {
+        key = keys[index];
+        object[key](createCallback(key));
+      }
+    }
+  }
+
+  /**
+   * @private
+   */
+  function arrayEachIndex(array, iterator, createCallback) {
+    var index = -1;
+    var length = array.length;
+
+    if (iterator.length === 3) {
+      while (++index < length) {
+        iterator(array[index], index, createCallback(index));
+      }
+    } else {
+      while (++index < length) {
+        iterator(array[index], createCallback(index));
+      }
+    }
+  }
+
+  /**
+   * @private
+   */
+  function baseEachIndex(object, iterator, createCallback, keys) {
+    var key;
+    var index = -1;
+    var length = keys.length;
+
+    if (iterator.length === 3) {
+      while (++index < length) {
+        key = keys[index];
+        iterator(object[key], key, createCallback(index));
+      }
+    } else {
+      while (++index < length) {
+        iterator(object[keys[index]], createCallback(index));
+      }
+    }
+  }
+
+  /**
+   * @private
+   */
+  function baseEachKey(object, iterator, createCallback, keys) {
+    var key;
+    var index = -1;
+    var length = keys.length;
+
+    if (iterator.length === 3) {
+      while (++index < length) {
+        key = keys[index];
+        iterator(object[key], key, createCallback(key));
+      }
+    } else {
+      while (++index < length) {
+        key = keys[index];
+        iterator(object[key], createCallback(key));
+      }
+    }
+  }
+
+  /**
+   * @private
+   */
+  function arrayEachValue(array, iterator, createCallback) {
+    var value;
+    var index = -1;
+    var length = array.length;
+
+    if (iterator.length === 3) {
+      while (++index < length) {
+        value = array[index];
+        iterator(value, index, createCallback(value));
+      }
+    } else {
+      while (++index < length) {
+        value = array[index];
+        iterator(value, createCallback(value));
+      }
+    }
+  }
+
+  /**
+   * @private
+   */
+  function baseEachValue(object, iterator, createCallback, keys) {
+    var key, value;
+    var index = -1;
+    var length = keys.length;
+
+    if (iterator.length === 3) {
+      while (++index < length) {
+        key = keys[index];
+        value = object[key];
+        iterator(value, key, createCallback(value));
+      }
+    } else {
+      while (++index < length) {
+        value = object[keys[index]];
+        iterator(value, createCallback(value));
+      }
+    }
+  }
+
+  /**
+   * @private
+   */
+  function arrayEachIndexValue(array, iterator, createCallback) {
+    var value;
+    var index = -1;
+    var length = array.length;
+
+    if (iterator.length === 3) {
+      while (++index < length) {
+        value = array[index];
+        iterator(value, index, createCallback(index, value));
+      }
+    } else {
+      while (++index < length) {
+        value = array[index];
+        iterator(value, createCallback(index, value));
+      }
+    }
+  }
+
+  /**
+   * @private
+   */
+  function baseEachIndexValue(object, iterator, createCallback, keys) {
+    var key, value;
+    var index = -1;
+    var length = keys.length;
+
+    if (iterator.length === 3) {
+      while (++index < length) {
+        key = keys[index];
+        value = object[key];
+        iterator(value, key, createCallback(index, value));
+      }
+    } else {
+      while (++index < length) {
+        value = object[keys[index]];
+        iterator(value, createCallback(index, value));
+      }
+    }
+  }
+
+  /**
+   * @private
+   */
+  function baseEachKeyValue(object, iterator, createCallback, keys) {
+    var key, value;
+    var index = -1;
+    var length = keys.length;
+
+    if (iterator.length === 3) {
+      while (++index < length) {
+        key = keys[index];
+        value = object[key];
+        iterator(value, key, createCallback(key, value));
+      }
+    } else {
+      while (++index < length) {
+        key = keys[index];
+        value = object[key];
+        iterator(value, createCallback(key, value));
+      }
+    }
   }
 
   /**
@@ -366,336 +2929,11 @@
 
   /**
    * @private
-   * @param {Array|Object} collection
-   * @param {Function} iterator
-   * @param {Function} callback
-   * @param {*} thisArg
-   * @param {boolean} bool
+   * @param {Object} a
+   * @param {Object} b
    */
-  function _commonFilter(collection, iterator, callback, thisArg, bool) {
-    callback = callback || noop;
-    var size, result;
-    var started = 0;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
-    var enableError = callback.length === 2;
-    var createCallback = enableError ? createFilterCallbackWithError : createFilterCallback;
-
-    if (Array.isArray(collection)) {
-      size = collection.length;
-      if (size === 0) {
-        return enableError ? callback(undefined, []) : callback([]);
-      }
-      result = Array(size);
-      _arrayEach(collection, iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator);
-    } else if (collection && typeof collection === 'object') {
-      var keys = Object.keys(collection);
-      size = keys.length;
-      if (size === 0) {
-        return enableError ? callback(undefined, []) : callback([]);
-      }
-      result = Array(size);
-      _objectEach(collection, iterator.length === 3 ? objectIteratorWithKey : objectIterator, keys);
-    } else {
-      return enableError ? callback(undefined, []) : callback([]);
-    }
-
-    function arrayIterator(value, index) {
-      _iterator(value, createCallback(index, value));
-    }
-
-    function arrayIteratorWithIndex(value, index) {
-      _iterator(value, index, createCallback(index, value));
-    }
-
-    function objectIterator(value) {
-      _iterator(value, createCallback(started++, value));
-    }
-
-    function objectIteratorWithKey(value, key) {
-      _iterator(value, key, createCallback(started++, value));
-    }
-
-    function createFilterCallback(index, value) {
-      var called = false;
-      return function done(res) {
-        if (called) {
-          throw new Error('Callback was already called.');
-        }
-        called = true;
-
-        if (!!res === bool) {
-          result[index] = value;
-        }
-        if (--size === 0) {
-          callback(_compact(result));
-        }
-      };
-    }
-
-    function createFilterCallbackWithError(index, value) {
-      var called = false;
-      return function done(err, res) {
-        if (called) {
-          throw new Error('Callback was already called.');
-        }
-        called = true;
-
-        if (err) {
-          callback(err, _compact(result));
-          callback = noop;
-          return;
-        }
-        if (!!res === bool) {
-          result[index] = value;
-        }
-        if (--size === 0) {
-          callback(undefined, _compact(result));
-        }
-      };
-    }
-  }
-
-  /**
-   * @private
-   * @param {Array|Object} collection
-   * @param {Function} iterator
-   * @param {Function} callback
-   * @param {*} thisArg
-   * @param {boolean} bool
-   */
-  function _commonFilterSeries(collection, iterator, callback, thisArg, bool) {
-    callback = callback || noop;
-    var size, key, value, keys, iterate, result, called;
-    var completed = 0;
-    var resultCount = -1;
-    var enableError = callback.length === 2;
-    var done = enableError ? filterCallbackWithError : filterCallback;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
-
-    if (Array.isArray(collection)) {
-      size = collection.length;
-      if (size === 0) {
-        return enableError ? callback(undefined, []) : callback([]);
-      }
-      iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
-    } else if (collection && typeof collection === 'object') {
-      keys = Object.keys(collection);
-      size = keys.length;
-      if (size === 0) {
-        return enableError ? callback(undefined, []) : callback([]);
-      }
-      iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
-    } else {
-      return enableError ? callback(undefined, []) : callback([]);
-    }
-    result = Array(size);
-    iterate();
-
-    function arrayIterator() {
-      called = false;
-      value = collection[completed];
-      _iterator(value, done);
-    }
-
-    function arrayIteratorWithIndex() {
-      called = false;
-      value = collection[completed];
-      _iterator(value, completed, done);
-    }
-
-    function objectIterator() {
-      called = false;
-      key = keys[completed];
-      value = collection[key];
-      _iterator(value, done);
-    }
-
-    function objectIteratorWithKey() {
-      called = false;
-      key = keys[completed];
-      value = collection[key];
-      _iterator(value, key, done);
-    }
-
-    function filterCallback(res) {
-      if (called) {
-        throw new Error('Callback was already called.');
-      }
-      called = true;
-
-      if (!!res === bool) {
-        result[++resultCount] = value;
-      }
-      if (++completed === size) {
-        return callback(_compact(result));
-      }
-      iterate();
-    }
-
-    function filterCallbackWithError(err, res) {
-      if (called) {
-        throw new Error('Callback was already called.');
-      }
-      called = true;
-
-      if (err) {
-        callback(err, _compact(result));
-        callback = noop;
-        return;
-      }
-      if (!!res === bool) {
-        result[++resultCount] = value;
-      }
-      if (++completed === size) {
-        return callback(undefined, _compact(result));
-      }
-      iterate();
-    }
-  }
-
-  /**
-   * @private
-   */
-  function createImmediate() {
-    if (!objectTypes[typeof process] || !process.nextTick) {
-      if (objectTypes[typeof setImmediate]) {
-        _nextTick = setImmediate;
-      } else {
-        _nextTick = function(func) {
-          setTimeout(func, 0);
-        };
-      }
-      _setImmediate = _nextTick;
-      _safeNextTick = _safeNextTick;
-    } else {
-      _nextTick = process.nextTick;
-      if (objectTypes[typeof setImmediate]) {
-        _setImmediate = setImmediate;
-      } else {
-        _setImmediate = _nextTick;
-      }
-      _safeNextTick = /^v0.10/.test(process.version) ? setImmediate : _nextTick;
-    }
-  }
-
-  /**
-   * @private
-   * @param {Array|Object} collection
-   * @param {number} limit - limit >= 1
-   * @param {Function} iterator
-   * @param {Function} callback
-   * @param {*} [thisArg]
-   */
-  function _commonFilterLimit(collection, limit, iterator, callback, thisArg, bool) {
-    callback = callback || noop;
-    var enableError = callback.length === 2;
-    if (isNaN(limit) || limit < 1) {
-      return enableError ? callback(undefined, []) : callback([]);
-    }
-
-    var size, keys, iterate, result;
-    var started = 0;
-    var completed = 0;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
-    var createCallback = enableError ? filterCallbackWithError : filterCallback;
-
-    if (Array.isArray(collection)) {
-      size = collection.length;
-      if (size === 0) {
-        return enableError ? callback(undefined, []) : callback([]);
-      }
-      iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
-    } else if (collection && typeof collection === 'object') {
-      keys = Object.keys(collection);
-      size = keys.length;
-      if (size === 0) {
-        return enableError ? callback(undefined, []) : callback([]);
-      }
-      iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
-    } else {
-      return enableError ? callback(undefined, []) : callback([]);
-    }
-
-    result = Array(size);
-    _times(limit > size ? size : limit, iterate);
-
-    function arrayIterator() {
-      var index = started++;
-      if (index >= size) {
-        return;
-      }
-      var value = collection[index];
-      _iterator(value, createCallback(value, index));
-    }
-
-    function arrayIteratorWithIndex() {
-      var index = started++;
-      if (index >= size) {
-        return;
-      }
-      var value = collection[index];
-      _iterator(value, index, createCallback(value, index));
-    }
-
-    function objectIterator() {
-      var index = started++;
-      if (index >= size) {
-        return;
-      }
-      var value = collection[keys[index]];
-      _iterator(value, createCallback(value, index));
-    }
-
-    function objectIteratorWithKey() {
-      var index = started++;
-      if (index >= size) {
-        return;
-      }
-      var key = keys[index];
-      var value = collection[key];
-      _iterator(value, key, createCallback(value, index));
-    }
-
-    function filterCallback(value, index) {
-      var called = false;
-      return function(res) {
-        if (called) {
-          throw new Error('Callback was already called.');
-        }
-        called = true;
-
-        if (!!res === bool) {
-          result[index] = value;
-        }
-        if (++completed === size) {
-          callback(_compact(result));
-        }
-        iterate();
-      };
-    }
-
-    function filterCallbackWithError(value, index) {
-      var called = false;
-      return function(err, res) {
-        if (called) {
-          throw new Error('Callback was already called.');
-        }
-        called = true;
-
-        if (err) {
-          callback(err, _compact(result));
-          callback = noop;
-          return;
-        }
-        if (!!res === bool) {
-          result[index] = value;
-        }
-        if (++completed === size) {
-          return callback(undefined, _compact(result));
-        }
-        iterate();
-      };
-    }
+  function sortIterator(a, b) {
+    return a.criteria - b.criteria;
   }
 
   /**
@@ -703,13 +2941,12 @@
    * @param {Function} func
    */
   function once(func) {
-    var called = false;
     return function(err, res) {
-      if (called) {
-        throw new Error('Callback was already called.');
+      if (func === null) {
+        throwError();
       }
-      called = true;
       func(err, res);
+      func = null;
     };
   }
 
@@ -928,124 +3165,404 @@
   }
 
   /**
-   * @memberof async
-   * @namespace each
+   * @private
+   * @param {Function} arrayEach
+   * @param {Function} baseEach
+   */
+  function createEach(arrayEach, baseEach) {
+
+    return function each(collection, iterator, callback, thisArg) {
+      callback = callback || noop;
+      var size;
+      var completed = 0;
+      var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
+
+      if (Array.isArray(collection)) {
+        size = collection.length;
+        arrayEach(collection, _iterator, done);
+      } else if (collection && typeof collection === 'object') {
+        var keys = Object.keys(collection);
+        size = keys.length;
+        baseEach(collection, _iterator, done, keys);
+      }
+      if (!size) {
+        callback();
+      }
+
+      function done(err, bool) {
+        if (err) {
+          callback(err);
+          callback = noop;
+        } else if (++completed === size) {
+          callback();
+        } else if (bool === false) {
+          callback();
+          callback = noop;
+        }
+      }
+    };
+  }
+
+  /**
+   * @private
+   * @param {Funciton} arrayEach
+   * @param {Funciton} baseEach
+   */
+  function createMap(arrayEach, baseEach) {
+
+    return function map(collection, iterator, callback, thisArg) {
+      callback = callback || noop;
+      var size, result;
+      var completed = 0;
+      var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
+
+      if (Array.isArray(collection)) {
+        size = collection.length;
+        result = Array(size);
+        arrayEach(collection, _iterator, createCallback);
+      } else if (collection && typeof collection === 'object') {
+        var keys = Object.keys(collection);
+        size = keys.length;
+        result = Array(size);
+        baseEach(collection, _iterator, createCallback, keys);
+      }
+      if (!size) {
+        callback(undefined, []);
+      }
+
+      function createCallback(index) {
+        return function done(err, res) {
+          if (index === null) {
+            throwError();
+          }
+          result[index] = res;
+          index = null;
+          if (err) {
+            callback(err, _arrayClone(result));
+            callback = noop;
+          } else if (++completed === size) {
+            callback(undefined, result);
+            callback = throwError;
+          }
+        };
+      }
+    };
+  }
+
+  /**
+   * @private
+   * @param {Funciton} arrayEach
+   * @param {Funciton} baseEach
+   */
+  function createMapValues(arrayEach, baseEach) {
+
+    return function mapValues(collection, iterator, callback, thisArg) {
+      callback = callback || noop;
+      var size;
+      var completed = 0;
+      var result = {};
+      var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
+
+      if (Array.isArray(collection)) {
+        size = collection.length;
+        arrayEach(collection, _iterator, createCallback);
+      } else if (collection && typeof collection === 'object') {
+        var keys = Object.keys(collection);
+        size = keys.length;
+        baseEach(collection, _iterator, createCallback, keys);
+      }
+      if (!size) {
+        callback(undefined, result);
+      }
+
+      function createCallback(key) {
+        return function(err, res) {
+          if (key === null) {
+            throwError();
+          }
+          result[key] = res;
+          key = null;
+          if (err) {
+            callback(err, _objectClone(result));
+            callback = noop;
+          } else if (++completed === size) {
+            callback(undefined, result);
+            callback = throwError;
+          }
+        };
+      }
+    };
+  }
+
+  /**
+   * @private
    * @param {Array|Object} collection
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
-   * @example
-   *
-   * // array
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done();
-   *   }, num * 10);
-   * };
-   * async.each(array, iterator, function(err, res) {
-   *   console.log(res); // undefined
-   *   console.log(order); // [1, 2, 3]
-   * });
-   *
-   * @example
-   *
-   * // array with index
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done();
-   *   }, num * 10);
-   * };
-   * async.each(array, iterator, function(err, res) {
-   *   console.log(res); // undefined
-   *   console.log(order); // [[1, 0], [2, 2], [3, 1]]
-   * });
-   *
-   * @example
-   *
-   * // object
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done();
-   *   }, num * 10);
-   * };
-   * async.each(object, iterator, function(err, res) {
-   *   console.log(res); // undefined
-   *   console.log(order); // [1, 2, 3]
-   * });
-   *
-   * @example
-   *
-   * // object with key
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done();
-   *   }, num * 10);
-   * };
-   * async.each(object, iterator, function(err, res) {
-   *   console.log(res); // undefined
-   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b']]
-   * });
-   *
+   * @param {*} thisArg
+   * @param {boolean} bool
    */
-  function each(collection, iterator, callback, thisArg) {
-    callback = callback || noop;
-    var size;
-    var completed = 0;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
+  function createFilter(arrayEach, baseEach, bool) {
 
-    if (Array.isArray(collection)) {
-      size = collection.length;
-      if (size === 0) {
-        return callback();
-      }
-      _arrayEach(collection, iterator.length === 3 ? collectionIteratorWithKey : collectionIterator);
-    } else if (collection && typeof collection === 'object') {
-      var keys = Object.keys(collection);
-      size = keys.length;
-      if (size === 0) {
-        return callback();
-      }
-      _objectEach(collection, iterator.length === 3 ? collectionIteratorWithKey : collectionIterator);
-    } else {
-      callback();
-    }
+    return function commonFilter(collection, iterator, callback, thisArg) {
+      callback = callback || noop;
+      var size, result;
+      var completed = 0;
+      var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
+      var enableError = callback.length === 2;
+      var createCallback = enableError ? createFilterCallbackWithError : createFilterCallback;
 
-    function collectionIterator(value) {
-      _iterator(value, once(done));
-    }
+      if (Array.isArray(collection)) {
+        size = collection.length;
+        result = Array(size);
+        arrayEach(collection, _iterator, createCallback);
+      } else if (collection && typeof collection === 'object') {
+        var keys = Object.keys(collection);
+        size = keys.length;
+        result = Array(size);
+        baseEach(collection, _iterator, createCallback, keys);
+      }
+      if (!size) {
+        return enableError ? callback(undefined, []) : callback([]);
+      }
 
-    function collectionIteratorWithKey(value, key) {
-      _iterator(value, key, once(done));
-    }
+      function createFilterCallback(index, value) {
+        return function done(res) {
+          if (index === null) {
+            throwError();
+          }
+          if (!!res === bool) {
+            result[index] = value;
+          }
+          index = null;
+          if (++completed === size) {
+            callback(_compact(result));
+          }
+        };
+      }
 
-    function done(err, bool) {
-      if (err) {
-        callback(err);
-        callback = noop;
-        return;
+      function createFilterCallbackWithError(index, value) {
+        return function done(err, res) {
+          if (index === null) {
+            throwError();
+          }
+          if (err) {
+            callback(err, _compact(result));
+            callback = noop;
+            index = null;
+            return;
+          }
+          if (!!res === bool) {
+            result[index] = value;
+          }
+          index = null;
+          if (--size === 0) {
+            callback(undefined, _compact(result));
+          }
+        };
       }
-      if (++completed === size) {
-        callback();
-        callback = noop;
-        return;
+    };
+  }
+
+  /**
+   * @private
+   * @param {boolean} bool
+   */
+  function createFilterSeries(bool) {
+
+    return function commonFilterSeries(collection, iterator, callback, thisArg) {
+      callback = callback || noop;
+      var size, key, value, keys, iterate, result;
+      var sync = true;
+      var completed = 0;
+      var resultCount = -1;
+      var enableError = callback.length === 2;
+      var done = enableError ? filterCallbackWithError : filterCallback;
+      var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
+
+      if (Array.isArray(collection)) {
+        size = collection.length;
+        iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
+      } else if (collection && typeof collection === 'object') {
+        keys = Object.keys(collection);
+        size = keys.length;
+        iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
       }
-      if (bool === false) {
-        callback();
-        callback = noop;
+      if (!size) {
+        return enableError ? callback(undefined, []) : callback([]);
       }
-    }
+      result = Array(size);
+      iterate();
+      sync = false;
+
+      function arrayIterator() {
+        value = collection[completed];
+        _iterator(value, done);
+      }
+
+      function arrayIteratorWithIndex() {
+        value = collection[completed];
+        _iterator(value, completed, done);
+      }
+
+      function objectIterator() {
+        key = keys[completed];
+        value = collection[key];
+        _iterator(value, done);
+      }
+
+      function objectIteratorWithKey() {
+        key = keys[completed];
+        value = collection[key];
+        _iterator(value, key, done);
+      }
+
+      function filterCallback(res) {
+        if (!!res === bool) {
+          result[++resultCount] = value;
+        }
+        if (++completed >= size) {
+          callback(_compact(result));
+          callback = throwError;
+        } else if (sync) {
+          async.nextTick(iterate);
+        } else {
+          iterate();
+        }
+      }
+
+      function filterCallbackWithError(err, res) {
+        if (err) {
+          callback(err, _compact(result));
+          callback = throwError;
+          return;
+        }
+        if (!!res === bool) {
+          result[++resultCount] = value;
+        }
+        if (++completed >= size) {
+          callback(undefined, _compact(result));
+          callback = throwError;
+        } else if (sync) {
+          async.nextTick(iterate);
+        } else {
+          iterate();
+        }
+      }
+    };
+  }
+
+  /**
+   * @private
+   * @param {boolean} obool
+   */
+  function createFilterLimit(bool) {
+
+    return function _commonFilterLimit(collection, limit, iterator, callback, thisArg) {
+      callback = callback || noop;
+      var size, keys, iterate, result;
+      var sync = true;
+      var started = 0;
+      var completed = 0;
+      var enableError = callback.length === 2;
+      var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
+      var createCallback = enableError ? filterCallbackWithError : filterCallback;
+
+      if (Array.isArray(collection)) {
+        size = collection.length;
+        iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
+      } else if (collection && typeof collection === 'object') {
+        keys = Object.keys(collection);
+        size = keys.length;
+        iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
+      }
+      if (!size || isNaN(limit) || limit < 1) {
+        return enableError ? callback(undefined, []) : callback([]);
+      }
+      result = Array(size);
+      _times(limit > size ? size : limit, iterate);
+      sync = false;
+
+      function arrayIterator() {
+        var index = started++;
+        if (index < size) {
+          var value = collection[index];
+          _iterator(value, createCallback(value, index));
+        }
+      }
+
+      function arrayIteratorWithIndex() {
+        var index = started++;
+        if (index < size) {
+          var value = collection[index];
+          _iterator(value, index, createCallback(value, index));
+        }
+      }
+
+      function objectIterator() {
+        var index = started++;
+        if (index < size) {
+          var value = collection[keys[index]];
+          _iterator(value, createCallback(value, index));
+        }
+      }
+
+      function objectIteratorWithKey() {
+        var index = started++;
+        if (index < size) {
+          var key = keys[index];
+          var value = collection[key];
+          _iterator(value, key, createCallback(value, index));
+        }
+      }
+
+      function filterCallback(value, index) {
+        return function(res) {
+          if (index === null) {
+            throwError();
+          }
+          if (!!res === bool) {
+            result[index] = value;
+          }
+          index = null;
+          if (++completed >= size) {
+            callback(_compact(result));
+            callback = throwError;
+          } else if (sync) {
+            async.nextTick(iterate);
+          } else {
+            iterate();
+          }
+        };
+      }
+
+      function filterCallbackWithError(value, index) {
+        return function(err, res) {
+          if (index === null) {
+            throwError();
+          }
+          if (err) {
+            callback(err, _compact(result));
+            callback = noop;
+            iterate = noop;
+            index = null;
+            return;
+          }
+          if (!!res === bool) {
+            result[index] = value;
+          }
+          index = null;
+          if (++completed === size) {
+            callback(undefined, _compact(result));
+            callback = throwError;
+          } else if (sync) {
+            async.nextTick(iterate);
+          } else {
+            iterate();
+          }
+        };
+      }
+    };
   }
 
   /**
@@ -1122,65 +3639,57 @@
    */
   function eachSeries(collection, iterator, callback, thisArg) {
     callback = callback || noop;
-    var size, keys, iterate, called;
+    var size, keys, iterate;
+    var sync = true;
     var completed = 0;
     var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
     if (Array.isArray(collection)) {
       size = collection.length;
-      if (size === 0) {
-        return callback();
-      }
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
     } else if (collection && typeof collection === 'object') {
       keys = Object.keys(collection);
       size = keys.length;
-      if (size === 0) {
-        return callback();
-      }
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
-    } else {
+    }
+    if (!size) {
       return callback();
     }
-
     iterate();
+    sync = false;
 
     function arrayIterator() {
-      called = false;
       _iterator(collection[completed], done);
     }
 
     function arrayIteratorWithIndex() {
-      called = false;
       _iterator(collection[completed], completed, done);
     }
 
     function objectIterator() {
-      called = false;
       _iterator(collection[keys[completed]], done);
     }
 
     function objectIteratorWithKey() {
-      called = false;
       var key = keys[completed];
       _iterator(collection[key], key, done);
     }
 
     function done(err, bool) {
-      if (called) {
-        throw new Error('Callback was already called.');
-      }
-      called = true;
       if (err) {
-        return callback(err);
+        callback(err);
+      } else if (++completed >= size) {
+        callback();
+        callback = throwError;
+      } else if (bool === false) {
+        callback();
+      } else if (sync) {
+        async.nextTick(iterate);
+      } else {
+        sync = true;
+        iterate();
       }
-      if (++completed === size) {
-        return callback();
-      }
-      if (bool === false) {
-        return callback();
-      }
-      iterate();
+      sync = false;
     }
   }
 
@@ -1259,219 +3768,73 @@
    */
   function eachLimit(collection, limit, iterator, callback, thisArg) {
     callback = callback || noop;
-    if (isNaN(limit) || limit < 1) {
-      return callback();
-    }
     var size, keys, iterate;
+    var sync = false;
     var started = 0;
     var completed = 0;
     var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
     if (Array.isArray(collection)) {
       size = collection.length;
-      if (size === 0) {
-        return callback();
-      }
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
     } else if (collection && typeof collection === 'object') {
       keys = Object.keys(collection);
       size = keys.length;
-      if (size === 0) {
-        return callback();
-      }
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
     } else {
       return callback();
     }
-
+    if (!size || isNaN(limit) || limit < 1) {
+      return callback();
+    }
     _times(limit > size ? size : limit, iterate);
+    sync = true;
 
     function arrayIterator() {
-      var index = started++;
-      if (index >= size) {
-        return;
+      if (started < size) {
+        _iterator(collection[started++], done);
       }
-      _iterator(collection[index], once(done));
     }
 
     function arrayIteratorWithIndex() {
       var index = started++;
-      if (index >= size) {
-        return;
+      if (index < size) {
+        _iterator(collection[index], index, done);
       }
-      _iterator(collection[index], index, once(done));
     }
 
     function objectIterator() {
-      var index = started++;
-      if (index >= size) {
-        return;
+      if (started < size) {
+        _iterator(collection[keys[started++]], done);
       }
-      _iterator(collection[keys[index]], once(done));
     }
 
     function objectIteratorWithKey() {
       var index = started++;
-      if (index >= size) {
-        return;
+      if (index < size) {
+        var key = keys[index];
+        _iterator(collection[key], key, done);
       }
-      var key = keys[index];
-      _iterator(collection[key], key, once(done));
     }
 
     function done(err, bool) {
       if (err) {
         callback(err);
         callback = noop;
-        return;
-      }
-      if (++completed === size) {
+        iterate = noop;
+      } else if (++completed >= size) {
+        callback();
+        callback = throwError;
+      } else if (bool === false) {
         callback();
         callback = noop;
-        return;
+      } else if (sync) {
+        async.nextTick(iterate);
+      } else {
+        sync = true;
+        iterate();
       }
-      if (bool === false) {
-        callback();
-        callback = noop;
-        return;
-      }
-      iterate();
-    }
-  }
-
-  /**
-   * @memberof async
-   * @namespace map
-   * @param {Array|Object} collection
-   * @param {Function} iterator
-   * @param {Function} callback
-   * @param {*} [thisArg]
-   * @example
-   *
-   * // array
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num);
-   *   }, num * 10);
-   * };
-   * async.map(array, iterator, function(err, res) {
-   *   console.log(res); // [1, 3, 2];
-   *   console.log(order); // [1, 2, 3]
-   * });
-   *
-   * @example
-   *
-   * // array with index
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(null, num);
-   *   }, num * 10);
-   * };
-   * async.map(array, iterator, function(err, res) {
-   *   console.log(res); // [1, 3, 2]
-   *   console.log(order); // [[1, 0], [2, 2], [3, 1]]
-   * });
-   *
-   * @example
-   *
-   * // object
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num);
-   *   }, num * 10);
-   * };
-   * async.map(object, iterator, function(err, res) {
-   *   console.log(res); // [1, 3, 2]
-   *   console.log(order); // [1, 2, 3]
-   * });
-   *
-   * @example
-   *
-   * // object with key
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(null, num);
-   *   }, num * 10);
-   * };
-   * async.map(object, iterator, function(err, res) {
-   *   console.log(res); // [1, 3, 2]
-   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b']]
-   * });
-   *
-   */
-  function map(collection, iterator, callback, thisArg) {
-    callback = callback || noop;
-    var size, result;
-    var started = 0;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
-
-    if (Array.isArray(collection)) {
-      size = collection.length;
-      if (size === 0) {
-        return callback(undefined, []);
-      }
-      result = Array(size);
-      _arrayEach(collection, iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator);
-    } else if (collection && typeof collection === 'object') {
-      var keys = Object.keys(collection);
-      size = keys.length;
-      if (size === 0) {
-        return callback(undefined, []);
-      }
-      result = Array(size);
-      _objectEach(collection, iterator.length === 3 ? objectIteratorWithKey : objectIterator, keys);
-    } else {
-      callback(undefined, []);
-    }
-
-    function arrayIterator(value, index) {
-      _iterator(value, createCallback(index));
-    }
-
-    function arrayIteratorWithIndex(value, index) {
-      _iterator(value, index, createCallback(index));
-    }
-
-    function objectIterator(value) {
-      _iterator(value, createCallback(started++));
-    }
-
-    function objectIteratorWithKey(value, key) {
-      _iterator(value, key, createCallback(started++));
-    }
-
-    function createCallback(index) {
-      var called = false;
-      return function done(err, res) {
-        if (called) {
-          throw new Error('Callback was already called.');
-        }
-        called = true;
-        result[index] = res;
-
-        if (err) {
-          callback(err, _arrayClone(result));
-          callback = noop;
-          return;
-        }
-        if (--size === 0) {
-          callback(undefined, result);
-          callback = noop;
-          return;
-        }
-      };
+      sync = false;
     }
   }
 
@@ -1549,69 +3912,58 @@
    */
   function mapSeries(collection, iterator, callback, thisArg) {
     callback = callback || noop;
-    var size, keys, result, iterate, called;
+    var size, keys, result, iterate;
+    var sync = true;
     var completed = 0;
     var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
     if (Array.isArray(collection)) {
       size = collection.length;
-      if (size === 0) {
-        return callback(undefined, []);
-      }
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
     } else if (collection && typeof collection === 'object') {
       keys = Object.keys(collection);
       size = keys.length;
-      if (size === 0) {
-        return callback(undefined, []);
-      }
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
-    } else {
+    }
+    if (!size) {
       return callback(undefined, []);
     }
-
     result = Array(size);
     iterate();
+    sync = false;
 
     function arrayIterator() {
-      called = false;
       _iterator(collection[completed], done);
     }
 
     function arrayIteratorWithIndex() {
-      called = false;
       _iterator(collection[completed], completed, done);
     }
 
     function objectIterator() {
-      called = false;
       _iterator(collection[keys[completed]], done);
     }
 
     function objectIteratorWithKey() {
-      called = false;
       var key = keys[completed];
       _iterator(collection[key], key, done);
     }
 
     function done(err, res) {
-      if (called) {
-        throw new Error('Callback was already called.');
-      }
-      called = true;
       result[completed] = res;
-
       if (err) {
         callback(err, _arrayClone(result));
-        callback = noop;
-        return;
-      }
-      if (++completed === size) {
+        callback = throwError;
+      } else if (++completed >= size) {
         callback(undefined, result);
-        callback = noop;
-        return;
+        callback = throwError;
+      } else if (sync) {
+        async.nextTick(iterate);
+      } else {
+        sync = true;
+        iterate();
       }
-      iterate();
+      sync = false;
     }
   }
 
@@ -1690,221 +4042,77 @@
    */
   function mapLimit(collection, limit, iterator, callback, thisArg) {
     callback = callback || noop;
-    if (isNaN(limit) || limit < 1) {
-      return callback(undefined, []);
-    }
     var size, keys, result, iterate;
+    var sync = true;
     var started = 0;
     var completed = 0;
     var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
     if (Array.isArray(collection)) {
       size = collection.length;
-      if (size === 0) {
-        return callback(undefined, []);
-      }
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
     } else if (collection && typeof collection === 'object') {
       keys = Object.keys(collection);
       size = keys.length;
-      if (size === 0) {
-        return callback(undefined, []);
-      }
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
-    } else {
+    }
+    if (!size || isNaN(limit) || limit < 1) {
       return callback(undefined, []);
     }
-
     result = Array(size);
     _times(limit > size ? size : limit, iterate);
+    sync = false;
 
     function arrayIterator() {
       var index = started++;
-      if (index >= size) {
-        return;
+      if (index < size) {
+        _iterator(collection[index], createCallback(index));
       }
-      _iterator(collection[index], createCallback(index));
     }
 
     function arrayIteratorWithIndex() {
       var index = started++;
-      if (index >= size) {
-        return;
+      if (index < size) {
+        _iterator(collection[index], index, createCallback(index));
       }
-      _iterator(collection[index], index, createCallback(index));
     }
 
     function objectIterator() {
       var index = started++;
-      if (index >= size) {
-        return;
+      if (index < size) {
+        _iterator(collection[keys[index]], createCallback(index));
       }
-      _iterator(collection[keys[index]], createCallback(index));
     }
 
     function objectIteratorWithKey() {
       var index = started++;
-      if (index >= size) {
-        return;
+      if (index < size) {
+        var key = keys[index];
+        _iterator(collection[key], key, createCallback(index));
       }
-      var key = keys[index];
-      _iterator(collection[key], key, createCallback(index));
     }
 
     function createCallback(index) {
-      var called = false;
       return function(err, res) {
-        if (called) {
-          throw new Error('Callback was already called.');
+        if (index === null) {
+          throwError();
         }
-        called = true;
         result[index] = res;
-
+        index = null;
         if (err) {
           callback(err, _arrayClone(result));
           callback = noop;
-          return;
-        }
-        if (++completed === size) {
+          iterate = noop;
+        } else if (++completed >= size) {
           callback(undefined, result);
-          callback = noop;
-          return;
+          callback = throwError;
+        } else if (sync) {
+          async.nextTick(iterate);
+        } else {
+          sync = true;
+          iterate();
         }
-        iterate();
-      };
-    }
-  }
-
-  /**
-   * @memberof async
-   * @namespace mapValues
-   * @param {Array|Object} collection
-   * @param {Function} iterator
-   * @param {Function} callback
-   * @param {*} [thisArg]
-   * @example
-   *
-   * // array
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num);
-   *   }, num * 10);
-   * };
-   * async.mapValues(array, iterator, function(err, res) {
-   *   console.log(res); // { '0': 1, '1': 3, '2': 2 }
-   *   console.log(order); // [1, 2, 3]
-   * });
-   *
-   * @example
-   *
-   * // array with index
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(null, num);
-   *   }, num * 10);
-   * };
-   * async.mapValues(array, iterator, function(err, res) {
-   *   console.log(res); // { '0': 1, '1': 3, '2': 2 }
-   *   console.log(order); // [[1, 0], [2, 2], [3, 1]]
-   * });
-   *
-   * @example
-   *
-   * // object
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num);
-   *   }, num * 10);
-   * };
-   * async.mapValues(object, iterator, function(err, res) {
-   *   console.log(res); // { a: 1, b: 3, c: 2 }
-   *   console.log(order); // [1, 2, 3]
-   * });
-   *
-   * @example
-   *
-   * // object with key
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(null, num);
-   *   }, num * 10);
-   * };
-   * async.mapValues(object, iterator, function(err, res) {
-   *   console.log(res); // { a: 1, b: 3, c: 2 }
-   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b']]
-   * });
-   *
-   */
-  function mapValues(collection, iterator, callback, thisArg) {
-    callback = callback || noop;
-    var size;
-    var result = {};
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
-
-    if (Array.isArray(collection)) {
-      size = collection.length;
-      if (size === 0) {
-        return callback(undefined, result);
-      }
-      _arrayEach(collection, iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator);
-    } else if (collection && typeof collection === 'object') {
-      var keys = Object.keys(collection);
-      size = keys.length;
-      if (size === 0) {
-        return callback(undefined, result);
-      }
-      _objectEach(collection, iterator.length === 3 ? objectIteratorWithKey : objectIterator, keys);
-    } else {
-      callback(undefined, result);
-    }
-
-    function arrayIterator(value, index) {
-      _iterator(value, createCallback(index));
-    }
-
-    function arrayIteratorWithIndex(value, index) {
-      _iterator(value, index, createCallback(index));
-    }
-
-    function objectIterator(value, key) {
-      _iterator(value, createCallback(key));
-    }
-
-    function objectIteratorWithKey(value, key) {
-      _iterator(value, key, createCallback(key));
-    }
-
-    function createCallback(key) {
-      var called = false;
-      return function(err, res) {
-        if (called) {
-          throw new Error('Callback was already called.');
-        }
-        called = true;
-        result[key] = res;
-
-        if (err) {
-          callback(err, _objectClone(result));
-          callback = noop;
-          return;
-        }
-        if (--size === 0) {
-          callback(undefined, result);
-          callback = noop;
-          return;
-        }
+        sync = false;
       };
     }
   }
@@ -1983,72 +4191,61 @@
    */
   function mapValuesSeries(collection, iterator, callback, thisArg) {
     callback = callback || noop;
-    var size, key, keys, iterate, called;
+    var size, key, keys, iterate;
+    var sync = true;
     var result = {};
     var completed = 0;
     var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
     if (Array.isArray(collection)) {
       size = collection.length;
-      if (size === 0) {
-        return callback(undefined, {});
-      }
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
     } else if (collection && typeof collection === 'object') {
       keys = Object.keys(collection);
       size = keys.length;
-      if (size === 0) {
-        return callback(undefined, {});
-      }
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
-    } else {
-      return callback(undefined, {});
     }
-
+    if (!size) {
+      return callback(undefined, result);
+    }
     iterate();
+    sync = false;
 
     function arrayIterator() {
-      called = false;
       key = completed;
       _iterator(collection[completed], done);
     }
 
     function arrayIteratorWithIndex() {
-      called = false;
       key = completed;
       _iterator(collection[completed], completed, done);
     }
 
     function objectIterator() {
-      called = false;
       key = keys[completed];
       _iterator(collection[key], done);
     }
 
     function objectIteratorWithKey() {
-      called = false;
       key = keys[completed];
       _iterator(collection[key], key, done);
     }
 
     function done(err, res) {
-      if (called) {
-        throw new Error('Callback was already called.');
-      }
-      called = true;
       result[key] = res;
-
       if (err) {
         callback(err, _objectClone(result));
-        callback = noop;
-        return;
-      }
-      if (++completed === size) {
+        callback = throwError;
+      } else if (++completed >= size) {
         callback(undefined, result);
-        callback = noop;
-        return;
+        callback = throwError;
+      } else if (sync) {
+        async.nextTick(iterate);
+      } else {
+        sync = true;
+        iterate();
       }
-      iterate();
+      sync = false;
     }
   }
 
@@ -2127,11 +4324,8 @@
    */
   function mapValuesLimit(collection, limit, iterator, callback, thisArg) {
     callback = callback || noop;
-    if (isNaN(limit) || limit < 1) {
-      return callback(undefined, []);
-    }
-
     var size, keys, iterate;
+    var sync = true;
     var result = {};
     var started = 0;
     var completed = 0;
@@ -2139,1825 +4333,405 @@
 
     if (Array.isArray(collection)) {
       size = collection.length;
-      if (size === 0) {
-        return callback(undefined, result);
-      }
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
     } else if (collection && typeof collection === 'object') {
       keys = Object.keys(collection);
       size = keys.length;
-      if (size === 0) {
-        return callback(undefined, result);
-      }
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
-    } else {
+    }
+    if (!size || isNaN(limit) || limit < 1) {
       return callback(undefined, result);
     }
-
     _times(limit > size ? size : limit, iterate);
+    sync = false;
 
     function arrayIterator() {
       var index = started++;
-      if (index >= size) {
-        return;
+      if (index < size) {
+        _iterator(collection[index], createCallback(index));
       }
-      _iterator(collection[index], createCallback(index));
     }
 
     function arrayIteratorWithIndex() {
       var index = started++;
-      if (index >= size) {
-        return;
+      if (index < size) {
+        _iterator(collection[index], index, createCallback(index));
       }
-      _iterator(collection[index], index, createCallback(index));
     }
 
     function objectIterator() {
       var index = started++;
-      if (index >= size) {
-        return;
+      if (index < size) {
+        var key = keys[index];
+        _iterator(collection[key], createCallback(key));
       }
-      var key = keys[index];
-      _iterator(collection[key], createCallback(key));
     }
 
     function objectIteratorWithKey() {
       var index = started++;
-      if (index >= size) {
-        return;
+      if (index < size) {
+        var key = keys[index];
+        _iterator(collection[key], key, createCallback(key));
       }
-      var key = keys[index];
-      _iterator(collection[key], key, createCallback(key));
     }
 
     function createCallback(key) {
-      var called = false;
       return function(err, res) {
-        if (called) {
-          throw new Error('Callback was already called.');
+        if (key === null) {
+          throwError();
         }
-        called = true;
         result[key] = res;
-
+        key = null;
         if (err) {
           callback(err, _objectClone(result));
           callback = noop;
-          return;
-        }
-        if (++completed === size) {
+          iterate = noop;
+        } else if (++completed >= size) {
           callback(undefined, result);
-          callback = noop;
-          return;
+          callback = throwError;
+        } else if (sync) {
+          async.nextTick(iterate);
+        } else {
+          sync = true;
+          iterate();
         }
-        iterate();
+        sync = false;
       };
     }
   }
 
   /**
-   * @memberof async
-   * @namespace filter
-   * @param {Array|Object} collection
-   * @param {Function} iterator
-   * @param {Function} callback
-   * @param {*} [thisArg]
-   * @example
-   *
-   * // array
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.filter(array, iterator, function(err, res) {
-   *   console.log(res); // [1, 3];
-   *   console.log(order); // [1, 2, 3]
-   * });
-   *
-   * @example
-   *
-   * // array with index
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.filter(array, iterator, function(err, res) {
-   *   console.log(res); // [1, 3];
-   *   console.log(order); // [[1, 0], [2, 2], [3, 1]]
-   * });
-   *
-   * @example
-   *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.filter(array, iterator, function(res) {
-   *   console.log(res); // [1, 3];
-   *   console.log(order); // [1, 2, 3]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.filter(array, iterator, function(res) {
-   *   console.log(res); // [1, 3];
-   *   console.log(order); // [[1, 0], [2, 2], [3, 1]]
-   * });
-   *
-   * @example
-   *
-   * // object
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.filter(object, iterator, function(err, res) {
-   *   console.log(res); // [1, 3];
-   *   console.log(order); // [1, 2, 3]
-   * });
-   *
-   * @example
-   *
-   * // object with key
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.filter(object, iterator, function(err, res) {
-   *   console.log(res); // [1, 3];
-   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.filter(object, iterator, function(res) {
-   *   console.log(res); // [1, 3];
-   *   console.log(order); // [1, 2, 3]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.filter(object, iterator, function(res) {
-   *   console.log(res); // [1, 3];
-   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b']]
-   * });
-   *
+   * @private
+   * @param {Function} arrayEach
+   * @param {Function} baseEach
+   * @param {boolean} bool
    */
-  function filter(collection, iterator, callback, thisArg) {
-    _commonFilter(collection, iterator, callback, thisArg, true);
-  }
+  function createDetect(arrayEach, baseEach, bool) {
 
-  /**
-   * @memberof async
-   * @namespace filterSeries
-   * @param {Array|Object} collection
-   * @param {Function} iterator
-   * @param {Function} callback
-   * @param {*} [thisArg]
-   * @example
-   *
-   * // array
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.filterSeries(array, iterator, function(err, res) {
-   *   console.log(res); // [1, 3];
-   *   console.log(order); // [1, 3, 2]
-   * });
-   *
-   * @example
-   *
-   * // array with index
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.filterSeries(array, iterator, function(err, res) {
-   *   console.log(res); // [1, 3]
-   *   console.log(order); // [[1, 0], [3, 1], [2, 2]]
-   * });
-   *
-   * @example
-   *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.filterSeries(array, iterator, function(res) {
-   *   console.log(res); // [1, 3];
-   *   console.log(order); // [1, 3, 2]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.filterSeries(array, iterator, function(res) {
-   *   console.log(res); // [1, 3]
-   *   console.log(order); // [[1, 0], [3, 1], [2, 2]]
-   * });
-   *
-   * @example
-   *
-   * // object
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.filterSeries(object, iterator, function(err, res) {
-   *   console.log(res); // [1, 3]
-   *   console.log(order); // [1, 3, 2]
-   * });
-   *
-   * @example
-   *
-   * // object with key
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.filterSeries(object, iterator, function(err, res) {
-   *   console.log(res); // [1, 3]
-   *   console.log(order); // [[1, 'a'], [3, 'b'], [2, 'c']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.filterSeries(object, iterator, function(res) {
-   *   console.log(res); // [1, 3]
-   *   console.log(order); // [1, 3, 2]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.filterSeries(object, iterator, function(res) {
-   *   console.log(res); // [1, 3]
-   *   console.log(order); // [[1, 'a'], [3, 'b'], [2, 'c']]
-   * });
-   *
-   */
-  function filterSeries(collection, iterator, callback, thisArg) {
-    _commonFilterSeries(collection, iterator, callback, thisArg, true);
-  }
+    return function detect(collection, iterator, callback, thisArg) {
+      callback = callback || noop;
+      var size;
+      var completed = 0;
+      var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
+      var createCallback = callback.length === 2 ? createCollectionCallbackWithError : createCollectionCallback;
 
-  /**
-   * @memberof async
-   * @namespace filterLimit
-   * @param {Array|Object} collection
-   * @param {number} limit - limit >= 1
-   * @param {Function} iterator
-   * @param {Function} callback
-   * @param {*} [thisArg]
-   * @example
-   *
-   * // array
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.filterLimit(array, 2, iterator, function(err, res) {
-   *   console.log(res); // [1, 5, 3]
-   *   console.log(order); // [1, 3, 5, 2, 4]
-   * });
-   *
-   * @example
-   *
-   * // array with index
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.filterLimit(array, 2, iterator, function(err, res) {
-   *   console.log(res); // [1, 5, 3]
-   *   console.log(order); // [[1, 0], [3, 2], [5, 1], [2, 4], [4, 3]]
-   * });
-   *
-   * @example
-   *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.filterLimit(array, 2, iterator, function(res) {
-   *   console.log(res); // [1, 5, 3]
-   *   console.log(order); // [1, 3, 5, 2, 4]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.filterLimit(array, 2, iterator, function(res) {
-   *   console.log(res); // [1, 5, 3]
-   *   console.log(order); // [[1, 0], [3, 2], [5, 1], [2, 4], [4, 3]]
-   * });
-   *
-   * @example
-   *
-   * // object
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.filterLimit(object, 2, iterator, function(err, res) {
-   *   console.log(res); // [1, 5, 3]
-   *   console.log(order); // [1, 3, 5, 2, 4]
-   * });
-   *
-   * @example
-   *
-   * // object with key
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.filterLimit(object, 2, iterator, function(err, res) {
-   *   console.log(res); // [1, 5, 3]
-   *   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.filterLimit(object, 2, iterator, function(res) {
-   *   console.log(res); // [1, 5, 3]
-   *   console.log(order); // [1, 3, 5, 2, 4]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.filterLimit(object, 2, iterator, function(res) {
-   *   console.log(res); // [1, 5, 3]
-   *   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
-   * });
-   *
-   */
-  function filterLimit(collection, limit, iterator, callback, thisArg) {
-    _commonFilterLimit(collection, limit, iterator, callback, thisArg, true);
-  }
-
-  /**
-   * @memberof async
-   * @namespace reject
-   * @param {Array|Object} collection
-   * @param {Function} iterator
-   * @param {Function} callback
-   * @param {*} [thisArg]
-   * @example
-   *
-   * // array
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.reject(array, iterator, function(err, res) {
-   *   console.log(res); // [2];
-   *   console.log(order); // [1, 2, 3]
-   * });
-   *
-   * @example
-   *
-   * // array with index
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.reject(array, iterator, function(err, res) {
-   *   console.log(res); // [2];
-   *   console.log(order); // [[1, 0], [2, 2], [3, 1]]
-   * });
-   *
-   * @example
-   *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.reject(array, iterator, function(res) {
-   *   console.log(res); // [2];
-   *   console.log(order); // [1, 2, 3]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.reject(array, iterator, function(res) {
-   *   console.log(res); // [2];
-   *   console.log(order); // [[1, 0], [2, 2], [3, 1]]
-   * });
-   *
-   * @example
-   *
-   * // object
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.reject(object, iterator, function(err, res) {
-   *   console.log(res); // [2];
-   *   console.log(order); // [1, 2, 3]
-   * });
-   *
-   * @example
-   *
-   * // object with key
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.reject(object, iterator, function(err, res) {
-   *   console.log(res); // [2];
-   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.reject(object, iterator, function(res) {
-   *   console.log(res); // [2];
-   *   console.log(order); // [1, 2, 3]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.reject(object, iterator, function(res) {
-   *   console.log(res); // [2];
-   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b']]
-   * });
-   *
-   */
-  function reject(collection, iterator, callback, thisArg) {
-    _commonFilter(collection, iterator, callback, thisArg, false);
-  }
-
-  /**
-   * @memberof async
-   * @namespace rejectSeries
-   * @param {Array|Object} collection
-   * @param {Function} iterator
-   * @param {Function} callback
-   * @param {*} [thisArg]
-   * @example
-   *
-   * // array
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.rejectSeries(array, iterator, function(err, res) {
-   *   console.log(res); // [2];
-   *   console.log(order); // [1, 3, 2]
-   * });
-   *
-   * @example
-   *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.rejectSeries(array, iterator, function(res) {
-   *   console.log(res); // [2];
-   *   console.log(order); // [1, 3, 2]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.rejectSeries(array, iterator, function(res) {
-   *   console.log(res); // [2];
-   *   console.log(order); // [[1, 0], [3, 1], [2, 2]]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.rejectSeries(array, iterator, function(res) {
-   *   console.log(res); // [2];
-   *   console.log(order); // [[1, 0], [3, 1], [2, 2]]
-   * });
-   *
-   * @example
-   *
-   * // object
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.rejectSeries(object, iterator, function(err, res) {
-   *   console.log(res); // [2];
-   *   console.log(order); // [1, 3, 2]
-   * });
-   *
-   * @example
-   *
-   * // object with key
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.rejectSeries(object, iterator, function(err, res) {
-   *   console.log(res); // [2];
-   *   console.log(order); // [[1, 'a'], [3, 'b'], [2, 'c']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.rejectSeries(object, iterator, function(res) {
-   *   console.log(res); // [2];
-   *   console.log(order); // [1, 3, 2]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.rejectSeries(object, iterator, function(res) {
-   *   console.log(res); // [2];
-   *   console.log(order); // [[1, 'a'], [3, 'b'], [2, 'c']]
-   * });
-   *
-   */
-  function rejectSeries(collection, iterator, callback, thisArg) {
-    _commonFilterSeries(collection, iterator, callback, thisArg, false);
-  }
-
-  /**
-   * @memberof async
-   * @namespace rejectLimit
-   * @param {Array|Object} collection
-   * @param {number} limit - limit >= 1
-   * @param {Function} iterator
-   * @param {Function} callback
-   * @param {*} [thisArg]
-   * @example
-   *
-   * // array
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.rejectLimit(array, 2, iterator, function(err, res) {
-   *   console.log(res); // [4, 2]
-   *   console.log(order); // [1, 3, 5, 2, 4]
-   * });
-   *
-   * @example
-   *
-   * // array with index
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.rejectLimit(array, 2, iterator, function(err, res) {
-   *   console.log(res); // [4, 2]
-   *   console.log(order); // [[1, 0], [3, 2], [5, 1], [2, 4], [4, 3]]
-   * });
-   *
-   * @example
-   *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.rejectLimit(array, 2, iterator, function(res) {
-   *   console.log(res); // [4, 2]
-   *   console.log(order); // [1, 3, 5, 2, 4]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.rejectLimit(array, 2, iterator, function(res) {
-   *   console.log(res); // [4, 2]
-   *   console.log(order); // [[1, 0], [3, 2], [5, 1], [2, 4], [4, 3]]
-   * });
-   *
-   * @example
-   *
-   * // object
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.rejectLimit(object, 2, iterator, function(err, res) {
-   *   console.log(res); // [4, 2]
-   *   console.log(order); // [1, 3, 5, 2, 4]
-   * });
-   *
-   * @example
-   *
-   * // object with key
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.rejectLimit(object, 2, iterator, function(err, res) {
-   *   console.log(res); // [4, 2]
-   *   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.rejectLimit(object, 2, iterator, function(res) {
-   *   console.log(res); // [4, 2]
-   *   console.log(order); // [1, 3, 5, 2, 4]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.rejectLimit(object, 2, iterator, function(res) {
-   *   console.log(res); // [4, 2]
-   *   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
-   * });
-   *
-   */
-  function rejectLimit(collection, limit, iterator, callback, thisArg) {
-    _commonFilterLimit(collection, limit, iterator, callback, thisArg, false);
-  }
-
-  /**
-   * @memberof async
-   * @namespace detect
-   * @param {Array|Object} collection
-   * @param {Function} iterator
-   * @param {Function} callback
-   * @param {*} [thisArg]
-   * @param {boolean} [opposite] - for `async.every`
-   * @example
-   *
-   * // array
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.detect(array, iterator, function(err, res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [1]
-   * });
-   *
-   * @example
-   *
-   * // array with index
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.detect(array, iterator, function(err, res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [[1, 0]]
-   * });
-   *
-   * @example
-   *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.detect(array, iterator, function(res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [1]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.detect(array, iterator, function(res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [[1, 0]]
-   * });
-   *
-   * @example
-   *
-   * // object
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.detect(object, iterator, function(err, res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [1]
-   * });
-   *
-   * @example
-   *
-   * // object with key
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.detect(object, iterator, function(err, res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [[1, 'a']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.detect(object, iterator, function(res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [1]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.detect(object, iterator, function(res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [[1, 'a']]
-   * });
-   *
-   */
-  function detect(collection, iterator, callback, thisArg, opposite) {
-    callback = callback || noop;
-    var size;
-    var bool = !opposite;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
-    var enableError = callback.length === 2;
-    var createCallback = enableError ? createCollectionCallbackWithError : createCollectionCallback;
-
-    if (Array.isArray(collection)) {
-      size = collection.length;
-      if (size === 0) {
-        return callback();
+      if (Array.isArray(collection)) {
+        size = collection.length;
+        arrayEach(collection, _iterator, createCallback);
+      } else if (collection && typeof collection === 'object') {
+        var keys = Object.keys(collection);
+        size = keys.length;
+        baseEach(collection, _iterator, createCallback, keys);
       }
-      _arrayEach(collection, iterator.length === 3 ? collectionIteratorWithKey : collectionIterator);
-    } else if (collection && typeof collection === 'object') {
-      var keys = Object.keys(collection);
-      size = keys.length;
-      if (size === 0) {
-        return callback();
+      if (!size) {
+        callback();
       }
-      _objectEach(collection, iterator.length === 3 ? collectionIteratorWithKey : collectionIterator, keys);
-    } else {
-      callback();
-    }
 
-    function collectionIterator(value) {
-      _iterator(value, createCallback(value));
-    }
+      function createCollectionCallback(value) {
+        var called = false;
+        return function done(res) {
+          if (called) {
+            throwError();
+          }
+          called = true;
+          if (!!res === bool) {
+            callback(value);
+            callback = noop;
+          } else if (++completed === size) {
+            callback();
+            callback = throwError;
+          }
+        };
+      }
 
-    function collectionIteratorWithKey(value, key) {
-      _iterator(value, key, createCallback(value));
-    }
-
-    function createCollectionCallback(value) {
-      var called = false;
-      return function done(res) {
-        if (called) {
-          throw new Error('Callback was already called.');
-        }
-        called = true;
-
-        if (!!res === bool) {
-          callback(value);
-          callback = noop;
-          return;
-        }
-        if (--size === 0) {
-          callback();
-          callback = noop;
-        }
-      };
-    }
-
-    function createCollectionCallbackWithError(value) {
-      var called = false;
-      return function done(err, res) {
-        if (called) {
-          throw new Error('Callback was already called.');
-        }
-        called = true;
-
-        if (err) {
-          callback(err);
-          callback = noop;
-          return;
-        }
-        if (!!res === bool) {
-          callback(undefined, value);
-          callback = noop;
-          return;
-        }
-        if (--size === 0) {
-          callback();
-          callback = noop;
-        }
-      };
-    }
+      function createCollectionCallbackWithError(value) {
+        var called = false;
+        return function done(err, res) {
+          if (called) {
+            throwError();
+          }
+          called = true;
+          if (err) {
+            callback(err);
+            callback = noop;
+          } else if (!!res === bool) {
+            callback(undefined, value);
+            callback = noop;
+          } else if (++completed === size) {
+            callback();
+            callback = throwError;
+          }
+        };
+      }
+    };
   }
 
   /**
-   * @memberof async
-   * @namespace detectSeries
-   * @param {Array|Object} collection
-   * @param {Function} iterator
-   * @param {Function} callback
-   * @param {*} [thisArg]
-   * @param {boolean} [opposite] - for `async.everySeries`
-   * @example
-   *
-   * // array
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.detectSeries(array, iterator, function(err, res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [1]
-   * });
-   *
-   * @example
-   *
-   * // array with index
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.detectSeries(array, iterator, function(err, res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [[1, 0]]
-   * });
-   *
-   * @example
-   *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.detectSeries(array, iterator, function(res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [1]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.detectSeries(array, iterator, function(res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [[1, 0]]
-   * });
-   *
-   * @example
-   *
-   * // object
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.detectSeries(object, iterator, function(err, res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [1]
-   * });
-   *
-   * @example
-   *
-   * // object with key
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.detectSeries(object, iterator, function(err, res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [[1, 'a']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.detectSeries(object, iterator, function(res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [1]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.detectSeries(object, iterator, function(res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [[1, 'a']]
-   * });
-   *
+   * @private
+   * @param {boolean} bool
    */
-  function detectSeries(collection, iterator, callback, thisArg, opposite) {
-    callback = callback || noop;
-    var size, value, iterate, called;
-    var completed = 0;
-    var bool = !opposite;
-    var done = callback.length === 2 ? detectCallbackWithError : detectCallback;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
+  function createDetectSeries(bool) {
 
-    if (Array.isArray(collection)) {
-      size = collection.length;
-      if (size === 0) {
-        return callback();
+    return function detectSeries(collection, iterator, callback, thisArg) {
+      callback = callback || noop;
+      var size, key, value, iterate;
+      var sync = true;
+      var completed = 0;
+      var done = callback.length === 2 ? detectCallbackWithError : detectCallback;
+      var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
+
+      if (Array.isArray(collection)) {
+        size = collection.length;
+        iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
+      } else if (collection && typeof collection === 'object') {
+        var keys = Object.keys(collection);
+        size = keys.length;
+        iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
       }
-      iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
-    } else if (collection && typeof collection === 'object') {
-      var keys = Object.keys(collection);
-      size = keys.length;
-      if (size === 0) {
-        return callback();
-      }
-      iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
-    } else {
-      return callback();
-    }
-
-    iterate();
-
-    function arrayIterator() {
-      called = false;
-      value = collection[completed];
-      _iterator(value, done);
-    }
-
-    function arrayIteratorWithIndex() {
-      called = false;
-      value = collection[completed];
-      _iterator(value, completed, done);
-    }
-
-    function objectIterator() {
-      called = false;
-      value = collection[keys[completed]];
-      _iterator(value, done);
-    }
-
-    function objectIteratorWithKey() {
-      called = false;
-      var key = keys[completed];
-      value = collection[key];
-      _iterator(value, key, done);
-    }
-
-    function detectCallback(res) {
-      if (called) {
-        throw new Error('Callback was already called.');
-      }
-      called = true;
-      if (!!res === bool) {
-        return callback(value);
-      }
-      if (++completed === size) {
+      if (!size) {
         return callback();
       }
       iterate();
-    }
+      sync = false;
 
-    function detectCallbackWithError(err, res) {
-      if (called) {
-        throw new Error('Callback was already called.');
+      function arrayIterator() {
+        value = collection[completed];
+        _iterator(value, done);
       }
-      called = true;
-      if (err) {
-        return callback(err);
+
+      function arrayIteratorWithIndex() {
+        value = collection[completed];
+        _iterator(value, completed, done);
       }
-      if (!!res === bool) {
-        return callback(undefined, value);
+
+      function objectIterator() {
+        value = collection[keys[completed]];
+        _iterator(value, done);
       }
-      if (++completed === size) {
-        return callback();
+
+      function objectIteratorWithKey() {
+        key = keys[completed];
+        value = collection[key];
+        _iterator(value, key, done);
       }
-      iterate();
-    }
-  }
 
-  /**
-   * @memberof async
-   * @namespace detectLimit
-   * @param {Array|Object} collection
-   * @param {number} limit - limit >= 1
-   * @param {Function} iterator
-   * @param {Function} callback
-   * @param {*} [thisArg]
-   * @param {boolean} [opposite] - for `async.everyLimit`
-   * @example
-   *
-   * // array
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.detectLimit(array, 2, iterator, function(err, res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [1]
-   * });
-   *
-   * @example
-   *
-   * // array with index
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.detectLimit(array, 2, iterator, function(err, res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [[1, 0]]
-   * });
-   *
-   * @example
-   *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.detectLimit(array, 2, iterator, function(res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [1]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.detectLimit(array, 2, iterator, function(res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [[1, 0]]
-   * });
-   *
-   * @example
-   *
-   * // object
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.detectLimit(object, 2, iterator, function(err, res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [1]
-   * });
-   *
-   * @example
-   *
-   * // object with key
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.detectLimit(object, 2, iterator, function(err, res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [[1, 'a']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.detectLimit(object, 2, iterator, function(res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [1]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.detectLimit(object, 2, iterator, function(res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [[1, 'a']]
-   * });
-   *
-   */
-  function detectLimit(collection, limit, iterator, callback, thisArg, opposite) {
-    callback = callback || noop;
-    if (isNaN(limit) || limit < 1) {
-      return callback();
-    }
-
-    var size, iterate;
-    var started = 0;
-    var completed = 0;
-    var bool = !opposite;
-    var createCallback = callback.length === 2 ? detectCallbackWithError : detectCallback;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
-
-    if (Array.isArray(collection)) {
-      size = collection.length;
-      if (size === 0) {
-        return callback();
-      }
-      iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
-    } else if (collection && typeof collection === 'object') {
-      var keys = Object.keys(collection);
-      size = keys.length;
-      if (size === 0) {
-        return callback();
-      }
-      iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
-    } else {
-      return callback();
-    }
-
-    _times(limit > size ? size : limit, iterate);
-
-    function arrayIterator() {
-      var index = started++;
-      if (index >= size) {
-        return;
-      }
-      var value = collection[index];
-      _iterator(value, createCallback(value));
-    }
-
-    function arrayIteratorWithIndex() {
-      var index = started++;
-      if (index >= size) {
-        return;
-      }
-      var value = collection[index];
-      _iterator(value, index, createCallback(value));
-    }
-
-    function objectIterator() {
-      var index = started++;
-      if (index >= size) {
-        return;
-      }
-      var value = collection[keys[index]];
-      _iterator(value, createCallback(value));
-    }
-
-    function objectIteratorWithKey() {
-      var index = started++;
-      if (index >= size) {
-        return;
-      }
-      var key = keys[index];
-      var value = collection[key];
-      _iterator(value, key, createCallback(value));
-    }
-
-    function detectCallback(value) {
-      var called = false;
-      return function(res) {
-        if (called) {
-          throw new Error('Callback was already called.');
-        }
-        called = true;
-
+      function detectCallback(res) {
         if (!!res === bool) {
           callback(value);
-          callback = noop;
-          return;
-        }
-        if (++completed === size) {
+          callback = throwError;
+        } else if (++completed >= size) {
           callback();
-          callback = noop;
-          return;
+          callback = throwError;
+        } else if (sync) {
+          async.nextTick(iterate);
+        } else {
+          sync = true;
+          iterate();
         }
-        iterate();
-      };
-    }
+        sync = false;
+      }
 
-    function detectCallbackWithError(value) {
-      var called = false;
-      return function(err, res) {
-        if (called) {
-          throw new Error('Callback was already called.');
-        }
-        called = true;
-
+      function detectCallbackWithError(err, res) {
         if (err) {
           callback(err);
-          callback = noop;
-          return;
-        }
-        if (!!res === bool) {
+          callback = throwError;
+        } else if (!!res === bool) {
           callback(undefined, value);
-          callback = noop;
-          return;
-        }
-        if (++completed === size) {
+          callback = throwError;
+        } else if (++completed >= size) {
           callback();
-          callback = noop;
-          return;
+          callback = throwError;
+        } else if (sync) {
+          async.nextTick(iterate);
+        } else {
+          sync = true;
+          iterate();
         }
-        iterate();
-      };
-    }
-
+        sync = false;
+      }
+    };
   }
 
   /**
-   * @memberof async
-   * @namespace pick
-   * @param {Array|Object} collection
-   * @param {Function} iterator
-   * @param {Function} callback
-   * @param {*} [thisArg]
-   * @example
-   *
-   * // array
-   * var order = [];
-   * var array = [1, 3, 2, 4];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.pick(array, iterator, function(err, res) {
-   *   console.log(res); // { '0': 1, '1': 3 }
-   *   console.log(order); // [1, 2, 3, 4]
-   * });
-   *
-   * @example
-   *
-   * // array with index
-   * var order = [];
-   * var array = [1, 3, 2, 4];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.pick(array, iterator, function(err, res) {
-   *   console.log(res); // { '0': 1, '1': 3 }
-   *   console.log(order); // [[0, 1], [2, 2], [3, 1], [4, 3]]
-   * });
-   *
-   * @example
-   *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2, 4];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.pick(array, iterator, function(res) {
-   *   console.log(res); // { '0': 1, '1': 3 }
-   *   console.log(order); // [1, 2, 3, 4]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2, 4];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.pick(array, iterator, function(res) {
-   *   console.log(res); // { '0': 1, '1': 3 }
-   *   console.log(order); // [[0, 1], [2, 2], [3, 1], [4, 3]]
-   * });
-   *
-   * @example
-   *
-   * // object
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2, d: 4 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.pick(object, iterator, function(err, res) {
-   *   console.log(res); // { a: 1, b: 3 }
-   *   console.log(order); // [1, 2, 3, 4]
-   * });
-   *
-   * @example
-   *
-   * // object with key
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2, d: 4 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.pick(object, iterator, function(err, res) {
-   *   console.log(res); // { a: 1, b: 3 }
-   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b'], [4, 'd']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2, d: 4 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.pick(object, iterator, function(res) {
-   *   console.log(res); // { a: 1, b: 3 }
-   *   console.log(order); // [1, 2, 3, 4]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2, d: 4 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.pick(object, iterator, function(res) {
-   *   console.log(res); // { a: 1, b: 3 }
-   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b'], [4, 'd']]
-   * });
-   *
+   * @private
+   * @param {boolean} bool
    */
-  function pick(collection, iterator, callback, thisArg) {
-    callback = callback || noop;
-    var size;
-    var result = {};
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
-    var enableError = callback.length === 2;
-    var createCallback = enableError ? createPickCallbackWithError : createPickCallback;
+  function createDetectLimit(bool) {
 
-    if (Array.isArray(collection)) {
-      size = collection.length;
-      if (size === 0) {
-        return enableError ? callback(undefined, {}) : callback({});
+    return function detectLimit(collection, limit, iterator, callback, thisArg) {
+      callback = callback || noop;
+      var size, index, key, value, keys, iterate;
+      var sync = true;
+      var started = 0;
+      var completed = 0;
+      var createCallback = callback.length === 2 ? detectCallbackWithError : detectCallback;
+      var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
+
+      if (Array.isArray(collection)) {
+        size = collection.length;
+        iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
+      } else if (collection && typeof collection === 'object') {
+        keys = Object.keys(collection);
+        size = keys.length;
+        iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
       }
-      _arrayEach(collection, iterator.length === 3 ? collectionIteratorWithKey : collectionIterator);
-    } else if (collection && typeof collection === 'object') {
-      var keys = Object.keys(collection);
-      size = keys.length;
-      if (size === 0) {
-        return enableError ? callback(undefined, {}) : callback({});
+      if (!size || isNaN(limit) || limit < 1) {
+        return callback();
       }
-      _objectEach(collection, iterator.length === 3 ? collectionIteratorWithKey : collectionIterator, keys);
-    } else {
-      return enableError ? callback(undefined, {}) : callback({});
-    }
+      _times(limit > size ? size : limit, iterate);
+      sync = false;
 
-    function collectionIterator(value, key) {
-      _iterator(value, createCallback(key, value));
-    }
-
-    function collectionIteratorWithKey(value, key) {
-      _iterator(value, key, createCallback(key, value));
-    }
-
-    function createPickCallback(key, value) {
-      var called = false;
-      return function done(res) {
-        if (called) {
-          throw new Error('Callback was already called.');
-        }
-        called = true;
-
-        if (res) {
-          result[key] = value;
-        }
-        if (--size === 0) {
-          callback(result);
-        }
-      };
-    }
-
-    function createPickCallbackWithError(key, value) {
-      var called = false;
-      return function done(err, res) {
-        if (called) {
-          throw new Error('Callback was already called.');
-        }
-        called = true;
-
-        if (err) {
-          callback(err, result);
-          callback = noop;
+      function arrayIterator() {
+        index = started++;
+        if (index >= size) {
           return;
         }
-        if (res) {
-          result[key] = value;
+        value = collection[index];
+        _iterator(value, createCallback(value));
+      }
+
+      function arrayIteratorWithIndex() {
+        index = started++;
+        if (index < size) {
+          value = collection[index];
+          _iterator(value, index, createCallback(value));
         }
-        if (--size === 0) {
-          callback(undefined, result);
+      }
+
+      function objectIterator() {
+        index = started++;
+        if (index < size) {
+          value = collection[keys[index]];
+          _iterator(value, createCallback(value));
         }
-      };
-    }
+      }
+
+      function objectIteratorWithKey() {
+        if (started < size) {
+          key = keys[started++];
+          value = collection[key];
+          _iterator(value, key, createCallback(value));
+        }
+      }
+
+      function detectCallback(value) {
+        var called = false;
+        return function(res) {
+          if (called) {
+            throwError();
+          }
+          called = true;
+          if (!!res === bool) {
+            callback(value);
+            callback = noop;
+            iterate = noop;
+          } else if (++completed >= size) {
+            callback();
+            callback = throwError;
+          } else if (sync) {
+            async.nextTick(iterate);
+          } else {
+            sync = true;
+            iterate();
+          }
+          sync = false;
+        };
+      }
+
+      function detectCallbackWithError(value) {
+        var called = false;
+        return function(err, res) {
+          if (called) {
+            throwError();
+          }
+          called = true;
+          if (err) {
+            callback(err);
+            callback = noop;
+            iterate = noop;
+          } else if (!!res === bool) {
+            callback(undefined, value);
+            callback = noop;
+          } else if (++completed >= size) {
+            callback();
+            callback = throwError;
+          } else if (sync) {
+            async.nextTick(iterate);
+          } else {
+            sync = true;
+            iterate();
+          }
+          sync = false;
+        };
+      }
+    };
+  }
+
+  /**
+   * @private
+   * @param {Function} arrayEach
+   * @param {Function} baseEach
+   */
+  function createPick(arrayEach, baseEach) {
+
+    return function pick(collection, iterator, callback, thisArg) {
+      callback = callback || noop;
+      var size, keys;
+      var completed = 0;
+      var result = {};
+      var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
+      var enableError = callback.length === 2;
+      var createCallback = enableError ? createPickCallbackWithError : createPickCallback;
+
+      if (Array.isArray(collection)) {
+        size = collection.length;
+        arrayEach(collection, _iterator, createCallback);
+      } else if (collection && typeof collection === 'object') {
+        keys = Object.keys(collection);
+        size = keys.length;
+        baseEach(collection, _iterator, createCallback, keys);
+      }
+      if (!size) {
+        return enableError ? callback(undefined, {}) : callback({});
+      }
+
+      function createPickCallback(key, value) {
+        return function done(res) {
+          if (key === null) {
+            throwError();
+          }
+          if (res) {
+            result[key] = value;
+          }
+          key = null;
+          if (++completed === size) {
+            callback(result);
+          }
+        };
+      }
+
+      function createPickCallbackWithError(key, value) {
+        return function done(err, res) {
+          if (key === null) {
+            throwError();
+          }
+          if (err) {
+            callback(err, _objectClone(result));
+            callback = noop;
+            key = null;
+            return;
+          }
+          if (res) {
+            result[key] = value;
+          }
+          key = null;
+          if (++completed === size) {
+            callback(undefined, result);
+            callback = throwError;
+          }
+        };
+      }
+    };
   }
 
   /**
@@ -4098,7 +4872,8 @@
    */
   function pickSeries(collection, iterator, callback, thisArg) {
     callback = callback || noop;
-    var size, key, value, keys, iterate, called;
+    var size, key, value, keys, iterate;
+    var sync = true;
     var result = {};
     var completed = 0;
     var enableError = callback.length === 2;
@@ -4107,84 +4882,77 @@
 
     if (Array.isArray(collection)) {
       size = collection.length;
-      if (size === 0) {
-        return enableError ? callback(undefined, {}) : callback({});
-      }
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
     } else if (collection && typeof collection === 'object') {
       keys = Object.keys(collection);
       size = keys.length;
-      if (size === 0) {
-        return enableError ? callback(undefined, {}) : callback({});
-      }
-      result = {};
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
-    } else {
+    }
+    if (!size) {
       return enableError ? callback(undefined, {}) : callback({});
     }
     iterate();
+    sync = false;
 
     function arrayIterator() {
-      called = false;
       key = completed;
       value = collection[completed];
       _iterator(value, done);
     }
 
     function arrayIteratorWithIndex() {
-      called = false;
       key = completed;
       value = collection[completed];
       _iterator(value, completed, done);
     }
 
     function objectIterator() {
-      called = false;
       key = keys[completed];
       value = collection[key];
       _iterator(value, done);
     }
 
     function objectIteratorWithKey() {
-      called = false;
       key = keys[completed];
       value = collection[key];
       _iterator(value, key, done);
     }
 
     function pickCallback(res) {
-      if (called) {
-        throw new Error('Callback was already called.');
-      }
-      called = true;
-
       if (res) {
         result[key] = value;
       }
-      if (++completed === size) {
-        return callback(result);
+      if (++completed >= size) {
+        callback(result);
+        callback = throwError;
+      } else if (sync) {
+        async.nextTick(iterate);
+      } else {
+        sync = true;
+        iterate();
       }
-      iterate();
+      sync = false;
     }
 
     function pickCallbackWithError(err, res) {
-      if (called) {
-        throw new Error('Callback was already called.');
-      }
-      called = true;
-
       if (err) {
         callback(err, result);
-        callback = noop;
+        callback = throwError;
         return;
       }
       if (res) {
         result[key] = value;
       }
-      if (++completed === size) {
-        return callback(undefined, result);
+      if (++completed >= size) {
+        callback(undefined, result);
+        callback = throwError;
+      } else if (sync) {
+        async.nextTick(iterate);
+      } else {
+        sync = true;
+        iterate();
       }
-      iterate();
+      sync = false;
     }
   }
 
@@ -4326,114 +5094,109 @@
    */
   function pickLimit(collection, limit, iterator, callback, thisArg) {
     callback = callback || noop;
-    var enableError = callback.length === 2;
-    if (isNaN(limit) || limit < 1) {
-      return enableError ? callback(undefined, {}) : callback({});
-    }
-
-    var size, keys, iterate;
+    var size, index, key, value, keys, iterate;
+    var sync = true;
     var result = {};
     var started = 0;
     var completed = 0;
+    var enableError = callback.length === 2;
     var createCallback = enableError ? createPickCallbackWithError : createPickCallback;
     var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
     if (Array.isArray(collection)) {
       size = collection.length;
-      if (size === 0) {
-        return enableError ? callback(undefined, {}) : callback({});
-      }
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
     } else if (collection && typeof collection === 'object') {
       keys = Object.keys(collection);
       size = keys.length;
-      if (size === 0) {
-        return enableError ? callback(undefined, {}) : callback({});
-      }
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
-    } else {
+    }
+    if (!size || isNaN(limit) || limit < 1) {
       return enableError ? callback(undefined, {}) : callback({});
     }
-
     _times(limit > size ? size : limit, iterate);
+    sync = false;
 
     function arrayIterator() {
-      var index = started++;
-      if (index >= size) {
-        return;
+      index = started++;
+      if (index < size) {
+        value = collection[index];
+        _iterator(value, createCallback(value, index));
       }
-      var value = collection[index];
-      _iterator(value, createCallback(value, index));
     }
 
     function arrayIteratorWithIndex() {
-      var index = started++;
-      if (index >= size) {
-        return;
+      index = started++;
+      if (index < size) {
+        value = collection[index];
+        _iterator(value, index, createCallback(value, index));
       }
-      var value = collection[index];
-      _iterator(value, index, createCallback(value, index));
     }
 
     function objectIterator() {
-      var index = started++;
-      if (index >= size) {
-        return;
+      if (started < size) {
+        key = keys[started++];
+        value = collection[key];
+        _iterator(value, createCallback(value, key));
       }
-      var key = keys[index];
-      var value = collection[key];
-      _iterator(value, createCallback(value, key));
     }
 
     function objectIteratorWithKey() {
-      var index = started++;
-      if (index >= size) {
-        return;
+      if (started < size) {
+        key = keys[started++];
+        value = collection[key];
+        _iterator(value, key, createCallback(value, key));
       }
-      var key = keys[index];
-      var value = collection[key];
-      _iterator(value, key, createCallback(value, key));
     }
 
     function createPickCallback(value, key) {
-      var called = false;
       return function(res) {
-        if (called) {
-          throw new Error('Callback was already called.');
+        if (key === null) {
+          throwError();
         }
-        called = true;
-
         if (res) {
           result[key] = value;
         }
-        if (++completed === size) {
-          return callback(result);
+        key = null;
+        if (++completed >= size) {
+          callback(result);
+          callback = throwError;
+        } else if (sync) {
+          async.nextTick(iterate);
+        } else {
+          sync = true;
+          iterate();
         }
-        iterate();
+        sync = false;
       };
     }
 
     function createPickCallbackWithError(value, key) {
-      var called = false;
-
       return function(err, res) {
-        if (called) {
-          throw new Error('Callback was already called.');
+        if (key === null) {
+          throwError();
         }
-        called = true;
-
         if (err) {
           callback(err, _objectClone(result));
           callback = noop;
+          iterate = noop;
+          key = null;
           return;
         }
         if (res) {
           result[key] = value;
         }
-        if (++completed === size) {
-          return callback(undefined, result);
+        key = null;
+        if (++completed >= size) {
+          callback(undefined, result);
+          callback = throwError;
+        } else if (sync) {
+          async.nextTick(iterate);
+        } else {
+          sync = true;
+          iterate();
         }
-        iterate();
+        sync = false;
       };
     }
   }
@@ -4513,68 +5276,63 @@
    */
   function reduce(collection, result, iterator, callback, thisArg) {
     callback = callback || noop;
-    var size, keys, iterate, called;
+    var size, key, value, keys, iterate;
+    var sync = true;
     var completed = 0;
     var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
     if (Array.isArray(collection)) {
       size = collection.length;
-      if (size === 0) {
-        return callback(undefined, result);
-      }
       iterate = iterator.length === 4 ? arrayIteratorWithIndex : arrayIterator;
     } else if (collection && typeof collection === 'object') {
       keys = Object.keys(collection);
       size = keys.length;
-      if (size === 0) {
-        return callback(undefined, result);
-      }
       iterate = iterator.length === 4 ? objectIteratorWithKey : objectIterator;
-    } else {
+    }
+    if (!size) {
       return callback(undefined, result);
     }
-
     iterate(result);
+    sync = false;
 
     function arrayIterator(result) {
-      called = false;
-      var value = collection[completed];
+      value = collection[completed];
       _iterator(result, value, done);
     }
 
     function arrayIteratorWithIndex(result) {
-      called = false;
-      var value = collection[completed];
+      value = collection[completed];
       _iterator(result, value, completed, done);
     }
 
     function objectIterator(result) {
-      called = false;
-      var key = keys[completed];
-      var value = collection[key];
+      key = keys[completed];
+      value = collection[key];
       _iterator(result, value, done);
     }
 
     function objectIteratorWithKey(result) {
-      called = false;
-      var key = keys[completed];
-      var value = collection[key];
+      key = keys[completed];
+      value = collection[key];
       _iterator(result, value, key, done);
     }
 
     function done(err, result) {
-      if (called) {
-        throw new Error('Callback was already called.');
-      }
-      called = true;
-
       if (err) {
-        return callback(err, result);
+        callback(err, result);
+        callback = throwError;
+      } else if (++completed >= size) {
+        callback(undefined, result);
+        callback = throwError;
+      } else if (sync) {
+        async.nextTick(function() {
+          iterate(result);
+        });
+      } else {
+        sync = true;
+        iterate(result);
       }
-      if (++completed === size) {
-        return callback(undefined, result);
-      }
-      iterate(result);
+      sync = false;
     }
   }
 
@@ -4653,197 +5411,105 @@
    */
   function reduceRight(collection, result, iterator, callback, thisArg) {
     callback = callback || noop;
-    var resIndex, keys, iterate, called;
+    var resIndex, index, key, value, keys, iterate;
+    var sync = true;
     var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
     if (Array.isArray(collection)) {
       resIndex = collection.length;
-      if (!resIndex) {
-        return callback(undefined, result);
-      }
       iterate = iterator.length === 4 ? arrayIteratorWithIndex : arrayIterator;
     } else if (collection && typeof collection === 'object') {
       keys = Object.keys(collection);
       resIndex = keys.length;
-      if (!resIndex) {
-        return callback(undefined, result);
-      }
       iterate = iterator.length === 4 ? objectIteratorWithKey : objectIterator;
-    } else {
+    }
+    if (!resIndex) {
       return callback(undefined, result);
     }
-
     iterate(result);
+    sync = false;
 
     function arrayIterator(result) {
-      called = false;
-      var value = collection[--resIndex];
+      value = collection[--resIndex];
       _iterator(result, value, done);
     }
 
     function arrayIteratorWithIndex(result) {
-      called = false;
-      var index = --resIndex;
-      var value = collection[index];
+      index = --resIndex;
+      value = collection[index];
       _iterator(result, value, index, done);
     }
 
     function objectIterator(result) {
-      called = false;
-      var key = keys[--resIndex];
-      var value = collection[key];
+      key = keys[--resIndex];
+      value = collection[key];
       _iterator(result, value, done);
     }
 
     function objectIteratorWithKey(result) {
-      called = false;
-      var key = keys[--resIndex];
-      var value = collection[key];
+      key = keys[--resIndex];
+      value = collection[key];
       _iterator(result, value, key, done);
     }
 
     function done(err, result) {
-      if (called) {
-        throw new Error('Callback was already called.');
-      }
-      called = true;
-
       if (err) {
-        return callback(err, result);
+        callback(err, result);
+        callback = throwError;
+      } else if (resIndex <= 0) {
+        callback(undefined, result);
+        callback = throwError;
+      } else if (sync) {
+        async.nextTick(function() {
+          iterate(result);
+        });
+      } else {
+        sync = true;
+        iterate(result);
       }
-      if (resIndex === 0) {
-        return callback(undefined, result);
-      }
-      iterate(result);
+      sync = false;
     }
   }
 
   /**
-   * @memberof async
-   * @namespace transform
-   * @param {Array|Object} collection
-   * @param {Function} iterator
-   * @param {Function} callback
-   * @param {Array|Object} [accumulator]
-   * @param {*} [thisArg]
-   * @example
-   *
-   * // array
-   * var order = [];
-   * var collection = [1, 3, 2, 4];
-   * var iterator = function(result, num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     result.push(num)
-   *     done();
-   *   }, num * 10);
-   * };
-   * async.transform(collection, iterator, function(err, res) {
-   *   console.log(res); // [1, 2, 3, 4]
-   *   console.log(order); // [1, 2, 3, 4]
-   * });
-   *
-   * @example
-   *
-   * // array with index and accumulator
-   * var order = [];
-   * var collection = [1, 3, 2, 4];
-   * var iterator = function(result, num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     result[index] = num;
-   *     done();
-   *   }, num * 10);
-   * };
-   * async.transform(collection, iterator, function(err, res) {
-   *   console.log(res); // { '0': 1, '1': 3, '2': 2, '3': 4 }
-   *   console.log(order); // [[1, 0], [2, 2], [3, 1], [4, 3]]
-   * }, {});
-   *
-   * @example
-   *
-   * // object with accumulator
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2, d: 4 };
-   * var iterator = function(result, num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     result.push(num);
-   *     done();
-   *   }, num * 10);
-   * };
-   * async.transform(collection, iterator, function(err, res) {
-   *   console.log(res); // [1, 2, 3, 4]
-   *   console.log(order); // [1, 2, 3, 4]
-   * }, []);
-   *
-   * @example
-   *
-   * // object with key
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2, d: 4 };
-   * var iterator = function(result, num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     result[key] = num;
-   *     done();
-   *   }, num * 10);
-   * };
-   * async.transform(collection, iterator, function(err, res) {
-   *   console.log(res); //  { a: 1, b: 3, c: 2, d: 4 }
-   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b'], [4, 'd']]
-   * });
-   *
+   * @private
+   * @param {Function} arrayEach
+   * @param {Function} baseEach
    */
-  function transform(collection, iterator, callback, accumulator, thisArg) {
-    callback = callback || noop;
-    var size, result;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
+  function createTransform(arrayEach, baseEach) {
 
-    if (Array.isArray(collection)) {
-      size = collection.length;
-      result = accumulator !== undefined ? accumulator : [];
-      if (size === 0) {
-        return callback(undefined, result);
-      }
-      _arrayEach(collection, iterator.length === 4 ? collectionIteratorWithKey : collectionIterator);
-    } else if (collection && typeof collection === 'object') {
-      var keys = Object.keys(collection);
-      size = keys.length;
-      result = accumulator !== undefined ? accumulator : {};
-      if (size === 0) {
-        return callback(undefined, result);
-      }
-      _objectEach(collection, iterator.length === 4 ? collectionIteratorWithKey : collectionIterator);
-    } else {
-      callback(undefined, {});
-    }
+    return function transform(collection, iterator, callback, accumulator, thisArg) {
+      callback = callback || noop;
+      var size, keys, result;
+      var completed = 0;
+      var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
-    function collectionIterator(value) {
-      _iterator(result, value, once(done));
-    }
+      if (Array.isArray(collection)) {
+        size = collection.length;
+        result = accumulator !== undefined ? accumulator : [];
+        arrayEach(collection, result, _iterator, done);
+      } else if (collection && typeof collection === 'object') {
+        keys = Object.keys(collection);
+        size = keys.length;
+        result = accumulator !== undefined ? accumulator : {};
+        baseEach(collection, result, _iterator, done, keys);
+      }
+      if (!size) {
+        callback(undefined, accumulator !== undefined ? accumulator : result || {});
+      }
 
-    function collectionIteratorWithKey(value, key) {
-      _iterator(result, value, key, once(done));
-    }
-
-    function done(err, bool) {
-      if (err) {
-        callback(err, Array.isArray(result) ? _arrayClone(result) : _objectClone(result));
-        callback = noop;
-        return;
+      function done(err, bool) {
+        if (err) {
+          callback(err, Array.isArray(result) ? _arrayClone(result) : _objectClone(result));
+          callback = noop;
+        } else if (++completed === size) {
+          callback(undefined, result);
+        } else if (bool === false) {
+          callback(undefined, Array.isArray(result) ? _arrayClone(result) : _objectClone(result));
+          callback = noop;
+        }
       }
-      if (--size === 0) {
-        callback(undefined, result);
-        callback = noop;
-        return;
-      }
-      if (bool === false) {
-        callback(undefined, Array.isArray(result) ? _arrayClone(result) : _objectClone(result));
-        callback = noop;
-        return;
-      }
-    }
+    };
   }
 
   /**
@@ -4925,69 +5591,61 @@
    */
   function transformSeries(collection, iterator, callback, accumulator, thisArg) {
     callback = callback || noop;
-    var size, iterate, called, result;
-    var isArray = Array.isArray(collection);
+    var size, key, keys, iterate, result;
+    var sync = true;
     var completed = 0;
     var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
-    if (isArray) {
+    if (Array.isArray(collection)) {
       size = collection.length;
       result = accumulator !== undefined ? accumulator : [];
-      if (size === 0) {
-        return callback(undefined, result);
-      }
       iterate = iterator.length === 4 ? arrayIteratorWithIndex : arrayIterator;
     } else if (collection && typeof collection === 'object') {
-      var keys = Object.keys(collection);
+      keys = Object.keys(collection);
       size = keys.length;
       result = accumulator !== undefined ? accumulator : {};
-      if (size === 0) {
-        return callback(undefined, result);
-      }
       iterate = iterator.length === 4 ? objectIteratorWithKey : objectIterator;
-    } else {
-      return callback(undefined, {});
     }
-
+    if (!size) {
+      return callback(undefined, accumulator !== undefined ? accumulator : result || {});
+    }
     iterate();
+    sync = false;
 
     function arrayIterator() {
-      called = false;
       _iterator(result, collection[completed], done);
     }
 
     function arrayIteratorWithIndex() {
-      called = false;
       _iterator(result, collection[completed], completed, done);
     }
 
     function objectIterator() {
-      called = false;
       _iterator(result, collection[keys[completed]], done);
     }
 
     function objectIteratorWithKey() {
-      called = false;
-      var key = keys[completed];
+      key = keys[completed];
       _iterator(result, collection[key], key, done);
     }
 
     function done(err, bool) {
-      if (called) {
-        throw new Error('Callback was already called.');
-      }
-      called = true;
-
       if (err) {
-        return callback(err, result);
+        callback(err, result);
+        callback = throwError;
+      } else if (++completed >= size) {
+        callback(undefined, result);
+        callback = throwError;
+      } else if (bool === false) {
+        callback(undefined, result);
+        callback = throwError;
+      } else if (sync) {
+        async.nextTick(iterate);
+      } else {
+        sync = true;
+        iterate();
       }
-      if (++completed === size) {
-        return callback(undefined, result);
-      }
-      if (bool === false) {
-        return callback(undefined, result);
-      }
-      iterate();
+      sync = false;
     }
   }
 
@@ -5071,382 +5729,420 @@
    */
   function transformLimit(collection, limit, iterator, callback, accumulator, thisArg) {
     callback = callback || noop;
-    var isArray = Array.isArray(collection);
-    var result = accumulator !== undefined ? accumulator : isArray ? [] : {};
-    if (isNaN(limit) || limit < 1) {
-      return callback(undefined, result);
-    }
-
-    var size, iterate;
+    var size, index, key, keys, iterate, result;
+    var sync = true;
     var started = 0;
     var completed = 0;
     var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
-    if (isArray) {
+    if (Array.isArray(collection)) {
       size = collection.length;
-      if (size === 0) {
-        return callback(undefined, result);
-      }
+      result = accumulator !== undefined ? accumulator : [];
       iterate = iterator.length === 4 ? arrayIteratorWithIndex : arrayIterator;
     } else if (collection && typeof collection === 'object') {
-      var keys = Object.keys(collection);
+      keys = Object.keys(collection);
       size = keys.length;
-      if (size === 0) {
-        return callback(undefined, result);
-      }
+      result = accumulator !== undefined ? accumulator : {};
       iterate = iterator.length === 4 ? objectIteratorWithKey : objectIterator;
-    } else {
-      return callback(undefined, result);
     }
-
+    if (!size || isNaN(limit) || limit < 1) {
+      return callback(undefined, accumulator !== undefined ? accumulator : result || {});
+    }
     _times(limit > size ? size : limit, iterate);
+    sync = false;
 
     function arrayIterator() {
-      var index = started++;
-      if (index >= size) {
-        return;
+      index = started++;
+      if (index < size) {
+        _iterator(result, collection[index], once(done));
       }
-      _iterator(result, collection[index], once(done));
     }
 
     function arrayIteratorWithIndex() {
-      var index = started++;
-      if (index >= size) {
-        return;
+      index = started++;
+      if (index < size) {
+        _iterator(result, collection[index], index, once(done));
       }
-      _iterator(result, collection[index], index, once(done));
     }
 
     function objectIterator() {
-      var index = started++;
-      if (index >= size) {
-        return;
+      index = started++;
+      if (index < size) {
+        _iterator(result, collection[keys[index]], once(done));
       }
-      _iterator(result, collection[keys[index]], once(done));
     }
 
     function objectIteratorWithKey() {
-      var index = started++;
-      if (index >= size) {
-        return;
+      index = started++;
+      if (index < size) {
+        key = keys[index];
+        _iterator(result, collection[key], key, once(done));
       }
-      var key = keys[index];
-      _iterator(result, collection[key], key, once(done));
     }
 
     function done(err, bool) {
       if (err) {
         callback(err, Array.isArray(result) ? _arrayClone(result) : _objectClone(result));
         callback = noop;
-        return;
-      }
-      if (++completed === size) {
+        iterate = noop;
+      } else if (++completed >= size) {
         callback(undefined, result);
-        callback = noop;
-        return;
-      }
-      if (bool === false) {
+        callback = throwError;
+      } else if (bool === false) {
         callback(undefined, Array.isArray(result) ? _arrayClone(result) : _objectClone(result));
         callback = noop;
-        return;
+        iterate = noop;
+      } else if (sync) {
+        async.nextTick(iterate);
+      } else {
+        sync = true;
+        iterate();
       }
-      iterate();
+      sync = false;
     }
   }
 
   /**
    * @private
-   * @param {string} type
+   * @param {function} arrayEach
+   * @param {function} baseEach
    */
-  function createSortBy(type) {
-    switch (type) {
-      case 'series':
-        return sortBySeries;
-      case 'limit':
-        return sortByLimit;
-      default:
-        return sortBy;
-    }
+  function createSortBy(arrayEach, baseEach) {
 
-    /**
-     * @memberof async
-     * @namespace sortBy
-     * @param {Array|Object} collection
-     * @param {Function} iterator
-     * @param {Function} callback
-     * @param {*} [thisArg]
-     * @example
-     *
-     * // array
-     * var order = [];
-     * var array = [1, 3, 2];
-     * var iterator = function(num, done) {
-     *   setTimeout(function() {
-     *     order.push(num);
-     *     done(null, num);
-     *   }, num * 10);
-     * };
-     * async.sortBy(array, iterator, function(err, res) {
-     *   console.log(res); // [1, 2, 3];
-     *   console.log(order); // [1, 2, 3]
-     * });
-     *
-     * @example
-     *
-     * // array with index
-     * var order = [];
-     * var array = [1, 3, 2];
-     * var iterator = function(num, index, done) {
-     *   setTimeout(function() {
-     *     order.push([num, index]);
-     *     done(null, num);
-     *   }, num * 10);
-     * };
-     * async.sortBy(array, iterator, function(err, res) {
-     *   console.log(res); // [1, 2, 3]
-     *   console.log(order); // [[1, 0], [2, 2], [3, 1]]
-     * });
-     *
-     * @example
-     *
-     * // object
-     * var order = [];
-     * var object = { a: 1, b: 3, c: 2 };
-     * var iterator = function(num, done) {
-     *   setTimeout(function() {
-     *     order.push(num);
-     *     done(null, num);
-     *   }, num * 10);
-     * };
-     * async.sortBy(object, iterator, function(err, res) {
-     *   console.log(res); // [1, 2, 3]
-     *   console.log(order); // [1, 2, 3]
-     * });
-     *
-     * @example
-     *
-     * // object with key
-     * var order = [];
-     * var object = { a: 1, b: 3, c: 2 };
-     * var iterator = function(num, key, done) {
-     *   setTimeout(function() {
-     *     order.push([num, key]);
-     *     done(null, num);
-     *   }, num * 10);
-     * };
-     * async.sortBy(object, iterator, function(err, res) {
-     *   console.log(res); // [1, 2, 3]
-     *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b']]
-     * });
-     *
-     */
-    function sortBy(collection, iterator, callback, thisArg) {
-      var _iterator = createIterator(iterator, thisArg);
-      map(collection, _iterator, createCallback(callback));
-    }
-
-    /**
-     * @memberof async
-     * @namespace sortBySeries
-     * @param {Array|Object} collection
-     * @param {Function} iterator
-     * @param {Function} callback
-     * @param {*} [thisArg]
-     * @example
-     *
-     * // array
-     * var order = [];
-     * var array = [1, 3, 2];
-     * var iterator = function(num, done) {
-     *   setTimeout(function() {
-     *     order.push(num);
-     *     done(null, num);
-     *   }, num * 10);
-     * };
-     * async.sortBySeries(array, iterator, function(err, res) {
-     *   console.log(res); // [1, 2, 3];
-     *   console.log(order); // [1, 3, 2]
-     * });
-     *
-     * @example
-     *
-     * // array with index
-     * var order = [];
-     * var array = [1, 3, 2];
-     * var iterator = function(num, index, done) {
-     *   setTimeout(function() {
-     *     order.push([num, index]);
-     *     done(null, num);
-     *   }, num * 10);
-     * };
-     * async.sortBySeries(array, iterator, function(err, res) {
-     *   console.log(res); // [1, 2, 3]
-     *   console.log(order); // [[1, 0], [3, 1], [2, 2]]
-     * });
-     *
-     * @example
-     *
-     * // object
-     * var order = [];
-     * var object = { a: 1, b: 3, c: 2 };
-     * var iterator = function(num, done) {
-     *   setTimeout(function() {
-     *     order.push(num);
-     *     done(null, num);
-     *   }, num * 10);
-     * };
-     * async.sortBySeries(object, iterator, function(err, res) {
-     *   console.log(res); // [1, 2, 3]
-     *   console.log(order); // [1, 3, 2]
-     * });
-     *
-     * @example
-     *
-     * // object with key
-     * var order = [];
-     * var object = { a: 1, b: 3, c: 2 };
-     * var iterator = function(num, key, done) {
-     *   setTimeout(function() {
-     *     order.push([num, key]);
-     *     done(null, num);
-     *   }, num * 10);
-     * };
-     * async.sortBySeries(object, iterator, function(err, res) {
-     *   console.log(res); // [1, 2, 3]
-     *   console.log(order); // [[1, 'a'], [3, 'b'], [2, 'c']]
-     * });
-     *
-     */
-    function sortBySeries(collection, iterator, callback, thisArg) {
-      var _iterator = createIterator(iterator, thisArg);
-      mapSeries(collection, _iterator, createCallback(callback));
-    }
-
-    /**
-     * @memberof async
-     * @namespace sortByLimit
-     * @param {Array|Object} collection
-     * @param {number} limit - limit >= 1
-     * @param {Function} iterator
-     * @param {Function} callback
-     * @param {*} [thisArg]
-     * @example
-     *
-     * // array
-     * var order = [];
-     * var array = [1, 5, 3, 4, 2];
-     * var iterator = function(num, done) {
-     *   setTimeout(function() {
-     *     order.push(num);
-     *     done(null, num);
-     *   }, num * 10);
-     * };
-     * async.sortByLimit(array, 2, iterator, function(err, res) {
-     *   console.log(res); // [1, 2, 3, 4, 5]
-     *   console.log(order); // [1, 3, 5, 2, 4]
-     * });
-     *
-     * @example
-     *
-     * // array with index
-     * var order = [];
-     * var array = [1, 5, 3, 4, 2];
-     * var iterator = function(num, index, done) {
-     *   setTimeout(function() {
-     *     order.push([num, index]);
-     *     done(null, num);
-     *   }, num * 10);
-     * };
-     * async.sortByLimit(array, 2, iterator, function(err, res) {
-     *   console.log(res); // [1, 2, 3, 4, 5]
-     *   console.log(order); // [[1, 0], [3, 2], [5, 1], [2, 4], [4, 3]]
-     * });
-     *
-     * @example
-     *
-     * // object
-     * var order = [];
-     * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-     * var iterator = function(num, done) {
-     *   setTimeout(function() {
-     *     order.push(num);
-     *     done(null, num);
-     *   }, num * 10);
-     * };
-     * async.sortByLimit(object, 2, iterator, function(err, res) {
-     *   console.log(res); // [1, 2, 3, 4, 5]
-     *   console.log(order); // [1, 3, 5, 2, 4]
-     * });
-     *
-     * @example
-     *
-     * // object with key
-     * var order = [];
-     * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-     * var iterator = function(num, key, done) {
-     *   setTimeout(function() {
-     *     order.push([num, key]);
-     *     done(null, num);
-     *   }, num * 10);
-     * };
-     * async.sortByLimit(object, 2, iterator, function(err, res) {
-     *   console.log(res); // [1, 2, 3, 4, 5]
-     *   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
-     * });
-     *
-     */
-    function sortByLimit(collection, limit, iterator, callback, thisArg) {
-      var _iterator = createIterator(iterator, thisArg);
-      mapLimit(collection, limit, _iterator, createCallback(callback));
-    }
-
-    function createIterator(iterator, thisArg) {
+    return function sortBy(collection, iterator, callback, thisArg) {
+      callback = callback || noop;
+      var size, result;
+      var completed = 0;
       var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
-      return iterator.length === 3 ? collectionIteratorWithKey : collectionIterator;
 
-      function collectionIterator(value, callback) {
-        _iterator(value, function(err, criteria) {
-          if (err) {
-            callback(err);
-            callback = noop;
-            return;
-          }
-          callback(undefined, {
-            value: value,
-            criteria: criteria
-          });
-        });
+      if (Array.isArray(collection)) {
+        size = collection.length;
+        result = Array(size);
+        arrayEach(collection, _iterator, createCallback);
+      } else if (collection && typeof collection === 'object') {
+        var keys = Object.keys(collection);
+        size = keys.length;
+        result = Array(size);
+        baseEach(collection, _iterator, createCallback, keys);
+      }
+      if (!size) {
+        callback(undefined, []);
       }
 
-      function collectionIteratorWithKey(value, key, callback) {
-        _iterator(value, key, function(err, criteria) {
+      function createCallback(value) {
+        var called = false;
+        return function done(err, criteria) {
+          if (called) {
+            throwError();
+          }
+          called = true;
+          result[completed] = {
+            value: value,
+            criteria: criteria
+          };
           if (err) {
             callback(err);
             callback = noop;
-            return;
+          } else if (++completed === size) {
+            result.sort(sortIterator);
+            callback(undefined, _pluck(result, 'value'));
+            callback = throwError;
           }
-          callback(undefined, {
-            value: value,
-            criteria: criteria
-          });
-        });
+        };
+      }
+    };
+  }
+
+  /**
+   * @memberof async
+   * @namespace sortBySeries
+   * @param {Array|Object} collection
+   * @param {Function} iterator
+   * @param {Function} callback
+   * @param {*} [thisArg]
+   * @example
+   *
+   * // array
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num);
+   *   }, num * 10);
+   * };
+   * async.sortBySeries(array, iterator, function(err, res) {
+   *   console.log(res); // [1, 2, 3];
+   *   console.log(order); // [1, 3, 2]
+   * });
+   *
+   * @example
+   *
+   * // array with index
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(null, num);
+   *   }, num * 10);
+   * };
+   * async.sortBySeries(array, iterator, function(err, res) {
+   *   console.log(res); // [1, 2, 3]
+   *   console.log(order); // [[1, 0], [3, 1], [2, 2]]
+   * });
+   *
+   * @example
+   *
+   * // object
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num);
+   *   }, num * 10);
+   * };
+   * async.sortBySeries(object, iterator, function(err, res) {
+   *   console.log(res); // [1, 2, 3]
+   *   console.log(order); // [1, 3, 2]
+   * });
+   *
+   * @example
+   *
+   * // object with key
+   * var order = [];
+   * var object = { a: 1, b: 3, c: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(null, num);
+   *   }, num * 10);
+   * };
+   * async.sortBySeries(object, iterator, function(err, res) {
+   *   console.log(res); // [1, 2, 3]
+   *   console.log(order); // [[1, 'a'], [3, 'b'], [2, 'c']]
+   * });
+   *
+   */
+  function sortBySeries(collection, iterator, callback, thisArg) {
+    callback = callback || noop;
+    var size, key, value, keys, result, iterate;
+    var sync = true;
+    var completed = 0;
+    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
+
+    if (Array.isArray(collection)) {
+      size = collection.length;
+      iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
+    } else if (collection && typeof collection === 'object') {
+      keys = Object.keys(collection);
+      size = keys.length;
+      iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
+    }
+    if (!size) {
+      return callback(undefined, []);
+    }
+    result = Array(size);
+    iterate();
+    sync = false;
+
+    function arrayIterator() {
+      value = collection[completed];
+      _iterator(value, done);
+    }
+
+    function arrayIteratorWithIndex() {
+      value = collection[completed];
+      _iterator(value, completed, done);
+    }
+
+    function objectIterator() {
+      value = collection[keys[completed]];
+      _iterator(value, done);
+    }
+
+    function objectIteratorWithKey() {
+      key = keys[completed];
+      value = collection[key];
+      _iterator(value, key, done);
+    }
+
+    function done(err, criteria) {
+      result[completed] = {
+        value: value,
+        criteria: criteria
+      };
+      if (err) {
+        callback(err);
+        callback = throwError;
+      } else if (++completed >= size) {
+        result.sort(sortIterator);
+        callback(undefined, _pluck(result, 'value'));
+        callback = throwError;
+      } else if (sync) {
+        async.nextTick(iterate);
+      } else {
+        sync = true;
+        iterate();
+      }
+      sync = false;
+    }
+  }
+
+  /**
+   * @memberof async
+   * @namespace sortByLimit
+   * @param {Array|Object} collection
+   * @param {number} limit - limit >= 1
+   * @param {Function} iterator
+   * @param {Function} callback
+   * @param {*} [thisArg]
+   * @example
+   *
+   * // array
+   * var order = [];
+   * var array = [1, 5, 3, 4, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num);
+   *   }, num * 10);
+   * };
+   * async.sortByLimit(array, 2, iterator, function(err, res) {
+   *   console.log(res); // [1, 2, 3, 4, 5]
+   *   console.log(order); // [1, 3, 5, 2, 4]
+   * });
+   *
+   * @example
+   *
+   * // array with index
+   * var order = [];
+   * var array = [1, 5, 3, 4, 2];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(null, num);
+   *   }, num * 10);
+   * };
+   * async.sortByLimit(array, 2, iterator, function(err, res) {
+   *   console.log(res); // [1, 2, 3, 4, 5]
+   *   console.log(order); // [[1, 0], [3, 2], [5, 1], [2, 4], [4, 3]]
+   * });
+   *
+   * @example
+   *
+   * // object
+   * var order = [];
+   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num);
+   *   }, num * 10);
+   * };
+   * async.sortByLimit(object, 2, iterator, function(err, res) {
+   *   console.log(res); // [1, 2, 3, 4, 5]
+   *   console.log(order); // [1, 3, 5, 2, 4]
+   * });
+   *
+   * @example
+   *
+   * // object with key
+   * var order = [];
+   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(null, num);
+   *   }, num * 10);
+   * };
+   * async.sortByLimit(object, 2, iterator, function(err, res) {
+   *   console.log(res); // [1, 2, 3, 4, 5]
+   *   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
+   * });
+   *
+   */
+  function sortByLimit(collection, limit, iterator, callback, thisArg) {
+    callback = callback || noop;
+    var size, index, key, value, keys, result, iterate;
+    var sync = false;
+    var started = 0;
+    var completed = 0;
+    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
+
+    if (Array.isArray(collection)) {
+      size = collection.length;
+      iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
+    } else if (collection && typeof collection === 'object') {
+      keys = Object.keys(collection);
+      size = keys.length;
+      iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
+    }
+    if (!size || isNaN(limit) || limit < 1) {
+      return callback(undefined, []);
+    }
+    result = Array(size);
+    _times(limit > size ? size : limit, iterate);
+
+    function arrayIterator() {
+      if (started < size) {
+        value = collection[started++];
+        _iterator(value, createCallback(value));
       }
     }
 
-    function createCallback(callback) {
-      return function(err, array) {
+    function arrayIteratorWithIndex() {
+      index = started++;
+      if (index < size) {
+        value = collection[index];
+        _iterator(value, index, createCallback(value));
+      }
+    }
+
+    function objectIterator() {
+      if (started < size) {
+        value = collection[keys[started++]];
+        _iterator(value, createCallback(value));
+      }
+    }
+
+    function objectIteratorWithKey() {
+      if (started < size) {
+        key = keys[started++];
+        value = collection[key];
+        _iterator(value, key, createCallback(value));
+      }
+    }
+
+    function createCallback(value) {
+      var called = false;
+      return function(err, criteria) {
+        if (called) {
+          throwError();
+        }
+        called = true;
+        result[completed] = {
+          value: value,
+          criteria: criteria
+        };
         if (err) {
           callback(err);
           callback = noop;
-          return;
+          iterate = noop;
+        } else if (++completed >= size) {
+          result.sort(sortIterator);
+          callback(undefined, _pluck(result, 'value'));
+          callback = throwError;
+        } else if (sync) {
+          async.nextTick(iterate);
+        } else {
+          sync = true;
+          iterate();
         }
-        array.sort(function(a, b) {
-          return a.criteria < b.criteria ? -1 : 1;
-        });
-        callback(undefined, _pluck(array, 'value'));
+        sync = false;
       };
     }
-
   }
 
   /**
@@ -5898,570 +6594,108 @@
   }
 
   /**
-   * @memberof async
-   * @namespace every
-   * @param {Array|Object} collection
-   * @param {Function} iterator
-   * @param {Function} callback
-   * @param {*} [thisArg]
-   * @example
-   *
-   * // array
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.every(array, iterator, function(err, res) {
-   *   console.log(res); // false
-   *   console.log(order); // [1, 2]
-   * });
-   *
-   * @example
-   *
-   * // array with index
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.every(array, iterator, function(err, res) {
-   *   console.log(res); // false
-   *   console.log(order); // [[1, 0], [2, 2]]
-   * });
-   *
-   * @example
-   *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.every(array, iterator, function(res) {
-   *   console.log(res); // false
-   *   console.log(order); // [1, 2]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.every(array, iterator, function(res) {
-   *   console.log(res); // false
-   *   console.log(order); // [[1, 0], [2, 2]]
-   * });
-   *
-   * @example
-   *
-   * // object
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.every(object, iterator, function(err, res) {
-   *   console.log(res); // false
-   *   console.log(order); // [1, 2]
-   * });
-   *
-   * @example
-   *
-   * // object with key
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.every(object, iterator, function(err, res) {
-   *   console.log(res); // false
-   *   console.log(order); // [[1, 'a'], [2, 'c']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.every(object, iterator, function(res) {
-   *   console.log(res); // false
-   *   console.log(order); // [1, 2]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.every(object, iterator, function(res) {
-   *   console.log(res); // false
-   *   console.log(order); // [[1, 'a'], [2, 'c']]
-   * });
-   *
+   * @private
+   * @param {Function} arrayEach
+   * @param {Function} baseEach
    */
-  function every(collection, iterator, callback, thisArg) {
-    callback = callback || noop;
-    detect(collection, iterator, callback.length === 2 ? doneWithError : done, thisArg, true);
+  function createEvery(arrayEach, baseEach) {
 
-    function done(res) {
-      callback(!res);
-    }
+    var deny = createDetect(arrayEach, baseEach, false);
 
-    function doneWithError(err, res) {
-      callback(err, !res);
-    }
+    return function every(collection, iterator, callback, thisArg) {
+      callback = callback || noop;
+      deny(collection, iterator, callback.length === 2 ? doneWithError : done, thisArg);
+
+      function done(res) {
+        callback(!res);
+      }
+
+      function doneWithError(err, res) {
+        callback(err, !res);
+      }
+    };
   }
 
   /**
-   * @memberof async
-   * @namespace everySeries
-   * @param {Array|Object} collection
-   * @param {Function} iterator
-   * @param {Function} callback
-   * @param {*} [thisArg]
-   * @example
-   *
-   * // array
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.everySeries(array, iterator, function(err, res) {
-   *   console.log(res); // false
-   *   console.log(order); // [1, 3, 2]
-   * });
-   *
-   * @example
-   *
-   * // array with index
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.everySeries(array, iterator, function(err, res) {
-   *   console.log(res); // false
-   *   console.log(order); // [[1, 0], [3, 1], [2, 2]]
-   * });
-   *
-   * @example
-   *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.everySeries(array, iterator, function(res) {
-   *   console.log(res); // false
-   *   console.log(order); // [1, 3, 2]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.everySeries(array, iterator, function(res) {
-   *   console.log(res); // false
-   *   console.log(order); // [[1, 0], [3, 1], [2, 2]]
-   * });
-   *
-   * @example
-   *
-   * // object
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.everySeries(object, iterator, function(err, res) {
-   *   console.log(res); // false
-   *   console.log(order); // [1, 3, 2]
-   * });
-   *
-   * @example
-   *
-   * // object with key
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.everySeries(object, iterator, function(err, res) {
-   *   console.log(res); // false
-   *   console.log(order); // [[1, 'a'], [3, 'b'] [2, 'c']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.every(object, iterator, function(res) {
-   *   console.log(res); // false
-   *   console.log(order); // [1, 2]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.every(object, iterator, function(res) {
-   *   console.log(res); // false
-   *   console.log(order); // [[1, 'a'], [2, 'c']]
-   * });
-   *
+   * @private
    */
-  function everySeries(collection, iterator, callback, thisArg) {
-    callback = callback || noop;
-    detectSeries(collection, iterator, callback.length === 2 ? doneWithError : done, thisArg, true);
+  function createEverySeries() {
 
-    function done(res) {
-      callback(!res);
-    }
+    var denySeries = createDetectSeries(false);
 
-    function doneWithError(err, res) {
-      callback(err, !res);
-    }
+    return function everySeries(collection, iterator, callback, thisArg) {
+      callback = callback || noop;
+      denySeries(collection, iterator, callback.length === 2 ? doneWithError : done, thisArg);
+
+      function done(res) {
+        callback(!res);
+      }
+
+      function doneWithError(err, res) {
+        callback(err, !res);
+      }
+    };
   }
 
   /**
-   * @memberof async
-   * @namespace everyLimit
-   * @param {Array|Object} collection
-   * @param {number} limit - limit >= 1
-   * @param {Function} iterator
-   * @param {Function} callback
-   * @param {*} [thisArg]
-   * @example
-   *
-   * // array
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.everyLimit(array, 2, iterator, function(err, res) {
-   *   console.log(res); // false
-   *   console.log(order); // [1, 3, 5, 2]
-   * });
-   *
-   * @example
-   *
-   * // array with index
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.everyLimit(array, 2, iterator, function(err, res) {
-   *   console.log(res); // false
-   *   console.log(order); // [[1, 0], [3, 2], [5, 1], [2, 4]]
-   * });
-   *
-   * @example
-   *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.everyLimit(array, 2, iterator, function(res) {
-   *   console.log(res); // false
-   *   console.log(order); // [1, 3, 5, 2]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.everyLimit(array, 2, iterator, function(res) {
-   *   console.log(res); // false
-   *   console.log(order); // [[1, 0], [3, 2], [5, 1], [2, 4]]
-   * });
-   *
-   * @example
-   *
-   * // object
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.everyLimit(object, 2, iterator, function(err, res) {
-   *   console.log(res); // false
-   *   console.log(order); // [1, 3, 5, 2]
-   * });
-   *
-   * @example
-   *
-   * // object with key
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(null, num % 2);
-   *   }, num * 10);
-   * };
-   * async.everyLimit(object, 2, iterator, function(err, res) {
-   *   console.log(res); // false
-   *   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.everyLimit(object, 2, iterator, function(res) {
-   *   console.log(res); // false
-   *   console.log(order); // [1, 3, 5, 2]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.everyLimit(object, 2, iterator, function(res) {
-   *   console.log(res); // false
-   *   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e']]
-   * });
-   *
+   * @private
    */
-  function everyLimit(collection, limit, iterator, callback, thisArg) {
-    callback = callback || noop;
-    detectLimit(collection, limit, iterator, callback.length === 2 ? doneWithError : done, thisArg, true);
+  function createEveryLimit() {
 
-    function done(res) {
-      callback(!res);
-    }
+    var denyLimit = createDetectLimit(false);
 
-    function doneWithError(err, res) {
-      callback(err, !res);
-    }
+    return function everyLimit(collection, limit, iterator, callback, thisArg) {
+      callback = callback || noop;
+      denyLimit(collection, limit, iterator, callback.length === 2 ? doneWithError : done, thisArg);
+
+      function done(res) {
+        callback(!res);
+      }
+
+      function doneWithError(err, res) {
+        callback(err, !res);
+      }
+    };
   }
 
   /**
-   * @memberof async
-   * @namespace concat
-   * @param {Array|Object} collection
-   * @param {Function} iterator
-   * @param {Function} callback
-   * @param {*} [thisArg]
-   * @example
-   *
-   * // array
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, [num]);
-   *   }, num * 10);
-   * };
-   * async.concat(array, iterator, function(err, res) {
-   *   console.log(res); // [1, 2, 3];
-   *   console.log(order); // [1, 2, 3]
-   * });
-   *
-   * @example
-   *
-   * // array with index
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(null, [num]);
-   *   }, num * 10);
-   * };
-   * async.concat(array, iterator, function(err, res) {
-   *   console.log(res); // [1, 2, 3]
-   *   console.log(order); // [[1, 0], [2, 2], [3, 1]]
-   * });
-   *
-   * @example
-   *
-   * // object
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(null, [num]);
-   *   }, num * 10);
-   * };
-   * async.concat(object, iterator, function(err, res) {
-   *   console.log(res); // [1, 2, 3]
-   *   console.log(order); // [1, 2, 3]
-   * });
-   *
-   * @example
-   *
-   * // object with key
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(null, [num]);
-   *   }, num * 10);
-   * };
-   * async.concat(object, iterator, function(err, res) {
-   *   console.log(res); // [1, 2, 3]
-   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b']]
-   * });
-   *
+   * @private
+   * @param {Funciton} arrayEach
+   * @param {Funciton} baseEach
    */
-  function concat(collection, iterator, callback, thisArg) {
-    callback = callback || noop;
-    var size;
-    var result = [];
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
+  function createConcat(arrayEach, baseEach) {
 
-    if (Array.isArray(collection)) {
-      size = collection.length;
-      if (size === 0) {
-        return callback(undefined, result);
-      }
-      _arrayEach(collection, iterator.length === 3 ? collectionIteratorWithKey : collectionIterator);
-    } else if (collection && typeof collection === 'object') {
-      var keys = Object.keys(collection);
-      size = keys.length;
-      if (size === 0) {
-        return callback(undefined, result);
-      }
-      _objectEach(collection, iterator.length === 3 ? collectionIteratorWithKey : collectionIterator);
-    } else {
-      callback(undefined, result);
-    }
+    return function concat(collection, iterator, callback, thisArg) {
+      callback = callback || noop;
+      var size;
+      var completed = 0;
+      var result = [];
+      var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
-    function collectionIterator(value) {
-      _iterator(value, once(done));
-    }
-
-    function collectionIteratorWithKey(value, key) {
-      _iterator(value, key, once(done));
-    }
-
-    function done(err, array) {
-      if (array !== undefined) {
-        Array.prototype.push.apply(result, Array.isArray(array) ? array : [array]);
+      if (Array.isArray(collection)) {
+        size = collection.length;
+        arrayEach(collection, _iterator, done);
+      } else if (collection && typeof collection === 'object') {
+        var keys = Object.keys(collection);
+        size = keys.length;
+        baseEach(collection, _iterator, done, keys);
       }
-      if (err) {
-        callback(err, _arrayClone(result));
-        callback = noop;
-        return;
-      }
-      if (--size === 0) {
+      if (!size) {
         callback(undefined, result);
-        callback = noop;
       }
-    }
+
+      function done(err, array) {
+        if (array !== undefined) {
+          Array.prototype.push.apply(result, Array.isArray(array) ? array : [array]);
+        }
+        if (err) {
+          callback(err, _arrayClone(result));
+          callback = noop;
+        } else if (++completed === size) {
+          callback(undefined, result);
+        }
+      }
+    };
   }
 
   /**
@@ -6538,67 +6772,60 @@
    */
   function concatSeries(collection, iterator, callback, thisArg) {
     callback = callback || noop;
-    var size, keys, iterate, called;
+    var size, key, keys, iterate;
+    var sync = true;
     var result = [];
     var completed = 0;
     var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
     if (Array.isArray(collection)) {
       size = collection.length;
-      if (size === 0) {
-        return callback(undefined, result);
-      }
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
     } else if (collection && typeof collection === 'object') {
       keys = Object.keys(collection);
       size = keys.length;
-      if (size === 0) {
-        return callback(undefined, result);
-      }
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
-    } else {
+    }
+    if (!size) {
       return callback(undefined, result);
     }
-
     iterate();
+    sync = false;
 
     function arrayIterator() {
-      called = false;
       _iterator(collection[completed], done);
     }
 
     function arrayIteratorWithIndex() {
-      called = false;
       _iterator(collection[completed], completed, done);
     }
 
     function objectIterator() {
-      called = false;
       _iterator(collection[keys[completed]], done);
     }
 
     function objectIteratorWithKey() {
-      called = false;
-      var key = keys[completed];
+      key = keys[completed];
       _iterator(collection[key], key, done);
     }
 
     function done(err, array) {
-      if (called) {
-        throw new Error('Callback was already called.');
-      }
-      called = true;
-
       if (array) {
         Array.prototype.push.apply(result, Array.isArray(array) ? array : [array]);
       }
       if (err) {
-        return callback(err, result);
+        callback(err, result);
+        callback = throwError;
+      } else if (++completed >= size) {
+        callback(undefined, result);
+        callback = throwError;
+      } else if (sync) {
+        async.nextTick(iterate);
+      } else {
+        sync = true;
+        iterate();
       }
-      if (++completed === size) {
-        return callback(undefined, result);
-      }
-      iterate();
+      sync = false;
     }
   }
 
@@ -6678,65 +6905,50 @@
   function concatLimit(collection, limit, iterator, callback, thisArg) {
     callback = callback || noop;
     var result = [];
-    if (isNaN(limit) || limit < 1) {
-      return callback(undefined, result);
-    }
-
-    var size, iterate;
+    var size, index, key, iterate;
+    var sync = true;
     var started = 0;
     var completed = 0;
     var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
     if (Array.isArray(collection)) {
       size = collection.length;
-      if (size === 0) {
-        return callback(undefined, result);
-      }
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
     } else if (collection && typeof collection === 'object') {
       var keys = Object.keys(collection);
       size = keys.length;
-      if (size === 0) {
-        return callback(undefined, result);
-      }
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
-    } else {
+    }
+    if (!size || isNaN(limit) || limit < 1) {
       return callback(undefined, result);
     }
-
     _times(limit > size ? size : limit, iterate);
+    sync = false;
 
     function arrayIterator() {
-      var index = started++;
-      if (index >= size) {
-        return;
+      if (started < size) {
+        _iterator(collection[started++], once(done));
       }
-      _iterator(collection[index], once(done));
     }
 
     function arrayIteratorWithIndex() {
-      var index = started++;
-      if (index >= size) {
-        return;
+      index = started++;
+      if (index < size) {
+        _iterator(collection[index], index, once(done));
       }
-      _iterator(collection[index], index, once(done));
     }
 
     function objectIterator() {
-      var index = started++;
-      if (index >= size) {
-        return;
+      if (started < size) {
+        _iterator(collection[keys[started++]], once(done));
       }
-      _iterator(collection[keys[index]], once(done));
     }
 
     function objectIteratorWithKey() {
-      var index = started++;
-      if (index >= size) {
-        return;
+      if (started < size) {
+        key = keys[started++];
+        _iterator(collection[key], key, once(done));
       }
-      var key = keys[index];
-      _iterator(collection[key], key, once(done));
     }
 
     function done(err, array) {
@@ -6746,14 +6958,16 @@
       if (err) {
         callback(err, result);
         callback = noop;
-        return;
-      }
-      if (++completed === size) {
+      } else if (++completed >= size) {
         callback(undefined, result);
-        callback = noop;
-        return;
+        callback = throwError;
+      } else if (sync) {
+        async.nextTick(iterate);
+      } else {
+        sync = true;
+        iterate();
       }
-      iterate();
+      sync = false;
     }
   }
 
@@ -6832,57 +7046,52 @@
    * });
    *
    */
-  function parallel(tasks, callback, thisArg) {
-    callback = callback || noop;
-    var size, result;
+  /**
+   * @private
+   * @param {Funciton} arrayEach
+   * @param {Funciton} baseEach
+   */
+  function createParallel(arrayEach, baseEach) {
 
-    if (Array.isArray(tasks)) {
-      size = tasks.length;
-      if (size === 0) {
-        return callback(undefined, []);
+    return function parallel(tasks, callback, thisArg) {
+      callback = callback || noop;
+      var size, result;
+      var completed = 0;
+
+      if (Array.isArray(tasks)) {
+        size = tasks.length;
+        result = Array(size);
+        arrayEach(tasks, createCallback, thisArg);
+      } else if (tasks && typeof tasks === 'object') {
+        var keys = Object.keys(tasks);
+        size = keys.length;
+        result = {};
+        baseEach(tasks, createCallback, keys, thisArg);
       }
-      result = Array(size);
-      _arrayEach(tasks, thisArg ? collectionIteratorWithBind : collectionIterator);
-    } else if (tasks && typeof tasks === 'object') {
-      var keys = Object.keys(tasks);
-      size = keys.length;
-      if (size === 0) {
-        return callback(undefined, {});
+      if (!size) {
+        callback(undefined, result);
       }
-      result = {};
-      _objectEach(tasks, thisArg ? collectionIteratorWithBind : collectionIterator, keys);
-    } else {
-      callback();
-    }
 
-    function collectionIterator(task, index) {
-      task(createCallback(index));
-    }
-
-    function collectionIteratorWithBind(task, index) {
-      task.call(thisArg, createCallback(index));
-    }
-
-    function createCallback(key) {
-      var called = false;
-      return function(err, res) {
-        if (called) {
-          throw new Error('Callback was already called.');
-        }
-        called = true;
-
-        if (err) {
-          callback(err, result);
-          callback = noop;
-          return;
-        }
-        result[key] = arguments.length <= 2 ? res : _slice(arguments, 1);
-        if (--size === 0) {
-          callback(undefined, result);
-          callback = noop;
-        }
-      };
-    }
+      function createCallback(key) {
+        return function(err, res) {
+          if (key === null) {
+            throwError();
+          }
+          if (err) {
+            callback(err, result);
+            callback = noop;
+            key = null;
+            return;
+          }
+          result[key] = arguments.length <= 2 ? res : _slice(arguments, 1);
+          key = null;
+          if (++completed === size) {
+            callback(undefined, result);
+            callback = throwError;
+          }
+        };
+      }
+    };
   }
 
   /**
@@ -6962,68 +7171,66 @@
    */
   function series(tasks, callback, thisArg) {
     callback = callback || noop;
-    var size, key, keys, result, iterate, called;
+    var size, key, keys, result, iterate;
+    var sync = true;
     var completed = 0;
 
     if (Array.isArray(tasks)) {
       size = tasks.length;
-      if (size === 0) {
-        return callback(undefined, []);
-      }
       result = Array(size);
       iterate = thisArg ? arrayIteratorWithBind : arrayIterator;
     } else if (tasks && typeof tasks === 'object') {
       keys = Object.keys(tasks);
       size = keys.length;
-      if (size === 0) {
-        return callback(undefined, {});
-      }
       result = {};
       iterate = thisArg ? objectIteratorWithBind : objectIterator;
     } else {
       return callback();
     }
-
+    if (!size) {
+      return callback(undefined, result);
+    }
     iterate();
+    sync = false;
 
     function arrayIterator() {
-      called = false;
       key = completed;
       tasks[completed](done);
     }
 
     function arrayIteratorWithBind() {
-      called = false;
       key = completed;
       tasks[completed].call(thisArg, done);
     }
 
     function objectIterator() {
-      called = false;
       key = keys[completed];
       tasks[key](done);
     }
 
     function objectIteratorWithBind() {
-      called = false;
       key = keys[completed];
       tasks[key].call(thisArg, done);
     }
 
     function done(err, res) {
-      if (called) {
-        throw new Error('Callback was already called.');
-      }
-      called = true;
-
       if (err) {
-        return callback(err, result);
+        callback(err, result);
+        callback = throwError;
+        iterate = throwError;
+        return;
       }
       result[key] = arguments.length <= 2 ? res : _slice(arguments, 1);
-      if (++completed === size) {
-        return callback(undefined, result);
+      if (++completed >= size) {
+        callback(undefined, result);
+        callback = throwError;
+      } else if (sync) {
+        async.nextTick(iterate);
+      } else {
+        sync = true;
+        iterate();
       }
-      iterate();
+      sync = false;
     }
   }
 
@@ -7105,83 +7312,77 @@
    */
   function parallelLimit(tasks, limit, callback, thisArg) {
     callback = callback || noop;
-    var size, result, iterate;
+    var size, index, key, keys, result, iterate;
+    var sync = true;
     var started = 0;
     var completed = 0;
 
     if (Array.isArray(tasks)) {
       size = tasks.length;
-      if (size === 0) {
-        return callback(undefined, []);
-      }
       result = Array(size);
       iterate = thisArg ? arrayIteratorWithBind : arrayIterator;
     } else if (tasks && typeof tasks === 'object') {
-      var keys = Object.keys(tasks);
+      keys = Object.keys(tasks);
       size = keys.length;
-      if (size === 0) {
-        return callback(undefined, {});
-      }
       result = {};
       iterate = thisArg ? objectIteratorWithBind : objectIterator;
-    } else {
-      return callback();
     }
-
+    if (!size || isNaN(limit) || limit < 1) {
+      return callback(undefined, result);
+    }
     _times(limit > size ? size : limit, iterate);
+    sync = false;
 
     function arrayIterator() {
-      var index = started++;
-      if (index >= size) {
-        return;
+      index = started++;
+      if (index < size) {
+        tasks[index](createCallback(index));
       }
-      tasks[index](createCallback(index));
     }
 
     function arrayIteratorWithBind() {
-      var index = started++;
-      if (index >= size) {
-        return;
+      index = started++;
+      if (index < size) {
+        tasks[index].call(thisArg, createCallback(index));
       }
-      tasks[index].call(thisArg, createCallback(index));
     }
 
     function objectIterator() {
-      var index = started++;
-      if (index >= size) {
-        return;
+      if (started < size) {
+        key = keys[started++];
+        tasks[key](createCallback(key));
       }
-      var key = keys[index];
-      tasks[key](createCallback(key));
     }
 
     function objectIteratorWithBind() {
-      var index = started++;
-      if (index >= size) {
-        return;
+      if (started < size) {
+        key = keys[started++];
+        tasks[key].call(thisArg, createCallback(key));
       }
-      var key = keys[index];
-      tasks[key].call(thisArg, createCallback(key));
     }
 
     function createCallback(key) {
-      var called = false;
       return function(err, res) {
-        if (called) {
-          throw new Error('Callback was already called.');
+        if (key === null) {
+          throwError();
         }
-        called = true;
-
         if (err) {
           callback(err, result);
           callback = noop;
+          key = null;
           return;
         }
         result[key] = arguments.length <= 2 ? res : _slice(arguments, 1);
-        if (++completed === size) {
-          return callback(undefined, result);
+        key = null;
+        if (++completed >= size) {
+          callback(undefined, result);
+        } else if (sync) {
+          async.nextTick(iterate);
+        } else {
+          sync = true;
+          iterate();
         }
-        iterate();
+        sync = false;
       };
     }
   }
@@ -7249,29 +7450,33 @@
     if (!checkWaterfallTasks(tasks, callback)) {
       return;
     }
-    var called;
     var completed = 0;
+    var called = false;
+    var sync = true;
     var size = tasks.length;
+    var func = tasks[completed];
     var args = [];
     iterate();
+    sync = false;
 
     function iterate() {
       called = false;
-      var func = tasks[completed];
       switch (args.length) {
         case 0:
-          return func(done);
         case 1:
-          return func(args[0], done);
+          return func(done);
         case 2:
-          return func(args[0], args[1], done);
+          return func(args[1], done);
         case 3:
-          return func(args[0], args[1], args[2], done);
+          return func(args[1], args[2], done);
         case 4:
-          return func(args[0], args[1], args[2], args[3], done);
+          return func(args[1], args[2], args[3], done);
         case 5:
-          return func(args[0], args[1], args[2], args[3], args[4], done);
+          return func(args[1], args[2], args[3], args[4], done);
+        case 6:
+          return func(args[1], args[2], args[3], args[4], args[5], done);
         default:
+          args = _slice(args, 1);
           args.push(done);
           return func.apply(null, args);
       }
@@ -7279,18 +7484,28 @@
 
     function done(err) {
       if (called) {
-        throw new Error('Callback was already called.');
+        throwError();
+      }
+      if (err) {
+        callback(err);
+        callback = throwError;
+        return;
       }
       called = true;
-
-      if (err) {
-        return callback(err);
+      if (++completed >= size) {
+        callback.apply(null, _baseSlice(arguments));
+        callback = throwError;
+        return;
       }
-      if (++completed === size) {
-        return callback.apply(null, _baseSlice(arguments));
+      func = tasks[completed];
+      args = arguments;
+      if (sync) {
+        async.nextTick(iterate);
+      } else {
+        sync = true;
+        iterate();
       }
-      args = _slice(arguments, 1);
-      iterate();
+      sync = false;
     }
   }
 
@@ -7313,38 +7528,42 @@
       var func = tasks[completed];
       switch (args.length) {
         case 0:
-          return func(done);
         case 1:
-          return func(args[0], done);
+          return func(done);
         case 2:
-          return func(args[0], args[1], done);
+          return func(args[1], done);
         case 3:
-          return func(args[0], args[1], args[2], done);
+          return func(args[1], args[2], done);
         case 4:
-          return func(args[0], args[1], args[2], args[3], done);
+          return func(args[1], args[2], args[3], done);
         case 5:
-          return func(args[0], args[1], args[2], args[3], args[4], done);
+          return func(args[1], args[2], args[3], args[4], done);
+        case 6:
+          return func(args[1], args[2], args[3], args[4], args[5], done);
         default:
+          args = _slice(args, 1);
           args.push(done);
           return func.apply(null, args);
       }
 
       function done(err) {
         if (called) {
-          throw new Error('Callback was already called.');
+          throwError();
         }
         called = true;
-
         if (err) {
-          return callback(err);
+          callback(err);
+        } else if (++completed >= size) {
+          callback.apply(null, _baseSlice(arguments));
+        } else {
+          args = arguments;
+          async.safeNextTick(function() {
+            iterate(completed);
+          });
+          return;
         }
-        if (++completed === size) {
-          return callback.apply(null, _baseSlice(arguments));
-        }
-        args = _slice(arguments, 1);
-        async.safeNextTick(function() {
-          iterate(completed);
-        });
+        iterate = throwError;
+        callback = throwError;
       }
     }
   }
@@ -7395,46 +7614,53 @@
     if (!checkWaterfallTasks(tasks, callback)) {
       return;
     }
-    var called;
     var completed = 0;
+    var sync = true;
     var size = tasks.length;
+    var func = tasks[completed];
     var args = [];
     iterate();
+    sync = false;
 
     function iterate() {
-      called = false;
-      var func = tasks[completed];
       switch (func.length) {
         case 1:
           return func(done);
         case 2:
-          return func(args[0], done);
+          return func(args[1], done);
         case 3:
-          return func(args[0], args[1], done);
+          return func(args[1], args[2], done);
         case 4:
-          return func(args[0], args[1], args[2], done);
+          return func(args[1], args[2], args[3], done);
         case 5:
-          return func(args[0], args[1], args[2], args[3], done);
+          return func(args[1], args[2], args[3], args[4], done);
         default:
+          args = _slice(args, 1);
           args[func.length - 1] = done;
           return func.apply(null, args);
       }
     }
 
     function done(err) {
-      if (called) {
-        throw new Error('Callback was already called.');
-      }
-      called = true;
-
       if (err) {
-        return callback(err);
+        callback(err);
+        callback = throwError;
+        return;
       }
-      if (++completed === size) {
-        return callback.apply(null, _baseSlice(arguments));
+      if (++completed >= size) {
+        callback.apply(null, _baseSlice(arguments));
+        callback = throwError;
+        return;
       }
-      args = _slice(arguments, 1);
-      iterate();
+      func = tasks[completed];
+      args = arguments;
+      if (sync) {
+        async.nextTick(iterate);
+      } else {
+        sync = true;
+        iterate();
+      }
+      sync = false;
     }
   }
 
@@ -7444,8 +7670,10 @@
    */
   function whilst(test, iterator, callback, thisArg) {
     callback = callback || noop;
+    var sync = true;
     var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
     iterate();
+    sync = false;
 
     function iterate() {
       if (test()) {
@@ -7453,7 +7681,13 @@
           if (err) {
             return callback(err);
           }
-          iterate();
+          if (sync) {
+            async.nextTick(iterate);
+          } else {
+            sync = true;
+            iterate();
+          }
+          sync = false;
         });
       } else {
         callback();
@@ -7467,8 +7701,10 @@
    */
   function doWhilst(iterator, test, callback, thisArg) {
     callback = callback || noop;
+    var sync = true;
     var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
     iterate();
+    sync = false;
 
     function iterate() {
       _iterator(function(err) {
@@ -7476,7 +7712,13 @@
           return callback(err);
         }
         if (test.apply(thisArg, _slice(arguments, 1))) {
-          iterate();
+          if (sync) {
+            async.nextTick(iterate);
+          } else {
+            sync = true;
+            iterate();
+          }
+          sync = false;
         } else {
           callback();
         }
@@ -7490,8 +7732,10 @@
    */
   function until(test, iterator, callback, thisArg) {
     callback = callback || noop;
+    var sync = true;
     var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
     iterate();
+    sync = false;
 
     function iterate() {
       if (!test()) {
@@ -7499,7 +7743,13 @@
           if (err) {
             return callback(err);
           }
-          iterate();
+          if (sync) {
+            async.nextTick(iterate);
+          } else {
+            sync = true;
+            iterate();
+          }
+          sync = false;
         });
       } else {
         callback();
@@ -7513,8 +7763,10 @@
    */
   function doUntil(iterator, test, callback, thisArg) {
     callback = callback || noop;
+    var sync = true;
     var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
     iterate();
+    sync = false;
 
     function iterate() {
       _iterator(function(err) {
@@ -7522,7 +7774,13 @@
           return callback(err);
         }
         if (!test.apply(thisArg, _slice(arguments, 1))) {
-          iterate();
+          if (sync) {
+            async.nextTick(iterate);
+          } else {
+            sync = true;
+            iterate();
+          }
+          sync = false;
         } else {
           callback();
         }
@@ -7532,12 +7790,90 @@
 
   /**
    * @memberof async
+   * @namespace during
+   */
+  function during(test, iterator, callback, thisArg) {
+    callback = callback || noop;
+    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
+    _test();
+
+    function _test() {
+      test(iterate);
+    }
+
+    function iterate(err, truth) {
+      if (err) {
+        return callback(err);
+      }
+      if (truth) {
+        _iterator(done);
+      } else {
+        callback();
+      }
+    }
+
+    function done(err) {
+      if (err) {
+        return callback(err);
+      }
+      _test();
+    }
+  }
+
+  /**
+   * @memberof async
+   * @namespace doDuring
+   */
+  function doDuring(iterator, test, callback, thisArg) {
+    callback = callback || noop;
+    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
+    iterate(null, true);
+
+    function iterate(err, truth) {
+      if (err) {
+        return callback(err);
+      }
+      if (truth) {
+        _iterator(done);
+      } else {
+        callback();
+      }
+    }
+
+    function done(err, res) {
+      if (err) {
+        return callback(err);
+      }
+      switch (arguments.length) {
+        case 0:
+        case 1:
+          test(iterate);
+          break;
+        case 2:
+          test(res, iterate);
+          break;
+        default:
+          var args = _slice(arguments, 1);
+          args.push(iterate);
+          test.apply(null, args);
+          break;
+      }
+    }
+  }
+
+  /**
+   * @memberof async
    * @namespace forever
    */
   function forever(iterator, callback, thisArg) {
-    callback = callback || noop;
+    var sync = true;
     var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
-    _iterator(next);
+    iterate();
+    sync = false;
+
+    function iterate() {
+      _iterator(next);
+    }
 
     function next(err) {
       if (err) {
@@ -7546,7 +7882,13 @@
         }
         throw err;
       }
-      _iterator(next);
+      if (sync) {
+        async.nextTick(iterate);
+      } else {
+        sync = true;
+        iterate();
+      }
+      sync = false;
     }
   }
 
@@ -7605,7 +7947,7 @@
         return func(fns, iterator, callback);
 
         function iterator(fn, done) {
-          fn.apply(self, args.concat(done));
+          fn.apply(self, args.concat([done]));
         }
       };
       if (arguments.length > 1) {
@@ -7718,21 +8060,35 @@
       }
 
       callback = typeof callback === 'function' ? callback : noop;
+      var index = getIndex(priority);
       _arrayEach(_tasks, function(task) {
         var item = {
           task: task,
           priority: priority,
           callback: callback
         };
-        q.tasks.push(item);
-        q.tasks.sort(function(a, b) {
-          return a.priority < b.priority ? -1 : 1;
-        });
+        q.tasks.splice(index++, 0, item);
+
         if (typeof q.saturated === 'function' && q.length() === q.concurrency) {
           q.saturated();
         }
         async.nextTick(q.process);
       });
+
+      function getIndex(priority) {
+        var tasks = q.tasks;
+        var length = tasks.length;
+        if (!length) {
+          return 0;
+        }
+        var index = -1;
+        while (++index < length) {
+          if (priority < tasks[index].priority) {
+            return index;
+          }
+        }
+        return index;
+      }
     }
 
     function push(tasks, priority, callback) {
@@ -8031,7 +8387,7 @@
   function apply(func) {
     var args = _slice(arguments, 1);
     return function() {
-      return func.apply(this, Array.prototype.concat.apply(args, _baseSlice(arguments)));
+      return func.apply(this, args.concat(_baseSlice(arguments)));
     };
   }
 
@@ -8060,7 +8416,6 @@
     }
     var result = Array(n);
     var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
-
     _times(n, iterate);
 
     function iterate(num) {
@@ -8068,20 +8423,16 @@
     }
 
     function createCallback(index) {
-      var called = false;
       return function(err, res) {
-        if (called) {
-          throw new Error('Callback was already called.');
+        if (index === null) {
+          throwError();
         }
-        called = true;
         result[index] = res;
-
+        index = null;
         if (err) {
           callback(err);
           callback = noop;
-          return;
-        }
-        if (--n === 0) {
+        } else if (--n === 0) {
           callback(undefined, result);
         }
       };
@@ -8111,31 +8462,30 @@
     if (isNaN(n) || n < 1) {
       return callback(undefined, []);
     }
-    var called;
     var result = Array(n);
+    var sync = true;
     var completed = 0;
     var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
     iterate();
+    sync = false;
 
     function iterate() {
-      called = false;
       _iterator(completed, done);
     }
 
     function done(err, res) {
-      if (called) {
-        throw new Error('Callback was already called.');
-      }
-      called = true;
       result[completed] = res;
-
       if (err) {
-        return callback(err);
+        callback(err);
+        callback = throwError;
+      } else if (++completed >= n) {
+        callback(undefined, result);
+        callback = throwError;
+      } else if (sync) {
+        async.nextTick(iterate);
+      } else {
+        iterate();
       }
-      if (++completed === n) {
-        return callback(undefined, result);
-      }
-      iterate();
     }
   }
 
@@ -8164,40 +8514,40 @@
       return callback(undefined, []);
     }
     var result = Array(n);
+    var sync = true;
     var started = 0;
     var completed = 0;
     var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
-
     _times(limit > n ? n : limit, iterate);
+    sync = false;
 
     function iterate() {
       var index = started++;
-      if (index >= n) {
-        return;
+      if (index < n) {
+        _iterator(index, createCallback(index));
       }
-      _iterator(index, createCallback(index));
     }
 
     function createCallback(index) {
-      var called = false;
       return function(err, res) {
-        if (called) {
-          throw new Error('Callback was already called.');
+        if (index === null) {
+          throwError();
         }
-        called = true;
         result[index] = res;
-
+        index = null;
         if (err) {
           callback(err);
           callback = noop;
-          return;
-        }
-        if (++completed === n) {
+        } else if (++completed >= n) {
           callback(undefined, result);
-          callback = noop;
-          return;
+          callback = throwError;
+        } else if (sync) {
+          async.nextTick(iterate);
+        } else {
+          sync = true;
+          iterate();
         }
-        iterate();
+        sync = false;
       };
     }
   }
@@ -8261,6 +8611,55 @@
 
   /**
    * @memberof async
+   * @namespace ensureAsync
+   */
+  function ensureAsync(fn) {
+    return function( /* ...args, callback */ ) {
+      var sync = true;
+      var args = _baseSlice(arguments);
+      var callback = args.pop();
+      args.push(function() {
+        var innerArgs = arguments;
+        if (sync) {
+          async.safeNextTick(function() {
+            callback.apply(null, innerArgs);
+          });
+        } else {
+          callback.apply(null, innerArgs);
+        }
+      });
+      fn.apply(this, args);
+      sync = false;
+    };
+  }
+
+  /**
+   * @memberof async
+   * @namespace constant
+   */
+  function constant( /* values... */ ) {
+    var args = [null].concat(_baseSlice(arguments));
+    return function(callback) {
+      callback.apply(this, args);
+    };
+  }
+
+  function asyncify(func) {
+    return function( /* args..., callback */ ) {
+      var args = _baseSlice(arguments);
+      var callback = args.pop();
+      var result;
+      try {
+        result = func.apply(this, args);
+      } catch (e) {
+        return callback(e);
+      }
+      callback(null, result);
+    };
+  }
+
+  /**
+   * @memberof async
    * @namespace createLogger
    */
   function createLogger(name) {
@@ -8311,6 +8710,8 @@
     this._emitter = emitter || series;
     this._limit = limit || 4;
     this._events = {};
+    this._runing = {};
+    this._queue = {};
   }
 
   /**
@@ -8378,6 +8779,9 @@
       });
       return self;
     }
+    if (self.running(key)) {
+      return self.queue(key, 'addListener', functions);
+    }
 
     self._events[key] = self._events[key] || [];
     if (Array.isArray(functions)) {
@@ -8398,7 +8802,6 @@
       });
       return self;
     }
-
     if (Array.isArray(functions)) {
       _arrayEach(functions, function(func, index) {
         functions[index] = createOnce(func);
@@ -8416,6 +8819,9 @@
         removeListener.call(self, key, func);
       });
       return self;
+    }
+    if (self.running(key)) {
+      return self.queue(key, 'removeListener', functions);
     }
 
     var events = self._events[key] || [];
@@ -8439,44 +8845,77 @@
 
   EventEmitter.prototype.removeEvent = function removeEvent(key) {
     var self = this;
-    if (key) {
-      var events = self._events[key] || [];
-      if (events.length) {
-        delete self._events[key];
-      }
-    } else {
-      self._events = {};
+    if (!key) {
+      _objectEach(self._events, function(events, key) {
+        removeEvent.call(self, key);
+      });
+      return self;
+    }
+    var events = self._events[key] || [];
+    if (events.length) {
+      delete self._events[key];
     }
     return self;
   };
 
-  EventEmitter.prototype.emit = function(key, callback, thisArg) {
-    callback = callback || noop;
-    var events = this._events[key] || [];
-    if (!events.length) {
-      callback();
+  EventEmitter.prototype.running = function(key) {
+    return this._runing[key];
+  };
+
+  EventEmitter.prototype.queue = function(key, funcKey, func, thisArg) {
+    this._queue[key] = this._queue[key] || [];
+    this._queue[key].push([funcKey, func, thisArg]);
+    return this;
+  };
+
+  EventEmitter.prototype.resolve = function(key) {
+    if (this._runing[key]) {
       return this;
     }
+    var queue = this._queue[key] || [];
+    if (!queue.length) {
+      return this;
+    }
+    var items = queue.shift();
+    this[items[0]](key, items[1], items[2]);
+    return this.resolve(key);
+  };
 
-    var emitter = this._emitter;
+  EventEmitter.prototype.emit = function(key, callback, thisArg) {
+    callback = callback || noop;
+    var self = this;
+    if (self.running(key)) {
+      return self.queue(key, 'emit', callback, thisArg);
+    }
+    var events = self._events[key] || [];
+    if (!events.length) {
+      callback();
+      return self;
+    }
+    self._runing[key] = true;
+
+    var emitter = self._emitter;
     emitter = thisArg ? emitter.bind(thisArg) : emitter;
     if (emitter === parallelLimit) {
-      emitter(events, this._limit, done);
+      emitter(events, self._limit, done);
     } else {
       emitter(events, done);
     }
-    return this;
+    return self;
 
     function done(err, res) {
       if (err) {
-        return callback(err);
+        callback(err);
+      } else {
+        _arrayEachRight(events, function(func, index) {
+          if (func.ONCE === ONCE) {
+            events.splice(index, 1);
+          }
+        });
+        callback(undefined, res);
       }
-      _arrayEachRight(events, function(func, index) {
-        if (func.ONCE === ONCE) {
-          events.splice(index, 1);
-        }
-      });
-      callback(undefined, res);
+      self._runing[key] = false;
+      self.resolve(key);
     }
   };
 
