@@ -5,7 +5,7 @@ var _ = require('lodash');
 var limit = 4;
 var current = 0;
 var concurrency = 1;
-var collection, iterator, tasks, test, worker, times;
+var collection, iterator, tasks, test, worker, func, times;
 
 module.exports = {
   defaults: {
@@ -1433,6 +1433,16 @@ module.exports = {
     },
     func: function(async, callback) {
       async.seq.apply(async, tasks)(0, callback);
+    }
+  },
+  'apply': {
+    setup: function() {
+      func = function(arg1, callback) {
+        callback();
+      };
+    },
+    func: function(async, callback) {
+      async.apply(func, 1)(callback);
     }
   },
   'applyEach': {
