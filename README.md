@@ -69,6 +69,12 @@ bower install neo-async
 - [`forEach`](http://suguru03.github.io/neo-async/doc/async.each.html) -> [`each`](http://suguru03.github.io/neo-async/doc/async.each.html)
 - [`forEachSeries`](http://suguru03.github.io/neo-async/doc/async.eachSeries.html) -> [`eachSeries`](http://suguru03.github.io/neo-async/doc/async.eachSeries.html)
 - [`forEachLimit`](http://suguru03.github.io/neo-async/doc/async.eachLimit.html) -> [`eachLimit`](http://suguru03.github.io/neo-async/doc/async.eachLimit.html)
+- [`eachOf`](http://suguru03.github.io/neo-async/doc/async.each.html) -> [`each`](http://suguru03.github.io/neo-async/doc/async.each.html)
+- [`eachOfSeries`](http://suguru03.github.io/neo-async/doc/async.eachSeries.html) -> [`eachSeries`](http://suguru03.github.io/neo-async/doc/async.eachSeries.html)
+- [`eachOfLimit`](http://suguru03.github.io/neo-async/doc/async.eachLimit.html) -> [`eachLimit`](http://suguru03.github.io/neo-async/doc/async.eachLimit.html)
+- [`forEachOf`](http://suguru03.github.io/neo-async/doc/async.each.html) -> [`each`](http://suguru03.github.io/neo-async/doc/async.each.html)
+- [`forEachOfSeries`](http://suguru03.github.io/neo-async/doc/async.eachSeries.html) -> [`eachSeries`](http://suguru03.github.io/neo-async/doc/async.eachSeries.html)
+- [`eachOfLimit`](http://suguru03.github.io/neo-async/doc/async.eachLimit.html) -> [`forEachLimit`](http://suguru03.github.io/neo-async/doc/async.eachLimit.html)
 - [`map`](http://suguru03.github.io/neo-async/doc/async.map.html)
 - [`mapSeries`](http://suguru03.github.io/neo-async/doc/async.mapSeries.html)
 - [`mapLimit`](http://suguru03.github.io/neo-async/doc/async.mapLimit.html)
@@ -98,8 +104,8 @@ bower install neo-async
 - [`transform`](http://suguru03.github.io/neo-async/doc/async.transform.html) *
 - [`transformSeries`](http://suguru03.github.io/neo-async/doc/async.transformSeries.html) *
 - [`transformLimit`](http://suguru03.github.io/neo-async/doc/async.transformLimit.html) *
-- [`sortBy`](http://suguru03.github.io/neo-async/doc/async.sortBy.html) *
-- [`sortBySeries`](http://suguru03.github.io/neo-async/doc/async.sortBySeries.html) *
+- [`sortBy`](http://suguru03.github.io/neo-async/doc/async.sortBy.html)
+- [`sortBySeries`](http://suguru03.github.io/neo-async/doc/async.sortBySeries.html)
 - [`sortByLimit`](http://suguru03.github.io/neo-async/doc/async.sortByLimit.html) *
 - [`some`](http://suguru03.github.io/neo-async/doc/async.some.html)
 - [`someSeries`](http://suguru03.github.io/neo-async/doc/async.someSeries.html) *
@@ -135,15 +141,19 @@ bower install neo-async
 - [`auto`](#auto)
 - [`retry`](#retry)
 - [`iterator`](#iterator)
-- [`apply`](#apply)
-- [`nextTick`](#nextTick)
-- [`setImmediate`](#setImmediate)
-- [`safeNextTick`](#safeNextTick) *
 - [`times`](http://suguru03.github.io/neo-async/doc/async.times.html)
 - [`timesSeries`](http://suguru03.github.io/neo-async/doc/async.timesSeries.html)
 - [`timesLimit`](http://suguru03.github.io/neo-async/doc/async.timesLimit.html) *
 
 ### Utils
+- [`apply`](#apply)
+- [`nextTick`](#nextTick)
+- [`setImmediate`](#setImmediate)
+- [`safeNextTick`](#safeNextTick) *
+- [`asyncify`](#asyncify)
+- [`wrapSync`](#asyncify) -> [`asyncify`](#asyncify)
+- [`constant`](#constant)
+- [`ensureAsync`](#ensureAsync)
 - [`memoize`](#memoize)
 - [`unmemoize`](#unmemoize)
 - [`log`](#log)
@@ -165,9 +175,8 @@ async.safe.each(collection, iterator, callback);
 
 ## Speed Comparison
 
-* async v0.9.0
-* neo-async v0.6.4
-* neo-async v1.0.0
+* async v1.3.0
+* neo-async v1.3.0
 
 ### Server-side
 
@@ -178,76 +187,65 @@ Specifications are as follows.
 * Random execution order
 * Measure the average speed[μs] of n times
 
-__sample.parllel.js__
-
-```js
-var comparator = require('func-comparator');
-var _ = require('lodash');
-var async = require('async');
-var neo_async = require('neo-async');
-
-var count = 100; // the number of parallel tasks
-var times = 100000; // the number of trial times
-var array = _.shuffle(_.times(count));
-var tasks = _.map(array, function() {
-    return function(next) {
-        next();
-    };
-});
-
-// functions will be executed by random order
-var funcs = {
-    'async': function(callback) {
-        async.parallel(tasks, callback);
-    },
-    'neo-async': function(callback) {
-        neo_async.parallel(tasks, callback);
-    }
-};
-
-comparator
-.set(funcs)
-.async()
-.times(times)
-.start()
-.result(console.log);
-```
-
 __execute__
 
 * 100 times trials
-* 100000 tasks
+* 500000 tasks
 
 Execution environment are as follows.
 
-* node v0.10.39
-* node v0.12.5
-* iojs v2.3.2
+* node v0.10.40
+* node v0.12.7
+* iojs v2.3.4
 
 ```bash
-$ gulp speed_test --file parallel
+$ node perf/func-comparator
 ```
 __result__
 
 The value is the ratio (Neo-Async/Async) of the average speed per n times.
 
-##### control flow
-
-|function|node v0.10.39|node v0.12.5|iojs v2.3.1|
-|---|---|---|---|
-|parallel|4.13|4.16|3.29|
-|series|9.13|10.9|8.29|
-|parallelLimit|4.89|4.24|3.77|
-|waterfall|38.4|58.4|62.5|
-
 ##### collections
 
-|function|node v0.10.39|node v0.12.5|iojs v2.3.2|
+|function|node v0.10.40|node v0.12.7|iojs v2.3.4|
 |---|---|---|---|
-|each|2.01|2.08|2.16|
-|eachSeries|7.11|13.6|6.86|
-|eachLimit|5.84|3.71|4.04|
-|map|3.11|3.01|3.47|
-|mapSeries|9.79|13.9|10.6|
-|mapLimit|4.74|2.95|3.14|
-|filter|2.34|3.64|5.76|
+|each|2.01|1.95|2.19|
+|eachSeries|2.28|2.62|2.28|
+|eachLimit|2.33|3.32|2.81|
+|eachOf|1.93|1.92|2.12|
+|eachOfSeries|2.17|2.79|2.98|
+|eachOfLimit|2.03|1.54|2.57|
+|map|3.10|3.11|3.38|
+|mapSeries|2.36|1.98|2.32|
+|mapLimit|1.76|1.84|2.06|
+|filter|2.33|3.70|6.59|
+|filterSeries|2.11|2.71|3.68|
+|reject|2.71|4.38|7.33|
+|rejectSeries|2.31|3.09|3.86|
+|detect|2.31|2.69|2.92|
+|detectSeries|2.13|1.96|2.71|
+|reduce|2.09|1.94|2.26|
+|reduceRight|2.19|1.93|2.51|
+|sortBy|1.41|1.66|1.52|
+|some|2.23|2.29|2.50|
+|every|2.22|2.25|2.93|
+|concat|12.0|7.23|10.0|
+|concatSeries|8.37|5.15|8.05|
+
+##### control flow
+
+|function|node v0.10.40|node v0.12.7|iojs v2.3.4|
+|---|---|---|---|
+|parallel|4.13|5.00|3.37|
+|series|3.13|2.70|3.03|
+|parallelLimit|2.69|2.96|2.49|
+|waterfall|3.45|7.24|7.59|
+|whilst|1.02|1.09|1.14|
+|doWhilst|1.26|1.36|1.28|
+|until|1.02|1.08|1.13|
+|doUntil|1.25|1.31|1.34|
+|during|2.15|2.08|2.08|
+|doDuring|5.08|5.77|5.39|
+|times|4.07|3.16|3.44|
+|timesSeries|2.82|2.58|2.71|
+|timesLimit|2.23|2.05|1.93|
