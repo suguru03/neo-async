@@ -1,3 +1,151 @@
+<a name"v1.3.0"></a>
+## v1.3.0 (2015-07-15)
+
+
+#### Bug Fixes
+
+* **safe:** fix safe waterfall ([a49e2203](https://github.com/suguru03/neo-async/commit/a49e2203))
+* **waterfall:** fix to throw error if dobule callback ([a5f4c0f0](https://github.com/suguru03/neo-async/commit/a5f4c0f0))
+
+
+#### Features
+
+* **asyncify:** add `asyncify` method ([84cd37fe](https://github.com/suguru03/neo-async/commit/84cd37fe))
+* **constant:** add `constant` method ([a465aebc](https://github.com/suguru03/neo-async/commit/a465aebc))
+* **doDuring:** add `doDuring` method ([63885d01](https://github.com/suguru03/neo-async/commit/63885d01))
+* **during:** add `during` method ([a0ebe031](https://github.com/suguru03/neo-async/commit/a0ebe031))
+* **eachOf:** add `eachOf` aliases ([febdb6c2](https://github.com/suguru03/neo-async/commit/febdb6c2))
+* **ensureAsync:** add `ensureAsync` method ([b6c6bfbf](https://github.com/suguru03/neo-async/commit/b6c6bfbf))
+
+
+#### Other Changes
+
+* **CHANGELOG:**
+  * fix url path [ci skip] ([a39174f2](https://github.com/suguru03/neo-async/commit/a39174f2))
+  * v1.2.1 [ci skip] ([a5fa1ece](https://github.com/suguru03/neo-async/commit/a5fa1ece))
+* **EventEmitter:**
+  * fix test case for coverage ([1725cb94](https://github.com/suguru03/neo-async/commit/1725cb94))
+  * fix `EventEmitter` to apply asynchronos calling ([e469c907](https://github.com/suguru03/neo-async/commit/e469c907))
+* **README:**
+  * update speed comparison result ([e5764f34](https://github.com/suguru03/neo-async/commit/e5764f34))
+  * update README.md ([00a0a539](https://github.com/suguru03/neo-async/commit/00a0a539))
+* **angelFall:**
+  * add `async.nextTick` ([a0aefb2d](https://github.com/suguru03/neo-async/commit/a0aefb2d))
+  * refactor `angelFall` to improve performance ([9f2d0530](https://github.com/suguru03/neo-async/commit/9f2d0530))
+* **apply:** improve performance ([366f6643](https://github.com/suguru03/neo-async/commit/366f6643))
+* **applyEach:** improve performance ([279dd0d5](https://github.com/suguru03/neo-async/commit/279dd0d5))
+* **benchmark:** add `benchmark.js` to check performance ([db835138](https://github.com/suguru03/neo-async/commit/db835138))
+* **changelog:** fix gulp tasks [ci skip] ([8546953f](https://github.com/suguru03/neo-async/commit/8546953f))
+* **concat:** refactor `concat` to improve performance ([2d516fa3](https://github.com/suguru03/neo-async/commit/2d516fa3))
+* **concatLimit:**
+  * add `async.nextTick` ([ea4f6377](https://github.com/suguru03/neo-async/commit/ea4f6377))
+  * refactor `concatLimit` ([6f5790a5](https://github.com/suguru03/neo-async/commit/6f5790a5))
+* **concatSeries:**
+  * add `async.nextTick` ([3119ae42](https://github.com/suguru03/neo-async/commit/3119ae42))
+  * refactor `concatSeries` ([cedb2b00](https://github.com/suguru03/neo-async/commit/cedb2b00))
+* **createImmediate:** reafctor `createImmedaite` ([c99eb0a8](https://github.com/suguru03/neo-async/commit/c99eb0a8))
+* **detct:** refactor `detect` to improve performance ([b7ccfaff](https://github.com/suguru03/neo-async/commit/b7ccfaff))
+* **detectLimit:**
+  * add `async.nextTick` ([4e85421b](https://github.com/suguru03/neo-async/commit/4e85421b))
+  * refactor `detectLimit` to improve performance ([5bb2c764](https://github.com/suguru03/neo-async/commit/5bb2c764))
+* **detectSeries:**
+  * add `async.nextTick` ([6da10fcd](https://github.com/suguru03/neo-async/commit/6da10fcd))
+  * refactor `detectSeries` to improve performance ([d9ab8f11](https://github.com/suguru03/neo-async/commit/d9ab8f11))
+* **doDuring:**
+  * add test of `doDuring` ([71fea28a](https://github.com/suguru03/neo-async/commit/71fea28a))
+  * refactor `doDuring` to improve performance ([9c83282a](https://github.com/suguru03/neo-async/commit/9c83282a))
+* **doWhilst:** add `async.nextTick` ([887b7332](https://github.com/suguru03/neo-async/commit/887b7332))
+* **during:** refactor `during` to improve performance ([2fac74d2](https://github.com/suguru03/neo-async/commit/2fac74d2))
+* **each:** refactor `each` to improve response ([cae1e2dd](https://github.com/suguru03/neo-async/commit/cae1e2dd))
+* **eachLimit:**
+  * add `async.nextTick` to avoid stack overflow ([2c36032c](https://github.com/suguru03/neo-async/commit/2c36032c))
+  * refactor `eachLimit` to improve performance ([eb8d8959](https://github.com/suguru03/neo-async/commit/eb8d8959))
+* **eachSeries:**
+  * add `async.nextTick` to avoid stack overflow ([18fd0485](https://github.com/suguru03/neo-async/commit/18fd0485))
+  * refactor `eachSeries` to improve perfomance ([cefdb8d3](https://github.com/suguru03/neo-async/commit/cefdb8d3))
+* **everySeries:** add test case of `everySeries` ([088744e7](https://github.com/suguru03/neo-async/commit/088744e7))
+* **filter:** refactor(filter): refactor `filter` to improve performance ([55a22851](https://github.com/suguru03/neo-async/commit/55a22851))
+* **filterLimit:**
+  * add `async.nextTick` ([759f27b9](https://github.com/suguru03/neo-async/commit/759f27b9))
+  * refactor common `filterLimit` function to improve performance ([8dea6647](https://github.com/suguru03/neo-async/commit/8dea6647))
+* **filterSeries:**
+  * add `async.nextTick` ([6dd2731d](https://github.com/suguru03/neo-async/commit/6dd2731d))
+  * refactor common `filterSeries` function to improve response ([03cf144c](https://github.com/suguru03/neo-async/commit/03cf144c))
+* **forever:**
+  * add `async.nextTick` ([5011b516](https://github.com/suguru03/neo-async/commit/5011b516))
+  * fix to throw error if callack is not set ([faccab7f](https://github.com/suguru03/neo-async/commit/faccab7f))
+* **map:** refactor `map` to improve performance ([a44b1172](https://github.com/suguru03/neo-async/commit/a44b1172))
+* **mapLimit:**
+  * add `async.nextTick` ([7ced4b7c](https://github.com/suguru03/neo-async/commit/7ced4b7c))
+  * refactor `mapLimit` ([d089216d](https://github.com/suguru03/neo-async/commit/d089216d))
+* **mapSeries:**
+  * add `async.nextTick` ([0a22ebfa](https://github.com/suguru03/neo-async/commit/0a22ebfa))
+  * refactor `mapSeries` ([1c56e898](https://github.com/suguru03/neo-async/commit/1c56e898))
+* **mapValues:** refactor `mapValues` to improve response ([cdafd741](https://github.com/suguru03/neo-async/commit/cdafd741))
+* **mapValuesLimit:**
+  * fix test case ([bf0f3b65](https://github.com/suguru03/neo-async/commit/bf0f3b65))
+  * add `async.nextTick` ([54e0fa8e](https://github.com/suguru03/neo-async/commit/54e0fa8e))
+  * refactor `mapValuesLimit` ([0a6d2cd0](https://github.com/suguru03/neo-async/commit/0a6d2cd0))
+* **mapValuesSeries:**
+  * add `async.nextTick` ([50189eaf](https://github.com/suguru03/neo-async/commit/50189eaf))
+  * refactor `mapValuesSeries` to improve response ([9264fafe](https://github.com/suguru03/neo-async/commit/9264fafe))
+* **once:** fix not to use `called` ([3d592c4b](https://github.com/suguru03/neo-async/commit/3d592c4b))
+* **other:** add test case to check whether it has `async` functions ([ac97d3c3](https://github.com/suguru03/neo-async/commit/ac97d3c3))
+* **parallel:** refactor `parallel` to improve performance ([c07ca9cb](https://github.com/suguru03/neo-async/commit/c07ca9cb))
+* **parallelLimit:**
+  * add `async.nextTick` ([c65e2ab5](https://github.com/suguru03/neo-async/commit/c65e2ab5))
+  * refactor `parallelLimit` to improve performance ([d92525ec](https://github.com/suguru03/neo-async/commit/d92525ec))
+* **perf:**
+  * add `during` config ([6cbf45af](https://github.com/suguru03/neo-async/commit/6cbf45af))
+  * add config of `eachOf` ([3e45e87c](https://github.com/suguru03/neo-async/commit/3e45e87c))
+* **pick:**
+  * add `pick` test ([35b6e2f9](https://github.com/suguru03/neo-async/commit/35b6e2f9))
+  * refactor `pick` to improve performance ([b7399266](https://github.com/suguru03/neo-async/commit/b7399266))
+* **pickLimit:**
+  * add `async.nextTick` ([e7599f1c](https://github.com/suguru03/neo-async/commit/e7599f1c))
+  * refactor `pickLimit` to improve performance ([822ce6b1](https://github.com/suguru03/neo-async/commit/822ce6b1))
+* **pickSeries:**
+  * add `async.nextTick` ([5ba5a604](https://github.com/suguru03/neo-async/commit/5ba5a604))
+  * refactor `pickSeries` to improve performance ([9ef8c84b](https://github.com/suguru03/neo-async/commit/9ef8c84b))
+* **priorityQueue:** fix sort logic to improve performance ([316e480a](https://github.com/suguru03/neo-async/commit/316e480a))
+* **reduce:**
+  * add `async.nextTick` to `reduce` and `reduceRight` ([552fae38](https://github.com/suguru03/neo-async/commit/552fae38))
+  * refactor `reduce` to improve performance ([25e114f3](https://github.com/suguru03/neo-async/commit/25e114f3))
+* **reduceRight:** refactor `reduceRight` to improve performance ([a9f7a351](https://github.com/suguru03/neo-async/commit/a9f7a351))
+* **reject:** refactor `reject` to improve performance ([75c70b26](https://github.com/suguru03/neo-async/commit/75c70b26))
+* **rejectSeries:** add test of `rejectSeries` and `rejectLimit` ([e3737ddc](https://github.com/suguru03/neo-async/commit/e3737ddc))
+* **series:**
+  * add `async.nextTick` to `series` ([6a2e4ca6](https://github.com/suguru03/neo-async/commit/6a2e4ca6))
+  * refactor `series` to improve performance ([25bab9a9](https://github.com/suguru03/neo-async/commit/25bab9a9))
+* **some:** add test case of `someSeries` and `someLimit` ([ad0dadfb](https://github.com/suguru03/neo-async/commit/ad0dadfb))
+* **sortBy:**
+  * add `sortBy` tests ([f82464b7](https://github.com/suguru03/neo-async/commit/f82464b7))
+  * refactor `sortBy` to improve performance ([1719180a](https://github.com/suguru03/neo-async/commit/1719180a))
+  * modify sort logic ([de96bfdc](https://github.com/suguru03/neo-async/commit/de96bfdc))
+* **sortByLimit:**
+  * add `async.nextTick` ([73d84b18](https://github.com/suguru03/neo-async/commit/73d84b18))
+  * refactor `sortByLimit` to improve performance ([55bb37aa](https://github.com/suguru03/neo-async/commit/55bb37aa))
+* **sortBySeries:**
+  * add `async.nextTick` ([76aa8ac3](https://github.com/suguru03/neo-async/commit/76aa8ac3))
+  * refactor `sortBySeries` to improve performance ([827abd70](https://github.com/suguru03/neo-async/commit/827abd70))
+* **timesLimit:** add `async.nextTick` ([e52629f5](https://github.com/suguru03/neo-async/commit/e52629f5))
+* **timesSeries:** add `async.nextTick` ([4d96f372](https://github.com/suguru03/neo-async/commit/4d96f372))
+* **transform:**
+  * add `transform` tests ([5572c6ce](https://github.com/suguru03/neo-async/commit/5572c6ce))
+  * refactor `transform` to improve performance ([87fee9bf](https://github.com/suguru03/neo-async/commit/87fee9bf))
+* **transformLimit:**
+  * add `async.nextTick` ([774a73e0](https://github.com/suguru03/neo-async/commit/774a73e0))
+  * refactor `transformLimit` to improve performance ([a0cde4ec](https://github.com/suguru03/neo-async/commit/a0cde4ec))
+* **transformSeries:**
+  * add `async.nextTick` ([2ab5b4aa](https://github.com/suguru03/neo-async/commit/2ab5b4aa))
+  * refactor `transformSeries` to improve performance ([165ef1c2](https://github.com/suguru03/neo-async/commit/165ef1c2))
+* **travis:** fix iojs version ([c4c8c90f](https://github.com/suguru03/neo-async/commit/c4c8c90f))
+* **until:** add `async.nextTick` to `until` and `doUntil` ([b6d4ba63](https://github.com/suguru03/neo-async/commit/b6d4ba63))
+* **waterfall:**
+  * add `async.nextTick` ([2a369ff9](https://github.com/suguru03/neo-async/commit/2a369ff9))
+  * refactor `waterfall` to improve performance ([3691a443](https://github.com/suguru03/neo-async/commit/3691a443))
+* **whilst:** add `async.nextTick` ([56774886](https://github.com/suguru03/neo-async/commit/56774886))
+
 <a name"v1.2.1"></a>
 ### v1.2.1 (2015-05-28)
 
@@ -485,7 +633,7 @@
 * Modify waterfall function to respond quickly ([2d7af49c](https://github.com/suguru03/neo-async/commit/2d7af49c))
 
 <a name"v0.4.5"></a>
-### v0.4.5 (2015-05-29)
+### v0.4.5 (2015-07-16)
 
 
 #### Bug Fixes
