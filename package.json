@@ -47,6 +47,7 @@
     "mocha": "^2.0.1",
     "neo-async": "^0.6.5",
     "power-assert": "^0.10.0",
+    "q": "~1.4.1",
     "require-dir": "^0.3.0"
   }
 }
