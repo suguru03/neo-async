@@ -113,7 +113,7 @@ describe('#each', function() {
     });
   });
 
-  it('should execute iterator with binding', function(done) {
+  it('should execute iterator without binding', function(done) {
 
     var order = [];
     var collection = {
@@ -126,12 +126,12 @@ describe('#each', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(order, [1, 3, 4]);
+      assert.deepEqual(order, [1.1, 2.7, 3.5]);
       done();
     }, Math);
   });
 
-  it('should execute iterator with binding with passing key', function(done) {
+  it('should execute iterator without binding with passing key', function(done) {
 
     var order = [];
     var collection = {
@@ -145,9 +145,9 @@ describe('#each', function() {
         return done(err);
       }
       assert.deepEqual(order, [
-        [1, 'a'],
-        [3, 'c'],
-        [4, 'b']
+        [1.1, 'a'],
+        [2.7, 'c'],
+        [3.5, 'b']
       ]);
       done();
     }, Math);
@@ -361,7 +361,7 @@ describe('#eachSeries', function() {
     });
   });
 
-  it('should execute iterator to series with binding', function(done) {
+  it('should execute iterator to series without binding', function(done) {
 
     var order = [];
     var collection = {
@@ -374,7 +374,7 @@ describe('#eachSeries', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(order, [1, 4, 3]);
+      assert.deepEqual(order, [1.1, 3.5, 2.7]);
       done();
     }, Math);
   });
@@ -599,7 +599,7 @@ describe('#eachLimit', function() {
     });
   });
 
-  it('should execute iterator to series with binding', function(done) {
+  it('should execute iterator to series without binding', function(done) {
 
     var order = [];
     var collection = {
@@ -612,7 +612,7 @@ describe('#eachLimit', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(order, [1, 4, 3]);
+      assert.deepEqual(order, [1.1, 3.5, 2.7]);
       done();
     }, Math);
   });
