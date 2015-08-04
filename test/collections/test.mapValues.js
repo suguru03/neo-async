@@ -137,7 +137,7 @@ describe('#mapValues', function() {
     });
   });
 
-  it('should execute iterator with binding', function(done) {
+  it('should execute iterator without binding', function(done) {
 
     var order = [];
     var collection = {
@@ -151,11 +151,11 @@ describe('#mapValues', function() {
         return done(err);
       }
       assert.deepEqual(res, {
-        a: 2,
-        b: 8,
-        c: 6
+        a: 2.2,
+        b: 7,
+        c: 5.4
       });
-      assert.deepEqual(order, [1, 3, 4]);
+      assert.deepEqual(order, [1.1, 2.7, 3.5]);
       done();
     }, Math);
   });
@@ -365,7 +365,7 @@ describe('#mapValuesSeries', function() {
     });
   });
 
-  it('should execute iterator to series with binding', function(done) {
+  it('should execute iterator to series without binding', function(done) {
 
     var order = [];
     var collection = {
@@ -379,11 +379,11 @@ describe('#mapValuesSeries', function() {
         return done(err);
       }
       assert.deepEqual(res, {
-        a: 2,
-        b: 8,
-        c: 6
+        a: 2.2,
+        b: 7,
+        c: 5.4
       });
-      assert.deepEqual(order, [1, 4, 3]);
+      assert.deepEqual(order, [1.1, 3.5, 2.7]);
       done();
     }, Math);
   });
@@ -634,7 +634,7 @@ describe('#mapValuesLimit', function() {
     });
   });
 
-  it('should execute iterator to series with binding', function(done) {
+  it('should execute iterator without binding', function(done) {
 
     var order = [];
     var collection = {
@@ -648,11 +648,11 @@ describe('#mapValuesLimit', function() {
         return done(err);
       }
       assert.deepEqual(res, {
-        a: 2,
-        b: 8,
-        c: 6
+        a: 2.2,
+        b: 7,
+        c: 5.4
       });
-      assert.deepEqual(order, [1, 4, 3]);
+      assert.deepEqual(order, [1.1, 3.5, 2.7]);
       done();
     }, Math);
   });
