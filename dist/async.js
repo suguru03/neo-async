@@ -2344,11 +2344,11 @@
   var parallel = createParallel(arrayEachFunc, baseEachFunc);
 
   /**
-   * @version 1.3.1
+   * @version 1.3.2
    * @namespace async
    */
   var async = {
-    VERSION: '1.3.1',
+    VERSION: '1.3.2',
 
     // Collections
     each: each,
@@ -3430,7 +3430,7 @@
             result[index] = value;
           }
           index = null;
-          if (--size === 0) {
+          if (++completed === size) {
             callback(undefined, _compact(result));
           }
         };
@@ -8657,7 +8657,7 @@
       if (typeof result === 'object' && typeof result.then === 'function') {
         result.then(function(value) {
           callback(null, value);
-        }).catch(callback);
+        })['catch'](callback);
       } else {
         callback(null, result);
       }

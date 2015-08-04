@@ -307,6 +307,32 @@ describe('#filter', function() {
     }, delay);
   });
 
+  it('should not throw error of double callback', function(done) {
+
+    var collection = [
+      'dir1',
+      'dir2',
+      'file1',
+      'file2'
+    ];
+    var iterator = function(name, callback) {
+      var result = name.charAt(0) === 'd';
+      callback(null, result);
+    };
+    var called = false;
+    async.filter(collection, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(called, false);
+      called = true;
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.strictEqual(res.length, 2);
+      assert.deepEqual(res, ['dir1', 'dir2']);
+      setImmediate(done);
+    });
+  });
+
   it('should return response immediately if collection is empty', function(done) {
 
     var order = [];
@@ -539,6 +565,7 @@ describe('#filterSeries', function() {
     };
     async.filterSeries(collection, iterator, function(res) {
       assert.strictEqual(sync, false);
+      assert.deepEqual(res, [1, 3, 2]);
       done();
     });
     sync = false;
