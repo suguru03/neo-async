@@ -1,3 +1,35 @@
+<a name"v1.3.2"></a>
+### v1.3.2 (2015-08-04)
+
+
+#### Bug Fixes
+
+* **asyncify:** fix reserved word ([fae9f888](https://github.com/suguru03/neo-async/commit/fae9f888))
+* **filter:** fix bug of `async.filter` and `async.reject` ([029a042d](https://github.com/suguru03/neo-async/commit/029a042d))
+
+<a name"v1.3.1"></a>
+### v1.3.1 (2015-07-28)
+
+
+#### Features
+
+* **asyncify:** fix to apply promise ([28ee06aa](https://github.com/suguru03/neo-async/commit/28ee06aa))
+* **timesSeries:** fix to avoid stack overflow ([ec62f04c](https://github.com/suguru03/neo-async/commit/ec62f04c))
+
+
+#### Other Changes
+
+* **CHANGELOG:** v1.3.0 [ci skip] ([38dc4522](https://github.com/suguru03/neo-async/commit/38dc4522))
+* **detect:** refactor `detect`, `detectSeries` and `detectLimit` ([963e33b1](https://github.com/suguru03/neo-async/commit/963e33b1))
+* **each:** refactor `each`, `eachSeries` and `eachLimit` ([d0021181](https://github.com/suguru03/neo-async/commit/d0021181))
+* **filter:** refactor `filter`, `filterSeries` and `filterLimit` ([c94a4678](https://github.com/suguru03/neo-async/commit/c94a4678))
+* **map:** refactor `map`, `mapSeries` and `mapLimit` ([c167ad4a](https://github.com/suguru03/neo-async/commit/c167ad4a))
+* **mapValues:** refactor `mapValues` and `mapValuesLimit` ([ce5cb854](https://github.com/suguru03/neo-async/commit/ce5cb854))
+* **parallel:**
+  * refactor `parallel` ([68d9a112](https://github.com/suguru03/neo-async/commit/68d9a112))
+  * fix document ([22350338](https://github.com/suguru03/neo-async/commit/22350338))
+* **travis:** fix iojs version ([63131e80](https://github.com/suguru03/neo-async/commit/63131e80))
+
 <a name"v1.3.0"></a>
 ## v1.3.0 (2015-07-15)
 
@@ -633,7 +665,7 @@
 * Modify waterfall function to respond quickly ([2d7af49c](https://github.com/suguru03/neo-async/commit/2d7af49c))
 
 <a name"v0.4.5"></a>
-### v0.4.5 (2015-07-16)
+### v0.4.5 (2015-08-04)
 
 
 #### Bug Fixes

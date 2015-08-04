@@ -1,9 +1,12 @@
 'use strict';
 
+var path = require('path');
+
 var gulp = require('gulp');
 var generator = require('changelog-generator');
 
 gulp.task('changelog', function(done) {
-  var url = require('../../package.json').repository.homepage;
+  var filepath = path.resolve(__dirname, '../..', 'package.json');
+  var url = require(filepath).homepage;
   generator(url, done);
 });
