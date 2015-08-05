@@ -61,7 +61,7 @@ describe('#reject', function() {
     });
   });
 
-  it('should execute iterator with binding', function(done) {
+  it('should execute iterator without binding', function(done) {
 
     var order = [];
     var collection = {
@@ -72,9 +72,9 @@ describe('#reject', function() {
 
     async.reject(collection, rejectIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.strictEqual(res.length, 1);
-      assert.deepEqual(res, [3.5]);
-      assert.deepEqual(order, [1, 3, 4]);
+      assert.strictEqual(res.length, 0);
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, [1.1, 2.6, 3.5]);
       done();
     }, Math);
   });
@@ -228,9 +228,9 @@ describe('#rejectSeries', function() {
 
     async.rejectSeries(collection, rejectIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.strictEqual(res.length, 1);
-      assert.deepEqual(res, [3.5]);
-      assert.deepEqual(order, [1, 4, 3]);
+      assert.strictEqual(res.length, 0);
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, [1.1, 3.5, 2.6]);
       done();
     }, Math);
   });
@@ -392,7 +392,7 @@ describe('#rejectLimit', function() {
     });
   });
 
-  it('should execute iterator to series with binding', function(done) {
+  it('should execute iterator to series without binding', function(done) {
 
     var order = [];
     var collection = {
@@ -402,9 +402,9 @@ describe('#rejectLimit', function() {
     };
     async.rejectLimit(collection, 2, rejectIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.strictEqual(res.length, 1);
-      assert.deepEqual(res, [3.5]);
-      assert.deepEqual(order, [1, 4, 3]);
+      assert.strictEqual(res.length, 0);
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, [1.1, 3.5, 2.7]);
       done();
     }, Math);
   });

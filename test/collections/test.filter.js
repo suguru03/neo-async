@@ -231,7 +231,7 @@ describe('#filter', function() {
     });
   });
 
-  it('should execute iterator with binding', function(done) {
+  it('should execute iterator without binding', function(done) {
 
     var order = [];
     var collection = {
@@ -241,9 +241,9 @@ describe('#filter', function() {
     };
     async.filter(collection, filterIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.strictEqual(res.length, 2);
-      assert.deepEqual(res, [1.1, 2.6]);
-      assert.deepEqual(order, [1, 3, 4]);
+      assert.strictEqual(res.length, 3);
+      assert.deepEqual(res, [1.1, 3.5, 2.6]);
+      assert.deepEqual(order, [1.1, 2.6, 3.5]);
       done();
     }, Math);
   });
@@ -534,7 +534,7 @@ describe('#filterSeries', function() {
     });
   });
 
-  it('should execute iterator to series with binding', function(done) {
+  it('should execute iterator to series without binding', function(done) {
 
     var order = [];
     var collection = {
@@ -545,9 +545,9 @@ describe('#filterSeries', function() {
 
     async.filterSeries(collection, filterIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.strictEqual(res.length, 2);
-      assert.deepEqual(res, [1.1, 2.6]);
-      assert.deepEqual(order, [1, 4, 3]);
+      assert.strictEqual(res.length, 3);
+      assert.deepEqual(res, [1.1, 3.5, 2.6]);
+      assert.deepEqual(order, [1.1, 3.5, 2.6]);
       done();
     }, Math);
   });
@@ -823,7 +823,7 @@ describe('#filterLimit', function() {
     });
   });
 
-  it('should execute iterator to series with binding', function(done) {
+  it('should execute iterator to series without binding', function(done) {
 
     var order = [];
     var collection = {
@@ -833,9 +833,9 @@ describe('#filterLimit', function() {
     };
     async.filterLimit(collection, 2, filterIterator(order), function(res) {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.strictEqual(res.length, 2);
-      assert.deepEqual(res, [1.1, 2.7]);
-      assert.deepEqual(order, [1, 4, 3]);
+      assert.strictEqual(res.length, 3);
+      assert.deepEqual(res, [1.1, 3.5, 2.7]);
+      assert.deepEqual(order, [1.1, 3.5, 2.7]);
       done();
     }, Math);
   });
