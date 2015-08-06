@@ -201,7 +201,7 @@ describe('#some', function() {
     });
   });
 
-  it('should execute iterator with binding', function(done) {
+  it('should execute iterator without binding', function(done) {
 
     var order = [];
     var collection = {
@@ -212,7 +212,7 @@ describe('#some', function() {
 
     async.some(collection, someIterator(order), function(res) {
       assert.ok(res);
-      assert.deepEqual(order, [1]);
+      assert.deepEqual(order, [1.1]);
       done();
     }, Math);
   });
@@ -385,7 +385,7 @@ describe('#someSeries', function() {
     });
   });
 
-  it('should execute iterator with binding', function(done) {
+  it('should execute iterator without binding', function(done) {
 
     var order = [];
     var collection = {
@@ -396,7 +396,7 @@ describe('#someSeries', function() {
 
     async.someSeries(collection, someIterator(order), function(res) {
       assert.ok(res);
-      assert.deepEqual(order, [1]);
+      assert.deepEqual(order, [1.1]);
       done();
     }, Math);
   });
@@ -627,7 +627,7 @@ describe('#someLimit', function() {
     });
   });
 
-  it('should execute iterator to series with binding', function(done) {
+  it('should execute iterator to series without binding', function(done) {
 
     var order = [];
     var collection = {
@@ -638,7 +638,7 @@ describe('#someLimit', function() {
 
     async.someLimit(collection, 2, someIterator(order), function(res) {
       assert.ok(res);
-      assert.deepEqual(order, [1]);
+      assert.deepEqual(order, [1.1]);
       done();
     }, Math);
   });
