@@ -197,7 +197,7 @@ describe('#pick', function() {
     });
   });
 
-  it('should execute iterator with binding', function(done) {
+  it('should execute iterator without binding', function(done) {
 
     var order = [];
     var collection = {
@@ -210,9 +210,10 @@ describe('#pick', function() {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         a: 1.1,
+        b: 3.5,
         c: 2.6
       });
-      assert.deepEqual(order, [1, 3, 4]);
+      assert.deepEqual(order, [1.1, 2.6, 3.5]);
       done();
     }, Math);
   });
@@ -507,7 +508,7 @@ describe('#pickSeries', function() {
     });
   });
 
-  it('should execute iterator to series with binding', function(done) {
+  it('should execute iterator to series without binding', function(done) {
 
     var order = [];
     var collection = {
@@ -520,9 +521,10 @@ describe('#pickSeries', function() {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         a: 1.1,
+        b: 3.5,
         c: 2.6
       });
-      assert.deepEqual(order, [1, 4, 3]);
+      assert.deepEqual(order, [1.1, 3.5, 2.6]);
       done();
     }, Math);
   });
@@ -962,7 +964,7 @@ describe('#pickLimit', function() {
     });
   });
 
-  it('should execute iterator to series with binding', function(done) {
+  it('should execute iterator to series without binding', function(done) {
 
     var order = [];
     var collection = {
@@ -975,9 +977,10 @@ describe('#pickLimit', function() {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         a: 1.1,
+        b: 3.5,
         c: 2.7
       });
-      assert.deepEqual(order, [1, 4, 3]);
+      assert.deepEqual(order, [1.1, 3.5, 2.7]);
       done();
     }, Math);
   });
