@@ -171,11 +171,11 @@ describe('#reduce', function() {
         return done(err);
       }
       assert.deepEqual(res, {
-        1: 1,
-        3: 3,
-        4: 4
+        '1.1': 1.1,
+        '2.6': 2.6,
+        '3.5': 3.5
       });
-      assert.deepEqual(order, [1, 4, 3]);
+      assert.deepEqual(order, [1.1, 3.5, 2.6]);
       done();
     }, Math);
   });
@@ -406,7 +406,7 @@ describe('#reduceRight', function() {
     });
   });
 
-  it('should execute iterator to series with binding', function(done) {
+  it('should execute iterator to series without binding', function(done) {
 
     var order = [];
     var collection = {
@@ -419,8 +419,8 @@ describe('#reduceRight', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [3, 4, 1]);
-      assert.deepEqual(order, [3, 4, 1]);
+      assert.deepEqual(res, [2.6, 3.5, 1.1]);
+      assert.deepEqual(order, [2.6, 3.5, 1.1]);
       done();
     }, Math);
   });
