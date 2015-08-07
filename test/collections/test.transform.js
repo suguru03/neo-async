@@ -191,7 +191,7 @@ describe('#transform', function() {
     }, []);
   });
 
-  it('should execute iterator with binding', function(done) {
+  it('should execute iterator without binding', function(done) {
 
     var order = [];
     var collection = {
@@ -205,14 +205,11 @@ describe('#transform', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
-        a: 1,
-        c: 3
-      });
+      assert.deepEqual(res, {});
       assert.deepEqual(order, [
-        [1, 'a'],
-        [3, 'c'],
-        [4, 'b']
+        [1.1, 'a'],
+        [2.6, 'c'],
+        [3.5, 'b']
       ]);
       done();
     }, {}, Math);
@@ -423,7 +420,7 @@ describe('#transformSeries', function() {
     });
   });
 
-  it('should execute iterator to series with binding', function(done) {
+  it('should execute iterator to series without binding', function(done) {
 
     var order = [];
     var collection = {
@@ -437,14 +434,11 @@ describe('#transformSeries', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
-        a: 1,
-        c: 3
-      });
+      assert.deepEqual(res, {});
       assert.deepEqual(order, [
-        [1, 'a'],
-        [4, 'b'],
-        [3, 'c']
+        [1.1, 'a'],
+        [3.5, 'b'],
+        [2.6, 'c']
       ]);
       done();
     }, undefined, Math);
@@ -742,7 +736,7 @@ describe('#transformLimit', function() {
 
   });
 
-  it('should execute iterator in limited with binding', function(done) {
+  it('should execute iterator in limited without binding', function(done) {
 
     var order = [];
     var collection = {
@@ -756,8 +750,8 @@ describe('#transformLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [1, 3]);
-      assert.deepEqual(order, [1, 4, 3]);
+      assert.deepEqual(res, []);
+      assert.deepEqual(order, [1.1, 3.5, 2.7]);
       done();
     }, [], Math);
   });
