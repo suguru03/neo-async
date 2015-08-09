@@ -133,13 +133,13 @@ describe('#concat', function() {
     });
   });
 
-  it('should execute iterator with binding', function(done) {
+  it('should execute iterator without binding', function(done) {
 
     var order = [];
     var collection = {
-      a: 1.1,
+      a: 1.5,
       b: 3.5,
-      c: 2.7
+      c: 2.5
     };
 
     async.concat(collection, concatIterator(order), function(err, res) {
@@ -147,8 +147,8 @@ describe('#concat', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [1, 3, 2, 1, 4, 3, 2, 1]);
-      assert.deepEqual(order, [1, 3, 4]);
+      assert.deepEqual(res, [1.5, 0.5, 2.5, 1.5, 0.5, 3.5, 2.5, 1.5, 0.5]);
+      assert.deepEqual(order, [1.5, 2.5, 3.5]);
       done();
     }, Math);
   });
@@ -324,13 +324,13 @@ describe('#concatSeries', function() {
     });
   });
 
-  it('should execute iterator with binding', function(done) {
+  it('should execute iterator without binding', function(done) {
 
     var order = [];
     var collection = {
-      a: 1.1,
+      a: 1.5,
       b: 3.5,
-      c: 2.7
+      c: 2.5
     };
 
     async.concatSeries(collection, concatIterator(order), function(err, res) {
@@ -338,8 +338,8 @@ describe('#concatSeries', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [1, 4, 3, 2, 1, 3, 2, 1]);
-      assert.deepEqual(order, [1, 4, 3]);
+      assert.deepEqual(res, [1.5, 0.5, 3.5, 2.5, 1.5, 0.5, 2.5, 1.5, 0.5]);
+      assert.deepEqual(order, [1.5, 3.5, 2.5]);
       done();
     }, Math);
   });
@@ -562,11 +562,11 @@ describe('#concatLimit', function() {
     });
   });
 
-  it('should execute iterator with binding', function(done) {
+  it('should execute iterator without binding', function(done) {
 
     var order = [];
     var collection = {
-      a: 1.1,
+      a: 1.5,
       b: 3.5,
       c: 2.5
     };
@@ -576,8 +576,8 @@ describe('#concatLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [1, 4, 3, 2, 1, 3, 2, 1]);
-      assert.deepEqual(order, [1, 4, 3]);
+      assert.deepEqual(res, [1.5, 0.5, 3.5, 2.5, 1.5, 0.5, 2.5, 1.5, 0.5]);
+      assert.deepEqual(order, [1.5, 3.5, 2.5]);
       done();
     }, Math);
   });
