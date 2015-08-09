@@ -119,7 +119,7 @@ describe('#sortBy', function() {
     });
   });
 
-  it('should execute iterator with binding', function(done) {
+  it('should execute iterator without binding', function(done) {
 
     var order = [];
     var collection = {
@@ -133,7 +133,7 @@ describe('#sortBy', function() {
         return done(err);
       }
       assert.deepEqual(res, [1.1, 2.7, 3.5]);
-      assert.deepEqual(order, [1, 3, 4]);
+      assert.deepEqual(order, [1.1, 2.7, 3.5]);
       done();
     }, Math);
   });
@@ -287,7 +287,7 @@ describe('#sortBySeries', function() {
     });
   });
 
-  it('should execute iterator with binding', function(done) {
+  it('should execute iterator without binding', function(done) {
 
     var order = [];
     var collection = {
@@ -301,7 +301,7 @@ describe('#sortBySeries', function() {
         return done(err);
       }
       assert.deepEqual(res, [1.1, 2.7, 3.5]);
-      assert.deepEqual(order, [1, 4, 3]);
+      assert.deepEqual(order, [1.1, 3.5, 2.7]);
       done();
     }, Math);
   });
@@ -507,7 +507,7 @@ describe('#sortByLimit', function() {
     });
   });
 
-  it('should execute iterator with binding', function(done) {
+  it('should execute iterator without binding', function(done) {
 
     var order = [];
     var collection = {
@@ -521,7 +521,7 @@ describe('#sortByLimit', function() {
         return done(err);
       }
       assert.deepEqual(res, [1.1, 2.7, 3.5]);
-      assert.deepEqual(order, [1, 3, 4]);
+      assert.deepEqual(order, [1.1, 2.7, 3.5]);
       done();
     }, Math);
   });
