@@ -78,7 +78,7 @@ describe('#series', function() {
     });
   });
 
-  it('should execute to series by tasks of array with binding', function(done) {
+  it('should execute to series by tasks of array without binding', function(done) {
 
     var order = [];
     var numbers = [1.2, 2.4, 1.5, 3.6];
@@ -88,13 +88,13 @@ describe('#series', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [2, 4, 4, 8]);
+      assert.deepEqual(res, [2.4, 4.8, 3, 7.2]);
       assert.deepEqual(order, [1.2, 2.4, 1.5, 3.6]);
       done();
     }, Math);
   });
 
-  it('should execute to series by tasks of object with binding', function(done) {
+  it('should execute to series by tasks of object without binding', function(done) {
 
     var order = [];
     var numbers = {
@@ -110,10 +110,10 @@ describe('#series', function() {
         return done(err);
       }
       assert.deepEqual(res, {
-        a: 2,
-        c: 4,
-        b: 4,
-        d: 8
+        a: 2.4,
+        b: 4.8,
+        c: 3,
+        d: 7.2
       });
       assert.deepEqual(order, [1.2, 2.4, 1.5, 3.6]);
       done();
