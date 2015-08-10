@@ -79,7 +79,7 @@ describe('#parallel', function() {
     });
   });
 
-  it('should execute in parallel by tasks of array with binding', function(done) {
+  it('should execute in parallel by tasks of array without binding', function(done) {
 
     var order = [];
     var numbers = [1.2, 2.4, 1.5, 3.6];
@@ -89,13 +89,13 @@ describe('#parallel', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [2, 4, 4, 8]);
+      assert.deepEqual(res, [2.4, 4.8, 3, 7.2]);
       assert.deepEqual(order, [1.2, 1.5, 2.4, 3.6]);
       done();
     }, Math);
   });
 
-  it('should execute in parallel by tasks of object with binding', function(done) {
+  it('should execute in parallel by tasks of object without binding', function(done) {
 
     var order = [];
     var numbers = {
@@ -111,10 +111,10 @@ describe('#parallel', function() {
         return done(err);
       }
       assert.deepEqual(res, {
-        a: 2,
-        c: 4,
-        b: 4,
-        d: 8
+        a: 2.4,
+        c: 3,
+        b: 4.8,
+        d: 7.2
       });
       assert.deepEqual(order, [1.2, 1.5, 2.4, 3.6]);
       done();
@@ -263,7 +263,7 @@ describe('#parallelLimit', function() {
     });
   });
 
-  it('should execute in parallel by tasks of array with binding', function(done) {
+  it('should execute in parallel by tasks of array without binding', function(done) {
 
     var order = [];
     var numbers = [1.2, 2.4, 1.5, 3.6];
@@ -273,13 +273,13 @@ describe('#parallelLimit', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [2, 4, 4, 8]);
+      assert.deepEqual(res, [2.4, 4.8, 3, 7.2]);
       assert.deepEqual(order, [1.2, 1.5, 2.4, 3.6]);
       done();
     }, Math);
   });
 
-  it('should execute in parallel by tasks of object with binding', function(done) {
+  it('should execute in parallel by tasks of object without binding', function(done) {
 
     var order = [];
     var numbers = {
@@ -295,10 +295,10 @@ describe('#parallelLimit', function() {
         return done(err);
       }
       assert.deepEqual(res, {
-        a: 2,
-        c: 4,
-        b: 4,
-        d: 8
+        a: 2.4,
+        c: 3,
+        b: 4.8,
+        d: 7.2
       });
       assert.deepEqual(order, [1.2, 1.5, 2.4, 3.6]);
       done();
