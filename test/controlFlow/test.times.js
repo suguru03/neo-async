@@ -61,7 +61,7 @@ describe('#times', function() {
     });
   });
 
-  it('should execute iterator with binding', function(done) {
+  it('should execute iterator without binding', function(done) {
 
     var n = 3;
     var order = [];
@@ -70,7 +70,7 @@ describe('#times', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [0, 1, 4]);
+      assert.deepEqual(res, [0, 1, 2]);
       assert.deepEqual(order, [0, 2, 1]);
       done();
     }, Math);
@@ -153,7 +153,7 @@ describe('#timesSeries', function() {
     });
   });
 
-  it('should execute iterator with binding', function(done) {
+  it('should execute iterator without binding', function(done) {
 
     var n = 3;
     var order = [];
@@ -162,7 +162,7 @@ describe('#timesSeries', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [0, 1, 4]);
+      assert.deepEqual(res, [0, 1, 2]);
       assert.deepEqual(order, [0, 1, 2]);
       done();
     }, Math);
@@ -263,7 +263,7 @@ describe('#timesLimit', function() {
     });
   });
 
-  it('should execute iterator with binding', function(done) {
+  it('should execute iterator without binding', function(done) {
 
     var n = 7;
     var order = [];
@@ -272,7 +272,7 @@ describe('#timesLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [0, 1, 4, 9, 16, 25, 36]);
+      assert.deepEqual(res, [0, 1, 2, 3, 4, 5, 6]);
       assert.deepEqual(order, [0, 2, 1, 4, 3, 6, 5]);
       done();
     }, Math);
