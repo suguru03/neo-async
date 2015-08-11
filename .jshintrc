@@ -62,5 +62,7 @@
   "onevar": false,
   "white": false,
 
+  "-W018": true,
+
   "es3":true
 }
