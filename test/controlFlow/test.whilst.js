@@ -34,7 +34,7 @@ describe('#whilst', function() {
     });
   });
 
-  it('should execute with binding until test is false', function(done) {
+  it('should execute without binding until test is false', function(done) {
 
     var count = 0;
     var limit = 5;
@@ -48,7 +48,8 @@ describe('#whilst', function() {
       return count < limit;
     };
     var iterator = function(callback) {
-      result.push(this.pow(count, 2));
+      assert.strictEqual(this, undefined);
+      result.push(count * count);
       order.iterator.push(count++);
       callback();
     };
@@ -101,7 +102,8 @@ describe('#whilst', function() {
       return count < limit;
     };
     var iterator = function(callback) {
-      result.push(this.pow(count, 2));
+      assert.strictEqual(this, undefined);
+      result.push(count * count);
       order.iterator.push(count++);
       callback(count === 3);
     };
@@ -146,7 +148,7 @@ describe('#doWhilst', function() {
     });
   });
 
-  it('should execute with binding until test is false', function(done) {
+  it('should execute without binding until test is false', function(done) {
 
     var count = 0;
     var limit = 5;
@@ -160,7 +162,8 @@ describe('#doWhilst', function() {
       return count < limit;
     };
     var iterator = function(callback) {
-      result.push(this.pow(count, 2));
+      assert.strictEqual(this, undefined);
+      result.push(count * count);
       order.iterator.push(count++);
       callback();
     };
@@ -239,7 +242,8 @@ describe('#doWhilst', function() {
       return count < limit;
     };
     var iterator = function(callback) {
-      result.push(this.pow(count, 2));
+      assert.strictEqual(this, undefined);
+      result.push(count * count);
       order.iterator.push(count++);
       callback(count === 3);
     };

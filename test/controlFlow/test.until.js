@@ -34,7 +34,7 @@ describe('#until', function() {
     });
   });
 
-  it('should execute with binding until test is false', function(done) {
+  it('should execute without binding until test is false', function(done) {
 
     var count = 0;
     var limit = 5;
@@ -48,7 +48,8 @@ describe('#until', function() {
       return count === limit;
     };
     var iterator = function(callback) {
-      result.push(this.pow(count, 2));
+      assert.strictEqual(this, undefined);
+      result.push(count * count);
       order.iterator.push(count++);
       callback();
     };
@@ -141,7 +142,7 @@ describe('#doUntil', function() {
     });
   });
 
-  it('should execute with binding until test is false', function(done) {
+  it('should execute without binding until test is false', function(done) {
 
     var count = 0;
     var limit = 5;
@@ -155,7 +156,8 @@ describe('#doUntil', function() {
       return count === limit;
     };
     var iterator = function(callback) {
-      result.push(this.pow(count, 2));
+      assert.strictEqual(this, undefined);
+      result.push(count * count);
       order.iterator.push(count++);
       callback();
     };
