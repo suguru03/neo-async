@@ -44,7 +44,7 @@ describe('#during', function() {
     });
   });
 
-  it('should execute with binding until asynchronous test is false', function(done) {
+  it('should execute without binding until asynchronous test is false', function(done) {
 
     var count = 0;
     var sum = 0;
@@ -53,7 +53,7 @@ describe('#during', function() {
     };
     var iterator = function(callback) {
       count++;
-      sum += this.num;
+      sum += this && this.num || 3;
       setTimeout(function() {
         callback();
       }, 10);
@@ -63,7 +63,7 @@ describe('#during', function() {
         return done(err);
       }
       assert.strictEqual(count, 5);
-      assert.strictEqual(sum, 10);
+      assert.strictEqual(sum, 15);
       done();
     }, {
       num: 2
@@ -156,7 +156,7 @@ describe('#doDuring', function() {
     var iterator = function(callback) {
       order.push(['iterator', count]);
       count++;
-      sum += this.num;
+      sum += this && this.num || 3;
       setTimeout(function() {
         callback();
       }, 10);
@@ -166,7 +166,7 @@ describe('#doDuring', function() {
         return done(err);
       }
       assert.strictEqual(count, 5);
-      assert.strictEqual(sum, 10);
+      assert.strictEqual(sum, 15);
       assert.deepEqual(order, [
         ['iterator', 0],
         ['test', 1],
