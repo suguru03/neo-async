@@ -27,14 +27,15 @@ describe('#forever', function() {
     });
   });
 
-  it('should execute with binding until error occurs', function(done) {
+  it('should execute without binding until error occurs', function(done) {
 
     var count = 0;
     var limit = 5;
     var order = [];
     var result = [];
     var iterator = function(callback) {
-      result.push(this.pow(count, 2));
+      assert.strictEqual(this, undefined);
+      result.push(count * count);
       order.push(count++);
       if (count === limit) {
         return callback(new Error('end'));
