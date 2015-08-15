@@ -83,16 +83,16 @@ bower install neo-async
 - [`mapValuesLimit`](http://suguru03.github.io/neo-async/doc/async.mapValuesLimit.html) *
 - [`filter`](http://suguru03.github.io/neo-async/doc/async.filter.html)
 - [`filterSeries`](http://suguru03.github.io/neo-async/doc/async.filterSeries.html)
-- [`filterLimit`](http://suguru03.github.io/neo-async/doc/async.filterLimit.html) *
+- [`filterLimit`](http://suguru03.github.io/neo-async/doc/async.filterLimit.html)
 - [`select`](http://suguru03.github.io/neo-async/doc/async.filter.html) -> [`filter`](http://suguru03.github.io/neo-async/doc/async.filter.html)
 - [`selectSeries`](http://suguru03.github.io/neo-async/doc/async.filterSeries.html) -> [`filterSeries`](http://suguru03.github.io/neo-async/doc/async.filterSeries.html)
-- [`selectLimit`](http://suguru03.github.io/neo-async/doc/async.filterLimit.html) -> [`filterLimit`](http://suguru03.github.io/neo-async/doc/async.filterLimit.html) *
+- [`selectLimit`](http://suguru03.github.io/neo-async/doc/async.filterLimit.html) -> [`filterLimit`](http://suguru03.github.io/neo-async/doc/async.filterLimit.html)
 - [`reject`](http://suguru03.github.io/neo-async/doc/async.reject.html)
 - [`rejectSeries`](http://suguru03.github.io/neo-async/doc/async.rejectSeries.html)
-- [`rejectLimit`](http://suguru03.github.io/neo-async/doc/async.rejectLimit.html) *
+- [`rejectLimit`](http://suguru03.github.io/neo-async/doc/async.rejectLimit.html)
 - [`detect`](http://suguru03.github.io/neo-async/doc/async.detect.html)
 - [`detectSeries`](http://suguru03.github.io/neo-async/doc/async.detectSeries.html)
-- [`detectLimit`](http://suguru03.github.io/neo-async/doc/async.detectLimit.html) *
+- [`detectLimit`](http://suguru03.github.io/neo-async/doc/async.detectLimit.html)
 - [`pick`](http://suguru03.github.io/neo-async/doc/async.pick.html) *
 - [`pickSeries`](http://suguru03.github.io/neo-async/doc/async.pickSeries.html) *
 - [`pickLimit`](http://suguru03.github.io/neo-async/doc/async.pickLimit.html) *
@@ -108,12 +108,12 @@ bower install neo-async
 - [`sortBySeries`](http://suguru03.github.io/neo-async/doc/async.sortBySeries.html)
 - [`sortByLimit`](http://suguru03.github.io/neo-async/doc/async.sortByLimit.html) *
 - [`some`](http://suguru03.github.io/neo-async/doc/async.some.html)
-- [`someSeries`](http://suguru03.github.io/neo-async/doc/async.someSeries.html) *
-- [`someLimit`](http://suguru03.github.io/neo-async/doc/async.someLimit.html) *
+- [`someSeries`](http://suguru03.github.io/neo-async/doc/async.someSeries.html)
+- [`someLimit`](http://suguru03.github.io/neo-async/doc/async.someLimit.html)
 - [`any`](http://suguru03.github.io/neo-async/doc/async.some.html) -> [`some`](http://suguru03.github.io/neo-async/doc/async.some.html)
 - [`every`](http://suguru03.github.io/neo-async/doc/async.every.html)
 - [`everySeries`](http://suguru03.github.io/neo-async/doc/async.everySeries.html) *
-- [`everyLimit`](http://suguru03.github.io/neo-async/doc/async.everyLimit.html) *
+- [`everyLimit`](http://suguru03.github.io/neo-async/doc/async.everyLimit.html)
 - [`all`](http://suguru03.github.io/neo-async/doc/async.every.html) -> [`every`](http://suguru03.github.io/neo-async/doc/async.every.html)
 - [`concat`](http://suguru03.github.io/neo-async/doc/async.concat.html)
 - [`concatSeries`](http://suguru03.github.io/neo-async/doc/async.concatSeries.html)
@@ -143,7 +143,7 @@ bower install neo-async
 - [`iterator`](#iterator)
 - [`times`](http://suguru03.github.io/neo-async/doc/async.times.html)
 - [`timesSeries`](http://suguru03.github.io/neo-async/doc/async.timesSeries.html)
-- [`timesLimit`](http://suguru03.github.io/neo-async/doc/async.timesLimit.html) *
+- [`timesLimit`](http://suguru03.github.io/neo-async/doc/async.timesLimit.html)
 
 ### Utils
 - [`apply`](#apply)
