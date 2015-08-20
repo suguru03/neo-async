@@ -25,7 +25,6 @@
    * @param {Array|Object} collection
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -90,6 +89,22 @@
    *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b']]
    * });
    *
+   * @example
+   *
+   * // break
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num !== 2);
+   *   }, num * 10);
+   * };
+   * async.each(array, iterator, function(err, res) {
+   *   console.log(res); // undefined
+   *   console.log(order); // [1, 2]
+   * });
+   *
    */
   var each = createEach(arrayEach, baseEach);
 
@@ -99,7 +114,6 @@
    * @param {Array|Object} collection
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -173,7 +187,6 @@
    * @param {Array|Object} collection
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -247,7 +260,6 @@
    * @param {Array|Object} collection
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -385,7 +397,6 @@
    * @param {Array|Object} collection
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -524,7 +535,6 @@
    * @param {number} limit - limit >= 1
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -662,7 +672,6 @@
    * @param {Array|Object} collection
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -800,7 +809,6 @@
    * @param {Array|Object} collection
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -939,7 +947,6 @@
    * @param {number} limit - limit >= 1
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -1077,7 +1084,6 @@
    * @param {Array|Object} collection
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -1215,7 +1221,6 @@
    * @param {Array|Object} collection
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -1354,7 +1359,6 @@
    * @param {number} limit - limit >= 1
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -1492,7 +1496,6 @@
    * @param {Array|Object} collection
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -1630,7 +1633,6 @@
    * @param {Array|Object} collection
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -1769,7 +1771,6 @@
    * @param {number} limit - limit >= 1
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -1907,7 +1908,6 @@
    * @param {Array|Object} collection
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -2046,7 +2046,6 @@
    * @param {Function} iterator
    * @param {Function} callback
    * @param {Array|Object} [accumulator]
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -2124,7 +2123,6 @@
    * @param {Array|Object} collection
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -2198,7 +2196,6 @@
    * @param {Array|Object} collection
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -2271,7 +2268,6 @@
    * @namespace parallel
    * @param {Array|Object} tasks - functions
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * var order = [];
@@ -2344,11 +2340,11 @@
   var parallel = createParallel(arrayEachFunc, baseEachFunc);
 
   /**
-   * @version 1.3.2
+   * @version 1.4.0
    * @namespace async
    */
   var async = {
-    VERSION: '1.3.2',
+    VERSION: '1.4.0',
 
     // Collections
     each: each,
@@ -2657,39 +2653,26 @@
   /**
    * @private
    */
-  function arrayEachFunc(array, createCallback, thisArg) {
+  function arrayEachFunc(array, createCallback) {
     var index = -1;
     var length = array.length;
 
-    if (thisArg) {
-      while (++index < length) {
-        array[index].call(thisArg, createCallback(index));
-      }
-    } else {
-      while (++index < length) {
-        array[index](createCallback(index));
-      }
+    while (++index < length) {
+      array[index](createCallback(index));
     }
   }
 
   /**
    * @private
    */
-  function baseEachFunc(object, createCallback, keys, thisArg) {
+  function baseEachFunc(object, createCallback, keys) {
     var key;
     var index = -1;
     var length = keys.length;
 
-    if (thisArg) {
-      while (++index < length) {
-        key = keys[index];
-        object[key].call(thisArg, createCallback(key));
-      }
-    } else {
-      while (++index < length) {
-        key = keys[index];
-        object[key](createCallback(key));
-      }
+    while (++index < length) {
+      key = keys[index];
+      object[key](createCallback(key));
     }
   }
 
@@ -3026,77 +3009,15 @@
   }
 
   /**
+   * for node v0.10.x
    * @memberof async
    * @namespace safe
    */
   function safe() {
-    // ['index', 'bindIndex']
-    var safeIteratorMap = {
-      each: [1, 3],
-      eachSeries: [1, 3],
-      eachLimit: [2, 4],
-      forEach: [1, 3],
-      forEachSeries: [1, 3],
-      forEachLimit: [2, 4],
-      map: [1, 3],
-      mapSeries: [1, 3],
-      mapLimit: [2, 4],
-      mapValues: [1, 3],
-      mapValuesSeries: [1, 3],
-      mapValuesLimit: [2, 4],
-      filter: [1, 3],
-      filterSeries: [1, 3],
-      filterLimit: [2, 4],
-      select: [1, 3],
-      selectSeries: [1, 3],
-      selectLimit: [2, 4],
-      reject: [1, 3],
-      rejectSeries: [1, 3],
-      rejectLimit: [2, 4],
-      detect: [1, 3],
-      detectSeries: [1, 3],
-      detectLimit: [2, 4],
-      pick: [1, 3],
-      pickSeries: [1, 3],
-      pickLimit: [2, 4],
-      reduce: [2, 4],
-      inject: [2, 4],
-      foldl: [2, 4],
-      reduceRight: [2, 4],
-      foldr: [2, 4],
-      transform: [1, 4],
-      transformSeries: [1, 4],
-      transformLimit: [2, 5],
-      sortBy: [1, 3],
-      sortBySeries: [1, 3],
-      sortByLimit: [2, 4],
-      some: [1, 3],
-      someSeries: [1, 3],
-      someLimit: [2, 4],
-      any: [1, 3],
-      every: [1, 3],
-      all: [1, 3],
-      everySeries: [1, 3],
-      everyLimit: [2, 4],
-      concat: [1, 3],
-      concatSeries: [1, 3],
-      concatLimit: [2, 4],
-      whilst: [1, 3],
-      doWhilst: [0, 3],
-      until: [1, 3],
-      doUntil: [0, 3],
-      forever: [0, 2],
-      times: [1, 3],
-      timesSeries: [1, 3],
-      timesLimit: [2, 4]
-    };
-    var safeTaskMap = {
-      parallel: [0, 2],
-      series: [0, 2],
-      parallelLimit: [0, 3],
-      waterfall: [0, -1],
-      auto: [0, -1]
-    };
+    var iteratorRegExp = new RegExp('^(each|foreach|map|filter|select|reject|detect|pick|reduce|inject|fold|transform|sortby|some|any|every|all|concat|times)|(whilst|until|during)$|^forever$');
+    var zeroIndexRegExp = new RegExp(/^do|^forever$/);
+    var secondIndexRegExp = new RegExp(/^reduce|Limit$/);
+    var safeTaskRegExp = new RegExp(/^parallel|^(series|waterfall|auto)$/);
 
     var safeAsync = {};
     _objectEach(async, function(func, key) {
@@ -3105,59 +3026,55 @@
         return;
       }
 
-      // iterator
-      if (safeIteratorMap[key]) {
-        return createSafeIterator(func, key);
-      }
-
       // tasks
-      if (safeTaskMap[key]) {
+      if (safeTaskRegExp.test(key)) {
         return createSafeTasks(func, key);
       }
 
-      // not avaiable safe fucntion
+      // iterator
+      if (iteratorRegExp.test(key.toLowerCase())) {
+        return createSafeIterator(func, key);
+      }
+      // unavaiable safe fucntion
       safeAsync[key] = func;
     });
     safeAsync.safe = safe;
     return safeAsync;
 
     function createSafeIterator(func, key) {
-      var data = safeIteratorMap[key];
-      var index = data[0];
-      var bindIndex = data[1];
+      var index = zeroIndexRegExp.test(key) ? 0 : secondIndexRegExp.test(key) ? 2 : 1;
       var funcLength = func.length;
       safeAsync[key] = safeCollection;
 
       function safeCollection() {
         var items = _baseSlice(arguments);
         var iterator = items[index];
-        var thisArg = items[bindIndex];
         switch (iterator.length) {
           case 1:
             items[index] = function(done) {
               async.safeNextTick(function() {
-                iterator.call(thisArg, done);
+                iterator(done);
               });
             };
             break;
           case 2:
             items[index] = function(arg1, done) {
               async.safeNextTick(function() {
-                iterator.call(thisArg, arg1, done);
+                iterator(arg1, done);
               });
             };
             break;
           case 3:
             items[index] = function(arg1, arg2, done) {
               async.safeNextTick(function() {
-                iterator.call(thisArg, arg1, arg2, done);
+                iterator(arg1, arg2, done);
               });
             };
             break;
           case 4:
             items[index] = function(arg1, arg2, arg3, done) {
               async.safeNextTick(function() {
-                iterator.call(thisArg, arg1, arg2, arg3, done);
+                iterator(arg1, arg2, arg3, done);
               });
             };
             break;
@@ -3165,33 +3082,27 @@
             items[index] = function() {
               var args = _baseSlice(arguments);
               async.safeNextTick(function() {
-                iterator.apply(thisArg, args);
+                iterator.apply(null, args);
               });
             };
             break;
         }
 
         switch (funcLength) {
+          case 2:
+            return func(items[0], items[1]);
           case 3:
-            func(items[0], items[1], items[2]);
-            break;
+            return func(items[0], items[1], items[2]);
           case 4:
-            func(items[0], items[1], items[2], items[3]);
-            break;
+            return func(items[0], items[1], items[2], items[3]);
           case 5:
-            func(items[0], items[1], items[2], items[3], items[4]);
-            break;
-          case 6:
-            func(items[0], items[1], items[2], items[3], items[4], items[5]);
-            break;
+            return func(items[0], items[1], items[2], items[3], items[4]);
         }
       }
     }
 
     function createSafeTasks(func, key) {
-      var data = safeTaskMap[key];
-      var index = data[0];
-      var bindIndex = data[1];
+      var index = 0;
       if (/^waterfall$/.test(key)) {
         safeAsync[key] = safeWaterfall;
         return;
@@ -3202,7 +3113,6 @@
       function safeTasks() {
         var items = _baseSlice(arguments);
         var tasks = items[index];
-        var thisArg = items[bindIndex];
         if (Array.isArray(tasks)) {
           _arrayEach(tasks, function(task, index) {
             tasks[index] = createSafeFunction(task);
@@ -3219,9 +3129,6 @@
           case 3:
             func(items[0], items[1], items[2]);
             break;
-          case 4:
-            func(items[0], items[1], items[2], items[3]);
-            break;
         }
 
         function createSafeFunction(task) {
@@ -3231,7 +3138,7 @@
           return function safeFuncion() {
             var args = _baseSlice(arguments);
             async.safeNextTick(function() {
-              task.apply(thisArg, args);
+              task.apply(null, args);
             });
           };
         }
@@ -3246,19 +3153,18 @@
    */
   function createEach(arrayEach, baseEach) {
 
-    return function each(collection, iterator, callback, thisArg) {
+    return function each(collection, iterator, callback) {
       callback = callback || noop;
       var size, keys;
       var completed = 0;
-      var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
       if (Array.isArray(collection)) {
         size = collection.length;
-        arrayEach(collection, _iterator, done);
+        arrayEach(collection, iterator, done);
       } else if (collection && typeof collection === 'object') {
         keys = Object.keys(collection);
         size = keys.length;
-        baseEach(collection, _iterator, done, keys);
+        baseEach(collection, iterator, done, keys);
       }
       if (!size) {
         callback();
@@ -3285,21 +3191,20 @@
    */
   function createMap(arrayEach, baseEach) {
 
-    return function map(collection, iterator, callback, thisArg) {
+    return function map(collection, iterator, callback) {
       callback = callback || noop;
       var size, keys, result;
       var completed = 0;
-      var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
       if (Array.isArray(collection)) {
         size = collection.length;
         result = Array(size);
-        arrayEach(collection, _iterator, createCallback);
+        arrayEach(collection, iterator, createCallback);
       } else if (collection && typeof collection === 'object') {
         keys = Object.keys(collection);
         size = keys.length;
         result = Array(size);
-        baseEach(collection, _iterator, createCallback, keys);
+        baseEach(collection, iterator, createCallback, keys);
       }
       if (!size) {
         callback(undefined, []);
@@ -3330,20 +3235,19 @@
    */
   function createMapValues(arrayEach, baseEach) {
 
-    return function mapValues(collection, iterator, callback, thisArg) {
+    return function mapValues(collection, iterator, callback) {
       callback = callback || noop;
       var size, keys;
       var completed = 0;
       var result = {};
-      var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
       if (Array.isArray(collection)) {
         size = collection.length;
-        arrayEach(collection, _iterator, createCallback);
+        arrayEach(collection, iterator, createCallback);
       } else if (collection && typeof collection === 'object') {
         keys = Object.keys(collection);
         size = keys.length;
-        baseEach(collection, _iterator, createCallback, keys);
+        baseEach(collection, iterator, createCallback, keys);
       }
       if (!size) {
         callback(undefined, result);
@@ -3370,31 +3274,28 @@
 
   /**
    * @private
-   * @param {Array|Object} collection
-   * @param {Function} iterator
-   * @param {Function} callback
-   * @param {*} thisArg
+   * @param {Function} arrayEach
+   * @param {Function} baseEach
    * @param {boolean} bool
    */
   function createFilter(arrayEach, baseEach, bool) {
 
-    return function commonFilter(collection, iterator, callback, thisArg) {
+    return function commonFilter(collection, iterator, callback) {
       callback = callback || noop;
       var size, keys, result;
       var completed = 0;
-      var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
       var enableError = callback.length === 2;
       var createCallback = enableError ? createFilterCallbackWithError : createFilterCallback;
 
       if (Array.isArray(collection)) {
         size = collection.length;
         result = Array(size);
-        arrayEach(collection, _iterator, createCallback);
+        arrayEach(collection, iterator, createCallback);
       } else if (collection && typeof collection === 'object') {
         keys = Object.keys(collection);
         size = keys.length;
         result = Array(size);
-        baseEach(collection, _iterator, createCallback, keys);
+        baseEach(collection, iterator, createCallback, keys);
       }
       if (!size) {
         return enableError ? callback(undefined, []) : callback([]);
@@ -3444,7 +3345,7 @@
    */
   function createFilterSeries(bool) {
 
-    return function commonFilterSeries(collection, iterator, callback, thisArg) {
+    return function commonFilterSeries(collection, iterator, callback) {
       callback = callback || noop;
       var size, key, value, keys, iterate, result;
       var sync = true;
@@ -3452,7 +3353,6 @@
       var resultCount = -1;
       var enableError = callback.length === 2;
       var done = enableError ? filterCallbackWithError : filterCallback;
-      var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
       if (Array.isArray(collection)) {
         size = collection.length;
@@ -3471,24 +3371,24 @@
 
       function arrayIterator() {
         value = collection[completed];
-        _iterator(value, done);
+        iterator(value, done);
       }
 
       function arrayIteratorWithIndex() {
         value = collection[completed];
-        _iterator(value, completed, done);
+        iterator(value, completed, done);
       }
 
       function objectIterator() {
         key = keys[completed];
         value = collection[key];
-        _iterator(value, done);
+        iterator(value, done);
       }
 
       function objectIteratorWithKey() {
         key = keys[completed];
         value = collection[key];
-        _iterator(value, key, done);
+        iterator(value, key, done);
       }
 
       function filterCallback(res) {
@@ -3532,14 +3432,13 @@
    */
   function createFilterLimit(bool) {
 
-    return function _commonFilterLimit(collection, limit, iterator, callback, thisArg) {
+    return function _commonFilterLimit(collection, limit, iterator, callback) {
       callback = callback || noop;
       var size, index, key, value, keys, iterate, result;
       var sync = true;
       var started = 0;
       var completed = 0;
       var enableError = callback.length === 2;
-      var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
       var createCallback = enableError ? filterCallbackWithError : filterCallback;
 
       if (Array.isArray(collection)) {
@@ -3561,7 +3460,7 @@
         index = started++;
         if (index < size) {
           value = collection[index];
-          _iterator(value, createCallback(value, index));
+          iterator(value, createCallback(value, index));
         }
       }
 
@@ -3569,7 +3468,7 @@
         index = started++;
         if (index < size) {
           value = collection[index];
-          _iterator(value, index, createCallback(value, index));
+          iterator(value, index, createCallback(value, index));
         }
       }
 
@@ -3577,7 +3476,7 @@
         index = started++;
         if (index < size) {
           value = collection[keys[index]];
-          _iterator(value, createCallback(value, index));
+          iterator(value, createCallback(value, index));
         }
       }
 
@@ -3586,7 +3485,7 @@
         if (index < size) {
           key = keys[index];
           value = collection[key];
-          _iterator(value, key, createCallback(value, index));
+          iterator(value, key, createCallback(value, index));
         }
       }
 
@@ -3645,7 +3544,6 @@
    * @param {Array|Object} collection
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -3710,13 +3608,27 @@
    *   console.log(order); // [[1, 'a'], [3, 'b'], [2, 'b']]
    * });
    *
+   * @example
+   *
+   * // break
+   * var order = [];
+   * var array = [1, 3, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num !== 3);
+   *   }, num * 10);
+   * };
+   * async.eachSeries(array, iterator, function(err, res) {
+   *   console.log(res); // undefined
+   *   console.log(order); // [1, 3]
+   * });
    */
-  function eachSeries(collection, iterator, callback, thisArg) {
+  function eachSeries(collection, iterator, callback) {
     callback = callback || noop;
     var size, key, keys, iterate;
     var sync = true;
     var completed = 0;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
     if (Array.isArray(collection)) {
       size = collection.length;
@@ -3733,20 +3645,20 @@
     sync = false;
 
     function arrayIterator() {
-      _iterator(collection[completed], done);
+      iterator(collection[completed], done);
     }
 
     function arrayIteratorWithIndex() {
-      _iterator(collection[completed], completed, done);
+      iterator(collection[completed], completed, done);
     }
 
     function objectIterator() {
-      _iterator(collection[keys[completed]], done);
+      iterator(collection[keys[completed]], done);
     }
 
     function objectIteratorWithKey() {
       key = keys[completed];
-      _iterator(collection[key], key, done);
+      iterator(collection[key], key, done);
     }
 
     function done(err, bool) {
@@ -3774,7 +3686,6 @@
    * @param {number} limit - limit >= 1
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -3839,14 +3750,29 @@
    *   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
    * });
    *
+   * @example
+   *
+   * // break
+   * var order = [];
+   * var array = [1, 5, 3, 4, 2];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, num !== 5);
+   *   }, num * 10);
+   * };
+   * async.eachLimit(array, 2, iterator, function(err, res) {
+   *   console.log(res); // undefined
+   *   console.log(order); // [1, 3, 5]
+   * });
+   *
    */
-  function eachLimit(collection, limit, iterator, callback, thisArg) {
+  function eachLimit(collection, limit, iterator, callback) {
     callback = callback || noop;
     var size, index, key, keys, iterate;
     var sync = false;
     var started = 0;
     var completed = 0;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
     if (Array.isArray(collection)) {
       size = collection.length;
@@ -3866,20 +3792,20 @@
 
     function arrayIterator() {
       if (started < size) {
-        _iterator(collection[started++], done);
+        iterator(collection[started++], done);
       }
     }
 
     function arrayIteratorWithIndex() {
       index = started++;
       if (index < size) {
-        _iterator(collection[index], index, done);
+        iterator(collection[index], index, done);
       }
     }
 
     function objectIterator() {
       if (started < size) {
-        _iterator(collection[keys[started++]], done);
+        iterator(collection[keys[started++]], done);
       }
     }
 
@@ -3887,7 +3813,7 @@
       index = started++;
       if (index < size) {
         key = keys[index];
-        _iterator(collection[key], key, done);
+        iterator(collection[key], key, done);
       }
     }
 
@@ -3918,7 +3844,6 @@
    * @param {Array|Object} collection
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -3984,12 +3909,11 @@
    * });
    *
    */
-  function mapSeries(collection, iterator, callback, thisArg) {
+  function mapSeries(collection, iterator, callback) {
     callback = callback || noop;
     var size, key, keys, result, iterate;
     var sync = true;
     var completed = 0;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
     if (Array.isArray(collection)) {
       size = collection.length;
@@ -4007,20 +3931,20 @@
     sync = false;
 
     function arrayIterator() {
-      _iterator(collection[completed], done);
+      iterator(collection[completed], done);
     }
 
     function arrayIteratorWithIndex() {
-      _iterator(collection[completed], completed, done);
+      iterator(collection[completed], completed, done);
     }
 
     function objectIterator() {
-      _iterator(collection[keys[completed]], done);
+      iterator(collection[keys[completed]], done);
     }
 
     function objectIteratorWithKey() {
       key = keys[completed];
-      _iterator(collection[key], key, done);
+      iterator(collection[key], key, done);
     }
 
     function done(err, res) {
@@ -4048,7 +3972,6 @@
    * @param {number} limit - limit >= 1
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -4114,13 +4037,12 @@
    * });
    *
    */
-  function mapLimit(collection, limit, iterator, callback, thisArg) {
+  function mapLimit(collection, limit, iterator, callback) {
     callback = callback || noop;
     var size, index, key, keys, result, iterate;
     var sync = true;
     var started = 0;
     var completed = 0;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
     if (Array.isArray(collection)) {
       size = collection.length;
@@ -4140,21 +4062,21 @@
     function arrayIterator() {
       index = started++;
       if (index < size) {
-        _iterator(collection[index], createCallback(index));
+        iterator(collection[index], createCallback(index));
       }
     }
 
     function arrayIteratorWithIndex() {
       index = started++;
       if (index < size) {
-        _iterator(collection[index], index, createCallback(index));
+        iterator(collection[index], index, createCallback(index));
       }
     }
 
     function objectIterator() {
       index = started++;
       if (index < size) {
-        _iterator(collection[keys[index]], createCallback(index));
+        iterator(collection[keys[index]], createCallback(index));
       }
     }
 
@@ -4162,7 +4084,7 @@
       index = started++;
       if (index < size) {
         key = keys[index];
-        _iterator(collection[key], key, createCallback(index));
+        iterator(collection[key], key, createCallback(index));
       }
     }
 
@@ -4197,7 +4119,6 @@
    * @param {Array|Object} collection
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -4263,13 +4184,12 @@
    * });
    *
    */
-  function mapValuesSeries(collection, iterator, callback, thisArg) {
+  function mapValuesSeries(collection, iterator, callback) {
     callback = callback || noop;
     var size, key, keys, iterate;
     var sync = true;
     var result = {};
     var completed = 0;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
     if (Array.isArray(collection)) {
       size = collection.length;
@@ -4287,22 +4207,22 @@
 
     function arrayIterator() {
       key = completed;
-      _iterator(collection[completed], done);
+      iterator(collection[completed], done);
     }
 
     function arrayIteratorWithIndex() {
       key = completed;
-      _iterator(collection[completed], completed, done);
+      iterator(collection[completed], completed, done);
     }
 
     function objectIterator() {
       key = keys[completed];
-      _iterator(collection[key], done);
+      iterator(collection[key], done);
     }
 
     function objectIteratorWithKey() {
       key = keys[completed];
-      _iterator(collection[key], key, done);
+      iterator(collection[key], key, done);
     }
 
     function done(err, res) {
@@ -4330,7 +4250,6 @@
    * @param {number} limit - limit >= 1
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -4396,14 +4315,13 @@
    * });
    *
    */
-  function mapValuesLimit(collection, limit, iterator, callback, thisArg) {
+  function mapValuesLimit(collection, limit, iterator, callback) {
     callback = callback || noop;
     var size, index, key, keys, iterate;
     var sync = true;
     var result = {};
     var started = 0;
     var completed = 0;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
     if (Array.isArray(collection)) {
       size = collection.length;
@@ -4422,14 +4340,14 @@
     function arrayIterator() {
       index = started++;
       if (index < size) {
-        _iterator(collection[index], createCallback(index));
+        iterator(collection[index], createCallback(index));
       }
     }
 
     function arrayIteratorWithIndex() {
       index = started++;
       if (index < size) {
-        _iterator(collection[index], index, createCallback(index));
+        iterator(collection[index], index, createCallback(index));
       }
     }
 
@@ -4437,7 +4355,7 @@
       index = started++;
       if (index < size) {
         key = keys[index];
-        _iterator(collection[key], createCallback(key));
+        iterator(collection[key], createCallback(key));
       }
     }
 
@@ -4445,7 +4363,7 @@
       index = started++;
       if (index < size) {
         key = keys[index];
-        _iterator(collection[key], key, createCallback(key));
+        iterator(collection[key], key, createCallback(key));
       }
     }
 
@@ -4482,20 +4400,19 @@
    */
   function createDetect(arrayEach, baseEach, bool) {
 
-    return function detect(collection, iterator, callback, thisArg) {
+    return function detect(collection, iterator, callback) {
       callback = callback || noop;
       var size, keys;
       var completed = 0;
-      var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
       var createCallback = callback.length === 2 ? createCollectionCallbackWithError : createCollectionCallback;
 
       if (Array.isArray(collection)) {
         size = collection.length;
-        arrayEach(collection, _iterator, createCallback);
+        arrayEach(collection, iterator, createCallback);
       } else if (collection && typeof collection === 'object') {
         keys = Object.keys(collection);
         size = keys.length;
-        baseEach(collection, _iterator, createCallback, keys);
+        baseEach(collection, iterator, createCallback, keys);
       }
       if (!size) {
         callback();
@@ -4546,13 +4463,12 @@
    */
   function createDetectSeries(bool) {
 
-    return function detectSeries(collection, iterator, callback, thisArg) {
+    return function detectSeries(collection, iterator, callback) {
       callback = callback || noop;
       var size, key, value, keys, iterate;
       var sync = true;
       var completed = 0;
       var done = callback.length === 2 ? detectCallbackWithError : detectCallback;
-      var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
       if (Array.isArray(collection)) {
         size = collection.length;
@@ -4570,23 +4486,23 @@
 
       function arrayIterator() {
         value = collection[completed];
-        _iterator(value, done);
+        iterator(value, done);
       }
 
       function arrayIteratorWithIndex() {
         value = collection[completed];
-        _iterator(value, completed, done);
+        iterator(value, completed, done);
       }
 
       function objectIterator() {
         value = collection[keys[completed]];
-        _iterator(value, done);
+        iterator(value, done);
       }
 
       function objectIteratorWithKey() {
         key = keys[completed];
         value = collection[key];
-        _iterator(value, key, done);
+        iterator(value, key, done);
       }
 
       function detectCallback(res) {
@@ -4632,14 +4548,13 @@
    */
   function createDetectLimit(bool) {
 
-    return function detectLimit(collection, limit, iterator, callback, thisArg) {
+    return function detectLimit(collection, limit, iterator, callback) {
       callback = callback || noop;
       var size, index, key, value, keys, iterate;
       var sync = true;
       var started = 0;
       var completed = 0;
       var createCallback = callback.length === 2 ? detectCallbackWithError : detectCallback;
-      var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
       if (Array.isArray(collection)) {
         size = collection.length;
@@ -4659,7 +4574,7 @@
         index = started++;
         if (index < size) {
           value = collection[index];
-          _iterator(value, createCallback(value));
+          iterator(value, createCallback(value));
         }
       }
 
@@ -4667,7 +4582,7 @@
         index = started++;
         if (index < size) {
           value = collection[index];
-          _iterator(value, index, createCallback(value));
+          iterator(value, index, createCallback(value));
         }
       }
 
@@ -4675,7 +4590,7 @@
         index = started++;
         if (index < size) {
           value = collection[keys[index]];
-          _iterator(value, createCallback(value));
+          iterator(value, createCallback(value));
         }
       }
 
@@ -4683,7 +4598,7 @@
         if (started < size) {
           key = keys[started++];
           value = collection[key];
-          _iterator(value, key, createCallback(value));
+          iterator(value, key, createCallback(value));
         }
       }
 
@@ -4747,22 +4662,21 @@
    */
   function createPick(arrayEach, baseEach) {
 
-    return function pick(collection, iterator, callback, thisArg) {
+    return function pick(collection, iterator, callback) {
       callback = callback || noop;
       var size, keys;
       var completed = 0;
       var result = {};
-      var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
       var enableError = callback.length === 2;
       var createCallback = enableError ? createPickCallbackWithError : createPickCallback;
 
       if (Array.isArray(collection)) {
         size = collection.length;
-        arrayEach(collection, _iterator, createCallback);
+        arrayEach(collection, iterator, createCallback);
       } else if (collection && typeof collection === 'object') {
         keys = Object.keys(collection);
         size = keys.length;
-        baseEach(collection, _iterator, createCallback, keys);
+        baseEach(collection, iterator, createCallback, keys);
       }
       if (!size) {
         return enableError ? callback(undefined, {}) : callback({});
@@ -4813,7 +4727,6 @@
    * @param {Array|Object} collection
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -4943,7 +4856,7 @@
    * });
    *
    */
-  function pickSeries(collection, iterator, callback, thisArg) {
+  function pickSeries(collection, iterator, callback) {
     callback = callback || noop;
     var size, key, value, keys, iterate;
     var sync = true;
@@ -4951,7 +4864,6 @@
     var completed = 0;
     var enableError = callback.length === 2;
     var done = enableError ? pickCallbackWithError : pickCallback;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
     if (Array.isArray(collection)) {
       size = collection.length;
@@ -4970,25 +4882,25 @@
     function arrayIterator() {
       key = completed;
       value = collection[completed];
-      _iterator(value, done);
+      iterator(value, done);
     }
 
     function arrayIteratorWithIndex() {
       key = completed;
       value = collection[completed];
-      _iterator(value, completed, done);
+      iterator(value, completed, done);
     }
 
     function objectIterator() {
       key = keys[completed];
       value = collection[key];
-      _iterator(value, done);
+      iterator(value, done);
     }
 
     function objectIteratorWithKey() {
       key = keys[completed];
       value = collection[key];
-      _iterator(value, key, done);
+      iterator(value, key, done);
     }
 
     function pickCallback(res) {
@@ -5036,7 +4948,6 @@
    * @param {number} limit - limit >= 1
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -5165,7 +5076,7 @@
    *   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
    * });
    */
-  function pickLimit(collection, limit, iterator, callback, thisArg) {
+  function pickLimit(collection, limit, iterator, callback) {
     callback = callback || noop;
     var size, index, key, value, keys, iterate;
     var sync = true;
@@ -5174,7 +5085,6 @@
     var completed = 0;
     var enableError = callback.length === 2;
     var createCallback = enableError ? createPickCallbackWithError : createPickCallback;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
     if (Array.isArray(collection)) {
       size = collection.length;
@@ -5194,7 +5104,7 @@
       index = started++;
       if (index < size) {
         value = collection[index];
-        _iterator(value, createCallback(value, index));
+        iterator(value, createCallback(value, index));
       }
     }
 
@@ -5202,7 +5112,7 @@
       index = started++;
       if (index < size) {
         value = collection[index];
-        _iterator(value, index, createCallback(value, index));
+        iterator(value, index, createCallback(value, index));
       }
     }
 
@@ -5210,7 +5120,7 @@
       if (started < size) {
         key = keys[started++];
         value = collection[key];
-        _iterator(value, createCallback(value, key));
+        iterator(value, createCallback(value, key));
       }
     }
 
@@ -5218,7 +5128,7 @@
       if (started < size) {
         key = keys[started++];
         value = collection[key];
-        _iterator(value, key, createCallback(value, key));
+        iterator(value, key, createCallback(value, key));
       }
     }
 
@@ -5281,7 +5191,6 @@
    * @param {*} result
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -5347,12 +5256,11 @@
    * });
    *
    */
-  function reduce(collection, result, iterator, callback, thisArg) {
+  function reduce(collection, result, iterator, callback) {
     callback = callback || noop;
     var size, key, value, keys, iterate;
     var sync = true;
     var completed = 0;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
     if (Array.isArray(collection)) {
       size = collection.length;
@@ -5370,24 +5278,24 @@
 
     function arrayIterator(result) {
       value = collection[completed];
-      _iterator(result, value, done);
+      iterator(result, value, done);
     }
 
     function arrayIteratorWithIndex(result) {
       value = collection[completed];
-      _iterator(result, value, completed, done);
+      iterator(result, value, completed, done);
     }
 
     function objectIterator(result) {
       key = keys[completed];
       value = collection[key];
-      _iterator(result, value, done);
+      iterator(result, value, done);
     }
 
     function objectIteratorWithKey(result) {
       key = keys[completed];
       value = collection[key];
-      _iterator(result, value, key, done);
+      iterator(result, value, key, done);
     }
 
     function done(err, result) {
@@ -5416,7 +5324,6 @@
    * @param {*} result
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -5482,11 +5389,10 @@
    * });
    *
    */
-  function reduceRight(collection, result, iterator, callback, thisArg) {
+  function reduceRight(collection, result, iterator, callback) {
     callback = callback || noop;
     var resIndex, index, key, value, keys, iterate;
     var sync = true;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
     if (Array.isArray(collection)) {
       resIndex = collection.length;
@@ -5504,25 +5410,25 @@
 
     function arrayIterator(result) {
       value = collection[--resIndex];
-      _iterator(result, value, done);
+      iterator(result, value, done);
     }
 
     function arrayIteratorWithIndex(result) {
       index = --resIndex;
       value = collection[index];
-      _iterator(result, value, index, done);
+      iterator(result, value, index, done);
     }
 
     function objectIterator(result) {
       key = keys[--resIndex];
       value = collection[key];
-      _iterator(result, value, done);
+      iterator(result, value, done);
     }
 
     function objectIteratorWithKey(result) {
       key = keys[--resIndex];
       value = collection[key];
-      _iterator(result, value, key, done);
+      iterator(result, value, key, done);
     }
 
     function done(err, result) {
@@ -5551,21 +5457,20 @@
    */
   function createTransform(arrayEach, baseEach) {
 
-    return function transform(collection, iterator, callback, accumulator, thisArg) {
+    return function transform(collection, iterator, callback, accumulator) {
       callback = callback || noop;
       var size, keys, result;
       var completed = 0;
-      var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
       if (Array.isArray(collection)) {
         size = collection.length;
         result = accumulator !== undefined ? accumulator : [];
-        arrayEach(collection, result, _iterator, done);
+        arrayEach(collection, result, iterator, done);
       } else if (collection && typeof collection === 'object') {
         keys = Object.keys(collection);
         size = keys.length;
         result = accumulator !== undefined ? accumulator : {};
-        baseEach(collection, result, _iterator, done, keys);
+        baseEach(collection, result, iterator, done, keys);
       }
       if (!size) {
         callback(undefined, accumulator !== undefined ? accumulator : result || {});
@@ -5592,7 +5497,6 @@
    * @param {Function} iterator
    * @param {Function} callback
    * @param {Array|Object} [accumulator]
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -5662,12 +5566,11 @@
    * });
    *
    */
-  function transformSeries(collection, iterator, callback, accumulator, thisArg) {
+  function transformSeries(collection, iterator, callback, accumulator) {
     callback = callback || noop;
     var size, key, keys, iterate, result;
     var sync = true;
     var completed = 0;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
     if (Array.isArray(collection)) {
       size = collection.length;
@@ -5686,20 +5589,20 @@
     sync = false;
 
     function arrayIterator() {
-      _iterator(result, collection[completed], done);
+      iterator(result, collection[completed], done);
     }
 
     function arrayIteratorWithIndex() {
-      _iterator(result, collection[completed], completed, done);
+      iterator(result, collection[completed], completed, done);
     }
 
     function objectIterator() {
-      _iterator(result, collection[keys[completed]], done);
+      iterator(result, collection[keys[completed]], done);
     }
 
     function objectIteratorWithKey() {
       key = keys[completed];
-      _iterator(result, collection[key], key, done);
+      iterator(result, collection[key], key, done);
     }
 
     function done(err, bool) {
@@ -5730,7 +5633,6 @@
    * @param {Function} iterator
    * @param {Function} callback
    * @param {Array|Object} [accumulator]
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -5800,13 +5702,12 @@
    * });
    *
    */
-  function transformLimit(collection, limit, iterator, callback, accumulator, thisArg) {
+  function transformLimit(collection, limit, iterator, callback, accumulator) {
     callback = callback || noop;
     var size, index, key, keys, iterate, result;
     var sync = true;
     var started = 0;
     var completed = 0;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
     if (Array.isArray(collection)) {
       size = collection.length;
@@ -5827,21 +5728,21 @@
     function arrayIterator() {
       index = started++;
       if (index < size) {
-        _iterator(result, collection[index], once(done));
+        iterator(result, collection[index], once(done));
       }
     }
 
     function arrayIteratorWithIndex() {
       index = started++;
       if (index < size) {
-        _iterator(result, collection[index], index, once(done));
+        iterator(result, collection[index], index, once(done));
       }
     }
 
     function objectIterator() {
       index = started++;
       if (index < size) {
-        _iterator(result, collection[keys[index]], once(done));
+        iterator(result, collection[keys[index]], once(done));
       }
     }
 
@@ -5849,7 +5750,7 @@
       index = started++;
       if (index < size) {
         key = keys[index];
-        _iterator(result, collection[key], key, once(done));
+        iterator(result, collection[key], key, once(done));
       }
     }
 
@@ -5882,21 +5783,20 @@
    */
   function createSortBy(arrayEach, baseEach) {
 
-    return function sortBy(collection, iterator, callback, thisArg) {
+    return function sortBy(collection, iterator, callback) {
       callback = callback || noop;
       var size, result;
       var completed = 0;
-      var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
       if (Array.isArray(collection)) {
         size = collection.length;
         result = Array(size);
-        arrayEach(collection, _iterator, createCallback);
+        arrayEach(collection, iterator, createCallback);
       } else if (collection && typeof collection === 'object') {
         var keys = Object.keys(collection);
         size = keys.length;
         result = Array(size);
-        baseEach(collection, _iterator, createCallback, keys);
+        baseEach(collection, iterator, createCallback, keys);
       }
       if (!size) {
         callback(undefined, []);
@@ -5932,7 +5832,6 @@
    * @param {Array|Object} collection
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -5998,12 +5897,11 @@
    * });
    *
    */
-  function sortBySeries(collection, iterator, callback, thisArg) {
+  function sortBySeries(collection, iterator, callback) {
     callback = callback || noop;
     var size, key, value, keys, result, iterate;
     var sync = true;
     var completed = 0;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
     if (Array.isArray(collection)) {
       size = collection.length;
@@ -6022,23 +5920,23 @@
 
     function arrayIterator() {
       value = collection[completed];
-      _iterator(value, done);
+      iterator(value, done);
     }
 
     function arrayIteratorWithIndex() {
       value = collection[completed];
-      _iterator(value, completed, done);
+      iterator(value, completed, done);
     }
 
     function objectIterator() {
       value = collection[keys[completed]];
-      _iterator(value, done);
+      iterator(value, done);
     }
 
     function objectIteratorWithKey() {
       key = keys[completed];
       value = collection[key];
-      _iterator(value, key, done);
+      iterator(value, key, done);
     }
 
     function done(err, criteria) {
@@ -6070,7 +5968,6 @@
    * @param {number} limit - limit >= 1
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -6136,13 +6033,12 @@
    * });
    *
    */
-  function sortByLimit(collection, limit, iterator, callback, thisArg) {
+  function sortByLimit(collection, limit, iterator, callback) {
     callback = callback || noop;
     var size, index, key, value, keys, result, iterate;
     var sync = false;
     var started = 0;
     var completed = 0;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
     if (Array.isArray(collection)) {
       size = collection.length;
@@ -6161,7 +6057,7 @@
     function arrayIterator() {
       if (started < size) {
         value = collection[started++];
-        _iterator(value, createCallback(value));
+        iterator(value, createCallback(value));
       }
     }
 
@@ -6169,14 +6065,14 @@
       index = started++;
       if (index < size) {
         value = collection[index];
-        _iterator(value, index, createCallback(value));
+        iterator(value, index, createCallback(value));
       }
     }
 
     function objectIterator() {
       if (started < size) {
         value = collection[keys[started++]];
-        _iterator(value, createCallback(value));
+        iterator(value, createCallback(value));
       }
     }
 
@@ -6184,7 +6080,7 @@
       if (started < size) {
         key = keys[started++];
         value = collection[key];
-        _iterator(value, key, createCallback(value));
+        iterator(value, key, createCallback(value));
       }
     }
 
@@ -6224,7 +6120,6 @@
    * @param {Array|Object} collection
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -6354,9 +6249,9 @@
    * });
    *
    */
-  function some(collection, iterator, callback, thisArg) {
+  function some(collection, iterator, callback) {
     callback = callback || noop;
-    detect(collection, iterator, callback.length === 2 ? doneWithError : done, thisArg);
+    detect(collection, iterator, callback.length === 2 ? doneWithError : done);
 
     function done(res) {
       callback(!!res);
@@ -6373,7 +6268,6 @@
    * @param {Array|Object} collection
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -6503,9 +6397,9 @@
    * });
    *
    */
-  function someSeries(collection, iterator, callback, thisArg) {
+  function someSeries(collection, iterator, callback) {
     callback = callback || noop;
-    detectSeries(collection, iterator, callback.length === 2 ? doneWithError : done, thisArg);
+    detectSeries(collection, iterator, callback.length === 2 ? doneWithError : done);
 
     function done(res) {
       callback(!!res);
@@ -6523,7 +6417,6 @@
    * @param {number} limit - limit >= 1
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -6653,9 +6546,9 @@
    * });
    *
    */
-  function someLimit(collection, limit, iterator, callback, thisArg) {
+  function someLimit(collection, limit, iterator, callback) {
     callback = callback || noop;
-    detectLimit(collection, limit, iterator, callback.length === 2 ? doneWithError : done, thisArg);
+    detectLimit(collection, limit, iterator, callback.length === 2 ? doneWithError : done);
 
     function done(res) {
       callback(!!res);
@@ -6675,9 +6568,9 @@
 
     var deny = createDetect(arrayEach, baseEach, false);
 
-    return function every(collection, iterator, callback, thisArg) {
+    return function every(collection, iterator, callback) {
       callback = callback || noop;
-      deny(collection, iterator, callback.length === 2 ? doneWithError : done, thisArg);
+      deny(collection, iterator, callback.length === 2 ? doneWithError : done);
 
       function done(res) {
         callback(!res);
@@ -6696,9 +6589,9 @@
 
     var denySeries = createDetectSeries(false);
 
-    return function everySeries(collection, iterator, callback, thisArg) {
+    return function everySeries(collection, iterator, callback) {
       callback = callback || noop;
-      denySeries(collection, iterator, callback.length === 2 ? doneWithError : done, thisArg);
+      denySeries(collection, iterator, callback.length === 2 ? doneWithError : done);
 
       function done(res) {
         callback(!res);
@@ -6717,9 +6610,9 @@
 
     var denyLimit = createDetectLimit(false);
 
-    return function everyLimit(collection, limit, iterator, callback, thisArg) {
+    return function everyLimit(collection, limit, iterator, callback) {
       callback = callback || noop;
-      denyLimit(collection, limit, iterator, callback.length === 2 ? doneWithError : done, thisArg);
+      denyLimit(collection, limit, iterator, callback.length === 2 ? doneWithError : done);
 
       function done(res) {
         callback(!res);
@@ -6738,20 +6631,19 @@
    */
   function createConcat(arrayEach, baseEach) {
 
-    return function concat(collection, iterator, callback, thisArg) {
+    return function concat(collection, iterator, callback) {
       callback = callback || noop;
       var size;
       var completed = 0;
       var result = [];
-      var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
       if (Array.isArray(collection)) {
         size = collection.length;
-        arrayEach(collection, _iterator, done);
+        arrayEach(collection, iterator, done);
       } else if (collection && typeof collection === 'object') {
         var keys = Object.keys(collection);
         size = keys.length;
-        baseEach(collection, _iterator, done, keys);
+        baseEach(collection, iterator, done, keys);
       }
       if (!size) {
         callback(undefined, result);
@@ -6777,7 +6669,6 @@
    * @param {Array|Object} collection
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -6843,13 +6734,12 @@
    * });
    *
    */
-  function concatSeries(collection, iterator, callback, thisArg) {
+  function concatSeries(collection, iterator, callback) {
     callback = callback || noop;
     var size, key, keys, iterate;
     var sync = true;
     var result = [];
     var completed = 0;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
     if (Array.isArray(collection)) {
       size = collection.length;
@@ -6866,20 +6756,20 @@
     sync = false;
 
     function arrayIterator() {
-      _iterator(collection[completed], done);
+      iterator(collection[completed], done);
     }
 
     function arrayIteratorWithIndex() {
-      _iterator(collection[completed], completed, done);
+      iterator(collection[completed], completed, done);
     }
 
     function objectIterator() {
-      _iterator(collection[keys[completed]], done);
+      iterator(collection[keys[completed]], done);
     }
 
     function objectIteratorWithKey() {
       key = keys[completed];
-      _iterator(collection[key], key, done);
+      iterator(collection[key], key, done);
     }
 
     function done(err, array) {
@@ -6909,7 +6799,6 @@
    * @param {number} limit - limit >= 1
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * // array
@@ -6975,14 +6864,13 @@
    * });
    *
    */
-  function concatLimit(collection, limit, iterator, callback, thisArg) {
+  function concatLimit(collection, limit, iterator, callback) {
     callback = callback || noop;
     var result = [];
     var size, index, key, iterate;
     var sync = true;
     var started = 0;
     var completed = 0;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
 
     if (Array.isArray(collection)) {
       size = collection.length;
@@ -7000,27 +6888,27 @@
 
     function arrayIterator() {
       if (started < size) {
-        _iterator(collection[started++], once(done));
+        iterator(collection[started++], once(done));
       }
     }
 
     function arrayIteratorWithIndex() {
       index = started++;
       if (index < size) {
-        _iterator(collection[index], index, once(done));
+        iterator(collection[index], index, once(done));
       }
     }
 
     function objectIterator() {
       if (started < size) {
-        _iterator(collection[keys[started++]], once(done));
+        iterator(collection[keys[started++]], once(done));
       }
     }
 
     function objectIteratorWithKey() {
       if (started < size) {
         key = keys[started++];
-        _iterator(collection[key], key, once(done));
+        iterator(collection[key], key, once(done));
       }
     }
 
@@ -7051,7 +6939,7 @@
    */
   function createParallel(arrayEach, baseEach) {
 
-    return function parallel(tasks, callback, thisArg) {
+    return function parallel(tasks, callback) {
       callback = callback || noop;
       var size, keys, result;
       var completed = 0;
@@ -7059,12 +6947,12 @@
       if (Array.isArray(tasks)) {
         size = tasks.length;
         result = Array(size);
-        arrayEach(tasks, createCallback, thisArg);
+        arrayEach(tasks, createCallback);
       } else if (tasks && typeof tasks === 'object') {
         keys = Object.keys(tasks);
         size = keys.length;
         result = {};
-        baseEach(tasks, createCallback, keys, thisArg);
+        baseEach(tasks, createCallback, keys);
       }
       if (!size) {
         callback(undefined, result);
@@ -7097,7 +6985,6 @@
    * @namespace series
    * @param {Array|Object} tasks - functions
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * var order = [];
@@ -7167,7 +7054,7 @@
    * });
    *
    */
-  function series(tasks, callback, thisArg) {
+  function series(tasks, callback) {
     callback = callback || noop;
     var size, key, keys, result, iterate;
     var sync = true;
@@ -7176,12 +7063,12 @@
     if (Array.isArray(tasks)) {
       size = tasks.length;
       result = Array(size);
-      iterate = thisArg ? arrayIteratorWithBind : arrayIterator;
+      iterate = arrayIterator;
     } else if (tasks && typeof tasks === 'object') {
       keys = Object.keys(tasks);
       size = keys.length;
       result = {};
-      iterate = thisArg ? objectIteratorWithBind : objectIterator;
+      iterate = objectIterator;
     } else {
       return callback();
     }
@@ -7196,19 +7083,9 @@
       tasks[completed](done);
     }
 
-    function arrayIteratorWithBind() {
-      key = completed;
-      tasks[completed].call(thisArg, done);
-    }
-
     function objectIterator() {
       key = keys[completed];
       tasks[key](done);
-    }
-
-    function objectIteratorWithBind() {
-      key = keys[completed];
-      tasks[key].call(thisArg, done);
     }
 
     function done(err, res) {
@@ -7238,7 +7115,6 @@
    * @param {Array|Object} tasks - functions
    * @param {number} limit - limit >= 1
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * var order = [];
@@ -7308,7 +7184,7 @@
    * });
    *
    */
-  function parallelLimit(tasks, limit, callback, thisArg) {
+  function parallelLimit(tasks, limit, callback) {
     callback = callback || noop;
     var size, index, key, keys, result, iterate;
     var sync = true;
@@ -7318,12 +7194,12 @@
     if (Array.isArray(tasks)) {
       size = tasks.length;
       result = Array(size);
-      iterate = thisArg ? arrayIteratorWithBind : arrayIterator;
+      iterate = arrayIterator;
     } else if (tasks && typeof tasks === 'object') {
       keys = Object.keys(tasks);
       size = keys.length;
       result = {};
-      iterate = thisArg ? objectIteratorWithBind : objectIterator;
+      iterate = objectIterator;
     }
     if (!size || isNaN(limit) || limit < 1) {
       return callback(undefined, result);
@@ -7338,24 +7214,10 @@
       }
     }
 
-    function arrayIteratorWithBind() {
-      index = started++;
-      if (index < size) {
-        tasks[index].call(thisArg, createCallback(index));
-      }
-    }
-
     function objectIterator() {
       if (started < size) {
         key = keys[started++];
         tasks[key](createCallback(key));
-      }
-    }
-
-    function objectIteratorWithBind() {
-      if (started < size) {
-        key = keys[started++];
-        tasks[key].call(thisArg, createCallback(key));
       }
     }
 
@@ -7665,17 +7527,19 @@
   /**
    * @memberof async
    * @namespace whilst
+   * @param {Funciton} test
+   * @param {Funciton} iterator
+   * @param {Funciton} callback
    */
-  function whilst(test, iterator, callback, thisArg) {
+  function whilst(test, iterator, callback) {
     callback = callback || noop;
     var sync = true;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
     iterate();
     sync = false;
 
     function iterate() {
       if (test()) {
-        _iterator(function(err) {
+        iterator(function(err) {
           if (err) {
             return callback(err);
           }
@@ -7696,20 +7560,22 @@
   /**
    * @memberof async
    * @namespace doWhilst
+   * @param {Funciton} iterator
+   * @param {Funciton} test
+   * @param {Funciton} callback
    */
-  function doWhilst(iterator, test, callback, thisArg) {
+  function doWhilst(iterator, test, callback) {
     callback = callback || noop;
     var sync = true;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
     iterate();
     sync = false;
 
     function iterate() {
-      _iterator(function(err) {
+      iterator(function(err, arg) {
         if (err) {
           return callback(err);
         }
-        if (test.apply(thisArg, _slice(arguments, 1))) {
+        if (arguments.length <= 2 ? test(arg) : test.apply(null, _slice(arguments, 1))) {
           if (sync) {
             async.nextTick(iterate);
           } else {
@@ -7727,17 +7593,19 @@
   /**
    * @memberof async
    * @namespace until
+   * @param {Funciton} test
+   * @param {Funciton} iterator
+   * @param {Funciton} callback
    */
-  function until(test, iterator, callback, thisArg) {
+  function until(test, iterator, callback) {
     callback = callback || noop;
     var sync = true;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
     iterate();
     sync = false;
 
     function iterate() {
       if (!test()) {
-        _iterator(function(err) {
+        iterator(function(err) {
           if (err) {
             return callback(err);
           }
@@ -7758,20 +7626,22 @@
   /**
    * @memberof async
    * @namespace doUntil
+   * @param {Funciton} iterator
+   * @param {Funciton} test
+   * @param {Funciton} callback
    */
-  function doUntil(iterator, test, callback, thisArg) {
+  function doUntil(iterator, test, callback) {
     callback = callback || noop;
     var sync = true;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
     iterate();
     sync = false;
 
     function iterate() {
-      _iterator(function(err) {
+      iterator(function(err, arg) {
         if (err) {
           return callback(err);
         }
-        if (!test.apply(thisArg, _slice(arguments, 1))) {
+        if (arguments.length <= 2 ? !test(arg) : !test.apply(null, _slice(arguments, 1))) {
           if (sync) {
             async.nextTick(iterate);
           } else {
@@ -7789,10 +7659,12 @@
   /**
    * @memberof async
    * @namespace during
+   * @param {Funciton} test
+   * @param {Funciton} iterator
+   * @param {Funciton} callback
    */
-  function during(test, iterator, callback, thisArg) {
+  function during(test, iterator, callback) {
     callback = callback || noop;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
     _test();
 
     function _test() {
@@ -7804,7 +7676,7 @@
         return callback(err);
       }
       if (truth) {
-        _iterator(done);
+        iterator(done);
       } else {
         callback();
       }
@@ -7821,10 +7693,12 @@
   /**
    * @memberof async
    * @namespace doDuring
+   * @param {Funciton} test
+   * @param {Funciton} iterator
+   * @param {Funciton} callback
    */
-  function doDuring(iterator, test, callback, thisArg) {
+  function doDuring(iterator, test, callback) {
     callback = callback || noop;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
     iterate(null, true);
 
     function iterate(err, truth) {
@@ -7832,7 +7706,7 @@
         return callback(err);
       }
       if (truth) {
-        _iterator(done);
+        iterator(done);
       } else {
         callback();
       }
@@ -7863,14 +7737,13 @@
    * @memberof async
    * @namespace forever
    */
-  function forever(iterator, callback, thisArg) {
+  function forever(iterator, callback) {
     var sync = true;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
     iterate();
     sync = false;
 
     function iterate() {
-      _iterator(next);
+      iterator(next);
     }
 
     function next(err) {
@@ -7961,8 +7834,8 @@
    * @memberof async
    * @namespace queue
    */
-  function queue(worker, concurrency, thisArg) {
-    var q = priorityQueue(worker, concurrency, thisArg);
+  function queue(worker, concurrency) {
+    var q = priorityQueue(worker, concurrency);
     q.unshift = unshift;
     q.push = push;
     return q;
@@ -8013,7 +7886,7 @@
    * @memberof async
    * @namespace priorityQueue
    */
-  function priorityQueue(worker, concurrency, thisArg) {
+  function priorityQueue(worker, concurrency) {
     if (concurrency === undefined) {
       concurrency = 1;
     } else if (isNaN(concurrency) || concurrency < 1) {
@@ -8037,8 +7910,7 @@
       idle: idle,
       pause: pause,
       resume: resume,
-      _worker: worker,
-      _thisArg: thisArg
+      _worker: worker
     };
     return q;
 
@@ -8107,8 +7979,7 @@
         q.empty();
       }
       workers++;
-      var _worker = q._thisArg ? q._worker.bind(q._thisArg) : q._worker;
-      _worker(task.task, once(next));
+      q._worker(task.task, once(next));
 
       function next() {
         workers--;
@@ -8395,7 +8266,6 @@
    * @param {number} n - n >= 1
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * var iterator = function(n, done) {
@@ -8406,18 +8276,17 @@
    * });
    *
    */
-  function times(n, iterator, callback, thisArg) {
+  function times(n, iterator, callback) {
     callback = callback || noop;
     n = +n;
     if (isNaN(n) || n < 1) {
       return callback(undefined, []);
     }
     var result = Array(n);
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
     _times(n, iterate);
 
     function iterate(num) {
-      _iterator(num, createCallback(num));
+      iterator(num, createCallback(num));
     }
 
     function createCallback(index) {
@@ -8443,7 +8312,6 @@
    * @param {number} n - n >= 1
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * var iterator = function(n, done) {
@@ -8454,7 +8322,7 @@
    * });
    *
    */
-  function timesSeries(n, iterator, callback, thisArg) {
+  function timesSeries(n, iterator, callback) {
     callback = callback || noop;
     n = +n;
     if (isNaN(n) || n < 1) {
@@ -8463,12 +8331,11 @@
     var result = Array(n);
     var sync = true;
     var completed = 0;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
     iterate();
     sync = false;
 
     function iterate() {
-      _iterator(completed, done);
+      iterator(completed, done);
     }
 
     function done(err, res) {
@@ -8496,7 +8363,6 @@
    * @param {number} limit - n >= 1
    * @param {Function} iterator
    * @param {Function} callback
-   * @param {*} [thisArg]
    * @example
    *
    * var iterator = function(n, done) {
@@ -8507,7 +8373,7 @@
    * });
    *
    */
-  function timesLimit(n, limit, iterator, callback, thisArg) {
+  function timesLimit(n, limit, iterator, callback) {
     callback = callback || noop;
     n = +n;
     if (isNaN(n) || n < 1 || isNaN(limit) || limit < 1) {
@@ -8517,14 +8383,13 @@
     var sync = true;
     var started = 0;
     var completed = 0;
-    var _iterator = thisArg ? iterator.bind(thisArg) : iterator;
     _times(limit > n ? n : limit, iterate);
     sync = false;
 
     function iterate() {
       var index = started++;
       if (index < n) {
-        _iterator(index, createCallback(index));
+        iterator(index, createCallback(index));
       }
     }
 
@@ -8556,7 +8421,7 @@
    * @memberof async
    * @namespace memoize
    */
-  function memoize(fn, hasher, thisArg) {
+  function memoize(fn, hasher) {
     hasher = hasher || function(hash) {
       return hash;
     };
@@ -8569,7 +8434,7 @@
       var key = hasher.apply(null, args);
       if (_has(memo, key)) {
         async.nextTick(function() {
-          callback.apply(thisArg, memo[key]);
+          callback.apply(null, memo[key]);
         });
         return;
       }
@@ -8579,7 +8444,7 @@
 
       queues[key] = [callback];
       args.push(done);
-      fn.apply(thisArg, args);
+      fn.apply(null, args);
 
       function done() {
         var args = _baseSlice(arguments);
@@ -8590,7 +8455,7 @@
         var i = -1;
         var length = q.length;
         while (++i < length) {
-          q[i].apply(thisArg, args);
+          q[i].apply(null, args);
         }
       }
     };

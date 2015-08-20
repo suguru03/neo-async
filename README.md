@@ -1,4 +1,4 @@
-# Neo-Async v1.3.2
+# Neo-Async v1.4.0
 
 [![npm](https://img.shields.io/npm/v/neo-async.svg)](https://www.npmjs.com/package/neo-async)
 [![Travis](https://img.shields.io/travis/suguru03/neo-async.svg)](https://travis-ci.org/suguru03/neo-async)
