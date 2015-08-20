@@ -1,3 +1,40 @@
+<a name"v1.4.0"></a>
+## v1.4.0 (2015-08-21)
+
+
+#### Features
+
+* **concat:** remove `thisArg` ([d663bcf5](https://github.com/suguru03/neo-async/commit/d663bcf5))
+* **detect:** remove `thisArg` from `createDetect` ([f12dc386](https://github.com/suguru03/neo-async/commit/f12dc386))
+* **during:** remove `thisArg` ([22de81be](https://github.com/suguru03/neo-async/commit/22de81be))
+* **each:** remove `thisArg` and add example of break ([dfc02bdf](https://github.com/suguru03/neo-async/commit/dfc02bdf))
+* **filter:** remove `thisArg` from `async.filter` and `async.reject` ([76083b4a](https://github.com/suguru03/neo-async/commit/76083b4a))
+* **forever:** remove `thisArg` ([a1e15074](https://github.com/suguru03/neo-async/commit/a1e15074))
+* **map:** remove `thisArg` ([0fafad7d](https://github.com/suguru03/neo-async/commit/0fafad7d))
+* **mapValues:** remove `thisArg` ([9b5d8d47](https://github.com/suguru03/neo-async/commit/9b5d8d47))
+* **memoize:** remove `thisArg` ([6df16bc5](https://github.com/suguru03/neo-async/commit/6df16bc5))
+* **parallel:** remove `thisArg` from `parallel` and `parallelLimit` ([98c7721b](https://github.com/suguru03/neo-async/commit/98c7721b))
+* **pick:** remove `thisArg` ([240d39d0](https://github.com/suguru03/neo-async/commit/240d39d0))
+* **queue:** remove `thisArg` from `queue` and `priorityQueue` ([f49536e2](https://github.com/suguru03/neo-async/commit/f49536e2))
+* **reduce:** remove `thisArg` ([be1407a9](https://github.com/suguru03/neo-async/commit/be1407a9))
+* **safe:**
+  * remove unreached code ([8b64c81b](https://github.com/suguru03/neo-async/commit/8b64c81b))
+  * remove `thisArg` from safe functions ([93765faa](https://github.com/suguru03/neo-async/commit/93765faa))
+* **series:** remove `thisArg` ([e5a09c9b](https://github.com/suguru03/neo-async/commit/e5a09c9b))
+* **sortBy:** remove `thisArg` ([4fb90fd3](https://github.com/suguru03/neo-async/commit/4fb90fd3))
+* **times:** remove `thisArg` ([d3b78113](https://github.com/suguru03/neo-async/commit/d3b78113))
+* **transform:** remove `thisArg` ([afe2d626](https://github.com/suguru03/neo-async/commit/afe2d626))
+* **whilist:** remove `thisArg` from `whilst` and `until` ([03d10ec8](https://github.com/suguru03/neo-async/commit/03d10ec8))
+
+
+#### Other Changes
+
+* Merge branch 'v1.3.x' ([910d66cb](https://github.com/suguru03/neo-async/commit/910d66cb))
+* **CHANGELOG:** v1.3.2 [ci skip] ([bc48f2e3](https://github.com/suguru03/neo-async/commit/bc48f2e3))
+* **README:** update async version ([ef9f3e17](https://github.com/suguru03/neo-async/commit/ef9f3e17))
+* **doWhilst:** improve performance of `doWhilst` and `doUntil` ([7d4bbf56](https://github.com/suguru03/neo-async/commit/7d4bbf56))
+* **jshint:** add `-W018` option [ci skip] ([a3216d5b](https://github.com/suguru03/neo-async/commit/a3216d5b))
+
 <a name"v1.3.2"></a>
 ### v1.3.2 (2015-08-04)
 
@@ -665,7 +702,7 @@
 * Modify waterfall function to respond quickly ([2d7af49c](https://github.com/suguru03/neo-async/commit/2d7af49c))
 
 <a name"v0.4.5"></a>
-### v0.4.5 (2015-08-04)
+### v0.4.5 (2015-08-21)
 
 
 #### Bug Fixes

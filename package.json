@@ -15,6 +15,7 @@
   "homepage": "https://github.com/suguru03/neo-async",
   "files": [
     "LICENSE",
+    "CHANGELOG.md",
     "index.js",
     "lib/async.js",
     "lib/async.min.js",
