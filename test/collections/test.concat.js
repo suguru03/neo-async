@@ -153,6 +153,21 @@ describe('#concat', function() {
     }, Math);
   });
 
+  it('should not concatenate with the result if iterator get the falsy value', function(done) {
+
+    var collection = [2, 1, 3];
+    var iterator = function(n, callback) {
+      callback(null, 0);
+    };
+    async.concat(collection, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      done();
+    });
+  });
+
   it('should throw error', function(done) {
 
     var order = [];
@@ -342,6 +357,21 @@ describe('#concatSeries', function() {
       assert.deepEqual(order, [1.5, 3.5, 2.5]);
       done();
     }, Math);
+  });
+
+  it('should not concatenate with the result if iterator get the falsy value', function(done) {
+
+    var collection = [2, 1, 3];
+    var iterator = function(n, callback) {
+      callback(null, 0);
+    };
+    async.concatSeries(collection, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      done();
+    });
   });
 
   it('should execute on asynchronous', function(done) {
@@ -593,6 +623,21 @@ describe('#concatLimit', function() {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 2, 1, 3, 2, 1]);
       assert.deepEqual(order, [1, 2, 3]);
+      done();
+    });
+  });
+
+  it('should not concatenate with the result if iterator get the falsy value', function(done) {
+
+    var collection = [2, 1, 3];
+    var iterator = function(n, callback) {
+      callback(null, 0);
+    };
+    async.concatLimit(collection, 2, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
       done();
     });
   });
