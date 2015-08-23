@@ -3,7 +3,6 @@
 var fs = require('fs');
 var path = require('path');
 
-var _ = require('lodash');
 var gulp = require('gulp');
 var git = require('gulp-git');
 
@@ -17,16 +16,14 @@ gulp.task('gh-pages', function(done) {
     encoding: 'utf8'
   };
   var asyncFile = fs.readFileSync(filepath, options);
-  async.waterfall([
+  async.angelFall([
 
     function(next) {
-      git.checkout('origin/gh-pages', next);
+      git.fetch('origin', '', next);
     },
 
     function(next) {
-      git.checkout('gh-pages', {
-        args: '-B'
-      }, next);
+      git.checkout('gh-pages', next);
     },
 
     function(next) {
@@ -36,8 +33,7 @@ gulp.task('gh-pages', function(done) {
       jsdoc.create(next);
     },
 
-    function() {
-      var next = _.last(arguments);
+    function(next) {
       git.status({
         args: '-s ./doc'
       }, next);
@@ -53,7 +49,7 @@ gulp.task('gh-pages', function(done) {
       }, next);
     },
 
-    function(result, next) {
+    function(next) {
       git.exec({
         args: 'commit -m "docs(jsdoc): update jsdoc [v' + async.VERSION + ']"'
       }, next);
@@ -63,6 +59,6 @@ gulp.task('gh-pages', function(done) {
   ], done);
 
   function checkoutMaster(next) {
-    git.checkout('v1.x', next);
+    git.checkout('master', next);
   }
 });
