@@ -2340,11 +2340,11 @@
   var parallel = createParallel(arrayEachFunc, baseEachFunc);
 
   /**
-   * @version 1.4.0
+   * @version 1.4.1
    * @namespace async
    */
   var async = {
-    VERSION: '1.4.0',
+    VERSION: '1.4.1',
 
     // Collections
     each: each,
@@ -2533,13 +2533,12 @@
   function _compact(array) {
     var index = -1;
     var length = array.length;
-    var resIndex = -1;
     var result = [];
 
     while (++index < length) {
       var value = array[index];
       if (value) {
-        result[++resIndex] = value;
+        result[result.length] = value;
       }
     }
     return result;
@@ -3347,10 +3346,10 @@
 
     return function commonFilterSeries(collection, iterator, callback) {
       callback = callback || noop;
-      var size, key, value, keys, iterate, result;
+      var size, key, value, keys, iterate;
       var sync = true;
       var completed = 0;
-      var resultCount = -1;
+      var result = [];
       var enableError = callback.length === 2;
       var done = enableError ? filterCallbackWithError : filterCallback;
 
@@ -3365,7 +3364,6 @@
       if (!size) {
         return enableError ? callback(undefined, []) : callback([]);
       }
-      result = Array(size);
       iterate();
       sync = false;
 
@@ -3393,10 +3391,10 @@
 
       function filterCallback(res) {
         if (!!res === bool) {
-          result[++resultCount] = value;
+          result[result.length] = value;
         }
         if (++completed >= size) {
-          callback(_compact(result));
+          callback(result);
           callback = throwError;
         } else if (sync) {
           async.nextTick(iterate);
@@ -3407,15 +3405,15 @@
 
       function filterCallbackWithError(err, res) {
         if (err) {
-          callback(err, _compact(result));
+          callback(err, result);
           callback = throwError;
           return;
         }
         if (!!res === bool) {
-          result[++resultCount] = value;
+          result[result.length] = value;
         }
         if (++completed >= size) {
-          callback(undefined, _compact(result));
+          callback(undefined, result);
           callback = throwError;
         } else if (sync) {
           async.nextTick(iterate);
@@ -3428,11 +3426,11 @@
 
   /**
    * @private
-   * @param {boolean} obool
+   * @param {boolean} bool
    */
   function createFilterLimit(bool) {
 
-    return function _commonFilterLimit(collection, limit, iterator, callback) {
+    return function commonFilterLimit(collection, limit, iterator, callback) {
       callback = callback || noop;
       var size, index, key, value, keys, iterate, result;
       var sync = true;
@@ -6650,7 +6648,7 @@
       }
 
       function done(err, array) {
-        if (array !== undefined) {
+        if (array) {
           Array.prototype.push.apply(result, Array.isArray(array) ? array : [array]);
         }
         if (err) {
