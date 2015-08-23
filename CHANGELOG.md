@@ -1,3 +1,23 @@
+<a name"v1.4.1"></a>
+### v1.4.1 (2015-08-24)
+
+
+#### Bug Fixes
+
+* **concat:** fix not to concatenate the falsy value with the result ([b7b1f07b](https://github.com/suguru03/neo-async/commit/b7b1f07b))
+
+
+#### Features
+
+* **filterLimit:** fix docs and function name ([fed73554](https://github.com/suguru03/neo-async/commit/fed73554))
+
+
+#### Other Changes
+
+* **CHANGELOG:** v1.4.0 [ci skip] ([cf582155](https://github.com/suguru03/neo-async/commit/cf582155))
+* **filter:** fix to use `Array#length` ([e84206a8](https://github.com/suguru03/neo-async/commit/e84206a8))
+* **filterSeries:** improve not to use `_compact` ([3540e032](https://github.com/suguru03/neo-async/commit/3540e032))
+
 <a name"v1.4.0"></a>
 ## v1.4.0 (2015-08-21)
 
@@ -702,7 +722,7 @@
 * Modify waterfall function to respond quickly ([2d7af49c](https://github.com/suguru03/neo-async/commit/2d7af49c))
 
 <a name"v0.4.5"></a>
-### v0.4.5 (2015-08-21)
+### v0.4.5 (2015-08-24)
 
 
 #### Bug Fixes
