@@ -174,6 +174,71 @@ describe('#angelFall', function() {
     sync = false;
   });
 
+  it('should execute even if task does not have an argument', function(done) {
+
+    var order = [];
+    async.angelFall([
+      function() {
+        order.push(1);
+        return 1;
+      },
+      function(next) {
+        order.push(2);
+        next();
+      },
+      function(arg, next) {
+        order.push(3);
+        next();
+      },
+      function() {
+        order.push(4);
+        return 4;
+      },
+      function(arg, next) {
+        assert.strictEqual(arg, 4);
+        order.push(5);
+        next();
+      }
+    ], function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, [1, 2, 3, 4, 5]);
+      done();
+    });
+  });
+
+  it('should throw error if task which does not have an argument throws error', function(done) {
+
+    var order = [];
+    async.angelFall([
+      function() {
+        order.push(1);
+        return 1;
+      },
+      function(next) {
+        order.push(2);
+        next();
+      },
+      function(arg, next) {
+        order.push(3);
+        next();
+      },
+      function() {
+        order.push(4);
+        throw new Error('error');
+      },
+      function(arg, next) {
+        order.push(5);
+        next();
+      }
+    ], function(err) {
+      assert.ok(err);
+      assert.deepEqual(order, [1, 2, 3, 4]);
+      done();
+    });
+  });
+
   it('should throw error', function(done) {
 
     var numbers = [1, 3, 2, 4];
