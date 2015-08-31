@@ -4,7 +4,9 @@
   "description": "Neo-Async is thought to be used as a drop-in replacement for Async, it almost fully covers its functionality and runs faster ",
   "main": "index.js",
   "scripts": {
-    "test": "make test-cov"
+    "test": "npm run clean & istanbul cover ./node_modules/.bin/_mocha --require ./node_modules/intelli-espower-loader --report lcovonly -- -R spec ./test/*/*.js",
+    "clean": "rm -rf coverage",
+    "cov:99.8": "grep Lines | perl -nle 'my ($l, $c, $p, @d) = split(/[\\s%]+/); exit(($p > 99.8) == 0)'"
   },
   "license": "MIT",
   "keywords": "async, util",

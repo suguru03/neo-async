@@ -1,6 +1,6 @@
 language: node_js
 
-after_success: 'make test-codecov; make clean'
+after_success: 'npm test | npm run cov:99.8'
 
 node_js:
   - "iojs"

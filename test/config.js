@@ -1,5 +1,5 @@
 'use strict';
 
 module.exports = {
-  delay: 70
+  delay: process.env.DELAY || 70
 };
