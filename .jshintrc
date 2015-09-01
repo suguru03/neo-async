@@ -15,7 +15,7 @@
   "latedef": false,
   "newcap": false,
   "noarg": true,
-  "noempty": true,
+  "noempty": false,
   "nonew": false,
   "plusplus": false,
   "quotmark": false,

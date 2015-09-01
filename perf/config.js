@@ -54,6 +54,18 @@ module.exports = {
       }
     }
   },
+  'each:map': {
+    functions: [2],
+    setup: function(count) {
+      collection = createMapCollection(count);
+      iterator = function(n, callback) {
+        callback();
+      };
+    },
+    func: function(async, callback) {
+      async.each(collection, iterator, callback);
+    }
+  },
   'eachSeries:array': {
     setup: function(count) {
       collection = createArrayCollection(count);
@@ -1573,4 +1585,12 @@ function createArrayCollection(count) {
 
 function createObjectCollection(count) {
   return _.mapValues(_.shuffle(_.times(count)));
+}
+
+function createMapCollection(count) {
+  var map = new Map();
+  _.forOwn(createObjectCollection(count), function(v, k) {
+    map.set(k, v);
+  });
+  return map;
 }

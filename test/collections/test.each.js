@@ -4,6 +4,7 @@
 var assert = require('power-assert');
 var async = global.async || require('../../');
 var delay = require('../config').delay;
+var util = require('../util');
 var domain = require('domain').create();
 var errorCallCount = 0;
 domain.on('error', function(err) {
@@ -101,6 +102,41 @@ describe('#each', function() {
       c: 2
     };
     async.each(collection, eachIteratorWithKey(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, [
+        [1, 'a'],
+        [2, 'c'],
+        [3, 'b']
+      ]);
+      done();
+    });
+  });
+
+  util.it('should execute iterator by collection of Map', function(done) {
+
+    var order = [];
+    var map = new Map();
+    map.set('a', 1);
+    map.set('b', 3);
+    map.set('c', 2);
+    async.each(map, eachIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, [1, 2, 3]);
+      done();
+    });
+  });
+
+  util.it('should execute iterator by collection of Map with passing key', function(done) {
+    var order = [];
+    var map = new Map();
+    map.set('a', 1);
+    map.set('b', 3);
+    map.set('c', 2);
+    async.each(map, eachIteratorWithKey(order), function(err) {
       if (err) {
         return done(err);
       }
