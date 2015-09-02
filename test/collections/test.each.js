@@ -2,8 +2,9 @@
 'use strict';
 
 var assert = require('power-assert');
+var config = require('../config');
 var async = global.async || require('../../');
-var delay = require('../config').delay;
+var delay = config.delay;
 var util = require('../util');
 var domain = require('domain').create();
 var errorCallCount = 0;
@@ -114,10 +115,10 @@ describe('#each', function() {
     });
   });
 
-  util.it('should execute iterator by collection of Map', function(done) {
+  it('should execute iterator by collection of Map', function(done) {
 
     var order = [];
-    var map = new Map();
+    var map = new util.Map();
     map.set('a', 1);
     map.set('b', 3);
     map.set('c', 2);
@@ -130,9 +131,9 @@ describe('#each', function() {
     });
   });
 
-  util.it('should execute iterator by collection of Map with passing key', function(done) {
+  it('should execute iterator by collection of Map with passing key', function(done) {
     var order = [];
-    var map = new Map();
+    var map = new util.Map();
     map.set('a', 1);
     map.set('b', 3);
     map.set('c', 2);
