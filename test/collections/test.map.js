@@ -617,7 +617,6 @@ describe('#mapLimit', function() {
     sync = false;
   });
 
-
   it('should throw error', function(done) {
 
     var order = [];
