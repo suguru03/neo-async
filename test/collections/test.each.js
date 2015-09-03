@@ -654,6 +654,47 @@ describe('#eachLimit', function() {
     });
   });
 
+  it('should execute iterator by collection of Map', function(done) {
+
+    var order = [];
+    var map = new util.Map();
+    map.set('a', 1);
+    map.set('b', 5);
+    map.set('c', 3);
+    map.set('d', 4);
+    map.set('e', 2);
+    async.eachLimit(map, 2, eachIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, [1, 3, 5, 2, 4]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Map with passing key', function(done) {
+    var order = [];
+    var map = new util.Map();
+    map.set('a', 1);
+    map.set('b', 5);
+    map.set('c', 3);
+    map.set('d', 4);
+    map.set('e', 2);
+    async.eachLimit(map, 2, eachIteratorWithKey(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, [
+        [1, 'a'],
+        [3, 'c'],
+        [5, 'b'],
+        [2, 'e'],
+        [4, 'd']
+      ]);
+      done();
+    });
+  });
+
   it('should execute iterator to series without binding', function(done) {
 
     var order = [];
