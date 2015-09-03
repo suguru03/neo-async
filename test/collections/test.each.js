@@ -381,19 +381,37 @@ describe('#eachSeries', function() {
     });
   });
 
-  it('should execute iterator to series by collection of object', function(done) {
+  it('should execute iterator by collection of Map', function(done) {
 
     var order = [];
-    var collection = {
-      a: 1,
-      b: 3,
-      c: 2
-    };
-    async.eachSeries(collection, eachIterator(order), function(err) {
+    var map = new util.Map();
+    map.set('a', 1);
+    map.set('b', 3);
+    map.set('c', 2);
+    async.eachSeries(map, eachIterator(order), function(err) {
       if (err) {
         return done(err);
       }
       assert.deepEqual(order, [1, 3, 2]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Map with passing key', function(done) {
+    var order = [];
+    var map = new util.Map();
+    map.set('a', 1);
+    map.set('b', 3);
+    map.set('c', 2);
+    async.eachSeries(map, eachIteratorWithKey(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, [
+        [1, 'a'],
+        [3, 'b'],
+        [2, 'c']
+      ]);
       done();
     });
   });
