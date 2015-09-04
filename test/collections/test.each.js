@@ -381,7 +381,7 @@ describe('#eachSeries', function() {
     });
   });
 
-  it('should execute iterator by collection of Map', function(done) {
+  it('should execute iterator to series by collection of Map', function(done) {
 
     var order = [];
     var map = new util.Map();
@@ -397,7 +397,7 @@ describe('#eachSeries', function() {
     });
   });
 
-  it('should execute iterator by collection of Map with passing key', function(done) {
+  it('should execute iterator to series by collection of Map with passing key', function(done) {
     var order = [];
     var map = new util.Map();
     map.set('a', 1);
@@ -576,7 +576,7 @@ describe('#eachSeries', function() {
 
 describe('#eachLimit', function() {
 
-  it('should execute iterator in ned by collection of array', function(done) {
+  it('should execute iterator in limited by collection of array', function(done) {
 
     var order = [];
     var collection = [1, 5, 3, 4, 2];
@@ -590,7 +590,7 @@ describe('#eachLimit', function() {
     });
   });
 
-  it('should execute iterator in ned by collection of array with passing index', function(done) {
+  it('should execute iterator in limited by collection of array with passing index', function(done) {
 
     var order = [];
     var collection = [1, 5, 3, 4, 2];
@@ -610,7 +610,7 @@ describe('#eachLimit', function() {
     });
   });
 
-  it('should execute iterator to series by collection of object', function(done) {
+  it('should execute iterator in limited by collection of object', function(done) {
 
     var order = [];
     var collection = {
@@ -629,7 +629,7 @@ describe('#eachLimit', function() {
     });
   });
 
-  it('should execute iterator to series by collection of object with passing key', function(done) {
+  it('should execute iterator in limited by collection of object with passing key', function(done) {
 
     var order = [];
     var collection = {
@@ -654,7 +654,7 @@ describe('#eachLimit', function() {
     });
   });
 
-  it('should execute iterator by collection of Map', function(done) {
+  it('should execute iterator in limited by collection of Map', function(done) {
 
     var order = [];
     var map = new util.Map();
@@ -672,7 +672,7 @@ describe('#eachLimit', function() {
     });
   });
 
-  it('should execute iterator by collection of Map with passing key', function(done) {
+  it('should execute iterator in limited by collection of Map with passing key', function(done) {
     var order = [];
     var map = new util.Map();
     map.set('a', 1);
@@ -695,7 +695,7 @@ describe('#eachLimit', function() {
     });
   });
 
-  it('should execute iterator to series without binding', function(done) {
+  it('should execute iterator in limited without binding', function(done) {
 
     var order = [];
     var collection = {

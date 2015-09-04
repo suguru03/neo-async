@@ -58,6 +58,7 @@ describe('#map', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [2, 6, 4]);
       assert.deepEqual(order, [1, 2, 3]);
       done();
@@ -72,6 +73,7 @@ describe('#map', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [2, 6, 4]);
       assert.deepEqual(order, [
         [1, 0],
@@ -94,6 +96,7 @@ describe('#map', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [2, 6, 4]);
       assert.deepEqual(order, [1, 2, 3]);
       done();
@@ -112,6 +115,7 @@ describe('#map', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [2, 6, 4]);
       assert.deepEqual(order, [
         [1, 'a'],
@@ -133,6 +137,7 @@ describe('#map', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [2, 6, 4]);
       assert.deepEqual(order, [1, 2, 3]);
       done();
@@ -150,6 +155,7 @@ describe('#map', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [2, 6, 4]);
       assert.deepEqual(order, [
         [1, 'a'],
@@ -173,6 +179,7 @@ describe('#map', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [2.2, 7, 5.4]);
       assert.deepEqual(order, [1.1, 2.7, 3.5]);
       done();
@@ -192,6 +199,7 @@ describe('#map', function() {
 
     async.map(collection, iterator, function(err, res) {
       assert.ok(err);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3, 2, undefined]);
       assert.deepEqual(order, [1, 2, 3]);
       done();
@@ -227,6 +235,7 @@ describe('#map', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -241,6 +250,7 @@ describe('#map', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -254,6 +264,7 @@ describe('#map', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -267,6 +278,7 @@ describe('#map', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -280,6 +292,7 @@ describe('#map', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -298,7 +311,7 @@ describe('#mapSeries', function() {
       if (err) {
         return done(err);
       }
-
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [2, 6, 4]);
       assert.deepEqual(order, [1, 3, 2]);
       done();
@@ -313,7 +326,7 @@ describe('#mapSeries', function() {
       if (err) {
         return done(err);
       }
-
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [2, 6, 4]);
       assert.deepEqual(order, [
         [1, 0],
@@ -336,6 +349,7 @@ describe('#mapSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [2, 6, 4]);
       assert.deepEqual(order, [1, 3, 2]);
       done();
@@ -354,6 +368,7 @@ describe('#mapSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [2, 6, 4]);
       assert.deepEqual(order, [
         [1, 'a'],
@@ -375,6 +390,7 @@ describe('#mapSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [2, 6, 4]);
       assert.deepEqual(order, [1, 3, 2]);
       done();
@@ -392,6 +408,7 @@ describe('#mapSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [2, 6, 4]);
       assert.deepEqual(order, [
         [1, 'a'],
@@ -410,11 +427,11 @@ describe('#mapSeries', function() {
       b: 3.5,
       c: 2.7
     };
-
     async.mapSeries(collection, mapIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [2.2, 7, 5.4]);
       assert.deepEqual(order, [1.1, 3.5, 2.7]);
       done();
@@ -432,12 +449,13 @@ describe('#mapSeries', function() {
     var iterator = function(n, callback) {
       callback(null, n);
     };
-    async.mapSeries(collection, iterator, function(err, result) {
+    async.mapSeries(collection, iterator, function(err, res) {
       if (err) {
         return done(err);
       }
       assert.strictEqual(sync, false);
-      assert.deepEqual(result, [1, 3, 2]);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.deepEqual(res, [1, 3, 2]);
       done();
     });
     sync = false;
@@ -456,6 +474,7 @@ describe('#mapSeries', function() {
 
     async.mapSeries(collection, iterator, function(err, res) {
       assert.ok(err);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3, undefined, undefined]);
       assert.deepEqual(order, [1, 3]);
       done();
@@ -491,6 +510,7 @@ describe('#mapSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -505,6 +525,7 @@ describe('#mapSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -518,6 +539,7 @@ describe('#mapSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -531,6 +553,7 @@ describe('#mapSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -544,6 +567,7 @@ describe('#mapSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -563,6 +587,7 @@ describe('#mapLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [2, 10, 6, 8, 4]);
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
@@ -578,6 +603,7 @@ describe('#mapLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [2, 10, 6, 8, 4]);
       assert.deepEqual(order, [
         [1, 0],
@@ -604,6 +630,7 @@ describe('#mapLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [2, 10, 6, 8, 4]);
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
@@ -624,6 +651,7 @@ describe('#mapLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [2, 10, 6, 8, 4]);
       assert.deepEqual(order, [
         [1, 'a'],
@@ -649,6 +677,7 @@ describe('#mapLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [2.2, 7, 5.4]);
       assert.deepEqual(order, [1.1, 3.5, 2.7]);
       done();
@@ -664,6 +693,7 @@ describe('#mapLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [2, 6, 8, 4, 6]);
       assert.deepEqual(order, [1, 2, 3, 3, 4]);
       done();
@@ -683,12 +713,13 @@ describe('#mapLimit', function() {
     var iterator = function(n, callback) {
       callback(null, n);
     };
-    async.mapLimit(collection, 2, iterator, function(err, result) {
+    async.mapLimit(collection, 2, iterator, function(err, res) {
       if (err) {
         return done(err);
       }
       assert.strictEqual(sync, false);
-      assert.deepEqual(result, [1, 5, 3, 4, 2]);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.deepEqual(res, [1, 5, 3, 4, 2]);
       done();
     });
     sync = false;
@@ -707,6 +738,7 @@ describe('#mapLimit', function() {
 
     async.mapLimit(collection, 4, iterator, function(err, res) {
       assert.ok(err);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3, undefined, 2, undefined, undefined]);
       assert.deepEqual(order, [1, 2, 3]);
       done();
@@ -742,6 +774,7 @@ describe('#mapLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -756,6 +789,7 @@ describe('#mapLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -769,6 +803,7 @@ describe('#mapLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -782,6 +817,7 @@ describe('#mapLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -795,6 +831,7 @@ describe('#mapLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -809,6 +846,7 @@ describe('#mapLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -823,6 +861,7 @@ describe('#mapLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
