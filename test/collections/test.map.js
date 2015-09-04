@@ -4,6 +4,7 @@
 var assert = require('power-assert');
 var async = global.async || require('../../');
 var delay = require('../config').delay;
+var util = require('../util');
 var domain = require('domain').create();
 var errorCallCount = 0;
 domain.on('error', function(err) {
@@ -108,6 +109,44 @@ describe('#map', function() {
       c: 2
     };
     async.map(collection, mapIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [2, 6, 4]);
+      assert.deepEqual(order, [
+        [1, 'a'],
+        [2, 'c'],
+        [3, 'b']
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Map', function(done) {
+
+    var order = [];
+    var map = new util.Map();
+    map.set('a', 1);
+    map.set('b', 3);
+    map.set('c', 2);
+    async.map(map, mapIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [2, 6, 4]);
+      assert.deepEqual(order, [1, 2, 3]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Map with passing key', function(done) {
+
+    var order = [];
+    var map = new util.Map();
+    map.set('a', 1);
+    map.set('b', 3);
+    map.set('c', 2);
+    async.map(map, mapIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -325,6 +364,44 @@ describe('#mapSeries', function() {
     });
   });
 
+  it('should execute iterator to series by collection of Map', function(done) {
+
+    var order = [];
+    var map = new util.Map();
+    map.set('a', 1);
+    map.set('b', 3);
+    map.set('c', 2);
+    async.mapSeries(map, mapIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [2, 6, 4]);
+      assert.deepEqual(order, [1, 3, 2]);
+      done();
+    });
+  });
+
+  it('should execute iterator to series by collection of Map with passing key', function(done) {
+
+    var order = [];
+    var map = new util.Map();
+    map.set('a', 1);
+    map.set('b', 3);
+    map.set('c', 2);
+    async.mapSeries(map, mapIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [2, 6, 4]);
+      assert.deepEqual(order, [
+        [1, 'a'],
+        [3, 'b'],
+        [2, 'c']
+      ]);
+      done();
+    });
+  });
+
   it('should execute iterator to series without binding', function(done) {
 
     var order = [];
@@ -513,7 +590,7 @@ describe('#mapLimit', function() {
     });
   });
 
-  it('should execute iterator to series by collection of object', function(done) {
+  it('should execute iterator in limited by collection of object', function(done) {
 
     var order = [];
     var collection = {
@@ -533,7 +610,7 @@ describe('#mapLimit', function() {
     });
   });
 
-  it('should execute iterator to series by collection of object with passing key', function(done) {
+  it('should execute iterator in limited by collection of object with passing key', function(done) {
 
     var order = [];
     var collection = {
@@ -559,7 +636,7 @@ describe('#mapLimit', function() {
     });
   });
 
-  it('should execute iterator to series without binding', function(done) {
+  it('should execute iterator in limited without binding', function(done) {
 
     var order = [];
     var collection = {
