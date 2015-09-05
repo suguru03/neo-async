@@ -4,6 +4,7 @@
 var assert = require('power-assert');
 var async = global.async || require('../../');
 var delay = require('../config').delay;
+var util = require('../util');
 var domain = require('domain').create();
 var errorCallCount = 0;
 domain.on('error', function(err) {
@@ -57,6 +58,7 @@ describe('#mapValues', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         '0': 2,
         '1': 6,
@@ -75,6 +77,7 @@ describe('#mapValues', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         '0': 2,
         '1': 6,
@@ -101,6 +104,7 @@ describe('#mapValues', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         a: 2,
         b: 6,
@@ -123,6 +127,55 @@ describe('#mapValues', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {
+        a: 2,
+        b: 6,
+        c: 4
+      });
+      assert.deepEqual(order, [
+        [1, 'a'],
+        [2, 'c'],
+        [3, 'b']
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Map', function(done) {
+
+    var order = [];
+    var collection = new util.Map();
+    collection.set('a', 1);
+    collection.set('b', 3);
+    collection.set('c', 2);
+    async.mapValues(collection, mapValuesIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {
+        a: 2,
+        b: 6,
+        c: 4
+      });
+      assert.deepEqual(order, [1, 2, 3]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Map with key', function(done) {
+
+    var order = [];
+    var collection = new util.Map();
+    collection.set('a', 1);
+    collection.set('b', 3);
+    collection.set('c', 2);
+    async.mapValues(collection, mapValuesIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         a: 2,
         b: 6,
@@ -150,6 +203,7 @@ describe('#mapValues', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         a: 2.2,
         b: 7,
@@ -173,6 +227,7 @@ describe('#mapValues', function() {
 
     async.mapValues(collection, iterator, function(err, res) {
       assert.ok(err);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         '0': 1,
         '1': 3,
@@ -212,6 +267,7 @@ describe('#mapValues', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
@@ -226,6 +282,7 @@ describe('#mapValues', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
@@ -239,6 +296,7 @@ describe('#mapValues', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
@@ -252,6 +310,7 @@ describe('#mapValues', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
@@ -265,6 +324,7 @@ describe('#mapValues', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
@@ -283,7 +343,7 @@ describe('#mapValuesSeries', function() {
       if (err) {
         return done(err);
       }
-
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         '0': 2,
         '1': 6,
@@ -302,7 +362,7 @@ describe('#mapValuesSeries', function() {
       if (err) {
         return done(err);
       }
-
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         '0': 2,
         '1': 6,
@@ -329,6 +389,7 @@ describe('#mapValuesSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         a: 2,
         b: 6,
@@ -351,6 +412,7 @@ describe('#mapValuesSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         a: 2,
         b: 6,
@@ -365,6 +427,55 @@ describe('#mapValuesSeries', function() {
     });
   });
 
+  it('should execute iterator to series by collection of Map', function(done) {
+
+    var order = [];
+    var collection = new util.Map();
+    collection.set('a', 1);
+    collection.set('b', 3);
+    collection.set('c', 2);
+    async.mapValuesSeries(collection, mapValuesIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {
+        a: 2,
+        b: 6,
+        c: 4
+      });
+      assert.deepEqual(order, [1, 3, 2]);
+      done();
+    });
+  });
+
+  it('should execute iterator to series by collection of Map with key', function(done) {
+
+    var order = [];
+    var collection = new util.Map();
+    collection.set('a', 1);
+    collection.set('b', 3);
+    collection.set('c', 2);
+    async.mapValuesSeries(collection, mapValuesIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {
+        a: 2,
+        b: 6,
+        c: 4
+      });
+      assert.deepEqual(order, [
+        [1, 'a'],
+        [3, 'b'],
+        [2, 'c']
+      ]);
+      done();
+    });
+  });
+
+
   it('should execute iterator to series without binding', function(done) {
 
     var order = [];
@@ -378,6 +489,7 @@ describe('#mapValuesSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         a: 2.2,
         b: 7,
@@ -404,6 +516,7 @@ describe('#mapValuesSeries', function() {
         return done(err);
       }
       assert.strictEqual(sync, false);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         a: 1,
         b: 3,
@@ -427,6 +540,7 @@ describe('#mapValuesSeries', function() {
 
     async.mapValuesSeries(collection, iterator, function(err, res) {
       assert.ok(err);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         '0': 1,
         '1': 3
@@ -465,6 +579,7 @@ describe('#mapValuesSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
@@ -479,6 +594,7 @@ describe('#mapValuesSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
@@ -492,6 +608,7 @@ describe('#mapValuesSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
@@ -505,6 +622,7 @@ describe('#mapValuesSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
@@ -518,6 +636,7 @@ describe('#mapValuesSeries', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
@@ -537,6 +656,7 @@ describe('#mapValuesLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         '0': 2,
         '1': 10,
@@ -558,6 +678,7 @@ describe('#mapValuesLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         '0': 2,
         '1': 10,
@@ -576,7 +697,7 @@ describe('#mapValuesLimit', function() {
     });
   });
 
-  it('should execute iterator to series by collection of object', function(done) {
+  it('should execute iterator in limited by collection of object', function(done) {
 
     var order = [];
     var collection = {
@@ -590,6 +711,7 @@ describe('#mapValuesLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         a: 2,
         b: 10,
@@ -602,7 +724,7 @@ describe('#mapValuesLimit', function() {
     });
   });
 
-  it('should execute iterator to series by collection of object with passing key', function(done) {
+  it('should execute iterator in limited by collection of object with passing key', function(done) {
 
     var order = [];
     var collection = {
@@ -616,6 +738,65 @@ describe('#mapValuesLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {
+        a: 2,
+        b: 10,
+        c: 6,
+        d: 8,
+        e: 4
+      });
+      assert.deepEqual(order, [
+        [1, 'a'],
+        [3, 'c'],
+        [5, 'b'],
+        [2, 'e'],
+        [4, 'd']
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator in limited by collection of Map', function(done) {
+
+    var order = [];
+    var collection = new util.Map();
+    collection.set('a', 1);
+    collection.set('b', 5);
+    collection.set('c', 3);
+    collection.set('d', 4);
+    collection.set('e', 2);
+    async.mapValuesLimit(collection, 2, mapValuesIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.deepEqual(res, {
+        a: 2,
+        b: 10,
+        c: 6,
+        d: 8,
+        e: 4
+      });
+      assert.deepEqual(order, [1, 3, 5, 2, 4]);
+      done();
+    });
+  });
+
+  it('should execute iterator in limited by collection of object with passing key', function(done) {
+
+    var order = [];
+    var collection = new util.Map();
+    collection.set('a', 1);
+    collection.set('b', 5);
+    collection.set('c', 3);
+    collection.set('d', 4);
+    collection.set('e', 2);
+    async.mapValuesLimit(collection, 2, mapValuesIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         a: 2,
         b: 10,
@@ -647,6 +828,7 @@ describe('#mapValuesLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         a: 2.2,
         b: 7,
@@ -666,6 +848,7 @@ describe('#mapValuesLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         '0': 2,
         '1': 6,
@@ -716,6 +899,7 @@ describe('#mapValuesLimit', function() {
 
     async.mapValuesLimit(collection, 4, iterator, function(err, res) {
       assert.ok(err);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         '0': 1,
         '1': 3,
@@ -755,6 +939,7 @@ describe('#mapValuesLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
@@ -769,6 +954,7 @@ describe('#mapValuesLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
@@ -782,6 +968,7 @@ describe('#mapValuesLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
@@ -795,6 +982,7 @@ describe('#mapValuesLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
@@ -808,6 +996,7 @@ describe('#mapValuesLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
@@ -822,6 +1011,7 @@ describe('#mapValuesLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
@@ -836,6 +1026,7 @@ describe('#mapValuesLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
       done();
