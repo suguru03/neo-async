@@ -5,6 +5,7 @@ var _ = require('lodash');
 var assert = require('power-assert');
 var async = global.async || require('../../');
 var delay = require('../config').delay;
+var util = require('../util');
 var domain = require('domain').create();
 var errorCallCount = 0;
 domain.on('error', function(err) {
@@ -139,6 +140,52 @@ describe('#reduce', function() {
       b: 3,
       c: 2
     };
+    async.reduce(collection, {}, reduceIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, {
+        2: 2,
+        3: 3,
+        5: 5
+      });
+      assert.deepEqual(order, [
+        [5, 'a'],
+        [3, 'b'],
+        [2, 'c']
+      ]);
+      done();
+    });
+  });
+
+  it('should get object by collection of Map', function(done) {
+
+    var order = [];
+    var collection = new util.Map();
+    collection.set('a', 5);
+    collection.set('b', 3);
+    collection.set('c', 2);
+    async.reduce(collection, {}, reduceIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, {
+        2: 2,
+        3: 3,
+        5: 5
+      });
+      assert.deepEqual(order, [5, 3, 2]);
+      done();
+    });
+  });
+
+  it('should get object by collection of Map with passing key', function(done) {
+
+    var order = [];
+    var collection = new util.Map();
+    collection.set('a', 5);
+    collection.set('b', 3);
+    collection.set('c', 2);
     async.reduce(collection, {}, reduceIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
