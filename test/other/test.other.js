@@ -111,6 +111,15 @@ describe('#nextTick', function() {
     async.nextTick(done);
   });
 
+  it('should avoid node warning [v0.10.x only]', function(done) {
+
+    var array = _.times(10000);
+    var iterator = function(n, done) {
+      done();
+    };
+    async.eachSeries(array, iterator, done);
+  });
+
 });
 
 describe('#setImmediate', function() {
