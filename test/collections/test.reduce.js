@@ -453,6 +453,52 @@ describe('#reduceRight', function() {
     });
   });
 
+  it('should get object by collection of Map', function(done) {
+
+    var order = [];
+    var collection = new util.Map();
+    collection.set('a', 5);
+    collection.set('b', 3);
+    collection.set('c', 2);
+    async.reduceRight(collection, {}, reduceIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, {
+        2: 2,
+        3: 3,
+        5: 5
+      });
+      assert.deepEqual(order, [2, 3, 5]);
+      done();
+    });
+  });
+
+  it('should get object by collection of Map with passing key', function(done) {
+
+    var order = [];
+    var collection = new util.Map();
+    collection.set('a', 5);
+    collection.set('b', 3);
+    collection.set('c', 2);
+    async.reduceRight(collection, {}, reduceIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, {
+        2: 2,
+        3: 3,
+        5: 5
+      });
+      assert.deepEqual(order, [
+        [2, 'c'],
+        [3, 'b'],
+        [5, 'a']
+      ]);
+      done();
+    });
+  });
+
   it('should execute iterator to series without binding', function(done) {
 
     var order = [];
