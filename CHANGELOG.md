@@ -1,3 +1,49 @@
+<a name"v1.5.0"></a>
+## v1.5.0 (2015-09-10)
+
+
+#### Bug Fixes
+
+* **nextTick:** fix to use `setImmediate` on node v0.10.x ([4ef5ae73](https://github.com/suguru03/neo-async/commit/4ef5ae73))
+
+
+#### Features
+
+* **angelFall:** improve to execute even if task has no argument ([99f54414](https://github.com/suguru03/neo-async/commit/99f54414))
+* **apply:** fix to enable to use `Function#length` ([81e84770](https://github.com/suguru03/neo-async/commit/81e84770))
+* **concat:** modify to support symbol iterator ([6752e7c0](https://github.com/suguru03/neo-async/commit/6752e7c0))
+* **detect:** modify to support symbol iterator ([6dcff7f9](https://github.com/suguru03/neo-async/commit/6dcff7f9))
+* **each:** add `symbolEach` funciton to support es2015 ([1959bcac](https://github.com/suguru03/neo-async/commit/1959bcac))
+* **eachLimit:** modify to support symbol iterator ([04642f3e](https://github.com/suguru03/neo-async/commit/04642f3e))
+* **eachSeries:** modify to support symbol iterator ([138d7b37](https://github.com/suguru03/neo-async/commit/138d7b37))
+* **filter:** modify to support symbol iterator ([68c7656f](https://github.com/suguru03/neo-async/commit/68c7656f))
+* **map:** modify to support symbol iterator ([ef982ca1](https://github.com/suguru03/neo-async/commit/ef982ca1))
+* **mapValues:** modify to support symbol iterator ([196a79d1](https://github.com/suguru03/neo-async/commit/196a79d1))
+* **pick:** modify to support symbol iterator ([cf1ed7c5](https://github.com/suguru03/neo-async/commit/cf1ed7c5))
+* **reduce:** modify to support symbol iterator ([0c8b1257](https://github.com/suguru03/neo-async/commit/0c8b1257))
+* **reduceRight:** modify to support symbol iterator ([13145158](https://github.com/suguru03/neo-async/commit/13145158))
+* **reject:** modify to support symbol iterator and add test case ([c43f3925](https://github.com/suguru03/neo-async/commit/c43f3925))
+* **sortBy:** modify to support symbol iterator ([1b8179eb](https://github.com/suguru03/neo-async/commit/1b8179eb))
+* **transform:** modify to support symbol iterator ([2527f297](https://github.com/suguru03/neo-async/commit/2527f297))
+
+
+#### Other Changes
+
+* **CHANGELOG:** v1.4.1 [ci skip] ([2e9d4739](https://github.com/suguru03/neo-async/commit/2e9d4739))
+* **async:** refactor and apply jsbeautify ([ac984f32](https://github.com/suguru03/neo-async/commit/ac984f32))
+* **gh-pages:** fix `gh-pages` task ([ef25eb3b](https://github.com/suguru03/neo-async/commit/ef25eb3b))
+* **map:**
+  * refactor map ([7ee34d90](https://github.com/suguru03/neo-async/commit/7ee34d90))
+  * fix to check response type ([ecf69efa](https://github.com/suguru03/neo-async/commit/ecf69efa))
+* **mapLimit:** add test case ([469bb5c8](https://github.com/suguru03/neo-async/commit/469bb5c8))
+* **other:** add test by using `vm` ([165834a1](https://github.com/suguru03/neo-async/commit/165834a1))
+* **some:** add Map test ([d243343e](https://github.com/suguru03/neo-async/commit/d243343e))
+* **test:** fix to check coverage ([5cb9ec55](https://github.com/suguru03/neo-async/commit/5cb9ec55))
+* **travis:**
+  * add node v4 ([98274a04](https://github.com/suguru03/neo-async/commit/98274a04))
+  * fix npm test ([7771dda6](https://github.com/suguru03/neo-async/commit/7771dda6))
+* **util:** add Map class for improving coverage of v0.10.x ([0178a497](https://github.com/suguru03/neo-async/commit/0178a497))
+
 <a name"v1.4.1"></a>
 ### v1.4.1 (2015-08-24)
 
@@ -722,7 +768,7 @@
 * Modify waterfall function to respond quickly ([2d7af49c](https://github.com/suguru03/neo-async/commit/2d7af49c))
 
 <a name"v0.4.5"></a>
-### v0.4.5 (2015-08-24)
+### v0.4.5 (2015-09-10)
 
 
 #### Bug Fixes
