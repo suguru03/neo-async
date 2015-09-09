@@ -475,7 +475,6 @@ describe('#mapValuesSeries', function() {
     });
   });
 
-
   it('should execute iterator to series without binding', function(done) {
 
     var order = [];
