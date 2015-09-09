@@ -41,6 +41,7 @@
     'function': true,
     'object': true
   };
+  var iteratorSymbol = typeof Symbol === 'function' &amp;&amp; Symbol.iterator;
 
   var _nextTick;
   var _safeNextTick;
@@ -134,7 +135,7 @@
    * });
    *
    */
-  var each = createEach(arrayEach, baseEach);
+  var each = createEach(arrayEach, baseEach, symbolEach);
 
   /**
    * @memberof async
@@ -207,7 +208,7 @@
    * });
    *
    */
-  var map = createMap(arrayEachIndex, baseEachIndex);
+  var map = createMap(arrayEachIndex, baseEachIndex, symbolEachIndex);
 
   /**
    * @memberof async
@@ -280,7 +281,7 @@
    * });
    *
    */
-  var mapValues = createMapValues(arrayEachIndex, baseEachKey);
+  var mapValues = createMapValues(arrayEachIndex, baseEachKey, symbolEachKey);
 
   /**
    * @memberof async
@@ -417,7 +418,7 @@
    * });
    *
    */
-  var filter = createFilter(arrayEachIndexValue, baseEachIndexValue, true);
+  var filter = createFilter(arrayEachIndexValue, baseEachIndexValue, symbolEachIndexValue, true);
 
   /**
    * @memberof async
@@ -829,7 +830,7 @@
    * });
    *
    */
-  var reject = createFilter(arrayEachIndexValue, baseEachIndexValue, false);
+  var reject = createFilter(arrayEachIndexValue, baseEachIndexValue, symbolEachIndexValue, false);
 
   /**
    * @memberof async
@@ -1241,7 +1242,7 @@
    * });
    *
    */
-  var detect = createDetect(arrayEachValue, baseEachValue, true);
+  var detect = createDetect(arrayEachValue, baseEachValue, symbolEachValue, true);
 
   /**
    * @memberof async
@@ -1653,7 +1654,7 @@
    * });
    *
    */
-  var every = createEvery(arrayEachValue, baseEachValue);
+  var every = createEvery(arrayEachValue, baseEachValue, symbolEachValue);
 
   /**
    * @memberof async
@@ -2065,7 +2066,7 @@
    * });
    *
    */
-  var pick = createPick(arrayEachIndexValue, baseEachKeyValue);
+  var pick = createPick(arrayEachIndexValue, baseEachKeyValue, symbolEachKeyValue);
 
   /**
    * @memberof async
@@ -2143,7 +2144,7 @@
    * });
    *
    */
-  var transform = createTransform(arrayEachResult, baseEachResult);
+  var transform = createTransform(arrayEachResult, baseEachResult, symbolEachResult);
 
   /**
    * @memberof async
@@ -2216,7 +2217,7 @@
    * });
    *
    */
-  var sortBy = createSortBy(arrayEachValue, baseEachValue);
+  var sortBy = createSortBy(arrayEachValue, baseEachValue, symbolEachValue);
 
   /**
    * @memberof async
@@ -2289,7 +2290,7 @@
    * });
    *
    */
-  var concat = createConcat(arrayEach, baseEach);
+  var concat = createConcat(arrayEach, baseEach, symbolEach);
 
   /**
    * @memberof async
@@ -2368,11 +2369,11 @@
   var parallel = createParallel(arrayEachFunc, baseEachFunc);
 
   /**
-   * @version 1.4.1
+   * @version 1.5.0
    * @namespace async
    */
   var async = {
-    VERSION: '1.4.1',
+    VERSION: '1.5.0',
 
     // Collections
     each: each,
@@ -2505,8 +2506,7 @@
     };
     _setImmediate = typeof setImmediate === 'function' ? setImmediate : delay;
     if (typeof process === 'object' &amp;&amp; typeof process.nextTick === 'function') {
-      _nextTick = process.nextTick;
-      _safeNextTick = /^v0.10/.test(process.version) ? _setImmediate : _nextTick;
+      _nextTick = _safeNextTick = /^v0.10/.test(process.version) ? _setImmediate : process.nextTick;
     } else {
       _nextTick = _safeNextTick = _setImmediate;
     }
@@ -2642,6 +2642,23 @@
   /**
    * @private
    */
+  function symbolEach(collection, iterator, callback) {
+    var iter = collection[iteratorSymbol]();
+    var item;
+    if (iterator.length === 3) {
+      while ((item = iter.next()).done === false) {
+        iterator(item.value[1], item.value[0], callback);
+      }
+    } else {
+      while ((item = iter.next()).done === false) {
+        iterator(item.value[1], callback);
+      }
+    }
+  }
+
+  /**
+   * @private
+   */
   function arrayEachResult(array, result, iterator, callback) {
     var index = -1;
     var length = array.length;
@@ -2673,6 +2690,24 @@
     } else {
       while (++index &lt; length) {
         iterator(result, object[keys[index]], once(callback));
+      }
+    }
+  }
+
+  /**
+   * @private
+   */
+  function symbolEachResult(collection, result, iterator, callback) {
+    var item;
+    var iter = collection[iteratorSymbol]();
+
+    if (iterator.length === 4) {
+      while ((item = iter.next()).done === false) {
+        iterator(result, item.value[1], item.value[0], once(callback));
+      }
+    } else {
+      while ((item = iter.next()).done === false) {
+        iterator(result, item.value[1], once(callback));
       }
     }
   }
@@ -2744,6 +2779,27 @@
   /**
    * @private
    */
+  function symbolEachIndex(collection, iterator, createCallback) {
+    var values;
+    var index = -1;
+    var size = collection.size;
+    var iter = collection[iteratorSymbol]();
+
+    if (iterator.length === 3) {
+      while (++index &lt; size) {
+        values = iter.next().value;
+        iterator(values[1], values[0], createCallback(index));
+      }
+    } else {
+      while (++index &lt; size) {
+        iterator(iter.next().value[1], createCallback(index));
+      }
+    }
+  }
+
+  /**
+   * @private
+   */
   function baseEachKey(object, iterator, createCallback, keys) {
     var key;
     var index = -1;
@@ -2758,6 +2814,25 @@
       while (++index &lt; length) {
         key = keys[index];
         iterator(object[key], createCallback(key));
+      }
+    }
+  }
+
+  /**
+   * @private
+   */
+  function symbolEachKey(collection, iterator, createCallback) {
+    var item, key;
+    var iter = collection[iteratorSymbol]();
+
+    if (iterator.length === 3) {
+      while ((item = iter.next()).done === false) {
+        key = item.value[0];
+        iterator(item.value[1], key, createCallback(key));
+      }
+    } else {
+      while ((item = iter.next()).done === false) {
+        iterator(item.value[1], createCallback(item.value[0]));
       }
     }
   }
@@ -2800,6 +2875,26 @@
     } else {
       while (++index &lt; length) {
         value = object[keys[index]];
+        iterator(value, createCallback(value));
+      }
+    }
+  }
+
+  /**
+   * @private
+   */
+  function symbolEachValue(collection, iterator, createCallback) {
+    var value, item;
+    var iter = collection[iteratorSymbol]();
+
+    if (iterator.length === 3) {
+      while ((item = iter.next()).done === false) {
+        value = item.value[1];
+        iterator(value, item.value[0], createCallback(value));
+      }
+    } else {
+      while ((item = iter.next()).done === false) {
+        value = item.value[1];
         iterator(value, createCallback(value));
       }
     }
@@ -2851,6 +2946,28 @@
   /**
    * @private
    */
+  function symbolEachIndexValue(collection, iterator, createCallback) {
+    var key, value, item;
+    var index = -1;
+    var iter = collection[iteratorSymbol]();
+
+    if (iterator.length === 3) {
+      while ((item = iter.next()).done === false) {
+        key = item.value[0];
+        value = item.value[1];
+        iterator(value, key, createCallback(++index, value));
+      }
+    } else {
+      while ((item = iter.next()).done === false) {
+        value = item.value[1];
+        iterator(value, createCallback(++index, value));
+      }
+    }
+  }
+
+  /**
+   * @private
+   */
   function baseEachKeyValue(object, iterator, createCallback, keys) {
     var key, value;
     var index = -1;
@@ -2867,6 +2984,27 @@
         key = keys[index];
         value = object[key];
         iterator(value, createCallback(key, value));
+      }
+    }
+  }
+
+  /**
+   * @private
+   */
+  function symbolEachKeyValue(collection, iterator, createCallback) {
+    var key, value, item;
+    var iter = collection[iteratorSymbol]();
+
+    if (iterator.length === 3) {
+      while ((item = iter.next()).done === false) {
+        key = item.value[0];
+        value = item.value[1];
+        iterator(value, key, createCallback(key, value));
+      }
+    } else {
+      while ((item = iter.next()).done === false) {
+        value = item.value[1];
+        iterator(value, createCallback(item.value[0], value));
       }
     }
   }
@@ -3178,17 +3316,20 @@
    * @param {Function} arrayEach
    * @param {Function} baseEach
    */
-  function createEach(arrayEach, baseEach) {
+  function createEach(arrayEach, baseEach, symbolEach) {
 
     return function each(collection, iterator, callback) {
       callback = callback || noop;
       var size, keys;
       var completed = 0;
-
       if (Array.isArray(collection)) {
         size = collection.length;
         arrayEach(collection, iterator, done);
-      } else if (collection &amp;&amp; typeof collection === 'object') {
+      } else if (!collection) {
+      } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+        size = collection.size;
+        symbolEach(collection, iterator, done);
+      } else if (typeof collection === 'object') {
         keys = Object.keys(collection);
         size = keys.length;
         baseEach(collection, iterator, done, keys);
@@ -3215,8 +3356,9 @@
    * @private
    * @param {Funciton} arrayEach
    * @param {Funciton} baseEach
+   * @param {Funciton} symbolEach
    */
-  function createMap(arrayEach, baseEach) {
+  function createMap(arrayEach, baseEach, symbolEach) {
 
     return function map(collection, iterator, callback) {
       callback = callback || noop;
@@ -3227,7 +3369,12 @@
         size = collection.length;
         result = Array(size);
         arrayEach(collection, iterator, createCallback);
-      } else if (collection &amp;&amp; typeof collection === 'object') {
+      } else if (!collection) {
+      } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+        size = collection.size;
+        result = Array(size);
+        symbolEach(collection, iterator, createCallback);
+      } else if (typeof collection === 'object') {
         keys = Object.keys(collection);
         size = keys.length;
         result = Array(size);
@@ -3259,8 +3406,9 @@
    * @private
    * @param {Funciton} arrayEach
    * @param {Funciton} baseEach
+   * @param {Funciton} symbolEach
    */
-  function createMapValues(arrayEach, baseEach) {
+  function createMapValues(arrayEach, baseEach, symbolEach) {
 
     return function mapValues(collection, iterator, callback) {
       callback = callback || noop;
@@ -3271,7 +3419,11 @@
       if (Array.isArray(collection)) {
         size = collection.length;
         arrayEach(collection, iterator, createCallback);
-      } else if (collection &amp;&amp; typeof collection === 'object') {
+      } else if (!collection) {
+      } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+        size = collection.size;
+        symbolEach(collection, iterator, createCallback);
+      } else if (typeof collection === 'object') {
         keys = Object.keys(collection);
         size = keys.length;
         baseEach(collection, iterator, createCallback, keys);
@@ -3303,9 +3455,10 @@
    * @private
    * @param {Function} arrayEach
    * @param {Function} baseEach
+   * @param {Function} symbolEach
    * @param {boolean} bool
    */
-  function createFilter(arrayEach, baseEach, bool) {
+  function createFilter(arrayEach, baseEach, symbolEach, bool) {
 
     return function commonFilter(collection, iterator, callback) {
       callback = callback || noop;
@@ -3318,7 +3471,12 @@
         size = collection.length;
         result = Array(size);
         arrayEach(collection, iterator, createCallback);
-      } else if (collection &amp;&amp; typeof collection === 'object') {
+      } else if (!collection) {
+      } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+        size = collection.size;
+        result = Array(size);
+        symbolEach(collection, iterator, createCallback);
+      } else if (typeof collection === 'object') {
         keys = Object.keys(collection);
         size = keys.length;
         result = Array(size);
@@ -3374,7 +3532,7 @@
 
     return function commonFilterSeries(collection, iterator, callback) {
       callback = callback || noop;
-      var size, key, value, keys, iterate;
+      var size, key, value, keys, iter, values, iterate;
       var sync = true;
       var completed = 0;
       var result = [];
@@ -3384,7 +3542,12 @@
       if (Array.isArray(collection)) {
         size = collection.length;
         iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
-      } else if (collection &amp;&amp; typeof collection === 'object') {
+      } else if (!collection) {
+      } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+        size = collection.size;
+        iter = collection[iteratorSymbol]();
+        iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
+      } else if (typeof collection === 'object') {
         keys = Object.keys(collection);
         size = keys.length;
         iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
@@ -3403,6 +3566,17 @@
       function arrayIteratorWithIndex() {
         value = collection[completed];
         iterator(value, completed, done);
+      }
+
+      function symbolIterator() {
+        value = iter.next().value[1];
+        iterator(value, done);
+      }
+
+      function symbolIteratorWithKey() {
+        values = iter.next().value;
+        value = values[1];
+        iterator(value, values[0], done);
       }
 
       function objectIterator() {
@@ -3460,7 +3634,7 @@
 
     return function commonFilterLimit(collection, limit, iterator, callback) {
       callback = callback || noop;
-      var size, index, key, value, keys, iterate, result;
+      var size, index, key, value, keys, iter, item, iterate, result;
       var sync = true;
       var started = 0;
       var completed = 0;
@@ -3470,7 +3644,12 @@
       if (Array.isArray(collection)) {
         size = collection.length;
         iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
-      } else if (collection &amp;&amp; typeof collection === 'object') {
+      } else if (!collection) {
+      } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+        size = collection.size;
+        iter = collection[iteratorSymbol]();
+        iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
+      } else if (typeof collection === 'object') {
         keys = Object.keys(collection);
         size = keys.length;
         iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
@@ -3495,6 +3674,20 @@
         if (index &lt; size) {
           value = collection[index];
           iterator(value, index, createCallback(value, index));
+        }
+      }
+
+      function symbolIterator() {
+        if ((item = iter.next()).done === false) {
+          value = item.value[1];
+          iterator(value, createCallback(value, ++started));
+        }
+      }
+
+      function symbolIteratorWithKey() {
+        if ((item = iter.next()).done === false) {
+          value = item.value[1];
+          iterator(value, item.value[0], createCallback(value, ++started));
         }
       }
 
@@ -3652,14 +3845,19 @@
    */
   function eachSeries(collection, iterator, callback) {
     callback = callback || noop;
-    var size, key, keys, iterate;
+    var size, key, keys, iter, values, iterate;
     var sync = true;
     var completed = 0;
 
     if (Array.isArray(collection)) {
       size = collection.length;
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
-    } else if (collection &amp;&amp; typeof collection === 'object') {
+    } else if (!collection) {
+    } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+      size = collection.size;
+      iter = collection[iteratorSymbol]();
+      iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
+    } else if (typeof collection === 'object') {
       keys = Object.keys(collection);
       size = keys.length;
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
@@ -3676,6 +3874,15 @@
 
     function arrayIteratorWithIndex() {
       iterator(collection[completed], completed, done);
+    }
+
+    function symbolIterator() {
+      iterator(iter.next().value[1], done);
+    }
+
+    function symbolIteratorWithKey() {
+      values = iter.next().value;
+      iterator(values[1], values[0], done);
     }
 
     function objectIterator() {
@@ -3795,7 +4002,7 @@
    */
   function eachLimit(collection, limit, iterator, callback) {
     callback = callback || noop;
-    var size, index, key, keys, iterate;
+    var size, index, key, keys, iter, item, iterate;
     var sync = false;
     var started = 0;
     var completed = 0;
@@ -3803,7 +4010,12 @@
     if (Array.isArray(collection)) {
       size = collection.length;
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
-    } else if (collection &amp;&amp; typeof collection === 'object') {
+    } else if (!collection) {
+    } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+      size = collection.size;
+      iter = collection[iteratorSymbol]();
+      iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
+    } else if (typeof collection === 'object') {
       keys = Object.keys(collection);
       size = keys.length;
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
@@ -3826,6 +4038,18 @@
       index = started++;
       if (index &lt; size) {
         iterator(collection[index], index, done);
+      }
+    }
+
+    function symbolIterator() {
+      if ((item = iter.next()).done === false) {
+        iterator(item.value[1], done);
+      }
+    }
+
+    function symbolIteratorWithKey() {
+      if ((item = iter.next()).done === false) {
+        iterator(item.value[1], item.value[0], done);
       }
     }
 
@@ -3937,14 +4161,19 @@
    */
   function mapSeries(collection, iterator, callback) {
     callback = callback || noop;
-    var size, key, keys, result, iterate;
+    var size, key, keys, iter, values, result, iterate;
     var sync = true;
     var completed = 0;
 
     if (Array.isArray(collection)) {
       size = collection.length;
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
-    } else if (collection &amp;&amp; typeof collection === 'object') {
+    } else if (!collection) {
+    } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+      size = collection.size;
+      iter = collection[iteratorSymbol]();
+      iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
+    } else if (typeof collection === 'object') {
       keys = Object.keys(collection);
       size = keys.length;
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
@@ -3962,6 +4191,15 @@
 
     function arrayIteratorWithIndex() {
       iterator(collection[completed], completed, done);
+    }
+
+    function symbolIterator() {
+      iterator(iter.next().value[1], done);
+    }
+
+    function symbolIteratorWithKey() {
+      values = iter.next().value;
+      iterator(values[1], values[0], done);
     }
 
     function objectIterator() {
@@ -4065,7 +4303,7 @@
    */
   function mapLimit(collection, limit, iterator, callback) {
     callback = callback || noop;
-    var size, index, key, keys, result, iterate;
+    var size, index, key, keys, iter, item, result, iterate;
     var sync = true;
     var started = 0;
     var completed = 0;
@@ -4073,7 +4311,12 @@
     if (Array.isArray(collection)) {
       size = collection.length;
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
-    } else if (collection &amp;&amp; typeof collection === 'object') {
+    } else if (!collection) {
+    } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+      size = collection.size;
+      iter = collection[iteratorSymbol]();
+      iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
+    } else if (typeof collection === 'object') {
       keys = Object.keys(collection);
       size = keys.length;
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
@@ -4096,6 +4339,18 @@
       index = started++;
       if (index &lt; size) {
         iterator(collection[index], index, createCallback(index));
+      }
+    }
+
+    function symbolIterator() {
+      if ((item = iter.next()).done === false) {
+        iterator(item.value[1], createCallback(started++));
+      }
+    }
+
+    function symbolIteratorWithKey() {
+      if ((item = iter.next()).done === false) {
+        iterator(item.value[1], item.value[0], createCallback(started++));
       }
     }
 
@@ -4212,7 +4467,7 @@
    */
   function mapValuesSeries(collection, iterator, callback) {
     callback = callback || noop;
-    var size, key, keys, iterate;
+    var size, key, keys, iter, values, iterate;
     var sync = true;
     var result = {};
     var completed = 0;
@@ -4220,7 +4475,12 @@
     if (Array.isArray(collection)) {
       size = collection.length;
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
-    } else if (collection &amp;&amp; typeof collection === 'object') {
+    } else if (!collection) {
+    } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+      size = collection.size;
+      iter = collection[iteratorSymbol]();
+      iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
+    } else if (typeof collection === 'object') {
       keys = Object.keys(collection);
       size = keys.length;
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
@@ -4239,6 +4499,18 @@
     function arrayIteratorWithIndex() {
       key = completed;
       iterator(collection[completed], completed, done);
+    }
+
+    function symbolIterator() {
+      values = iter.next().value;
+      key = values[0];
+      iterator(values[1], done);
+    }
+
+    function symbolIteratorWithKey() {
+      values = iter.next().value;
+      key = values[0];
+      iterator(values[1], key, done);
     }
 
     function objectIterator() {
@@ -4343,7 +4615,7 @@
    */
   function mapValuesLimit(collection, limit, iterator, callback) {
     callback = callback || noop;
-    var size, index, key, keys, iterate;
+    var size, index, key, keys, iter, item, iterate;
     var sync = true;
     var result = {};
     var started = 0;
@@ -4352,7 +4624,12 @@
     if (Array.isArray(collection)) {
       size = collection.length;
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
-    } else if (collection &amp;&amp; typeof collection === 'object') {
+    } else if (!collection) {
+    } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+      size = collection.size;
+      iter = collection[iteratorSymbol]();
+      iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
+    } else if (typeof collection === 'object') {
       keys = Object.keys(collection);
       size = keys.length;
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
@@ -4374,6 +4651,19 @@
       index = started++;
       if (index &lt; size) {
         iterator(collection[index], index, createCallback(index));
+      }
+    }
+
+    function symbolIterator() {
+      if ((item = iter.next()).done === false) {
+        iterator(item.value[1], createCallback(item.value[0]));
+      }
+    }
+
+    function symbolIteratorWithKey() {
+      if ((item = iter.next()).done === false) {
+        key = item.value[0];
+        iterator(item.value[1], key, createCallback(key));
       }
     }
 
@@ -4422,9 +4712,10 @@
    * @private
    * @param {Function} arrayEach
    * @param {Function} baseEach
+   * @param {Function} symbolEach
    * @param {boolean} bool
    */
-  function createDetect(arrayEach, baseEach, bool) {
+  function createDetect(arrayEach, baseEach, symbolEach, bool) {
 
     return function detect(collection, iterator, callback) {
       callback = callback || noop;
@@ -4435,7 +4726,11 @@
       if (Array.isArray(collection)) {
         size = collection.length;
         arrayEach(collection, iterator, createCallback);
-      } else if (collection &amp;&amp; typeof collection === 'object') {
+      } else if (!collection) {
+      } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+        size = collection.size;
+        symbolEach(collection, iterator, createCallback);
+      } else if (typeof collection === 'object') {
         keys = Object.keys(collection);
         size = keys.length;
         baseEach(collection, iterator, createCallback, keys);
@@ -4491,7 +4786,7 @@
 
     return function detectSeries(collection, iterator, callback) {
       callback = callback || noop;
-      var size, key, value, keys, iterate;
+      var size, key, value, keys, iter, values, iterate;
       var sync = true;
       var completed = 0;
       var done = callback.length === 2 ? detectCallbackWithError : detectCallback;
@@ -4499,7 +4794,12 @@
       if (Array.isArray(collection)) {
         size = collection.length;
         iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
-      } else if (collection &amp;&amp; typeof collection === 'object') {
+      } else if (!collection) {
+      } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+        size = collection.size;
+        iter = collection[iteratorSymbol]();
+        iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
+      } else if (typeof collection === 'object') {
         keys = Object.keys(collection);
         size = keys.length;
         iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
@@ -4518,6 +4818,17 @@
       function arrayIteratorWithIndex() {
         value = collection[completed];
         iterator(value, completed, done);
+      }
+
+      function symbolIterator() {
+        value = iter.next().value[1];
+        iterator(value, done);
+      }
+
+      function symbolIteratorWithKey() {
+        values = iter.next().value;
+        value = values[1];
+        iterator(value, values[0], done);
       }
 
       function objectIterator() {
@@ -4576,7 +4887,7 @@
 
     return function detectLimit(collection, limit, iterator, callback) {
       callback = callback || noop;
-      var size, index, key, value, keys, iterate;
+      var size, index, key, value, keys, iter, item, iterate;
       var sync = true;
       var started = 0;
       var completed = 0;
@@ -4585,7 +4896,12 @@
       if (Array.isArray(collection)) {
         size = collection.length;
         iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
-      } else if (collection &amp;&amp; typeof collection === 'object') {
+      } else if (!collection) {
+      } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+        size = collection.size;
+        iter = collection[iteratorSymbol]();
+        iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
+      } else if (typeof collection === 'object') {
         keys = Object.keys(collection);
         size = keys.length;
         iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
@@ -4609,6 +4925,20 @@
         if (index &lt; size) {
           value = collection[index];
           iterator(value, index, createCallback(value));
+        }
+      }
+
+      function symbolIterator() {
+        if ((item = iter.next()).done === false) {
+          value = item.value[1];
+          iterator(value, createCallback(value));
+        }
+      }
+
+      function symbolIteratorWithKey() {
+        if ((item = iter.next()).done === false) {
+          value = item.value[1];
+          iterator(value, item.value[0], createCallback(value));
         }
       }
 
@@ -4685,8 +5015,9 @@
    * @private
    * @param {Function} arrayEach
    * @param {Function} baseEach
+   * @param {Function} symbolEach
    */
-  function createPick(arrayEach, baseEach) {
+  function createPick(arrayEach, baseEach, symbolEach) {
 
     return function pick(collection, iterator, callback) {
       callback = callback || noop;
@@ -4699,7 +5030,11 @@
       if (Array.isArray(collection)) {
         size = collection.length;
         arrayEach(collection, iterator, createCallback);
-      } else if (collection &amp;&amp; typeof collection === 'object') {
+      } else if (!collection) {
+      } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+        size = collection.size;
+        symbolEach(collection, iterator, createCallback);
+      } else if (typeof collection === 'object') {
         keys = Object.keys(collection);
         size = keys.length;
         baseEach(collection, iterator, createCallback, keys);
@@ -4884,7 +5219,7 @@
    */
   function pickSeries(collection, iterator, callback) {
     callback = callback || noop;
-    var size, key, value, keys, iterate;
+    var size, key, value, keys, iter, values, iterate;
     var sync = true;
     var result = {};
     var completed = 0;
@@ -4894,7 +5229,12 @@
     if (Array.isArray(collection)) {
       size = collection.length;
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
-    } else if (collection &amp;&amp; typeof collection === 'object') {
+    } else if (!collection) {
+    } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+      size = collection.size;
+      iter = collection[iteratorSymbol]();
+      iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
+    } else if (typeof collection === 'object') {
       keys = Object.keys(collection);
       size = keys.length;
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
@@ -4915,6 +5255,20 @@
       key = completed;
       value = collection[completed];
       iterator(value, completed, done);
+    }
+
+    function symbolIterator() {
+      values = iter.next().value;
+      key = values[0];
+      value = values[1];
+      iterator(value, done);
+    }
+
+    function symbolIteratorWithKey() {
+      values = iter.next().value;
+      key = values[0];
+      value = values[1];
+      iterator(value, key, done);
     }
 
     function objectIterator() {
@@ -5104,7 +5458,7 @@
    */
   function pickLimit(collection, limit, iterator, callback) {
     callback = callback || noop;
-    var size, index, key, value, keys, iterate;
+    var size, index, key, value, keys, iter, item, iterate;
     var sync = true;
     var result = {};
     var started = 0;
@@ -5115,7 +5469,12 @@
     if (Array.isArray(collection)) {
       size = collection.length;
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
-    } else if (collection &amp;&amp; typeof collection === 'object') {
+    } else if (!collection) {
+    } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+      size = collection.size;
+      iter = collection[iteratorSymbol]();
+      iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
+    } else if (typeof collection === 'object') {
       keys = Object.keys(collection);
       size = keys.length;
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
@@ -5139,6 +5498,21 @@
       if (index &lt; size) {
         value = collection[index];
         iterator(value, index, createCallback(value, index));
+      }
+    }
+
+    function symbolIterator() {
+      if ((item = iter.next()).done === false) {
+        value = item.value[1];
+        iterator(value, createCallback(value, item.value[0]));
+      }
+    }
+
+    function symbolIteratorWithKey() {
+      if ((item = iter.next()).done === false) {
+        key = item.value[0];
+        value = item.value[1];
+        iterator(value, key, createCallback(value, key));
       }
     }
 
@@ -5284,14 +5658,19 @@
    */
   function reduce(collection, result, iterator, callback) {
     callback = callback || noop;
-    var size, key, value, keys, iterate;
+    var size, key, value, keys, iter, values, iterate;
     var sync = true;
     var completed = 0;
 
     if (Array.isArray(collection)) {
       size = collection.length;
       iterate = iterator.length === 4 ? arrayIteratorWithIndex : arrayIterator;
-    } else if (collection &amp;&amp; typeof collection === 'object') {
+    } else if (!collection) {
+    } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+      size = collection.size;
+      iter = collection[iteratorSymbol]();
+      iterate = iterator.length === 4 ? symbolIteratorWithKey : symbolIterator;
+    } else if (typeof collection === 'object') {
       keys = Object.keys(collection);
       size = keys.length;
       iterate = iterator.length === 4 ? objectIteratorWithKey : objectIterator;
@@ -5310,6 +5689,15 @@
     function arrayIteratorWithIndex(result) {
       value = collection[completed];
       iterator(result, value, completed, done);
+    }
+
+    function symbolIterator() {
+      iterator(result, iter.next().value[1], done);
+    }
+
+    function symbolIteratorWithKey() {
+      values = iter.next().value;
+      iterator(result, values[1], values[0], done);
     }
 
     function objectIterator(result) {
@@ -5417,13 +5805,27 @@
    */
   function reduceRight(collection, result, iterator, callback) {
     callback = callback || noop;
-    var resIndex, index, key, value, keys, iterate;
+    var resIndex, index, key, value, keys, iter, item, col, iterate;
     var sync = true;
 
     if (Array.isArray(collection)) {
       resIndex = collection.length;
       iterate = iterator.length === 4 ? arrayIteratorWithIndex : arrayIterator;
-    } else if (collection &amp;&amp; typeof collection === 'object') {
+    } else if (!collection) {
+    } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+      resIndex = collection.size;
+      keys = Array(resIndex);
+      iter = collection[iteratorSymbol]();
+      index = -1;
+      col = {};
+      while ((item = iter.next()).done === false) {
+        key = item.value[0];
+        col[key] = item.value[1];
+        keys[++index] = key;
+      }
+      collection = col;
+      iterate = iterator.length === 4 ? objectIteratorWithKey : objectIterator;
+    } else if (typeof collection === 'object') {
       keys = Object.keys(collection);
       resIndex = keys.length;
       iterate = iterator.length === 4 ? objectIteratorWithKey : objectIterator;
@@ -5480,8 +5882,9 @@
    * @private
    * @param {Function} arrayEach
    * @param {Function} baseEach
+   * @param {Function} symbolEach
    */
-  function createTransform(arrayEach, baseEach) {
+  function createTransform(arrayEach, baseEach, symbolEach) {
 
     return function transform(collection, iterator, callback, accumulator) {
       callback = callback || noop;
@@ -5492,7 +5895,12 @@
         size = collection.length;
         result = accumulator !== undefined ? accumulator : [];
         arrayEach(collection, result, iterator, done);
-      } else if (collection &amp;&amp; typeof collection === 'object') {
+      } else if (!collection) {
+      } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+        size = collection.size;
+        result = accumulator !== undefined ? accumulator : {};
+        symbolEach(collection, result, iterator, done);
+      } else if (typeof collection === 'object') {
         keys = Object.keys(collection);
         size = keys.length;
         result = accumulator !== undefined ? accumulator : {};
@@ -5594,7 +6002,7 @@
    */
   function transformSeries(collection, iterator, callback, accumulator) {
     callback = callback || noop;
-    var size, key, keys, iterate, result;
+    var size, key, keys, iter, values, iterate, result;
     var sync = true;
     var completed = 0;
 
@@ -5602,7 +6010,13 @@
       size = collection.length;
       result = accumulator !== undefined ? accumulator : [];
       iterate = iterator.length === 4 ? arrayIteratorWithIndex : arrayIterator;
-    } else if (collection &amp;&amp; typeof collection === 'object') {
+    } else if (!collection) {
+    } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+      size = collection.size;
+      iter = collection[iteratorSymbol]();
+      result = accumulator !== undefined ? accumulator : {};
+      iterate = iterator.length === 4 ? symbolIteratorWithKey : symbolIterator;
+    } else if (typeof collection === 'object') {
       keys = Object.keys(collection);
       size = keys.length;
       result = accumulator !== undefined ? accumulator : {};
@@ -5620,6 +6034,15 @@
 
     function arrayIteratorWithIndex() {
       iterator(result, collection[completed], completed, done);
+    }
+
+    function symbolIterator() {
+      iterator(result, iter.next().value[1], done);
+    }
+
+    function symbolIteratorWithKey() {
+      values = iter.next().value;
+      iterator(result, values[1], values[0], done);
     }
 
     function objectIterator() {
@@ -5730,7 +6153,7 @@
    */
   function transformLimit(collection, limit, iterator, callback, accumulator) {
     callback = callback || noop;
-    var size, index, key, keys, iterate, result;
+    var size, index, key, keys, iter, item, iterate, result;
     var sync = true;
     var started = 0;
     var completed = 0;
@@ -5739,7 +6162,13 @@
       size = collection.length;
       result = accumulator !== undefined ? accumulator : [];
       iterate = iterator.length === 4 ? arrayIteratorWithIndex : arrayIterator;
-    } else if (collection &amp;&amp; typeof collection === 'object') {
+    } else if (!collection) {
+    } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+      size = collection.size;
+      iter = collection[iteratorSymbol]();
+      result = accumulator !== undefined ? accumulator : {};
+      iterate = iterator.length === 4 ? symbolIteratorWithKey : symbolIterator;
+    } else if (typeof collection === 'object') {
       keys = Object.keys(collection);
       size = keys.length;
       result = accumulator !== undefined ? accumulator : {};
@@ -5762,6 +6191,18 @@
       index = started++;
       if (index &lt; size) {
         iterator(result, collection[index], index, once(done));
+      }
+    }
+
+    function symbolIterator() {
+      if ((item = iter.next()).done === false) {
+        iterator(result, item.value[1], once(done));
+      }
+    }
+
+    function symbolIteratorWithKey() {
+      if ((item = iter.next()).done === false) {
+        iterator(result, item.value[1], item.value[0], once(done));
       }
     }
 
@@ -5806,8 +6247,9 @@
    * @private
    * @param {function} arrayEach
    * @param {function} baseEach
+   * @param {function} symbolEach
    */
-  function createSortBy(arrayEach, baseEach) {
+  function createSortBy(arrayEach, baseEach, symbolEach) {
 
     return function sortBy(collection, iterator, callback) {
       callback = callback || noop;
@@ -5818,7 +6260,12 @@
         size = collection.length;
         result = Array(size);
         arrayEach(collection, iterator, createCallback);
-      } else if (collection &amp;&amp; typeof collection === 'object') {
+      } else if (!collection) {
+      } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+        size = collection.size;
+        result = Array(size);
+        symbolEach(collection, iterator, createCallback);
+      } else if (typeof collection === 'object') {
         var keys = Object.keys(collection);
         size = keys.length;
         result = Array(size);
@@ -5925,14 +6372,19 @@
    */
   function sortBySeries(collection, iterator, callback) {
     callback = callback || noop;
-    var size, key, value, keys, result, iterate;
+    var size, key, value, keys, iter, values, result, iterate;
     var sync = true;
     var completed = 0;
 
     if (Array.isArray(collection)) {
       size = collection.length;
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
-    } else if (collection &amp;&amp; typeof collection === 'object') {
+    } else if (!collection) {
+    } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+      size = collection.size;
+      iter = collection[iteratorSymbol]();
+      iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
+    } else if (typeof collection === 'object') {
       keys = Object.keys(collection);
       size = keys.length;
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
@@ -5952,6 +6404,17 @@
     function arrayIteratorWithIndex() {
       value = collection[completed];
       iterator(value, completed, done);
+    }
+
+    function symbolIterator() {
+      value = iter.next().value[1];
+      iterator(value, done);
+    }
+
+    function symbolIteratorWithKey() {
+      values = iter.next().value;
+      value = values[1];
+      iterator(value, values[0], done);
     }
 
     function objectIterator() {
@@ -6061,7 +6524,7 @@
    */
   function sortByLimit(collection, limit, iterator, callback) {
     callback = callback || noop;
-    var size, index, key, value, keys, result, iterate;
+    var size, index, key, value, keys, iter, item, result, iterate;
     var sync = false;
     var started = 0;
     var completed = 0;
@@ -6069,7 +6532,12 @@
     if (Array.isArray(collection)) {
       size = collection.length;
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
-    } else if (collection &amp;&amp; typeof collection === 'object') {
+    } else if (!collection) {
+    } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+      size = collection.size;
+      iter = collection[iteratorSymbol]();
+      iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
+    } else if (typeof collection === 'object') {
       keys = Object.keys(collection);
       size = keys.length;
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
@@ -6092,6 +6560,20 @@
       if (index &lt; size) {
         value = collection[index];
         iterator(value, index, createCallback(value));
+      }
+    }
+
+    function symbolIterator() {
+      if ((item = iter.next()).done === false) {
+        value = item.value[1];
+        iterator(value, createCallback(value));
+      }
+    }
+
+    function symbolIteratorWithKey() {
+      if ((item = iter.next()).done === false) {
+        value = item.value[1];
+        iterator(value, item.value[0], createCallback(value));
       }
     }
 
@@ -6589,10 +7071,11 @@
    * @private
    * @param {Function} arrayEach
    * @param {Function} baseEach
+   * @param {Function} symbolEach
    */
-  function createEvery(arrayEach, baseEach) {
+  function createEvery(arrayEach, baseEach, symbolEach) {
 
-    var deny = createDetect(arrayEach, baseEach, false);
+    var deny = createDetect(arrayEach, baseEach, symbolEach, false);
 
     return function every(collection, iterator, callback) {
       callback = callback || noop;
@@ -6654,8 +7137,9 @@
    * @private
    * @param {Funciton} arrayEach
    * @param {Funciton} baseEach
+   * @param {Funciton} symbolEach
    */
-  function createConcat(arrayEach, baseEach) {
+  function createConcat(arrayEach, baseEach, symbolEach) {
 
     return function concat(collection, iterator, callback) {
       callback = callback || noop;
@@ -6666,7 +7150,11 @@
       if (Array.isArray(collection)) {
         size = collection.length;
         arrayEach(collection, iterator, done);
-      } else if (collection &amp;&amp; typeof collection === 'object') {
+      } else if (!collection) {
+      } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+        size = collection.size;
+        symbolEach(collection, iterator, done);
+      } else if (typeof collection === 'object') {
         var keys = Object.keys(collection);
         size = keys.length;
         baseEach(collection, iterator, done, keys);
@@ -6762,7 +7250,7 @@
    */
   function concatSeries(collection, iterator, callback) {
     callback = callback || noop;
-    var size, key, keys, iterate;
+    var size, key, keys, iter, values, iterate;
     var sync = true;
     var result = [];
     var completed = 0;
@@ -6770,7 +7258,12 @@
     if (Array.isArray(collection)) {
       size = collection.length;
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
-    } else if (collection &amp;&amp; typeof collection === 'object') {
+    } else if (!collection) {
+    } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+      size = collection.size;
+      iter = collection[iteratorSymbol]();
+      iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
+    } else if (typeof collection === 'object') {
       keys = Object.keys(collection);
       size = keys.length;
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
@@ -6787,6 +7280,15 @@
 
     function arrayIteratorWithIndex() {
       iterator(collection[completed], completed, done);
+    }
+
+    function symbolIterator() {
+      iterator(iter.next().value[1], done);
+    }
+
+    function symbolIteratorWithKey() {
+      values = iter.next().value;
+      iterator(values[1], values[0], done);
     }
 
     function objectIterator() {
@@ -6893,7 +7395,7 @@
   function concatLimit(collection, limit, iterator, callback) {
     callback = callback || noop;
     var result = [];
-    var size, index, key, iterate;
+    var size, index, key, iter, item, iterate;
     var sync = true;
     var started = 0;
     var completed = 0;
@@ -6901,7 +7403,12 @@
     if (Array.isArray(collection)) {
       size = collection.length;
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
-    } else if (collection &amp;&amp; typeof collection === 'object') {
+    } else if (!collection) {
+    } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
+      size = collection.size;
+      iter = collection[iteratorSymbol]();
+      iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
+    } else if (typeof collection === 'object') {
       var keys = Object.keys(collection);
       size = keys.length;
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
@@ -6922,6 +7429,18 @@
       index = started++;
       if (index &lt; size) {
         iterator(collection[index], index, once(done));
+      }
+    }
+
+    function symbolIterator() {
+      if ((item = iter.next()).done === false) {
+        iterator(item.value[1], once(done));
+      }
+    }
+
+    function symbolIteratorWithKey() {
+      if ((item = iter.next()).done === false) {
+        iterator(item.value[1], item.value[0], once(done));
       }
     }
 
@@ -7510,6 +8029,13 @@
 
     function iterate() {
       switch (func.length) {
+        case 0:
+          try {
+            done(null, func());
+          } catch (e) {
+            done(e);
+          }
+          return;
         case 1:
           return func(done);
         case 2:
@@ -8280,10 +8806,28 @@
    * @namespace apply
    */
   function apply(func) {
-    var args = _slice(arguments, 1);
-    return function() {
-      return func.apply(this, args.concat(_baseSlice(arguments)));
-    };
+    switch (arguments.length) {
+      case 0:
+      case 1:
+        return func;
+      case 2:
+        return func.bind(null, arguments[1]);
+      case 3:
+        return func.bind(null, arguments[1], arguments[2]);
+      case 4:
+        return func.bind(null, arguments[1], arguments[2], arguments[3]);
+      case 5:
+        return func.bind(null, arguments[1], arguments[2], arguments[3], arguments[4]);
+      default:
+        var length = arguments.length;
+        var index = 0;
+        var args = Array(length);
+        args[index] = null;
+        while (++index &lt; length) {
+          args[index] = arguments[index];
+        }
+        return func.bind.apply(func, args);
+    }
   }
 
   /**
@@ -8861,7 +9405,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Mon Aug 24 2015 01:04:53 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Thu Sep 10 2015 00:39:21 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>
