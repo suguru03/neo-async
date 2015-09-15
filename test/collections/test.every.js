@@ -4,6 +4,7 @@
 var assert = require('power-assert');
 var async = global.async || require('../../');
 var delay = require('../config').delay;
+var util = require('../util');
 var domain = require('domain').create();
 var errorCallCount = 0;
 domain.on('error', function(err) {
@@ -92,20 +93,6 @@ describe('#every', function() {
     });
   });
 
-  it('should execute iterator by collection of array and get 2rd callback argument', function(done) {
-
-    var order = [];
-    var collection = [1, 3, 2, 4];
-    async.every(collection, everyIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(res, false);
-      assert.deepEqual(order, [1, 2]);
-      done();
-    });
-  });
-
   it('should execute iterator by collection of array', function(done) {
 
     var order = [];
@@ -131,7 +118,38 @@ describe('#every', function() {
     });
   });
 
-  it('should execute iterator by collection of object', function(done) {
+  it('should execute iterator by collection of array and get 2nd callback argument', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    async.every(collection, everyIteratorWithError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [1, 2]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of array with passing index and get 2nd callback argument', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    async.every(collection, everyIteratorWithKeyAndError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [
+        [1, 0],
+        [2, 2]
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Map', function(done) {
 
     var order = [];
     var collection = {
@@ -146,7 +164,7 @@ describe('#every', function() {
     });
   });
 
-  it('should execute iterator by collection of object with passing key', function(done) {
+  it('should execute iterator by collection of Map with passing key', function(done) {
 
     var order = [];
     var collection = {
@@ -163,7 +181,25 @@ describe('#every', function() {
     });
   });
 
-  it('should execute iterator by collection of object with passing key and get 2rd callback argument', function(done) {
+  it('should execute iterator by collection of Map and get 2nd callback argument', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 4,
+      b: 3,
+      c: 2
+    };
+    async.every(collection, everyIteratorWithError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [2]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of object with passing key and get 2nd callback argument', function(done) {
 
     var order = [];
     var collection = {
@@ -183,15 +219,64 @@ describe('#every', function() {
     });
   });
 
-  it('should execute iterator by collection of object', function(done) {
+  it('should execute iterator by collection of Map', function(done) {
 
     var order = [];
-    var collection = {
-      a: 4,
-      b: 3,
-      c: 2
-    };
+    var collection = new util.Map();
+    collection.set('a', 4);
+    collection.set('b', 3);
+    collection.set('c', 2);
+    async.every(collection, everyIterator(order), function(res) {
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [2]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Map with passing key', function(done) {
+
+    var order = [];
+    var collection = new util.Map();
+    collection.set('a', 4);
+    collection.set('b', 3);
+    collection.set('c', 2);
     async.every(collection, everyIteratorWithKey(order), function(res) {
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [
+        [2, 'c']
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Map and get 2nd callback argument', function(done) {
+
+    var order = [];
+    var collection = new util.Map();
+    collection.set('a', 4);
+    collection.set('b', 3);
+    collection.set('c', 2);
+    async.every(collection, everyIteratorWithError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [2]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Map with passing key and get 2nd callback argument', function(done) {
+
+    var order = [];
+    var collection = new util.Map();
+    collection.set('a', 4);
+    collection.set('b', 3);
+    collection.set('c', 2);
+    async.every(collection, everyIteratorWithKeyAndError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, false);
       assert.deepEqual(order, [
         [2, 'c']
@@ -271,6 +356,17 @@ describe('#everySeries', function() {
     });
   });
 
+  it('should execute iterator by collection of array', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 1, 5];
+    async.everySeries(collection, everyIterator(order), function(res) {
+      assert.strictEqual(res, true);
+      assert.deepEqual(order, [1, 3, 1, 5]);
+      done();
+    });
+  });
+
   it('should execute iterator by collection of array with passing index', function(done) {
 
     var order = [];
@@ -286,7 +382,7 @@ describe('#everySeries', function() {
     });
   });
 
-  it('should execute iterator by collection of array and get callback 2rd argument', function(done) {
+  it('should execute iterator by collection of array and get callback 2nd argument', function(done) {
 
     var order = [];
     var collection = [1, 3, 2, 4];
@@ -300,7 +396,7 @@ describe('#everySeries', function() {
     });
   });
 
-  it('should execute iterator by collection of array with passing index and get callback 2rd argument', function(done) {
+  it('should execute iterator by collection of array with passing index and get callback 2nd argument', function(done) {
 
     var order = [];
     var collection = [1, 3, 2, 4];
@@ -318,17 +414,6 @@ describe('#everySeries', function() {
     });
   });
 
-  it('should execute iterator by collection of array', function(done) {
-
-    var order = [];
-    var collection = [1, 3, 1, 5];
-    async.everySeries(collection, everyIterator(order), function(res) {
-      assert.strictEqual(res, true);
-      assert.deepEqual(order, [1, 3, 1, 5]);
-      done();
-    });
-  });
-
   it('should execute iterator by collection of object', function(done) {
 
     var order = [];
@@ -340,6 +425,127 @@ describe('#everySeries', function() {
     async.everySeries(collection, everyIterator(order), function(res) {
       assert.strictEqual(res, false);
       assert.deepEqual(order, [4]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of object with passing key', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 4,
+      b: 3,
+      c: 2
+    };
+    async.everySeries(collection, everyIteratorWithKey(order), function(res) {
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [
+        [4, 'a']
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of object and get 2nd callback argument', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 4,
+      b: 3,
+      c: 2
+    };
+    async.everySeries(collection, everyIteratorWithError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [4]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of object with passing key and get 2nd callback argument', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 4,
+      b: 3,
+      c: 2
+    };
+    async.everySeries(collection, everyIteratorWithKeyAndError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [
+        [4, 'a']
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Map', function(done) {
+
+    var order = [];
+    var collection = new util.Map();
+    collection.set('a', 4);
+    collection.set('b', 3);
+    collection.set('c', 2);
+    async.everySeries(collection, everyIterator(order), function(res) {
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [4]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Map with passing key', function(done) {
+
+    var order = [];
+    var collection = new util.Map();
+    collection.set('a', 4);
+    collection.set('b', 3);
+    collection.set('c', 2);
+    async.everySeries(collection, everyIteratorWithKey(order), function(res) {
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [
+        [4, 'a']
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Map and get 2nd callback argument', function(done) {
+
+    var order = [];
+    var collection = new util.Map();
+    collection.set('a', 4);
+    collection.set('b', 3);
+    collection.set('c', 2);
+    async.everySeries(collection, everyIteratorWithError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [4]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Map with passing key and get 2nd callback argument', function(done) {
+
+    var order = [];
+    var collection = new util.Map();
+    collection.set('a', 4);
+    collection.set('b', 3);
+    collection.set('c', 2);
+    async.everySeries(collection, everyIteratorWithKeyAndError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [
+        [4, 'a']
+      ]);
       done();
     });
   });
@@ -379,7 +585,7 @@ describe('#everySeries', function() {
     sync = false;
   });
 
-  it('should execute on asynchronous and get 2rd callback argument', function(done) {
+  it('should execute on asynchronous and get 2nd callback argument', function(done) {
 
     var sync = true;
     var collection = {
@@ -491,7 +697,7 @@ describe('#everyLimit', function() {
     });
   });
 
-  it('should execute iterator by collection of array and get 2rd callback argument', function(done) {
+  it('should execute iterator by collection of array and get 2nd callback argument', function(done) {
 
     var order = [];
     var collection = [1, 5, 2, 4];
@@ -505,7 +711,7 @@ describe('#everyLimit', function() {
     });
   });
 
-  it('should execute iterator by collection of array with passing index and get 2rd callback argument', function(done) {
+  it('should execute iterator by collection of array with passing index and get 2nd callback argument', function(done) {
 
     var order = [];
     var collection = [1, 5, 2, 4];
@@ -534,6 +740,138 @@ describe('#everyLimit', function() {
     async.everyLimit(collection, 2, everyIterator(order), function(res) {
       assert.strictEqual(res, false);
       assert.deepEqual(order, [1, 2]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of object with passing key', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 1,
+      b: 5,
+      c: 2,
+      d: 4
+    };
+    async.everyLimit(collection, 2, everyIteratorWithKey(order), function(res) {
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [
+        [1, 'a'],
+        [2, 'c']
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of object and get 2nd callback argument', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 1,
+      b: 5,
+      c: 2,
+      d: 4
+    };
+    async.everyLimit(collection, 2, everyIteratorWithError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [1, 2]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of object with passing key and get 2nd callback argument', function(done) {
+
+    var order = [];
+    var collection = {
+      a: 1,
+      b: 5,
+      c: 2,
+      d: 4
+    };
+    async.everyLimit(collection, 2, everyIteratorWithKeyAndError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [
+        [1, 'a'],
+        [2, 'c']
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Map', function(done) {
+
+    var order = [];
+    var collection = new util.Map();
+    collection.set('a', 1);
+    collection.set('b', 5);
+    collection.set('c', 2);
+    collection.set('d', 4);
+    async.everyLimit(collection, 2, everyIterator(order), function(res) {
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [1, 2]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Map with passing key', function(done) {
+
+    var order = [];
+    var collection = new util.Map();
+    collection.set('a', 1);
+    collection.set('b', 5);
+    collection.set('c', 2);
+    collection.set('d', 4);
+    async.everyLimit(collection, 2, everyIteratorWithKey(order), function(res) {
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [
+        [1, 'a'],
+        [2, 'c']
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Map and get 2nd callback argument', function(done) {
+
+    var order = [];
+    var collection = new util.Map();
+    collection.set('a', 1);
+    collection.set('b', 5);
+    collection.set('c', 2);
+    collection.set('d', 4);
+    async.everyLimit(collection, 2, everyIteratorWithError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [1, 2]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Map with passing key and get 2nd callback argument', function(done) {
+
+    var order = [];
+    var collection = new util.Map();
+    collection.set('a', 1);
+    collection.set('b', 5);
+    collection.set('c', 2);
+    collection.set('d', 4);
+    async.everyLimit(collection, 2, everyIteratorWithKeyAndError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [
+        [1, 'a'],
+        [2, 'c']
+      ]);
       done();
     });
   });
