@@ -24,7 +24,7 @@ function timeItrator(order) {
       }
 
       callback(null, num);
-    }, num * 2 + (num % 2 === 0 ? 10 : 30));
+    }, num % 2 === 0 ? delay : 3 * delay);
   };
 }
 
@@ -248,7 +248,7 @@ parallel('#timesLimit', function() {
 
     var n = 5;
     var order = [];
-    async.timesLimit(n, 3, timeItrator(order), function(err, res) {
+    async.timesLimit(n, 2, timeItrator(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -263,7 +263,7 @@ parallel('#timesLimit', function() {
 
     var n = '5';
     var order = [];
-    async.timesLimit(n, 3, timeItrator(order), function(err, res) {
+    async.timesLimit(n, 2, timeItrator(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -278,7 +278,7 @@ parallel('#timesLimit', function() {
 
     var n = 7;
     var order = [];
-    async.timesLimit(n, 3, timeItrator(order), function(err, res) {
+    async.timesLimit(n, 2, timeItrator(order), function(err, res) {
       if (err) {
         return done(err);
       }
