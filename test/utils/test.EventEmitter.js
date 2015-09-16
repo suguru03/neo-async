@@ -1,8 +1,10 @@
-/* global describe, it */
+/* global it */
 'use strict';
 
 var _ = require('lodash');
 var assert = require('power-assert');
+var parallel = require('mocha.parallel');
+
 var async = require('../../');
 var delay = require('../config').delay;
 
@@ -17,7 +19,7 @@ function createTasks(order, numbers) {
   });
 }
 
-describe('#eventEmitter', function() {
+parallel('#eventEmitter', function() {
 
   it('should get a listener', function() {
     var eventEmitter = new async.EventEmitter();

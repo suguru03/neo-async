@@ -1,6 +1,7 @@
 /* global it */
 'use strict';
 
+var assert = require('power-assert');
 var _it = typeof Symbol === 'function' ? it : it.skip;
 _it.only = _it.only || function skipOnly(key) {
   it.only(key);
@@ -37,3 +38,7 @@ exports.Map = typeof Map === 'function' ? Map : (function() {
   });
   return Map;
 })();
+
+exports.errorChecker = function(err) {
+  assert.strictEqual(err.message, 'Callback was already called.');
+};

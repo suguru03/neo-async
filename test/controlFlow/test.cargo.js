@@ -1,11 +1,13 @@
-/* global describe, it */
+/* global it */
 'use strict';
 
 var _ = require('lodash');
 var assert = require('power-assert');
+var parallel = require('mocha.parallel');
+
 var async = global.async || require('../../');
 
-describe('#cargo', function() {
+parallel('#cargo', function() {
 
   it('should execute in accordance with payload', function(done) {
 

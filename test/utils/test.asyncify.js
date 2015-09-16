@@ -1,11 +1,13 @@
-/* global describe, it */
+/* global it */
 'use strict';
 
 var assert = require('power-assert');
+var parallel = require('mocha.parallel');
+
 var async = require('../../');
 var Q = require('q');
 
-describe('#asyncify', function() {
+parallel('#asyncify', function() {
 
   it('should convert synchronous function into asynchronous', function(done) {
 

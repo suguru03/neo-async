@@ -1,15 +1,14 @@
-/* global describe, it */
+/* global it */
 'use strict';
 
+var domain = require('domain');
+
 var assert = require('power-assert');
+var parallel = require('mocha.parallel');
+
 var async = global.async || require('../../');
 var delay = require('../config').delay;
-var domain = require('domain').create();
-var errorCallCount = 0;
-domain.on('error', function(err) {
-  errorCallCount++;
-  assert.strictEqual(err.message, 'Callback was already called.');
-});
+var util = require('../util');
 
 function timeItrator(order) {
 
@@ -29,7 +28,7 @@ function timeItrator(order) {
   };
 }
 
-describe('#times', function() {
+parallel('#times', function() {
 
   it('should execute iterator', function(done) {
 
@@ -105,23 +104,29 @@ describe('#times', function() {
 
   it('should throw error if double callback', function(done) {
 
-    errorCallCount = 0;
-    domain.run(function() {
-      var iterator = function(num, callback) {
-        process.nextTick(callback);
-        process.nextTick(callback);
-      };
-      async.times(4, iterator);
-    });
+    var errorCallCount = 0;
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 4);
       done();
     }, delay);
+
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        var iterator = function(num, callback) {
+          process.nextTick(callback);
+          process.nextTick(callback);
+        };
+        async.times(4, iterator);
+      });
   });
 
 });
 
-describe('#timesSeries', function() {
+parallel('#timesSeries', function() {
 
   it('should execute iterator', function(done) {
 
@@ -215,23 +220,29 @@ describe('#timesSeries', function() {
 
   it('should throw error if double callback', function(done) {
 
-    errorCallCount = 0;
-    domain.run(function() {
-      var iterator = function(num, callback) {
-        process.nextTick(callback);
-        process.nextTick(callback);
-      };
-      async.timesSeries(4, iterator);
-    });
+    var errorCallCount = 0;
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 4);
       done();
     }, delay);
+
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        var iterator = function(num, callback) {
+          process.nextTick(callback);
+          process.nextTick(callback);
+        };
+        async.timesSeries(4, iterator);
+      });
   });
 
 });
 
-describe('#timesLimit', function() {
+parallel('#timesLimit', function() {
 
   it('should execute iterator', function(done) {
 
@@ -346,18 +357,24 @@ describe('#timesLimit', function() {
 
   it('should throw error if double callback', function(done) {
 
-    errorCallCount = 0;
-    domain.run(function() {
-      var iterator = function(num, callback) {
-        process.nextTick(callback);
-        process.nextTick(callback);
-      };
-      async.timesLimit(4, 2, iterator);
-    });
+    var errorCallCount = 0;
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 4);
       done();
     }, delay);
+
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        var iterator = function(num, callback) {
+          process.nextTick(callback);
+          process.nextTick(callback);
+        };
+        async.timesLimit(4, 2, iterator);
+      });
   });
 
 });

@@ -1,10 +1,12 @@
-/* global describe, it */
+/* global it */
 'use strict';
 
 var assert = require('power-assert');
+var parallel = require('mocha.parallel');
+
 var async = require('../../');
 
-describe('#alias', function() {
+parallel('#alias', function() {
 
   it('should have alias of forEach', function(done) {
 

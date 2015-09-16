@@ -1,10 +1,12 @@
-/* global describe, it */
+/* global it */
 'use strict';
 
 var assert = require('power-assert');
+var parallel = require('mocha.parallel');
+
 var async = global.async || require('../../');
 
-describe('#iterator', function() {
+parallel('#iterator', function() {
 
   it('should execute iterators', function(done) {
 

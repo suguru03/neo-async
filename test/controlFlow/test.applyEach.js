@@ -1,10 +1,12 @@
-/* global describe, it */
+/* global it */
 'use strict';
 
 var assert = require('power-assert');
+var parallel = require('mocha.parallel');
+
 var async = global.async || require('../../');
 
-describe('#applyEach', function() {
+parallel('#applyEach', function() {
 
   it('should execute in parallel', function(done) {
 
@@ -84,7 +86,7 @@ describe('#applyEach', function() {
 
 });
 
-describe('#applyEachSeries', function() {
+parallel('#applyEachSeries', function() {
 
   it('should execute in series', function(done) {
 

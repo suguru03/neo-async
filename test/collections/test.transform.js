@@ -1,17 +1,15 @@
-/* global describe, it */
+/* global it */
 'use strict';
+
+var domain = require('domain');
 
 var _ = require('lodash');
 var assert = require('power-assert');
+var parallel = require('mocha.parallel');
+
 var async = global.async || require('../../');
 var delay = require('../config').delay;
 var util = require('../util');
-var domain = require('domain').create();
-var errorCallCount = 0;
-domain.on('error', function(err) {
-  errorCallCount++;
-  assert.strictEqual(err.message, 'Callback was already called.');
-});
 
 function transformIterator(order) {
 
@@ -62,7 +60,7 @@ function transformIteratorWithKey(order) {
   };
 }
 
-describe('#transform', function() {
+parallel('#transform', function() {
 
   it('should execute iterator by collection of array', function(done) {
 
@@ -383,7 +381,7 @@ describe('#transform', function() {
 
 });
 
-describe('#transformSeries', function() {
+parallel('#transformSeries', function() {
 
   it('should execute iterator to series by collection of array', function(done) {
 
@@ -610,19 +608,25 @@ describe('#transformSeries', function() {
 
   it('should throw error if double callback', function(done) {
 
-    errorCallCount = 0;
-    domain.run(function() {
-      var collection = [1, 3, 2, 4];
-      var iterator = function(memo, value, key, callback) {
-        process.nextTick(callback);
-        process.nextTick(callback);
-      };
-      async.transformSeries(collection, iterator);
-    });
+    var errorCallCount = 0;
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 4);
       done();
     }, delay);
+
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        var collection = [1, 3, 2, 4];
+        var iterator = function(memo, value, key, callback) {
+          process.nextTick(callback);
+          process.nextTick(callback);
+        };
+        async.transformSeries(collection, iterator);
+      });
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -729,7 +733,7 @@ describe('#transformSeries', function() {
 
 });
 
-describe('#transformLimit', function() {
+parallel('#transformLimit', function() {
 
   it('should execute iterator in limited by collection of array', function(done) {
 

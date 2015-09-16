@@ -1,17 +1,15 @@
-/* global describe, it */
+/* global it */
 'use strict';
 
+var domain = require('domain');
+
 var assert = require('power-assert');
+var parallel = require('mocha.parallel');
+
 var config = require('../config');
 var async = global.async || require('../../');
 var delay = config.delay;
 var util = require('../util');
-var domain = require('domain').create();
-var errorCallCount = 0;
-domain.on('error', function(err) {
-  errorCallCount++;
-  assert.strictEqual(err.message, 'Callback was already called.');
-});
 
 function concatIterator(order) {
 
@@ -57,7 +55,7 @@ function concatIteratorWithKey(order) {
   };
 }
 
-describe('#concat', function() {
+parallel('#concat', function() {
 
   it('should execute iterator by collection of array', function(done) {
 
@@ -303,7 +301,7 @@ describe('#concat', function() {
 
 });
 
-describe('#concatSeries', function() {
+parallel('#concatSeries', function() {
 
   it('should execute iterator by collection of array', function(done) {
 
@@ -499,19 +497,25 @@ describe('#concatSeries', function() {
 
   it('should throw error if double callback', function(done) {
 
-    errorCallCount = 0;
-    domain.run(function() {
-      var collection = [1, 3, 2, 4];
-      var iterator = function(num, callback) {
-        process.nextTick(callback);
-        process.nextTick(callback);
-      };
-      async.concatSeries(collection, iterator);
-    });
+    var errorCallCount = 0;
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 4);
       done();
     }, delay);
+
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        var collection = [1, 3, 2, 4];
+        var iterator = function(num, callback) {
+          process.nextTick(callback);
+          process.nextTick(callback);
+        };
+        async.concatSeries(collection, iterator);
+      });
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -588,7 +592,7 @@ describe('#concatSeries', function() {
 
 });
 
-describe('#concatLimit', function() {
+parallel('#concatLimit', function() {
 
   it('should execute iterator by collection of array', function(done) {
 

@@ -1,11 +1,14 @@
-/* global describe, it */
+/* global it */
 'use strict';
 
-var assert = require('power-assert');
-var async = global.async || require('../../');
-var domain = require('domain').create();
+var domain = require('domain');
 
-describe('#forever', function() {
+var assert = require('power-assert');
+var parallel = require('mocha.parallel');
+
+var async = global.async || require('../../');
+
+parallel('#forever', function() {
 
   it('should execute until error occurs', function(done) {
 
@@ -82,14 +85,15 @@ describe('#forever', function() {
       }
       callback();
     };
-    domain.on('error', function(err) {
-      assert.strictEqual(err.message, 'end');
-      assert.deepEqual(order, [0, 1, 2, 3, 4]);
-      done();
-    });
-    domain.run(function() {
-      async.forever(iterator);
-    });
+    domain.create()
+      .on('error', function(err) {
+        assert.strictEqual(err.message, 'end');
+        assert.deepEqual(order, [0, 1, 2, 3, 4]);
+        done();
+      })
+      .run(function() {
+        async.forever(iterator);
+      });
   });
 
 });

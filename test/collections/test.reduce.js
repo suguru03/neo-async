@@ -1,17 +1,15 @@
-/* global describe, it */
+/* global it */
 'use strict';
+
+var domain = require('domain');
 
 var _ = require('lodash');
 var assert = require('power-assert');
+var parallel = require('mocha.parallel');
+
 var async = global.async || require('../../');
 var delay = require('../config').delay;
 var util = require('../util');
-var domain = require('domain').create();
-var errorCallCount = 0;
-domain.on('error', function(err) {
-  errorCallCount++;
-  assert.strictEqual(err.message, 'Callback was already called.');
-});
 
 function reduceIterator(order) {
 
@@ -61,7 +59,7 @@ function reduceIteratorWithKey(order) {
   };
 }
 
-describe('#reduce', function() {
+parallel('#reduce', function() {
 
   it('should sum number by collection of array', function(done) {
 
@@ -272,19 +270,25 @@ describe('#reduce', function() {
 
   it('should throw error if double callback', function(done) {
 
-    errorCallCount = 0;
-    domain.run(function() {
-      var collection = [1, 3, 2, 4];
-      var iterator = function(memo, num, callback) {
-        process.nextTick(callback);
-        process.nextTick(callback);
-      };
-      async.reduce(collection, [], iterator);
-    });
+    var errorCallCount = 0;
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 4);
       done();
     }, delay);
+
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        var collection = [1, 3, 2, 4];
+        var iterator = function(memo, num, callback) {
+          process.nextTick(callback);
+          process.nextTick(callback);
+        };
+        async.reduce(collection, [], iterator);
+      });
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -356,7 +360,7 @@ describe('#reduce', function() {
 
 });
 
-describe('#reduceRight', function() {
+parallel('#reduceRight', function() {
 
   it('should sum number by collection of array', function(done) {
 
@@ -563,19 +567,25 @@ describe('#reduceRight', function() {
 
   it('should throw error if double callback', function(done) {
 
-    errorCallCount = 0;
-    domain.run(function() {
-      var collection = [1, 3, 2, 4];
-      var iterator = function(memo, num, callback) {
-        process.nextTick(callback);
-        process.nextTick(callback);
-      };
-      async.reduceRight(collection, [], iterator);
-    });
+    var errorCallCount = 0;
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 4);
       done();
     }, delay);
+
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        var collection = [1, 3, 2, 4];
+        var iterator = function(memo, num, callback) {
+          process.nextTick(callback);
+          process.nextTick(callback);
+        };
+        async.reduceRight(collection, [], iterator);
+      });
   });
 
   it('should return response immediately if array is empty', function(done) {

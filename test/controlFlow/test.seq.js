@@ -1,10 +1,12 @@
-/* global describe, it */
+/* global it */
 'use strict';
 
 var assert = require('power-assert');
+var parallel = require('mocha.parallel');
+
 var async = global.async || require('../../');
 
-describe('#seq', function() {
+parallel('#seq', function() {
 
   it('should execute in order of insertion', function(done) {
 

@@ -1,4 +1,4 @@
-/* global describe, it */
+/* global it */
 
 define = function() {};
 
@@ -8,10 +8,12 @@ var path = require('path');
 
 var _ = require('lodash');
 var assert = require('power-assert');
+var parallel = require('mocha.parallel');
+
 var async = global.async || require('../../');
 var asyncPath = global.async_path || path.resolve(__dirname, '../../lib/async.js');
 
-describe('#define', function() {
+parallel('#define', function() {
 
   'use strict';
 
@@ -49,7 +51,7 @@ describe('#define', function() {
 
 });
 
-describe('#nextTick', function() {
+parallel('#nextTick', function() {
 
   'use strict';
 
@@ -122,7 +124,7 @@ describe('#nextTick', function() {
 
 });
 
-describe('#setImmediate', function() {
+parallel('#setImmediate', function() {
 
   'use strict';
 
@@ -153,7 +155,7 @@ describe('#setImmediate', function() {
   });
 });
 
-describe('#check functions', function() {
+parallel('#check functions', function() {
 
   'use strict';
 
@@ -165,7 +167,7 @@ describe('#check functions', function() {
 
 });
 
-describe('#other', function() {
+parallel('#other', function() {
 
   'use strict';
 

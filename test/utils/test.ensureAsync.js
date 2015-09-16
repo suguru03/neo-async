@@ -1,10 +1,12 @@
-/* global describe, it */
+/* global it */
 'use strict';
 
 var assert = require('power-assert');
+var parallel = require('mocha.parallel');
+
 var async = require('../../');
 
-describe('#ensureAsync', function() {
+parallel('#ensureAsync', function() {
 
   it('should call function on asynchronous', function(done) {
 

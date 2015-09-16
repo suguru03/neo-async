@@ -1,16 +1,15 @@
-/* global describe, it */
+/* global it */
 'use strict';
+
+var domain = require('domain');
 
 var _ = require('lodash');
 var assert = require('power-assert');
+var parallel = require('mocha.parallel');
+
 var async = global.async || require('../../');
 var delay = require('../config').delay;
-var domain = require('domain').create();
-var errorCallCount = 0;
-domain.on('error', function(err) {
-  errorCallCount++;
-  assert.strictEqual(err.message, 'Callback was already called.');
-});
+var util = require('../util');
 
 function createSimpleTasks(numbers) {
 
@@ -36,7 +35,7 @@ function createSimpleTasks(numbers) {
   return tasks;
 }
 
-describe('#angelFall', function() {
+parallel('#angelFall', function() {
 
   it('should execute to waterfall by collection of array', function(done) {
 
@@ -256,34 +255,39 @@ describe('#angelFall', function() {
 
   it('should throw error if callback is called twice', function(done) {
 
-    errorCallCount = 0;
-    domain.run(function() {
-      var array = [
-        function(next) {
-          setImmediate(function() {
-            next(null, 'one', 'two');
-          });
-          setImmediate(function() {
-            next(null, 'one', 'two');
-          });
-        },
-        function(arg1, arg2, next) {
-          next(null, arg1, arg2, 'three');
-        },
-        function(arg1, arg2, arg3, next) {
-          next(null, 'four');
-        },
-        function(arg1, next) {
-          next();
-        }
-      ];
-      async.angelFall(array);
-    });
-
+    var errorCallCount = 0;
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 1);
       done();
     }, delay);
+
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        var array = [
+          function(next) {
+            setImmediate(function() {
+              next(null, 'one', 'two');
+            });
+            setImmediate(function() {
+              next(null, 'one', 'two');
+            });
+          },
+          function(arg1, arg2, next) {
+            next(null, arg1, arg2, 'three');
+          },
+          function(arg1, arg2, arg3, next) {
+            next(null, 'four');
+          },
+          function(arg1, next) {
+            next();
+          }
+        ];
+        async.angelFall(array);
+      });
   });
 
   it('should throw error if task is not collection', function(done) {

@@ -1,16 +1,14 @@
-/* global describe, it */
+/* global it */
 'use strict';
 
+var domain = require('domain');
+
 var assert = require('power-assert');
+var parallel = require('mocha.parallel');
+
 var async = global.async || require('../../');
 var delay = require('../config').delay;
 var util = require('../util');
-var domain = require('domain').create();
-var errorCallCount = 0;
-domain.on('error', function(err) {
-  errorCallCount++;
-  assert.strictEqual(err.message, 'Callback was already called.');
-});
 
 function sortByIterator(order) {
 
@@ -46,7 +44,7 @@ function sortByIteratorWithKey(order) {
   };
 }
 
-describe('#sortBy', function() {
+parallel('#sortBy', function() {
 
   it('should execute iterator by collection of array', function(done) {
 
@@ -196,19 +194,25 @@ describe('#sortBy', function() {
 
   it('should throw error if double callback', function(done) {
 
-    errorCallCount = 0;
-    domain.run(function() {
-      var collection = [1, 3, 2];
-      var iterator = function(num, index, callback) {
-        process.nextTick(callback);
-        process.nextTick(callback);
-      };
-      async.sortBy(collection, iterator);
-    });
+    var errorCallCount = 0;
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 3);
       done();
     }, delay);
+
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        var collection = [1, 3, 2];
+        var iterator = function(num, index, callback) {
+          process.nextTick(callback);
+          process.nextTick(callback);
+        };
+        async.sortBy(collection, iterator);
+      });
   });
 
   it('should return response immediately if collection is function', function(done) {
@@ -252,7 +256,7 @@ describe('#sortBy', function() {
 
 });
 
-describe('#sortBySeries', function() {
+parallel('#sortBySeries', function() {
 
   it('should execute iterator by collection of array', function(done) {
 
@@ -425,19 +429,25 @@ describe('#sortBySeries', function() {
 
   it('should throw error if double callback', function(done) {
 
-    errorCallCount = 0;
-    domain.run(function() {
-      var collection = [1, 3, 2];
-      var iterator = function(num, index, callback) {
-        process.nextTick(callback);
-        process.nextTick(callback);
-      };
-      async.sortBySeries(collection, iterator);
-    });
+    var errorCallCount = 0;
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 3);
       done();
     }, delay);
+
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        var collection = [1, 3, 2];
+        var iterator = function(num, index, callback) {
+          process.nextTick(callback);
+          process.nextTick(callback);
+        };
+        async.sortBySeries(collection, iterator);
+      });
   });
 
   it('should throw error', function(done) {
@@ -502,7 +512,7 @@ describe('#sortBySeries', function() {
 
 });
 
-describe('#sortByLimit', function() {
+parallel('#sortByLimit', function() {
 
   it('should execute iterator by collection of array', function(done) {
 
@@ -705,19 +715,25 @@ describe('#sortByLimit', function() {
 
   it('should throw error if double callback', function(done) {
 
-    errorCallCount = 0;
-    domain.run(function() {
-      var collection = [1, 3, 2];
-      var iterator = function(num, index, callback) {
-        process.nextTick(callback);
-        process.nextTick(callback);
-      };
-      async.sortByLimit(collection, 2, iterator);
-    });
+    var errorCallCount = 0;
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 3);
       done();
     }, delay);
+
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        var collection = [1, 3, 2];
+        var iterator = function(num, index, callback) {
+          process.nextTick(callback);
+          process.nextTick(callback);
+        };
+        async.sortByLimit(collection, 2, iterator);
+      });
   });
 
   it('should throw error', function(done) {

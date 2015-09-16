@@ -1,17 +1,14 @@
-/* global describe, it */
+/* global it */
 'use strict';
 
+var domain = require('domain');
+
 var assert = require('power-assert');
-var config = require('../config');
+var parallel = require('mocha.parallel');
+
 var async = global.async || require('../../');
-var delay = config.delay;
+var delay = require('../config').delay;
 var util = require('../util');
-var domain = require('domain').create();
-var errorCallCount = 0;
-domain.on('error', function(err) {
-  errorCallCount++;
-  assert.strictEqual(err.message, 'Callback was already called.');
-});
 
 function eachIterator(order) {
 
@@ -45,7 +42,7 @@ function eachIteratorWithKey(order) {
   };
 }
 
-describe('#each', function() {
+parallel('#each', function() {
 
   it('should execute iterator by collection of array', function(done) {
 
@@ -210,19 +207,25 @@ describe('#each', function() {
 
   it('should throw error if double callback', function(done) {
 
-    errorCallCount = 0;
-    domain.run(function() {
-      var collection = [1, 3, 2, 4];
-      var iterator = function(num, callback) {
-        process.nextTick(callback);
-        process.nextTick(callback);
-      };
-      async.each(collection, iterator);
-    });
+    var errorCallCount = 0;
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 4);
       done();
     }, delay);
+
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        var collection = [1, 3, 2, 4];
+        var iterator = function(num, callback) {
+          process.nextTick(callback);
+          process.nextTick(callback);
+        };
+        async.each(collection, iterator);
+      });
   });
 
   it('should break if respond equals false', function(done) {
@@ -309,7 +312,7 @@ describe('#each', function() {
 
 });
 
-describe('#eachSeries', function() {
+parallel('#eachSeries', function() {
 
   it('should execute iterator to series by collection of array', function(done) {
 
@@ -475,19 +478,25 @@ describe('#eachSeries', function() {
 
   it('should throw error if double callback', function(done) {
 
-    errorCallCount = 0;
-    domain.run(function() {
-      var collection = [1, 3, 2, 4];
-      var iterator = function(num, callback) {
-        setImmediate(callback);
-        setImmediate(callback);
-      };
-      async.eachSeries(collection, iterator);
-    });
+    var errorCallCount = 0;
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 4);
       done();
     }, delay);
+
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        var collection = [1, 3, 2, 4];
+        var iterator = function(num, callback) {
+          setImmediate(callback);
+          setImmediate(callback);
+        };
+        async.eachSeries(collection, iterator);
+      });
   });
 
   it('should break if respond equals false', function(done) {
@@ -574,7 +583,7 @@ describe('#eachSeries', function() {
 
 });
 
-describe('#eachLimit', function() {
+parallel('#eachLimit', function() {
 
   it('should execute iterator in limited by collection of array', function(done) {
 

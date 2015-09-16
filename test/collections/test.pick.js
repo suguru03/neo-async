@@ -1,16 +1,14 @@
-/* global describe, it */
+/* global it */
 'use strict';
 
+var domain = require('domain');
+
 var assert = require('power-assert');
+var parallel = require('mocha.parallel');
+
 var async = global.async || require('../../');
 var delay = require('../config').delay;
 var util = require('../util');
-var domain = require('domain').create();
-var errorCallCount = 0;
-domain.on('error', function(err) {
-  errorCallCount++;
-  assert.strictEqual(err.message, 'Callback was already called.');
-});
 
 function pickIterator(order) {
 
@@ -80,7 +78,7 @@ function pickIteratorWithKeyAndError(order) {
   };
 }
 
-describe('#pick', function() {
+parallel('#pick', function() {
 
   it('should execute iterator by collection of array', function(done) {
 
@@ -398,90 +396,114 @@ describe('#pick', function() {
 
   it('should throw error if double callback', function(done) {
 
-    errorCallCount = 0;
-    domain.run(function() {
-      var collection = [2, 1, 3];
-      var iterator = function(item, callback) {
-        process.nextTick(callback);
-        process.nextTick(callback);
-      };
-      async.pick(collection, iterator);
-    });
+    var errorCallCount = 0;
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 3);
       done();
     }, delay);
-  });
 
-  it('should throw error if double callback', function(done) {
-
-    errorCallCount = 0;
-    domain.run(function() {
-      var collection = [2, 1, 3];
-      var iterator = function(item, callback) {
-        process.nextTick(callback);
-        process.nextTick(callback);
-      };
-      async.pick(collection, iterator, function(err, res) {
-        if (err) {
-          return done(err);
-        }
-        assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-        assert.deepEqual(res, {});
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        var collection = [2, 1, 3];
+        var iterator = function(item, callback) {
+          process.nextTick(callback);
+          process.nextTick(callback);
+        };
+        async.pick(collection, iterator);
       });
-    });
-    setTimeout(function() {
-      assert.strictEqual(errorCallCount, 3);
-      done();
-    }, delay);
   });
 
   it('should throw error if double callback', function(done) {
 
-    errorCallCount = 0;
-    domain.run(function() {
-      var collection = {
-        a: 4,
-        b: 3,
-        c: 2
-      };
-      var iterator = function(item, callback) {
-        process.nextTick(callback);
-        process.nextTick(callback);
-      };
-      async.pick(collection, iterator);
-    });
+    var errorCallCount = 0;
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 3);
       done();
     }, delay);
-  });
 
-  it('should throw error if double callback', function(done) {
-
-    errorCallCount = 0;
-    domain.run(function() {
-      var collection = {
-        a: 4,
-        b: 3,
-        c: 2
-      };
-      var iterator = function(item, callback) {
-        process.nextTick(callback);
-        process.nextTick(callback);
-      };
-      async.pick(collection, iterator, function(err, res) {
-        if (err) {
-          return done(err);
-        }
-        assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-        assert.deepEqual(res, {});
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        var collection = [2, 1, 3];
+        var iterator = function(item, callback) {
+          process.nextTick(callback);
+          process.nextTick(callback);
+        };
+        async.pick(collection, iterator, function(err, res) {
+          if (err) {
+            return done(err);
+          }
+          assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+          assert.deepEqual(res, {});
+        });
       });
-    });
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    var errorCallCount = 0;
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 3);
       done();
     }, delay);
+
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        var collection = {
+          a: 4,
+          b: 3,
+          c: 2
+        };
+        var iterator = function(item, callback) {
+          process.nextTick(callback);
+          process.nextTick(callback);
+        };
+        async.pick(collection, iterator);
+      });
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    var errorCallCount = 0;
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 3);
+      done();
+    }, delay);
+
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        var collection = {
+          a: 4,
+          b: 3,
+          c: 2
+        };
+        var iterator = function(item, callback) {
+          process.nextTick(callback);
+          process.nextTick(callback);
+        };
+        async.pick(collection, iterator, function(err, res) {
+          if (err) {
+            return done(err);
+          }
+          assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+          assert.deepEqual(res, {});
+        });
+      });
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -543,7 +565,7 @@ describe('#pick', function() {
 
 });
 
-describe('#pickSeries', function() {
+parallel('#pickSeries', function() {
 
   it('should execute iterator to series by collection of array', function(done) {
 
@@ -908,90 +930,114 @@ describe('#pickSeries', function() {
 
   it('should throw error if double callback', function(done) {
 
-    errorCallCount = 0;
-    domain.run(function() {
-      var collection = [2, 1, 3];
-      var iterator = function(item, callback) {
-        process.nextTick(callback);
-        process.nextTick(callback);
-      };
-      async.pickSeries(collection, iterator);
-    });
+    var errorCallCount = 0;
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 3);
       done();
     }, delay);
-  });
 
-  it('should throw error if double callback', function(done) {
-
-    errorCallCount = 0;
-    domain.run(function() {
-      var collection = [2, 1, 3];
-      var iterator = function(item, callback) {
-        process.nextTick(callback);
-        process.nextTick(callback);
-      };
-      async.pickSeries(collection, iterator, function(err, res) {
-        if (err) {
-          return done(err);
-        }
-        assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-        assert.deepEqual(res, {});
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        var collection = [2, 1, 3];
+        var iterator = function(item, callback) {
+          process.nextTick(callback);
+          process.nextTick(callback);
+        };
+        async.pickSeries(collection, iterator);
       });
-    });
-    setTimeout(function() {
-      assert.strictEqual(errorCallCount, 3);
-      done();
-    }, delay);
   });
 
   it('should throw error if double callback', function(done) {
 
-    errorCallCount = 0;
-    domain.run(function() {
-      var collection = {
-        a: 4,
-        b: 3,
-        c: 2
-      };
-      var iterator = function(item, callback) {
-        process.nextTick(callback);
-        process.nextTick(callback);
-      };
-      async.pickSeries(collection, iterator);
-    });
+    var errorCallCount = 0;
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 3);
       done();
     }, delay);
-  });
 
-  it('should throw error if double callback', function(done) {
-
-    errorCallCount = 0;
-    domain.run(function() {
-      var collection = {
-        a: 4,
-        b: 3,
-        c: 2
-      };
-      var iterator = function(item, callback) {
-        process.nextTick(callback);
-        process.nextTick(callback);
-      };
-      async.pickSeries(collection, iterator, function(err, res) {
-        if (err) {
-          return done(err);
-        }
-        assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-        assert.deepEqual(res, {});
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        var collection = [2, 1, 3];
+        var iterator = function(item, callback) {
+          process.nextTick(callback);
+          process.nextTick(callback);
+        };
+        async.pickSeries(collection, iterator, function(err, res) {
+          if (err) {
+            return done(err);
+          }
+          assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+          assert.deepEqual(res, {});
+        });
       });
-    });
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    var errorCallCount = 0;
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 3);
       done();
     }, delay);
+
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        var collection = {
+          a: 4,
+          b: 3,
+          c: 2
+        };
+        var iterator = function(item, callback) {
+          process.nextTick(callback);
+          process.nextTick(callback);
+        };
+        async.pickSeries(collection, iterator);
+      });
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    var errorCallCount = 0;
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 3);
+      done();
+    }, delay);
+
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        var collection = {
+          a: 4,
+          b: 3,
+          c: 2
+        };
+        var iterator = function(item, callback) {
+          process.nextTick(callback);
+          process.nextTick(callback);
+        };
+        async.pickSeries(collection, iterator, function(err, res) {
+          if (err) {
+            return done(err);
+          }
+          assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+          assert.deepEqual(res, {});
+        });
+      });
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -1052,7 +1098,7 @@ describe('#pickSeries', function() {
 
 });
 
-describe('#pickLimit', function() {
+parallel('#pickLimit', function() {
 
   it('should execute iterator in limited by collection of array', function(done) {
 
@@ -1489,90 +1535,114 @@ describe('#pickLimit', function() {
 
   it('should throw error if double callback', function(done) {
 
-    errorCallCount = 0;
-    var collection = [2, 1, 3];
-    var iterator = function(item, callback) {
-      process.nextTick(callback);
-      process.nextTick(callback);
-    };
-    domain.run(function() {
-      async.pickLimit(collection, 4, iterator);
-    });
+    var errorCallCount = 0;
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 3);
       done();
     }, delay);
-  });
 
-  it('should throw error if double callback', function(done) {
-
-    errorCallCount = 0;
-    var collection = [2, 1, 3];
-    var iterator = function(item, index, callback) {
-      process.nextTick(callback);
-      process.nextTick(callback);
-    };
-    domain.run(function() {
-      async.pickLimit(collection, 4, iterator, function(err, res) {
-        if (err) {
-          return done(err);
-        }
-        assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-        assert.deepEqual(res, {});
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        var collection = [2, 1, 3];
+        var iterator = function(item, callback) {
+          process.nextTick(callback);
+          process.nextTick(callback);
+        };
+        async.pickLimit(collection, 4, iterator);
       });
-    });
-    setTimeout(function() {
-      assert.strictEqual(errorCallCount, 3);
-      done();
-    }, delay);
   });
 
   it('should throw error if double callback', function(done) {
 
-    errorCallCount = 0;
-    var collection = {
-      a: 2,
-      b: 1,
-      c: 3
-    };
-    var iterator = function(item, callback) {
-      process.nextTick(callback);
-      process.nextTick(callback);
-    };
-    domain.run(function() {
-      async.pickLimit(collection, 4, iterator);
-    });
+    var errorCallCount = 0;
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 3);
       done();
     }, delay);
-  });
 
-  it('should throw error if double callback', function(done) {
-
-    errorCallCount = 0;
-    var collection = {
-      a: 2,
-      b: 1,
-      c: 3
-    };
-    var iterator = function(item, index, callback) {
-      process.nextTick(callback);
-      process.nextTick(callback);
-    };
-    domain.run(function() {
-      async.pickLimit(collection, 4, iterator, function(err, res) {
-        if (err) {
-          return done(err);
-        }
-        assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-        assert.deepEqual(res, {});
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        var collection = [2, 1, 3];
+        var iterator = function(item, index, callback) {
+          process.nextTick(callback);
+          process.nextTick(callback);
+        };
+        async.pickLimit(collection, 4, iterator, function(err, res) {
+          if (err) {
+            return done(err);
+          }
+          assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+          assert.deepEqual(res, {});
+        });
       });
-    });
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    var errorCallCount = 0;
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 3);
       done();
     }, delay);
+
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        var collection = {
+          a: 2,
+          b: 1,
+          c: 3
+        };
+        var iterator = function(item, callback) {
+          process.nextTick(callback);
+          process.nextTick(callback);
+        };
+        async.pickLimit(collection, 4, iterator);
+      });
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    var errorCallCount = 0;
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 3);
+      done();
+    }, delay);
+
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        var collection = {
+          a: 2,
+          b: 1,
+          c: 3
+        };
+        var iterator = function(item, index, callback) {
+          process.nextTick(callback);
+          process.nextTick(callback);
+        };
+        async.pickLimit(collection, 4, iterator, function(err, res) {
+          if (err) {
+            return done(err);
+          }
+          assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+          assert.deepEqual(res, {});
+        });
+      });
   });
 
   it('should return response immediately if array is empty', function(done) {

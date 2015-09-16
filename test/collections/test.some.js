@@ -1,7 +1,9 @@
-/* global describe, it */
+/* global it */
 'use strict';
 
 var assert = require('power-assert');
+var parallel = require('mocha.parallel');
+
 var async = global.async || require('../../');
 var delay = require('../config').delay;
 var util = require('../util');
@@ -74,7 +76,7 @@ function someIteratorWithKeyAndError(order) {
   };
 }
 
-describe('#some', function() {
+parallel('#some', function() {
 
   it('should execute iterator by collection of array', function(done) {
 
@@ -328,7 +330,7 @@ describe('#some', function() {
 
 });
 
-describe('#someSeries', function() {
+parallel('#someSeries', function() {
 
   it('should execute iterator by collection of array', function(done) {
 
@@ -620,7 +622,7 @@ describe('#someSeries', function() {
 
 });
 
-describe('#someLimit', function() {
+parallel('#someLimit', function() {
 
   it('should execute iterator in limited by collection of array', function(done) {
 

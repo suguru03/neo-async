@@ -1,12 +1,15 @@
-/* global describe, it */
+/* global it */
 'use strict';
+
+var domain = require('domain');
 
 var _ = require('lodash');
 var assert = require('power-assert');
-var async = global.async || require('../../');
-var domain = require('domain').create();
+var parallel = require('mocha.parallel');
 
-describe('#queue', function() {
+var async = global.async || require('../../');
+
+parallel('#queue', function() {
 
   it('should execute queue', function(done) {
 
@@ -180,26 +183,27 @@ describe('#queue', function() {
 
   it('should throw error if concurrency is zero', function(done) {
 
-    domain.on('error', function(err) {
-      assert.strictEqual(err.message, 'concurrency must be more than 1');
-      done();
-    });
-    domain.run(function() {
-      var order = {
-        callback: [],
-        process: []
-      };
-      var delays = [160, 80, 240, 80];
-      var worker = function(data, callback) {
-        setTimeout(function() {
-          order.process.push(data);
-          callback('err', 'arg');
-        }, delays.shift());
-      };
-      setImmediate(function() {
-        async.queue(worker, 0);
+    domain.create()
+      .on('error', function(err) {
+        assert.strictEqual(err.message, 'concurrency must be more than 1');
+        done();
+      })
+      .run(function() {
+        var order = {
+          callback: [],
+          process: []
+        };
+        var delays = [160, 80, 240, 80];
+        var worker = function(data, callback) {
+          setTimeout(function() {
+            order.process.push(data);
+            callback('err', 'arg');
+          }, delays.shift());
+        };
+        setImmediate(function() {
+          async.queue(worker, 0);
+        });
       });
-    });
   });
 
   it('should execute while changing concurrency', function(done) {
@@ -519,7 +523,7 @@ describe('#queue', function() {
 
 });
 
-describe('#priorityQueue', function() {
+parallel('#priorityQueue', function() {
 
   it('should execute queue by priority sequence', function(done) {
 

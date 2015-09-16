@@ -1,16 +1,14 @@
-/* global describe, it */
+/* global it */
 'use strict';
 
+var domain = require('domain');
+
 var assert = require('power-assert');
+var parallel = require('mocha.parallel');
+
 var async = global.async || require('../../');
 var delay = require('../config').delay;
 var util = require('../util');
-var domain = require('domain').create();
-var errorCallCount = 0;
-domain.on('error', function(err) {
-  errorCallCount++;
-  assert.strictEqual(err.message, 'Callback was already called.');
-});
 
 function mapValuesIterator(order) {
 
@@ -48,7 +46,7 @@ function mapValuesIteratorWithKey(order) {
   };
 }
 
-describe('#mapValues', function() {
+parallel('#mapValues', function() {
 
   it('should execute iterator by collection of array', function(done) {
 
@@ -240,23 +238,29 @@ describe('#mapValues', function() {
 
   it('should throw error if double callback', function(done) {
 
-    errorCallCount = 0;
-    domain.run(function() {
-      var collection = [1, 3];
-      var iterator = function(num, callback) {
-        process.nextTick(function() {
-          callback(null, num);
-        });
-        process.nextTick(function() {
-          callback(null, num);
-        });
-      };
-      async.mapValues(collection, iterator);
-    });
+    var errorCallCount = 0;
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 2);
       done();
     }, delay);
+
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        var collection = [1, 3];
+        var iterator = function(num, callback) {
+          process.nextTick(function() {
+            callback(null, num);
+          });
+          process.nextTick(function() {
+            callback(null, num);
+          });
+        };
+        async.mapValues(collection, iterator);
+      });
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -333,7 +337,7 @@ describe('#mapValues', function() {
 
 });
 
-describe('#mapValuesSeries', function() {
+parallel('#mapValuesSeries', function() {
 
   it('should execute iterator to series by collection of array', function(done) {
 
@@ -551,23 +555,29 @@ describe('#mapValuesSeries', function() {
 
   it('should throw error if double callback', function(done) {
 
-    errorCallCount = 0;
-    domain.run(function() {
-      var collection = [1, 3];
-      var iterator = function(num, callback) {
-        process.nextTick(function() {
-          callback(null, num);
-        });
-        process.nextTick(function() {
-          callback(null, num);
-        });
-      };
-      async.mapValuesSeries(collection, iterator);
-    });
+    var errorCallCount = 0;
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 2);
       done();
     }, delay);
+
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        var collection = [1, 3];
+        var iterator = function(num, callback) {
+          process.nextTick(function() {
+            callback(null, num);
+          });
+          process.nextTick(function() {
+            callback(null, num);
+          });
+        };
+        async.mapValuesSeries(collection, iterator);
+      });
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -644,7 +654,7 @@ describe('#mapValuesSeries', function() {
 
 });
 
-describe('#mapValuesLimit', function() {
+parallel('#mapValuesLimit', function() {
 
   it('should execute iterator in limited by collection of array', function(done) {
 
@@ -888,7 +898,7 @@ describe('#mapValuesLimit', function() {
   it('should throw error', function(done) {
 
     var order = [];
-    var collection = [1, 3, 4, 2, 3, 1];
+    var collection = [1, 3, 5, 2, 4, 2];
     var iterator = function(num, callback) {
       setTimeout(function() {
         order.push(num);
@@ -911,23 +921,29 @@ describe('#mapValuesLimit', function() {
 
   it('should throw error if double callback', function(done) {
 
-    errorCallCount = 0;
-    domain.run(function() {
-      var collection = [1, 3, 2];
-      var iterator = function(num, callback) {
-        process.nextTick(function() {
-          callback(null, num);
-        });
-        process.nextTick(function() {
-          callback(null, num);
-        });
-      };
-      async.mapValuesLimit(collection, 2, iterator);
-    });
+    var errorCallCount = 0;
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 3);
       done();
     }, delay);
+
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        var collection = [1, 3, 2];
+        var iterator = function(num, callback) {
+          process.nextTick(function() {
+            callback(null, num);
+          });
+          process.nextTick(function() {
+            callback(null, num);
+          });
+        };
+        async.mapValuesLimit(collection, 2, iterator);
+      });
   });
 
   it('should return response immediately if array is empty', function(done) {

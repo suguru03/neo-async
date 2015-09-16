@@ -1,22 +1,21 @@
 /* global describe, it */
 'use strict';
 
+var domain = require('domain');
+
 var _ = require('lodash');
 var assert = require('power-assert');
+var parallel = require('mocha.parallel');
+
 var async = require('../../').safe;
 var safeAsync = async === async.noConflict() ? async.safe : async;
 
 var delay = require('../config').delay;
-var domain = require('domain').create();
-var errorCallCount = 0;
-domain.on('error', function(err) {
-  errorCallCount++;
-  assert.strictEqual(err.message, 'Callback was already called.');
-});
+var util = require('../util');
 
 describe('#safe', function() {
 
-  describe('#each', function() {
+  parallel('#each', function() {
 
     it('should execute safe iterator many times', function(done) {
 
@@ -63,7 +62,7 @@ describe('#safe', function() {
 
   });
 
-  describe('#eachSeries', function() {
+  parallel('#eachSeries', function() {
 
     it('should execute sync iterator many times', function(done) {
 
@@ -88,7 +87,7 @@ describe('#safe', function() {
 
   });
 
-  describe('#reduce', function() {
+  parallel('#reduce', function() {
 
     it('should execute sync iterator many times', function(done) {
 
@@ -130,7 +129,7 @@ describe('#safe', function() {
 
   });
 
-  describe('#transformLimit', function() {
+  parallel('#transformLimit', function() {
 
     it('should execute iterator in limited by collection of array', function(done) {
 
@@ -154,7 +153,7 @@ describe('#safe', function() {
 
   });
 
-  describe('#parallel', function() {
+  parallel('#parallel', function() {
 
     it('should execute sync tasks many times', function(done) {
 
@@ -177,7 +176,7 @@ describe('#safe', function() {
     });
   });
 
-  describe('#parallelLimit', function() {
+  parallel('#parallelLimit', function() {
 
     it('should execute sync tasks many times', function(done) {
 
@@ -200,7 +199,7 @@ describe('#safe', function() {
     });
   });
 
-  describe('#series', function() {
+  parallel('#series', function() {
 
     it('should execute sync tasks many times', function(done) {
 
@@ -223,7 +222,7 @@ describe('#safe', function() {
 
   });
 
-  describe('#whilst', function() {
+  parallel('#whilst', function() {
 
     it('should execute until test is false', function(done) {
 
@@ -250,7 +249,7 @@ describe('#safe', function() {
 
   });
 
-  describe('#auto', function() {
+  parallel('#auto', function() {
 
     it('should execute in accordance with best order', function(done) {
 
@@ -298,7 +297,7 @@ describe('#safe', function() {
     });
   });
 
-  describe('#waterfall', function() {
+  parallel('#waterfall', function() {
 
     it('should execute tasks', function(done) {
 
@@ -373,37 +372,42 @@ describe('#safe', function() {
 
     it('should throw error if callback is called twice', function(done) {
 
-      errorCallCount = 0;
-      domain.run(function() {
-        var array = [
-          function(next) {
-            setImmediate(function() {
-              next(null, 'one', 'two');
-            });
-            setImmediate(function() {
-              next(null, 'one', 'two');
-            });
-          },
-
-          function(arg1, arg2, next) {
-            next(null, arg1, arg2, 'three');
-          },
-
-          function(arg1, arg2, arg3, next) {
-            next(null, 'four');
-          },
-
-          function(arg1, next) {
-            next();
-          }
-        ];
-        safeAsync.waterfall(array);
-      });
-
+      var errorCallCount = 0;
       setTimeout(function() {
         assert.strictEqual(errorCallCount, 1);
         done();
       }, delay);
+
+      domain.create()
+        .on('error', util.errorChecker)
+        .on('error', function() {
+          errorCallCount++;
+        })
+        .run(function() {
+          var array = [
+            function(next) {
+              setImmediate(function() {
+                next(null, 'one', 'two');
+              });
+              setImmediate(function() {
+                next(null, 'one', 'two');
+              });
+            },
+
+            function(arg1, arg2, next) {
+              next(null, arg1, arg2, 'three');
+            },
+
+            function(arg1, arg2, arg3, next) {
+              next(null, 'four');
+            },
+
+            function(arg1, next) {
+              next();
+            }
+          ];
+          safeAsync.waterfall(array);
+        });
     });
 
     it('should throw error if task is not collection', function(done) {
@@ -428,7 +432,7 @@ describe('#safe', function() {
 
   });
 
-  describe('#forever', function() {
+  parallel('#forever', function() {
 
     it('should execute until error occurs', function(done) {
 
@@ -451,7 +455,7 @@ describe('#safe', function() {
     });
   });
 
-  describe('#safe', function() {
+  parallel('#safe', function() {
 
     it('should create new safe function', function() {
       var safe = safeAsync.safe();

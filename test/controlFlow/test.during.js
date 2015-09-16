@@ -1,11 +1,13 @@
-/* global describe, it */
+/* global it */
 'use strict';
 
 var _ = require('lodash');
 var assert = require('power-assert');
+var parallel = require('mocha.parallel');
+
 var async = global.async || require('../../');
 
-describe('#during', function() {
+parallel('#during', function() {
 
   it('should execute until asynchronous test is false', function(done) {
 
@@ -106,7 +108,7 @@ describe('#during', function() {
 
 });
 
-describe('#doDuring', function() {
+parallel('#doDuring', function() {
 
   it('should execute until asynchronous test is false', function(done) {
 
