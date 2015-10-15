@@ -341,12 +341,12 @@ module.exports = {
     setup: function(count) {
       collection = createArrayCollection(count);
       iterator = function(n, callback) {
-        callback(n % 2);
+        callback(null, n % 2);
       };
     },
     func: function(async, callback) {
-      async.filter(collection, iterator, function(res) {
-        callback(null, res);
+      async.filter(collection, iterator, function(err, res) {
+        callback(err, res);
       });
     }
   },
