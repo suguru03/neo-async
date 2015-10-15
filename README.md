@@ -1,4 +1,4 @@
-# Neo-Async v1.5.0
+# Neo-Async v1.5.1
 
 [![npm](https://img.shields.io/npm/v/neo-async.svg)](https://www.npmjs.com/package/neo-async)
 [![Travis](https://img.shields.io/travis/suguru03/neo-async.svg)](https://travis-ci.org/suguru03/neo-async)
@@ -6,8 +6,9 @@
 [![Dependency Status](https://gemnasium.com/suguru03/neo-async.svg)](https://gemnasium.com/suguru03/neo-async)
 [![npm](https://img.shields.io/npm/dm/neo-async.svg)](https://www.npmjs.com/package/neo-async)
 
-Neo-Async is thought to be used as a drop-in replacement for [Async](https://github.com/caolan/async), it almost fully covers its functionality and runs [faster](#speed-comparison).  
-[Async](https://github.com/caolan/async) allows double callbacks in `waterfall`, but Neo-Async does not allow. ([test](https://github.com/suguru03/async/tree/neo-async/test))  
+Neo-Async is thought to be used as a drop-in replacement for [Async](https://github.com/caolan/async), it almost fully covers its functionality and runs [faster](#speed-comparison).
+
+[Async](https://github.com/caolan/async) allows double callbacks in `waterfall`, but Neo-Async does not allow. ([test](https://github.com/suguru03/async/tree/neo-async/test))
 PR is welcome ! Especially improvement for English documents :)
 
 ![Neo-Async](https://raw.githubusercontent.com/wiki/suguru03/neo-async/images/neo_async.png)
@@ -180,7 +181,8 @@ async.safe.each(collection, iterator, callback);
 
 ### Server-side
 
-Speed comparison of server-side measured by [func-comparator](https://github.com/suguru03/func-comparator).  
+Speed comparison of server-side measured by [func-comparator](https://github.com/suguru03/func-comparator).
+
 Specifications are as follows.
 
 * n times trials

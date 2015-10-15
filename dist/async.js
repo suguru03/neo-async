@@ -180,7 +180,7 @@
    * });
    *
    */
-  var map = createMap(arrayEachIndex, baseEachIndex, symbolEachIndex);
+  var map = createMap(arrayEachIndex, baseEachIndex, symbolEachIndex, true);
 
   /**
    * @memberof async
@@ -253,7 +253,7 @@
    * });
    *
    */
-  var mapValues = createMapValues(arrayEachIndex, baseEachKey, symbolEachKey);
+  var mapValues = createMap(arrayEachIndex, baseEachKey, symbolEachKey, false);
 
   /**
    * @memberof async
@@ -2341,11 +2341,11 @@
   var parallel = createParallel(arrayEachFunc, baseEachFunc);
 
   /**
-   * @version 1.5.0
+   * @version 1.5.1
    * @namespace async
    */
   var async = {
-    VERSION: '1.5.0',
+    VERSION: '1.5.1',
 
     // Collections
     each: each,
@@ -2493,10 +2493,10 @@
    */
   function _baseSlice(array) {
     var index = -1;
-    var length = array.length;
-    var result = Array(length);
+    var size = array.length;
+    var result = Array(size);
 
-    while (++index < length) {
+    while (++index < size) {
       result[index] = array[index];
     }
     return result;
@@ -2532,10 +2532,10 @@
    */
   function _compact(array) {
     var index = -1;
-    var length = array.length;
+    var size = array.length;
     var result = [];
 
-    while (++index < length) {
+    while (++index < size) {
       var value = array[index];
       if (value) {
         result[result.length] = value;
@@ -2552,11 +2552,11 @@
    */
   function _reverse(array) {
     var index = -1;
-    var length = array.length;
-    var result = Array(length);
-    var resIndex = length;
+    var size = array.length;
+    var result = Array(size);
+    var resIndex = size;
 
-    while (++index < length) {
+    while (++index < size) {
       result[--resIndex] = array[index];
     }
     return result;
@@ -2578,14 +2578,14 @@
    */
   function arrayEach(array, iterator, callback) {
     var index = -1;
-    var length = array.length;
+    var size = array.length;
 
     if (iterator.length === 3) {
-      while (++index < length) {
+      while (++index < size) {
         iterator(array[index], index, once(callback));
       }
     } else {
-      while (++index < length) {
+      while (++index < size) {
         iterator(array[index], once(callback));
       }
     }
@@ -2597,15 +2597,15 @@
   function baseEach(object, iterator, callback, keys) {
     var key;
     var index = -1;
-    var length = keys.length;
+    var size = keys.length;
 
     if (iterator.length === 3) {
-      while (++index < length) {
+      while (++index < size) {
         key = keys[index];
         iterator(object[key], key, once(callback));
       }
     } else {
-      while (++index < length) {
+      while (++index < size) {
         iterator(object[keys[index]], once(callback));
       }
     }
@@ -2633,14 +2633,14 @@
    */
   function arrayEachResult(array, result, iterator, callback) {
     var index = -1;
-    var length = array.length;
+    var size = array.length;
 
     if (iterator.length === 4) {
-      while (++index < length) {
+      while (++index < size) {
         iterator(result, array[index], index, once(callback));
       }
     } else {
-      while (++index < length) {
+      while (++index < size) {
         iterator(result, array[index], once(callback));
       }
     }
@@ -2652,15 +2652,15 @@
   function baseEachResult(object, result, iterator, callback, keys) {
     var key;
     var index = -1;
-    var length = keys.length;
+    var size = keys.length;
 
     if (iterator.length === 4) {
-      while (++index < length) {
+      while (++index < size) {
         key = keys[index];
         iterator(result, object[key], key, once(callback));
       }
     } else {
-      while (++index < length) {
+      while (++index < size) {
         iterator(result, object[keys[index]], once(callback));
       }
     }
@@ -2689,9 +2689,9 @@
    */
   function arrayEachFunc(array, createCallback) {
     var index = -1;
-    var length = array.length;
+    var size = array.length;
 
-    while (++index < length) {
+    while (++index < size) {
       array[index](createCallback(index));
     }
   }
@@ -2702,9 +2702,9 @@
   function baseEachFunc(object, createCallback, keys) {
     var key;
     var index = -1;
-    var length = keys.length;
+    var size = keys.length;
 
-    while (++index < length) {
+    while (++index < size) {
       key = keys[index];
       object[key](createCallback(key));
     }
@@ -2715,14 +2715,14 @@
    */
   function arrayEachIndex(array, iterator, createCallback) {
     var index = -1;
-    var length = array.length;
+    var size = array.length;
 
     if (iterator.length === 3) {
-      while (++index < length) {
+      while (++index < size) {
         iterator(array[index], index, createCallback(index));
       }
     } else {
-      while (++index < length) {
+      while (++index < size) {
         iterator(array[index], createCallback(index));
       }
     }
@@ -2734,15 +2734,15 @@
   function baseEachIndex(object, iterator, createCallback, keys) {
     var key;
     var index = -1;
-    var length = keys.length;
+    var size = keys.length;
 
     if (iterator.length === 3) {
-      while (++index < length) {
+      while (++index < size) {
         key = keys[index];
         iterator(object[key], key, createCallback(index));
       }
     } else {
-      while (++index < length) {
+      while (++index < size) {
         iterator(object[keys[index]], createCallback(index));
       }
     }
@@ -2775,15 +2775,15 @@
   function baseEachKey(object, iterator, createCallback, keys) {
     var key;
     var index = -1;
-    var length = keys.length;
+    var size = keys.length;
 
     if (iterator.length === 3) {
-      while (++index < length) {
+      while (++index < size) {
         key = keys[index];
         iterator(object[key], key, createCallback(key));
       }
     } else {
-      while (++index < length) {
+      while (++index < size) {
         key = keys[index];
         iterator(object[key], createCallback(key));
       }
@@ -2815,15 +2815,15 @@
   function arrayEachValue(array, iterator, createCallback) {
     var value;
     var index = -1;
-    var length = array.length;
+    var size = array.length;
 
     if (iterator.length === 3) {
-      while (++index < length) {
+      while (++index < size) {
         value = array[index];
         iterator(value, index, createCallback(value));
       }
     } else {
-      while (++index < length) {
+      while (++index < size) {
         value = array[index];
         iterator(value, createCallback(value));
       }
@@ -2836,16 +2836,16 @@
   function baseEachValue(object, iterator, createCallback, keys) {
     var key, value;
     var index = -1;
-    var length = keys.length;
+    var size = keys.length;
 
     if (iterator.length === 3) {
-      while (++index < length) {
+      while (++index < size) {
         key = keys[index];
         value = object[key];
         iterator(value, key, createCallback(value));
       }
     } else {
-      while (++index < length) {
+      while (++index < size) {
         value = object[keys[index]];
         iterator(value, createCallback(value));
       }
@@ -2878,15 +2878,15 @@
   function arrayEachIndexValue(array, iterator, createCallback) {
     var value;
     var index = -1;
-    var length = array.length;
+    var size = array.length;
 
     if (iterator.length === 3) {
-      while (++index < length) {
+      while (++index < size) {
         value = array[index];
         iterator(value, index, createCallback(index, value));
       }
     } else {
-      while (++index < length) {
+      while (++index < size) {
         value = array[index];
         iterator(value, createCallback(index, value));
       }
@@ -2899,16 +2899,16 @@
   function baseEachIndexValue(object, iterator, createCallback, keys) {
     var key, value;
     var index = -1;
-    var length = keys.length;
+    var size = keys.length;
 
     if (iterator.length === 3) {
-      while (++index < length) {
+      while (++index < size) {
         key = keys[index];
         value = object[key];
         iterator(value, key, createCallback(index, value));
       }
     } else {
-      while (++index < length) {
+      while (++index < size) {
         value = object[keys[index]];
         iterator(value, createCallback(index, value));
       }
@@ -2943,16 +2943,16 @@
   function baseEachKeyValue(object, iterator, createCallback, keys) {
     var key, value;
     var index = -1;
-    var length = keys.length;
+    var size = keys.length;
 
     if (iterator.length === 3) {
-      while (++index < length) {
+      while (++index < size) {
         key = keys[index];
         value = object[key];
         iterator(value, key, createCallback(key, value));
       }
     } else {
-      while (++index < length) {
+      while (++index < size) {
         key = keys[index];
         value = object[key];
         iterator(value, createCallback(key, value));
@@ -2988,9 +2988,9 @@
    */
   function _arrayEach(array, iterator) {
     var index = -1;
-    var length = array.length;
+    var size = array.length;
 
-    while (++index < length) {
+    while (++index < size) {
       iterator(array[index], index);
     }
     return array;
@@ -3002,10 +3002,10 @@
    * @param {Function} iterator - The function invoked per iteration.
    */
   function _arrayEachRight(array, iterator) {
-    var length = array.length;
+    var size = array.length;
 
-    while (length--) {
-      iterator(array[length], length);
+    while (size--) {
+      iterator(array[size], size);
     }
     return array;
   }
@@ -3019,9 +3019,9 @@
   function _objectEach(object, iterator, keys) {
     keys = keys || Object.keys(object);
     var index = -1;
-    var length = keys.length;
+    var size = keys.length;
 
-    while (++index < length) {
+    while (++index < size) {
       var key = keys[index];
       iterator(object[key], key);
     }
@@ -3046,10 +3046,10 @@
    * @param {Function} iterator
    */
   function _arrayEvery(array, iterator) {
-    var length = array.length;
+    var size = array.length;
     var index = -1;
 
-    while (++index < length) {
+    while (++index < size) {
       if (!iterator(array[index])) {
         return false;
       }
@@ -3062,11 +3062,11 @@
    * @param {Array} array
    */
   function _arrayClone(array) {
-    var length = array.length;
+    var size = array.length;
     var index = -1;
-    var result = Array(length);
+    var result = Array(size);
 
-    while (++index < length) {
+    while (++index < size) {
       result[index] = array[index];
     }
     return result;
@@ -3078,11 +3078,11 @@
    */
   function _objectClone(object) {
     var keys = Object.keys(object);
-    var length = keys.length;
+    var size = keys.length;
     var index = -1;
     var result = {};
 
-    while (++index < length) {
+    while (++index < size) {
       var key = keys[index];
       result[key] = object[key];
     }
@@ -3096,10 +3096,10 @@
    */
   function _pluck(array, key) {
     var index = -1;
-    var length = array.length;
-    var result = Array(length);
+    var size = array.length;
+    var result = Array(size);
 
-    while (++index < length) {
+    while (++index < size) {
       var item = array[index] || {};
       result[index] = item[key];
     }
@@ -3113,9 +3113,9 @@
    */
   function _indexOf(array, value) {
     var index = -1;
-    var length = array.length;
+    var size = array.length;
 
-    while (++index < length) {
+    while (++index < size) {
       if (array[index] === value) {
         return index;
       }
@@ -3330,30 +3330,41 @@
    * @param {Funciton} baseEach
    * @param {Funciton} symbolEach
    */
-  function createMap(arrayEach, baseEach, symbolEach) {
+  function createMap(arrayEach, baseEach, symbolEach, isArray) {
 
-    return function map(collection, iterator, callback) {
+    var init, clone;
+    if (isArray) {
+      init = Array;
+      clone = _arrayClone;
+    } else {
+      init = function() {
+        return {};
+      };
+      clone = _objectClone;
+    }
+
+    return function(collection, iterator, callback) {
       callback = callback || noop;
       var size, keys, result;
       var completed = 0;
 
       if (Array.isArray(collection)) {
         size = collection.length;
-        result = Array(size);
+        result = init(size);
         arrayEach(collection, iterator, createCallback);
       } else if (!collection) {
       } else if (iteratorSymbol && collection[iteratorSymbol]) {
         size = collection.size;
-        result = Array(size);
+        result = init(size);
         symbolEach(collection, iterator, createCallback);
       } else if (typeof collection === 'object') {
         keys = Object.keys(collection);
         size = keys.length;
-        result = Array(size);
+        result = init(size);
         baseEach(collection, iterator, createCallback, keys);
       }
       if (!size) {
-        callback(undefined, []);
+        callback(undefined, init());
       }
 
       function createCallback(index) {
@@ -3364,59 +3375,10 @@
           result[index] = res;
           index = null;
           if (err) {
-            callback(err, _arrayClone(result));
+            callback(err, clone(result));
             callback = noop;
           } else if (++completed === size) {
             callback(undefined, result);
-          }
-        };
-      }
-    };
-  }
-
-  /**
-   * @private
-   * @param {Funciton} arrayEach
-   * @param {Funciton} baseEach
-   * @param {Funciton} symbolEach
-   */
-  function createMapValues(arrayEach, baseEach, symbolEach) {
-
-    return function mapValues(collection, iterator, callback) {
-      callback = callback || noop;
-      var size, keys;
-      var completed = 0;
-      var result = {};
-
-      if (Array.isArray(collection)) {
-        size = collection.length;
-        arrayEach(collection, iterator, createCallback);
-      } else if (!collection) {
-      } else if (iteratorSymbol && collection[iteratorSymbol]) {
-        size = collection.size;
-        symbolEach(collection, iterator, createCallback);
-      } else if (typeof collection === 'object') {
-        keys = Object.keys(collection);
-        size = keys.length;
-        baseEach(collection, iterator, createCallback, keys);
-      }
-      if (!size) {
-        callback(undefined, result);
-      }
-
-      function createCallback(key) {
-        return function done(err, res) {
-          if (key === null) {
-            throwError();
-          }
-          result[key] = res;
-          key = null;
-          if (err) {
-            callback(err, _objectClone(result));
-            callback = noop;
-          } else if (++completed === size) {
-            callback(undefined, result);
-            callback = throwError;
           }
         };
       }
@@ -8471,12 +8433,12 @@
 
       function getIndex(priority) {
         var tasks = q.tasks;
-        var length = tasks.length;
-        if (!length) {
+        var size = tasks.length;
+        if (!size) {
           return 0;
         }
         var index = -1;
-        while (++index < length) {
+        while (++index < size) {
           if (priority < tasks[index].priority) {
             return index;
           }
@@ -8791,11 +8753,11 @@
       case 5:
         return func.bind(null, arguments[1], arguments[2], arguments[3], arguments[4]);
       default:
-        var length = arguments.length;
+        var size = arguments.length;
         var index = 0;
-        var args = Array(length);
+        var args = Array(size);
         args[index] = null;
-        while (++index < length) {
+        while (++index < size) {
           args[index] = arguments[index];
         }
         return func.bind.apply(func, args);
@@ -8995,8 +8957,8 @@
         delete queues[key];
 
         var i = -1;
-        var length = q.length;
-        while (++i < length) {
+        var size = q.length;
+        while (++i < size) {
           q[i].apply(null, args);
         }
       }
