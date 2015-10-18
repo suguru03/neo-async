@@ -238,13 +238,16 @@ parallel('#every', function() {
 
 });
 
-parallel.skip('#everySeries', function() {
+parallel('#everySeries', function() {
 
   it('should execute iterator by collection of array', function(done) {
 
     var order = [];
     var collection = [1, 3, 2, 4];
-    async.everySeries(collection, everyIterator(order), function(res) {
+    async.everySeries(collection, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, false);
       assert.deepEqual(order, [1, 3, 2]);
       done();
@@ -255,7 +258,10 @@ parallel.skip('#everySeries', function() {
 
     var order = [];
     var collection = [1, 3, 1, 5];
-    async.everySeries(collection, everyIterator(order), function(res) {
+    async.everySeries(collection, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, true);
       assert.deepEqual(order, [1, 3, 1, 5]);
       done();
@@ -266,36 +272,7 @@ parallel.skip('#everySeries', function() {
 
     var order = [];
     var collection = [1, 3, 2, 4];
-    async.everySeries(collection, everyIteratorWithKey(order), function(res) {
-      assert.strictEqual(res, false);
-      assert.deepEqual(order, [
-        [1, 0],
-        [3, 1],
-        [2, 2]
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of array and get callback 2nd argument', function(done) {
-
-    var order = [];
-    var collection = [1, 3, 2, 4];
-    async.everySeries(collection, everyIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(res, false);
-      assert.deepEqual(order, [1, 3, 2]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of array with passing index and get callback 2nd argument', function(done) {
-
-    var order = [];
-    var collection = [1, 3, 2, 4];
-    async.everySeries(collection, everyIteratorWithKeyAndError(order), function(err, res) {
+    async.everySeries(collection, everyIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -317,7 +294,10 @@ parallel.skip('#everySeries', function() {
       b: 3,
       c: 2
     };
-    async.everySeries(collection, everyIterator(order), function(res) {
+    async.everySeries(collection, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, false);
       assert.deepEqual(order, [4]);
       done();
@@ -332,42 +312,7 @@ parallel.skip('#everySeries', function() {
       b: 3,
       c: 2
     };
-    async.everySeries(collection, everyIteratorWithKey(order), function(res) {
-      assert.strictEqual(res, false);
-      assert.deepEqual(order, [
-        [4, 'a']
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of object and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = {
-      a: 4,
-      b: 3,
-      c: 2
-    };
-    async.everySeries(collection, everyIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(res, false);
-      assert.deepEqual(order, [4]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of object with passing key and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = {
-      a: 4,
-      b: 3,
-      c: 2
-    };
-    async.everySeries(collection, everyIteratorWithKeyAndError(order), function(err, res) {
+    async.everySeries(collection, everyIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -386,7 +331,10 @@ parallel.skip('#everySeries', function() {
     collection.set('a', 4);
     collection.set('b', 3);
     collection.set('c', 2);
-    async.everySeries(collection, everyIterator(order), function(res) {
+    async.everySeries(collection, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, false);
       assert.deepEqual(order, [4]);
       done();
@@ -400,40 +348,7 @@ parallel.skip('#everySeries', function() {
     collection.set('a', 4);
     collection.set('b', 3);
     collection.set('c', 2);
-    async.everySeries(collection, everyIteratorWithKey(order), function(res) {
-      assert.strictEqual(res, false);
-      assert.deepEqual(order, [
-        [4, 'a']
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of Map and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = new util.Map();
-    collection.set('a', 4);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.everySeries(collection, everyIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(res, false);
-      assert.deepEqual(order, [4]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of Map with passing key and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = new util.Map();
-    collection.set('a', 4);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.everySeries(collection, everyIteratorWithKeyAndError(order), function(err, res) {
+    async.everySeries(collection, everyIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -454,7 +369,10 @@ parallel.skip('#everySeries', function() {
       c: 2.6
     };
 
-    async.everySeries(collection, everyIterator(order), function(res) {
+    async.everySeries(collection, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, true);
       assert.deepEqual(order, [1.1, 3.5, 2.6]);
       done();
@@ -462,25 +380,6 @@ parallel.skip('#everySeries', function() {
   });
 
   it('should execute on asynchronous', function(done) {
-
-    var sync = true;
-    var collection = {
-      a: 1,
-      b: 3,
-      c: 2
-    };
-    var iterator = function(n, key, callback) {
-      callback(true);
-    };
-    async.everySeries(collection, iterator, function(res) {
-      assert.strictEqual(sync, false);
-      assert.strictEqual(res, true);
-      done();
-    });
-    sync = false;
-  });
-
-  it('should execute on asynchronous and get 2nd callback argument', function(done) {
 
     var sync = true;
     var collection = {
@@ -519,10 +418,10 @@ parallel.skip('#everySeries', function() {
         var collection = [1, 3, 2, 4];
         var iterator = function(num, callback) {
           process.nextTick(function() {
-            callback(true);
+            callback(null, true);
           });
           process.nextTick(function() {
-            callback(true);
+            callback(null, true);
           });
         };
         async.everySeries(collection, iterator);
@@ -532,7 +431,10 @@ parallel.skip('#everySeries', function() {
   it('should return response immediately if collection is empty', function(done) {
 
     var order = [];
-    async.everySeries([], everyIterator(order), function(res) {
+    async.everySeries([], everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, true);
       assert.deepEqual(order, []);
       done();
@@ -542,7 +444,10 @@ parallel.skip('#everySeries', function() {
   it('should return response immediately if collection is function', function(done) {
 
     var order = [];
-    async.everySeries(function() {}, everyIterator(order), function(res) {
+    async.everySeries(function() {}, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, true);
       assert.deepEqual(order, []);
       done();
@@ -552,7 +457,10 @@ parallel.skip('#everySeries', function() {
   it('should return response immediately if collection is undefined', function(done) {
 
     var order = [];
-    async.everySeries(undefined, everyIterator(order), function(res) {
+    async.everySeries(undefined, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, true);
       assert.deepEqual(order, []);
       done();
@@ -562,7 +470,10 @@ parallel.skip('#everySeries', function() {
   it('should return response immediately if collection is null', function(done) {
 
     var order = [];
-    async.everySeries(null, everyIterator(order), function(res) {
+    async.everySeries(null, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, true);
       assert.deepEqual(order, []);
       done();
