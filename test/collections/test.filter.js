@@ -648,14 +648,17 @@ parallel('#filterSeries', function() {
 
 });
 
-parallel.skip('#filterLimit', function() {
+parallel('#filterLimit', function() {
 
   it('should execute iterator in limited by collection of array', function(done) {
 
     var order = [];
     var collection = [1, 5, 3, 2, 4];
 
-    async.filterLimit(collection, 2, filterIterator(order), function(res) {
+    async.filterLimit(collection, 2, filterIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.strictEqual(res.length, 3);
       assert.deepEqual(res, [1, 5, 3]);
@@ -669,44 +672,7 @@ parallel.skip('#filterLimit', function() {
     var order = [];
     var collection = [1, 5, 3, 2, 4];
 
-    async.filterLimit(collection, 2, filterIteratorWithKey(order), function(res) {
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.strictEqual(res.length, 3);
-      assert.deepEqual(res, [1, 5, 3]);
-      assert.deepEqual(order, [
-        [1, 0],
-        [3, 2],
-        [5, 1],
-        [2, 3],
-        [4, 4]
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator in limited by collection of array and get 2rd callback argument', function(done) {
-
-    var order = [];
-    var collection = [1, 5, 3, 2, 4];
-
-    async.filterLimit(collection, 2, filterIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.strictEqual(res.length, 3);
-      assert.deepEqual(res, [1, 5, 3]);
-      assert.deepEqual(order, [1, 3, 5, 2, 4]);
-      done();
-    });
-  });
-
-  it('should execute iterator in limited by collection of array with passing index and get 2rd callback argument', function(done) {
-
-    var order = [];
-    var collection = [1, 5, 3, 2, 4];
-
-    async.filterLimit(collection, 2, filterIteratorWithKeyAndError(order), function(err, res) {
+    async.filterLimit(collection, 2, filterIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -734,7 +700,10 @@ parallel.skip('#filterLimit', function() {
       d: 2,
       e: 4
     };
-    async.filterLimit(collection, 2, filterIterator(order), function(res) {
+    async.filterLimit(collection, 2, filterIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.strictEqual(res.length, 3);
       assert.deepEqual(res, [1, 5, 3]);
@@ -753,54 +722,7 @@ parallel.skip('#filterLimit', function() {
       d: 2,
       e: 4
     };
-    async.filterLimit(collection, 2, filterIteratorWithKey(order), function(res) {
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.strictEqual(res.length, 3);
-      assert.deepEqual(res, [1, 5, 3]);
-      assert.deepEqual(order, [
-        [1, 'a'],
-        [3, 'c'],
-        [5, 'b'],
-        [2, 'd'],
-        [4, 'e']
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator in limited by collection of object and get 2rd callback argument', function(done) {
-
-    var order = [];
-    var collection = {
-      a: 1,
-      b: 5,
-      c: 3,
-      d: 2,
-      e: 4
-    };
-    async.filterLimit(collection, 2, filterIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.strictEqual(res.length, 3);
-      assert.deepEqual(res, [1, 5, 3]);
-      assert.deepEqual(order, [1, 3, 5, 2, 4]);
-      done();
-    });
-  });
-
-  it('should execute iterator in limited by collection of object with passing index and get 2rd callback argument', function(done) {
-
-    var order = [];
-    var collection = {
-      a: 1,
-      b: 5,
-      c: 3,
-      d: 2,
-      e: 4
-    };
-    async.filterLimit(collection, 2, filterIteratorWithKeyAndError(order), function(err, res) {
+    async.filterLimit(collection, 2, filterIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -827,7 +749,10 @@ parallel.skip('#filterLimit', function() {
     collection.set('c', 3);
     collection.set('d', 2);
     collection.set('e', 4);
-    async.filterLimit(collection, 2, filterIterator(order), function(res) {
+    async.filterLimit(collection, 2, filterIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.strictEqual(res.length, 3);
       assert.deepEqual(res, [1, 5, 3]);
@@ -845,52 +770,7 @@ parallel.skip('#filterLimit', function() {
     collection.set('c', 3);
     collection.set('d', 2);
     collection.set('e', 4);
-    async.filterLimit(collection, 2, filterIteratorWithKey(order), function(res) {
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.strictEqual(res.length, 3);
-      assert.deepEqual(res, [1, 5, 3]);
-      assert.deepEqual(order, [
-        [1, 'a'],
-        [3, 'c'],
-        [5, 'b'],
-        [2, 'd'],
-        [4, 'e']
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator in limited by collection of Map and get 2rd callback argument', function(done) {
-
-    var order = [];
-    var collection = new util.Map();
-    collection.set('a', 1);
-    collection.set('b', 5);
-    collection.set('c', 3);
-    collection.set('d', 2);
-    collection.set('e', 4);
-    async.filterLimit(collection, 2, filterIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.strictEqual(res.length, 3);
-      assert.deepEqual(res, [1, 5, 3]);
-      assert.deepEqual(order, [1, 3, 5, 2, 4]);
-      done();
-    });
-  });
-
-  it('should execute iterator in limited by collection of Map with passing index and get 2rd callback argument', function(done) {
-
-    var order = [];
-    var collection = new util.Map();
-    collection.set('a', 1);
-    collection.set('b', 5);
-    collection.set('c', 3);
-    collection.set('d', 2);
-    collection.set('e', 4);
-    async.filterLimit(collection, 2, filterIteratorWithKeyAndError(order), function(err, res) {
+    async.filterLimit(collection, 2, filterIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -916,7 +796,10 @@ parallel.skip('#filterLimit', function() {
       b: 3.5,
       c: 2.7
     };
-    async.filterLimit(collection, 2, filterIterator(order), function(res) {
+    async.filterLimit(collection, 2, filterIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.strictEqual(res.length, 3);
       assert.deepEqual(res, [1.1, 3.5, 2.7]);
@@ -930,7 +813,10 @@ parallel.skip('#filterLimit', function() {
     var order = [];
     var collection = [1, 3, 4, 2, 3, 1];
 
-    async.filterLimit(collection, Infinity, filterIterator(order), function(res) {
+    async.filterLimit(collection, Infinity, filterIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.strictEqual(res.length, 4);
       assert.deepEqual(res, [1, 3, 3, 1]);
@@ -944,21 +830,6 @@ parallel.skip('#filterLimit', function() {
     var sync = true;
     var collection = [1, 3, 4, 2, 3, 1];
     var iterator = function(n, callback) {
-      callback(n % 2);
-    };
-    async.filterLimit(collection, 2, iterator, function(res) {
-      assert.strictEqual(sync, false);
-      assert.deepEqual(res, [1, 3, 3, 1]);
-      done();
-    });
-    sync = false;
-  });
-
-  it('should execute on asynchronous and get 2rd callback argument', function(done) {
-
-    var sync = true;
-    var collection = [1, 3, 4, 2, 3, 1];
-    var iterator = function(n, callback) {
       callback(null, n % 2);
     };
     async.filterLimit(collection, 2, iterator, function(err, res) {
@@ -966,7 +837,6 @@ parallel.skip('#filterLimit', function() {
         return done(err);
       }
       assert.strictEqual(sync, false);
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3, 3, 1]);
       done();
     });
@@ -1054,7 +924,10 @@ parallel.skip('#filterLimit', function() {
   it('should return response immediately if collection is empty', function(done) {
 
     var order = [];
-    async.filterLimit([], 2, filterIterator(order), function(res) {
+    async.filterLimit([], 2, filterIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.strictEqual(res.length, 0);
       assert.deepEqual(res, []);
@@ -1066,7 +939,10 @@ parallel.skip('#filterLimit', function() {
   it('should return response immediately if collection is empty object', function(done) {
 
     var order = [];
-    async.filterLimit({}, 2, filterIterator(order), function(res) {
+    async.filterLimit({}, 2, filterIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.strictEqual(res.length, 0);
       assert.deepEqual(res, []);
@@ -1078,7 +954,10 @@ parallel.skip('#filterLimit', function() {
   it('should return response immediately if collection is function', function(done) {
 
     var order = [];
-    async.filterLimit(function() {}, 2, filterIterator(order), function(res) {
+    async.filterLimit(function() {}, 2, filterIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.strictEqual(res.length, 0);
       assert.deepEqual(res, []);
@@ -1090,7 +969,10 @@ parallel.skip('#filterLimit', function() {
   it('should return response immediately if collection is undefined', function(done) {
 
     var order = [];
-    async.filterLimit(undefined, 2, filterIterator(order), function(res) {
+    async.filterLimit(undefined, 2, filterIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.strictEqual(res.length, 0);
       assert.deepEqual(res, []);
@@ -1102,7 +984,10 @@ parallel.skip('#filterLimit', function() {
   it('should return response immediately if collection is null', function(done) {
 
     var order = [];
-    async.filterLimit(null, 2, filterIterator(order), function(res) {
+    async.filterLimit(null, 2, filterIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.strictEqual(res.length, 0);
       assert.deepEqual(res, []);
@@ -1115,7 +1000,10 @@ parallel.skip('#filterLimit', function() {
 
     var order = [];
     var collection = [1, 3, 2];
-    async.filterLimit(collection, 0, filterIterator(order), function(res) {
+    async.filterLimit(collection, 0, filterIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.strictEqual(res.length, 0);
       assert.deepEqual(res, []);
@@ -1128,7 +1016,10 @@ parallel.skip('#filterLimit', function() {
 
     var order = [];
     var collection = [1, 3, 2];
-    async.filterLimit(collection, undefined, filterIterator(order), function(res) {
+    async.filterLimit(collection, undefined, filterIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.strictEqual(res.length, 0);
       assert.deepEqual(res, []);
