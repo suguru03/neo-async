@@ -482,13 +482,16 @@ parallel('#everySeries', function() {
 
 });
 
-parallel.skip('#everyLimit', function() {
+parallel('#everyLimit', function() {
 
   it('should execute iterator by collection of array', function(done) {
 
     var order = [];
     var collection = [1, 5, 2, 4];
-    async.everyLimit(collection, 2, everyIterator(order), function(res) {
+    async.everyLimit(collection, 2, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, false);
       assert.deepEqual(order, [1, 2]);
       done();
@@ -499,35 +502,7 @@ parallel.skip('#everyLimit', function() {
 
     var order = [];
     var collection = [1, 5, 2, 4];
-    async.everyLimit(collection, 2, everyIteratorWithKey(order), function(res) {
-      assert.strictEqual(res, false);
-      assert.deepEqual(order, [
-        [1, 0],
-        [2, 2]
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of array and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = [1, 5, 2, 4];
-    async.everyLimit(collection, 2, everyIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(res, false);
-      assert.deepEqual(order, [1, 2]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of array with passing index and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = [1, 5, 2, 4];
-    async.everyLimit(collection, 2, everyIteratorWithKeyAndError(order), function(err, res) {
+    async.everyLimit(collection, 2, everyIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -549,7 +524,10 @@ parallel.skip('#everyLimit', function() {
       c: 2,
       d: 4
     };
-    async.everyLimit(collection, 2, everyIterator(order), function(res) {
+    async.everyLimit(collection, 2, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, false);
       assert.deepEqual(order, [1, 2]);
       done();
@@ -565,45 +543,7 @@ parallel.skip('#everyLimit', function() {
       c: 2,
       d: 4
     };
-    async.everyLimit(collection, 2, everyIteratorWithKey(order), function(res) {
-      assert.strictEqual(res, false);
-      assert.deepEqual(order, [
-        [1, 'a'],
-        [2, 'c']
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of object and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = {
-      a: 1,
-      b: 5,
-      c: 2,
-      d: 4
-    };
-    async.everyLimit(collection, 2, everyIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(res, false);
-      assert.deepEqual(order, [1, 2]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of object with passing key and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = {
-      a: 1,
-      b: 5,
-      c: 2,
-      d: 4
-    };
-    async.everyLimit(collection, 2, everyIteratorWithKeyAndError(order), function(err, res) {
+    async.everyLimit(collection, 2, everyIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -624,7 +564,10 @@ parallel.skip('#everyLimit', function() {
     collection.set('b', 5);
     collection.set('c', 2);
     collection.set('d', 4);
-    async.everyLimit(collection, 2, everyIterator(order), function(res) {
+    async.everyLimit(collection, 2, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, false);
       assert.deepEqual(order, [1, 2]);
       done();
@@ -639,43 +582,7 @@ parallel.skip('#everyLimit', function() {
     collection.set('b', 5);
     collection.set('c', 2);
     collection.set('d', 4);
-    async.everyLimit(collection, 2, everyIteratorWithKey(order), function(res) {
-      assert.strictEqual(res, false);
-      assert.deepEqual(order, [
-        [1, 'a'],
-        [2, 'c']
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of Map and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = new util.Map();
-    collection.set('a', 1);
-    collection.set('b', 5);
-    collection.set('c', 2);
-    collection.set('d', 4);
-    async.everyLimit(collection, 2, everyIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(res, false);
-      assert.deepEqual(order, [1, 2]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of Map with passing key and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = new util.Map();
-    collection.set('a', 1);
-    collection.set('b', 5);
-    collection.set('c', 2);
-    collection.set('d', 4);
-    async.everyLimit(collection, 2, everyIteratorWithKeyAndError(order), function(err, res) {
+    async.everyLimit(collection, 2, everyIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -697,7 +604,10 @@ parallel.skip('#everyLimit', function() {
       c: 2.6
     };
 
-    async.everyLimit(collection, 2, everyIterator(order), function(res) {
+    async.everyLimit(collection, 2, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, true);
       assert.deepEqual(order, [1.1, 3.5, 2.6]);
       done();
@@ -708,7 +618,10 @@ parallel.skip('#everyLimit', function() {
 
     var order = [];
     var collection = [1, 3, 9, 5];
-    async.everyLimit(collection, Infinity, everyIterator(order), function(res) {
+    async.everyLimit(collection, Infinity, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, true);
       assert.deepEqual(order, [1, 3, 5, 9]);
       done();
@@ -719,7 +632,10 @@ parallel.skip('#everyLimit', function() {
   it('should return response immediately if collection is empty', function(done) {
 
     var order = [];
-    async.everyLimit([], 4, everyIterator(order), function(res) {
+    async.everyLimit([], 4, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, true);
       assert.deepEqual(order, []);
       done();
@@ -729,7 +645,10 @@ parallel.skip('#everyLimit', function() {
   it('should return response immediately if collection is function', function(done) {
 
     var order = [];
-    async.everyLimit(function() {}, 2, everyIterator(order), function(res) {
+    async.everyLimit(function() {}, 2, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, true);
       assert.deepEqual(order, []);
       done();
@@ -739,7 +658,10 @@ parallel.skip('#everyLimit', function() {
   it('should return response immediately if collection is undefined', function(done) {
 
     var order = [];
-    async.everyLimit(undefined, 0, everyIterator(order), function(res) {
+    async.everyLimit(undefined, 0, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, true);
       assert.deepEqual(order, []);
       done();
@@ -749,7 +671,10 @@ parallel.skip('#everyLimit', function() {
   it('should return response immediately if collection is null', function(done) {
 
     var order = [];
-    async.everyLimit(null, 0, everyIterator(order), function(res) {
+    async.everyLimit(null, 0, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, true);
       assert.deepEqual(order, []);
       done();
@@ -760,7 +685,10 @@ parallel.skip('#everyLimit', function() {
 
     var order = [];
     var collection = [1, 3, 2];
-    async.everyLimit(collection, 0, everyIterator(order), function(res) {
+    async.everyLimit(collection, 0, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, true);
       assert.deepEqual(order, []);
       done();
@@ -771,7 +699,10 @@ parallel.skip('#everyLimit', function() {
 
     var order = [];
     var collection = [1, 3, 2];
-    async.everyLimit(collection, undefined, everyIterator(order), function(res) {
+    async.everyLimit(collection, undefined, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, true);
       assert.deepEqual(order, []);
       done();
