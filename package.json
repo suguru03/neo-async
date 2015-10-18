@@ -48,7 +48,7 @@
     "lodash": "^3.6.0",
     "minimist": "^1.1.1",
     "mocha": "^2.0.1",
-    "mocha.parallel": "^0.7.1",
+    "mocha.parallel": "^0.8.0",
     "neo-async": "^0.6.5",
     "power-assert": "^0.10.0",
     "q": "~1.4.1",

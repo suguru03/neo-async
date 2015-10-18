@@ -347,13 +347,16 @@ parallel('#filter', function() {
   });
 });
 
-describe.skip('#filterSeries', function() {
+parallel('#filterSeries', function() {
 
   it('should execute iterator to series by collection of array', function(done) {
 
     var order = [];
     var collection = [1, 3, 2, 4];
-    async.filterSeries(collection, filterIterator(order), function(res) {
+    async.filterSeries(collection, filterIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.strictEqual(res.length, 2);
       assert.deepEqual(res, [1, 3]);
@@ -366,41 +369,7 @@ describe.skip('#filterSeries', function() {
 
     var order = [];
     var collection = [1, 3, 2, 4];
-    async.filterSeries(collection, filterIteratorWithKey(order), function(res) {
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.strictEqual(res.length, 2);
-      assert.deepEqual(res, [1, 3]);
-      assert.deepEqual(order, [
-        [1, 0],
-        [3, 1],
-        [2, 2],
-        [4, 3]
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator to series by collection of array and get 2rd callback argument', function(done) {
-
-    var order = [];
-    var collection = [1, 3, 2, 4];
-    async.filterSeries(collection, filterIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.strictEqual(res.length, 2);
-      assert.deepEqual(res, [1, 3]);
-      assert.deepEqual(order, [1, 3, 2, 4]);
-      done();
-    });
-  });
-
-  it('should execute iterator to series by collection of array with passing index and get 2rd callback argument', function(done) {
-
-    var order = [];
-    var collection = [1, 3, 2, 4];
-    async.filterSeries(collection, filterIteratorWithKeyAndError(order), function(err, res) {
+    async.filterSeries(collection, filterIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -425,7 +394,10 @@ describe.skip('#filterSeries', function() {
       b: 3,
       c: 2
     };
-    async.filterSeries(collection, filterIterator(order), function(res) {
+    async.filterSeries(collection, filterIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.strictEqual(res.length, 2);
       assert.deepEqual(res, [1, 3]);
@@ -442,48 +414,7 @@ describe.skip('#filterSeries', function() {
       b: 3,
       c: 2
     };
-    async.filterSeries(collection, filterIteratorWithKey(order), function(res) {
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.strictEqual(res.length, 2);
-      assert.deepEqual(res, [1, 3]);
-      assert.deepEqual(order, [
-        [1, 'a'],
-        [3, 'b'],
-        [2, 'c']
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator to series by collection of object and get 2rd callback argument', function(done) {
-
-    var order = [];
-    var collection = {
-      a: 1,
-      b: 3,
-      c: 2
-    };
-    async.filterSeries(collection, filterIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.strictEqual(res.length, 2);
-      assert.deepEqual(res, [1, 3]);
-      assert.deepEqual(order, [1, 3, 2]);
-      done();
-    });
-  });
-
-  it('should execute iterator to series by collection of object with passing key and get 2rd callback argument', function(done) {
-
-    var order = [];
-    var collection = {
-      a: 1,
-      b: 3,
-      c: 2
-    };
-    async.filterSeries(collection, filterIteratorWithKeyAndError(order), function(err, res) {
+    async.filterSeries(collection, filterIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -506,7 +437,10 @@ describe.skip('#filterSeries', function() {
     collection.set('a', 1);
     collection.set('b', 3);
     collection.set('c', 2);
-    async.filterSeries(collection, filterIterator(order), function(res) {
+    async.filterSeries(collection, filterIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.strictEqual(res.length, 2);
       assert.deepEqual(res, [1, 3]);
@@ -522,46 +456,7 @@ describe.skip('#filterSeries', function() {
     collection.set('a', 1);
     collection.set('b', 3);
     collection.set('c', 2);
-    async.filterSeries(collection, filterIteratorWithKey(order), function(res) {
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.strictEqual(res.length, 2);
-      assert.deepEqual(res, [1, 3]);
-      assert.deepEqual(order, [
-        [1, 'a'],
-        [3, 'b'],
-        [2, 'c']
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator to series by collection of Map and get 2rd callback argument', function(done) {
-
-    var order = [];
-    var collection = new util.Map();
-    collection.set('a', 1);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.filterSeries(collection, filterIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.strictEqual(res.length, 2);
-      assert.deepEqual(res, [1, 3]);
-      assert.deepEqual(order, [1, 3, 2]);
-      done();
-    });
-  });
-
-  it('should execute iterator to series by collection of Map with passing key and get 2rd callback argument', function(done) {
-
-    var order = [];
-    var collection = new util.Map();
-    collection.set('a', 1);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.filterSeries(collection, filterIteratorWithKeyAndError(order), function(err, res) {
+    async.filterSeries(collection, filterIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -586,7 +481,10 @@ describe.skip('#filterSeries', function() {
       c: 2.6
     };
 
-    async.filterSeries(collection, filterIterator(order), function(res) {
+    async.filterSeries(collection, filterIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.strictEqual(res.length, 3);
       assert.deepEqual(res, [1.1, 3.5, 2.6]);
@@ -604,25 +502,6 @@ describe.skip('#filterSeries', function() {
       c: 2
     };
     var iterator = function(n, callback) {
-      callback(true);
-    };
-    async.filterSeries(collection, iterator, function(res) {
-      assert.strictEqual(sync, false);
-      assert.deepEqual(res, [1, 3, 2]);
-      done();
-    });
-    sync = false;
-  });
-
-  it('should execute on asynchronous and get 2rd callback argument', function(done) {
-
-    var sync = true;
-    var collection = {
-      a: 1,
-      b: 3,
-      c: 2
-    };
-    var iterator = function(n, callback) {
       callback(null, true);
     };
     async.filterSeries(collection, iterator, function(err, res) {
@@ -630,7 +509,6 @@ describe.skip('#filterSeries', function() {
         return done(err);
       }
       assert.strictEqual(sync, false);
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 3, 2]);
       done();
     });
@@ -711,7 +589,10 @@ describe.skip('#filterSeries', function() {
   it('should return response immediately if collection is empty', function(done) {
 
     var order = [];
-    async.filterSeries([], filterIterator(order), function(res) {
+    async.filterSeries([], filterIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.strictEqual(res.length, 0);
       assert.deepEqual(res, []);
@@ -723,7 +604,10 @@ describe.skip('#filterSeries', function() {
   it('should return response immediately if collection is function', function(done) {
 
     var order = [];
-    async.filterSeries(function() {}, filterIterator(order), function(res) {
+    async.filterSeries(function() {}, filterIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.strictEqual(res.length, 0);
       assert.deepEqual(res, []);
@@ -735,7 +619,10 @@ describe.skip('#filterSeries', function() {
   it('should return response immediately if collection is undefined', function(done) {
 
     var order = [];
-    async.filterSeries(undefined, filterIterator(order), function(res) {
+    async.filterSeries(undefined, filterIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.strictEqual(res.length, 0);
       assert.deepEqual(res, []);
@@ -747,7 +634,10 @@ describe.skip('#filterSeries', function() {
   it('should return response immediately if collection is null', function(done) {
 
     var order = [];
-    async.filterSeries(null, filterIterator(order), function(res) {
+    async.filterSeries(null, filterIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.strictEqual(res.length, 0);
       assert.deepEqual(res, []);
@@ -758,7 +648,7 @@ describe.skip('#filterSeries', function() {
 
 });
 
-describe.skip('#filterLimit', function() {
+parallel.skip('#filterLimit', function() {
 
   it('should execute iterator in limited by collection of array', function(done) {
 
