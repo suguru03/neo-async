@@ -4,30 +4,13 @@
 var domain = require('domain');
 
 var assert = require('power-assert');
-var describe = require('mocha.parallel');
+var parallel = require('mocha.parallel');
 
 var async = global.async || require('../../');
 var delay = require('../config').delay;
 var util = require('../util');
 
 function everyIterator(order) {
-
-  return function(num, callback) {
-
-    var self = this;
-
-    setTimeout(function() {
-
-      if (self && self.round) {
-        num = self.round(num);
-      }
-      order.push(num);
-      callback(num % 2);
-    }, num * delay);
-  };
-}
-
-function everyIteratorWithError(order) {
 
   return function(num, callback) {
 
@@ -56,35 +39,21 @@ function everyIteratorWithKey(order) {
         num = self.round(num);
       }
       order.push([num, key]);
-      callback(num % 2);
-    }, num * delay);
-  };
-}
-
-function everyIteratorWithKeyAndError(order) {
-
-  return function(num, key, callback) {
-
-    var self = this;
-
-    setTimeout(function() {
-
-      if (self && self.round) {
-        num = self.round(num);
-      }
-      order.push([num, key]);
       callback(null, num % 2);
     }, num * delay);
   };
 }
 
-describe('#every', function() {
+parallel('#every', function() {
 
   it('should execute iterator by collection of array', function(done) {
 
     var order = [];
     var collection = [1, 3, 2, 4];
-    async.every(collection, everyIterator(order), function(res) {
+    async.every(collection, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, false);
       assert.deepEqual(order, [1, 2]);
       done();
@@ -95,7 +64,10 @@ describe('#every', function() {
 
     var order = [];
     var collection = [1, 3, 1, 5];
-    async.every(collection, everyIterator(order), function(res) {
+    async.every(collection, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, true);
       assert.deepEqual(order, [1, 1, 3, 5]);
       done();
@@ -106,35 +78,7 @@ describe('#every', function() {
 
     var order = [];
     var collection = [1, 3, 2, 4];
-    async.every(collection, everyIteratorWithKey(order), function(res) {
-      assert.strictEqual(res, false);
-      assert.deepEqual(order, [
-        [1, 0],
-        [2, 2]
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of array and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = [1, 3, 2, 4];
-    async.every(collection, everyIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(res, false);
-      assert.deepEqual(order, [1, 2]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of array with passing index and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = [1, 3, 2, 4];
-    async.every(collection, everyIteratorWithKeyAndError(order), function(err, res) {
+    async.every(collection, everyIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -155,7 +99,10 @@ describe('#every', function() {
       b: 3,
       c: 2
     };
-    async.every(collection, everyIterator(order), function(res) {
+    async.every(collection, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, false);
       assert.deepEqual(order, [2]);
       done();
@@ -170,42 +117,7 @@ describe('#every', function() {
       b: 3,
       c: 2
     };
-    async.every(collection, everyIteratorWithKey(order), function(res) {
-      assert.strictEqual(res, false);
-      assert.deepEqual(order, [
-        [2, 'c']
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of Map and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = {
-      a: 4,
-      b: 3,
-      c: 2
-    };
-    async.every(collection, everyIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(res, false);
-      assert.deepEqual(order, [2]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of object with passing key and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = {
-      a: 4,
-      b: 3,
-      c: 2
-    };
-    async.every(collection, everyIteratorWithKeyAndError(order), function(err, res) {
+    async.every(collection, everyIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -224,7 +136,10 @@ describe('#every', function() {
     collection.set('a', 4);
     collection.set('b', 3);
     collection.set('c', 2);
-    async.every(collection, everyIterator(order), function(res) {
+    async.every(collection, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, false);
       assert.deepEqual(order, [2]);
       done();
@@ -238,40 +153,7 @@ describe('#every', function() {
     collection.set('a', 4);
     collection.set('b', 3);
     collection.set('c', 2);
-    async.every(collection, everyIteratorWithKey(order), function(res) {
-      assert.strictEqual(res, false);
-      assert.deepEqual(order, [
-        [2, 'c']
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of Map and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = new util.Map();
-    collection.set('a', 4);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.every(collection, everyIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(res, false);
-      assert.deepEqual(order, [2]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of Map with passing key and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = new util.Map();
-    collection.set('a', 4);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.every(collection, everyIteratorWithKeyAndError(order), function(err, res) {
+    async.every(collection, everyIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -292,7 +174,10 @@ describe('#every', function() {
       c: 2.6
     };
 
-    async.every(collection, everyIterator(order), function(res) {
+    async.every(collection, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, true);
       assert.deepEqual(order, [1.1, 2.6, 3.5]);
       done();
@@ -302,7 +187,10 @@ describe('#every', function() {
   it('should return response immediately if collection is empty', function(done) {
 
     var order = [];
-    async.every([], everyIterator(order), function(res) {
+    async.every([], everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, true);
       assert.deepEqual(order, []);
       done();
@@ -312,7 +200,10 @@ describe('#every', function() {
   it('should return response immediately if collection is function', function(done) {
 
     var order = [];
-    async.every(function() {}, everyIterator(order), function(res) {
+    async.every(function() {}, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, true);
       assert.deepEqual(order, []);
       done();
@@ -322,7 +213,10 @@ describe('#every', function() {
   it('should return response immediately if collection is undefined', function(done) {
 
     var order = [];
-    async.every(undefined, everyIterator(order), function(res) {
+    async.every(undefined, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, true);
       assert.deepEqual(order, []);
       done();
@@ -332,7 +226,10 @@ describe('#every', function() {
   it('should return response immediately if collection is null', function(done) {
 
     var order = [];
-    async.every(null, everyIterator(order), function(res) {
+    async.every(null, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, true);
       assert.deepEqual(order, []);
       done();
@@ -341,7 +238,7 @@ describe('#every', function() {
 
 });
 
-describe('#everySeries', function() {
+parallel.skip('#everySeries', function() {
 
   it('should execute iterator by collection of array', function(done) {
 
@@ -674,7 +571,7 @@ describe('#everySeries', function() {
 
 });
 
-describe('#everyLimit', function() {
+parallel.skip('#everyLimit', function() {
 
   it('should execute iterator by collection of array', function(done) {
 
