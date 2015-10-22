@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Namespace: someSeries</title>
+    <title>JSDoc: Namespace: omitSeries</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Namespace: someSeries</h1>
+    <h1 class="page-title">Namespace: omitSeries</h1>
 
     
 
@@ -31,7 +31,7 @@
         <h2>
             <span class="ancestors"><a href="async.html">async</a>.</span>
         
-        someSeries
+        omitSeries
         </h2>
         
     
@@ -74,7 +74,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="async.js.html">async.js</a>, <a href="async.js.html#line7140">line 7140</a>
+        <a href="async.js.html">async.js</a>, <a href="async.js.html#line2454">line 2454</a>
     </li></ul></dd>
     
 
@@ -91,114 +91,114 @@
             
     <pre class="prettyprint"><code>// array
 var order = [];
-var array = [1, 3, 2];
+var array = [1, 3, 2, 4];
 var iterator = function(num, done) {
   setTimeout(function() {
     order.push(num);
     done(null, num % 2);
   }, num * 10);
 };
-async.someSeries(array, iterator, function(err, res) {
-  console.log(res); // true
-  console.log(order); // [1]
+async.omitSeries(array, iterator, function(err, res) {
+  console.log(res); // { '2': 2, '3': 4 }
+  console.log(order); // [1, 3, 2, 4]
 });</code></pre>
 
     <pre class="prettyprint"><code>// array with index
 var order = [];
-var array = [1, 3, 2];
+var array = [1, 3, 2, 4];
 var iterator = function(num, index, done) {
   setTimeout(function() {
     order.push([num, index]);
     done(null, num % 2);
   }, num * 10);
 };
-async.someSeries(array, iterator, function(err, res) {
-  console.log(res); // true
-  console.log(order); // [[1, 0]]
+async.omitSeries(array, iterator, function(err, res) {
+  console.log(res); // { '2': 2, '3': 4 }
+  console.log(order); // [[0, 1], [3, 1], [2, 2], [4, 3]]
 });</code></pre>
 
     <pre class="prettyprint"><code>// array (not use error handling)
 var order = [];
-var array = [1, 3, 2];
+var array = [1, 3, 2, 4];
 var iterator = function(num, done) {
   setTimeout(function() {
     order.push(num);
     done(num % 2);
   }, num * 10);
 };
-async.someSeries(array, iterator, function(res) {
-  console.log(res); // true
-  console.log(order); // [1]
+async.omitSeries(array, iterator, function(res) {
+  console.log(res); // { '2': 2, '3': 4 }
+  console.log(order); // [1, 3, 2, 4]
 });</code></pre>
 
     <pre class="prettyprint"><code>// array with index (not use error handling)
 var order = [];
-var array = [1, 3, 2];
+var array = [1, 3, 2, 4];
 var iterator = function(num, index, done) {
   setTimeout(function() {
     order.push([num, index]);
     done(num % 2);
   }, num * 10);
 };
-async.someSeries(array, iterator, function(res) {
-  console.log(res); // true
-  console.log(order); // [[1, 0]]
+async.omitSeries(array, iterator, function(res) {
+  console.log(res); // { '2': 2, '3': 4 }
+  console.log(order); // [[0, 1], [3, 1], [2, 2], [4, 3]]
 });</code></pre>
 
     <pre class="prettyprint"><code>// object
 var order = [];
-var object = { a: 1, b: 3, c: 2 };
+var object = { a: 1, b: 3, c: 2, d: 4 };
 var iterator = function(num, done) {
   setTimeout(function() {
     order.push(num);
     done(null, num % 2);
   }, num * 10);
 };
-async.someSeries(object, iterator, function(err, res) {
-  console.log(res); // true
-  console.log(order); // [1]
+async.omitSeries(object, iterator, function(err, res) {
+  console.log(res); // { c: 2, d: 4 }
+  console.log(order); // [1, 3, 2, 4]
 });</code></pre>
 
     <pre class="prettyprint"><code>// object with key
 var order = [];
-var object = { a: 1, b: 3, c: 2 };
+var object = { a: 1, b: 3, c: 2, d: 4 };
 var iterator = function(num, key, done) {
   setTimeout(function() {
     order.push([num, key]);
     done(null, num % 2);
   }, num * 10);
 };
-async.someSeries(object, iterator, function(err, res) {
-  console.log(res); // true
-  console.log(order); // [[1, 'a']]
+async.omitSeries(object, iterator, function(err, res) {
+  console.log(res); // { c: 2, d: 4 }
+  console.log(order); // [[1, 'a'], [3, 'b'], [2, 'c'], [4, 'd']]
 });</code></pre>
 
     <pre class="prettyprint"><code>// object (not use error handling)
 var order = [];
-var object = { a: 1, b: 3, c: 2 };
+var object = { a: 1, b: 3, c: 2, d: 4 };
 var iterator = function(num, done) {
   setTimeout(function() {
     order.push(num);
     done(num % 2);
   }, num * 10);
 };
-async.someSeries(object, iterator, function(res) {
-  console.log(res); // true
-  console.log(order); // [1]
+async.omitSeries(object, iterator, function(res) {
+  console.log(res); // { c: 2, d: 4 }
+  console.log(order); // [1, 3, 2, 4]
 });</code></pre>
 
     <pre class="prettyprint"><code>// object with key (not use error handling)
 var order = [];
-var object = { a: 1, b: 3, c: 2 };
+var object = { a: 1, b: 3, c: 2, d: 4 };
 var iterator = function(num, key, done) {
   setTimeout(function() {
     order.push([num, key]);
     done(num % 2);
   }, num * 10);
 };
-async.someSeries(object, iterator, function(res) {
-  console.log(res); // true
-  console.log(order); // [[1, 'a']]
+async.omitSeries(object, iterator, function(res) {
+  console.log(res); // { c: 2, d: 4 }
+  console.log(order); // [[1, 'a'], [3, 'b'], [2, 'c'], [4, 'd']]
 });</code></pre>
 
         
