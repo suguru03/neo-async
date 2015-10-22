@@ -1,4 +1,4 @@
-# Neo-Async v1.5.1
+# Neo-Async v1.6.0
 
 [![npm](https://img.shields.io/npm/v/neo-async.svg)](https://www.npmjs.com/package/neo-async)
 [![Travis](https://img.shields.io/travis/suguru03/neo-async.svg)](https://travis-ci.org/suguru03/neo-async)
@@ -97,6 +97,9 @@ bower install neo-async
 - [`pick`](http://suguru03.github.io/neo-async/doc/async.pick.html) *
 - [`pickSeries`](http://suguru03.github.io/neo-async/doc/async.pickSeries.html) *
 - [`pickLimit`](http://suguru03.github.io/neo-async/doc/async.pickLimit.html) *
+- [`omit`](http://suguru03.github.io/neo-async/doc/async.omit.html) *
+- [`omitSeries`](http://suguru03.github.io/neo-async/doc/async.omitSeries.html) *
+- [`omitLimit`](http://suguru03.github.io/neo-async/doc/async.omitLimit.html) *
 - [`reduce`](http://suguru03.github.io/neo-async/doc/async.reduce.html)
 - [`inject`](http://suguru03.github.io/neo-async/doc/async.reduce.html) -> [`reduce`](http://suguru03.github.io/neo-async/doc/async.reduce.html)
 - [`foldl`](http://suguru03.github.io/neo-async/doc/async.reduce.html) -> [`reduce`](http://suguru03.github.io/neo-async/doc/async.reduce.html)
