@@ -97,6 +97,9 @@ bower install neo-async
 - [`pick`](http://suguru03.github.io/neo-async/doc/async.pick.html) *
 - [`pickSeries`](http://suguru03.github.io/neo-async/doc/async.pickSeries.html) *
 - [`pickLimit`](http://suguru03.github.io/neo-async/doc/async.pickLimit.html) *
+- [`omit`](http://suguru03.github.io/neo-async/doc/async.omit.html) *
+- [`omitSeries`](http://suguru03.github.io/neo-async/doc/async.omitSeries.html) *
+- [`omitLimit`](http://suguru03.github.io/neo-async/doc/async.omitLimit.html) *
 - [`reduce`](http://suguru03.github.io/neo-async/doc/async.reduce.html)
 - [`inject`](http://suguru03.github.io/neo-async/doc/async.reduce.html) -> [`reduce`](http://suguru03.github.io/neo-async/doc/async.reduce.html)
 - [`foldl`](http://suguru03.github.io/neo-async/doc/async.reduce.html) -> [`reduce`](http://suguru03.github.io/neo-async/doc/async.reduce.html)
