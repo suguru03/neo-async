@@ -18,26 +18,19 @@ gulp.task('gh-pages', function(done) {
   var asyncFile = fs.readFileSync(filepath, options);
   async.angelFall([
 
-    function(next) {
-      git.fetch('origin', '', next);
-    },
+    async.apply(git.fetch, 'origin', ''),
 
-    function(next) {
-      git.checkout('gh-pages', next);
-    },
+    async.apply(git.checkout, 'gh-pages'),
 
-    function(next) {
-      fs.writeFileSync(filepath, asyncFile, {
-        encoding: 'utf8'
-      });
-      jsdoc.create(next);
-    },
+    async.apply(fs.writeFile, filepath, asyncFile, {
+      encoding: 'utf8'
+    }),
 
-    function(next) {
-      git.status({
+    async.apply(jsdoc.create),
+
+    async.apply(git.status, {
         args: '-s ./doc'
-      }, next);
-    },
+    }),
 
     function(result, next) {
       if (!result) {
@@ -49,11 +42,9 @@ gulp.task('gh-pages', function(done) {
       }, next);
     },
 
-    function(next) {
-      git.exec({
+    async.apply(git.exec, {
         args: 'commit -m "docs(jsdoc): update jsdoc [v' + async.VERSION + ']"'
-      }, next);
-    },
+    }),
 
     checkoutMaster
   ], done);
