@@ -1,3 +1,33 @@
+<a name"v1.6.0"></a>
+## v1.6.0 (2015-10-22)
+
+
+#### Features
+
+* **omit:** add feature of `omit` ([bc4376be](https://github.com/suguru03/neo-async/commit/bc4376be))
+
+
+#### Other Changes
+
+* **README:** add `omit` to feature ([f80767e5](https://github.com/suguru03/neo-async/commit/f80767e5))
+
+<a name"v1.5.1"></a>
+### v1.5.1 (2015-10-15)
+
+
+#### Features
+
+* **mapvalues:** fix to use common function with `map` ([8ffa0448](https://github.com/suguru03/neo-async/commit/8ffa0448))
+
+
+#### Other Changes
+
+* **CHANGELOG:** v1.5.0 [ci skip] ([becacf81](https://github.com/suguru03/neo-async/commit/becacf81))
+* **async:** rename `length` to `size` ([623044db](https://github.com/suguru03/neo-async/commit/623044db))
+* **every:** add test case ([7440e354](https://github.com/suguru03/neo-async/commit/7440e354))
+* **test:** modify to use `mocha.parallel` ([10af3dbb](https://github.com/suguru03/neo-async/commit/10af3dbb))
+* **times:** fix test case ([b016ea6f](https://github.com/suguru03/neo-async/commit/b016ea6f))
+
 <a name"v1.5.0"></a>
 ## v1.5.0 (2015-09-10)
 
@@ -768,7 +798,7 @@
 * Modify waterfall function to respond quickly ([2d7af49c](https://github.com/suguru03/neo-async/commit/2d7af49c))
 
 <a name"v0.4.5"></a>
-### v0.4.5 (2015-09-10)
+### v0.4.5 (2015-10-23)
 
 
 #### Bug Fixes
