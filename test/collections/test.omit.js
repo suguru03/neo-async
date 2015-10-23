@@ -22,46 +22,12 @@ function omitIterator(order) {
         num = self.round(num);
       }
       order.push(num);
-      callback(num % 2);
-    }, num * delay);
-  };
-}
-
-function omitIteratorWithError(order) {
-
-  return function(num, callback) {
-
-    var self = this;
-
-    setTimeout(function() {
-
-      if (self && self.round) {
-        num = self.round(num);
-      }
-      order.push(num);
       callback(null, num % 2);
     }, num * delay);
   };
 }
 
 function omitIteratorWithKey(order) {
-
-  return function(num, key, callback) {
-
-    var self = this;
-
-    setTimeout(function() {
-
-      if (self && self.round) {
-        num = self.round(num);
-      }
-      order.push([num, key]);
-      callback(num % 2);
-    }, num * delay);
-  };
-}
-
-function omitIteratorWithKeyAndError(order) {
 
   return function(num, key, callback) {
 
@@ -84,7 +50,10 @@ parallel('#omit', function() {
 
     var order = [];
     var collection = [1, 3, 2, 4];
-    async.omit(collection, omitIterator(order), function(res) {
+    async.omit(collection, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         '2': 2,
@@ -99,45 +68,7 @@ parallel('#omit', function() {
 
     var order = [];
     var collection = [1, 3, 2, 4];
-    async.omit(collection, omitIteratorWithKey(order), function(res) {
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
-        '2': 2,
-        '3': 4
-      });
-      assert.deepEqual(order, [
-        [1, 0],
-        [2, 2],
-        [3, 1],
-        [4, 3]
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of array and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = [1, 3, 2, 4];
-    async.omit(collection, omitIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
-        '2': 2,
-        '3': 4
-      });
-      assert.deepEqual(order, [1, 2, 3, 4]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of array with passing index and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = [1, 3, 2, 4];
-    async.omit(collection, omitIteratorWithKeyAndError(order), function(err, res) {
+    async.omit(collection, omitIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -164,7 +95,10 @@ parallel('#omit', function() {
       b: 3,
       c: 2
     };
-    async.omit(collection, omitIterator(order), function(res) {
+    async.omit(collection, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         a: 4,
@@ -183,52 +117,7 @@ parallel('#omit', function() {
       b: 3,
       c: 2
     };
-    async.omit(collection, omitIteratorWithKey(order), function(res) {
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
-        a: 4,
-        c: 2
-      });
-      assert.deepEqual(order, [
-        [2, 'c'],
-        [3, 'b'],
-        [4, 'a']
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of object and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = {
-      a: 4,
-      b: 3,
-      c: 2
-    };
-    async.omit(collection, omitIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
-        a: 4,
-        c: 2
-      });
-      assert.deepEqual(order, [2, 3, 4]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of object with passing key and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = {
-      a: 4,
-      b: 3,
-      c: 2
-    };
-    async.omit(collection, omitIteratorWithKeyAndError(order), function(err, res) {
+    async.omit(collection, omitIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -253,7 +142,10 @@ parallel('#omit', function() {
     collection.set('a', 4);
     collection.set('b', 3);
     collection.set('c', 2);
-    async.omit(collection, omitIterator(order), function(res) {
+    async.omit(collection, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         a: 4,
@@ -271,50 +163,7 @@ parallel('#omit', function() {
     collection.set('a', 4);
     collection.set('b', 3);
     collection.set('c', 2);
-    async.omit(collection, omitIteratorWithKey(order), function(res) {
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
-        a: 4,
-        c: 2
-      });
-      assert.deepEqual(order, [
-        [2, 'c'],
-        [3, 'b'],
-        [4, 'a']
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of Map and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = new util.Map();
-    collection.set('a', 4);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.omit(collection, omitIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
-        a: 4,
-        c: 2
-      });
-      assert.deepEqual(order, [2, 3, 4]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of Map with passing key and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = new util.Map();
-    collection.set('a', 4);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.omit(collection, omitIteratorWithKeyAndError(order), function(err, res) {
+    async.omit(collection, omitIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -341,7 +190,10 @@ parallel('#omit', function() {
       c: 2.6
     };
 
-    async.omit(collection, omitIterator(order), function(res) {
+    async.omit(collection, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, [1.1, 2.6, 3.5]);
@@ -522,7 +374,10 @@ parallel('#omit', function() {
 
     var order = [];
     var array = [];
-    async.omit(array, omitIterator(order), function(res) {
+    async.omit(array, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
@@ -534,7 +389,10 @@ parallel('#omit', function() {
 
     var order = [];
     var object = {};
-    async.omit(object, omitIterator(order), function(res) {
+    async.omit(object, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
@@ -545,7 +403,10 @@ parallel('#omit', function() {
   it('should return response immediately if collection is function', function(done) {
 
     var order = [];
-    async.omit(function() {}, omitIterator(order), function(res) {
+    async.omit(function() {}, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
@@ -556,7 +417,10 @@ parallel('#omit', function() {
   it('should return response immediately if collection is undefined', function(done) {
 
     var order = [];
-    async.omit(undefined, omitIterator(order), function(res) {
+    async.omit(undefined, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
@@ -567,7 +431,10 @@ parallel('#omit', function() {
   it('should return response immediately if collection is null', function(done) {
 
     var order = [];
-    async.omit(null, omitIterator(order), function(res) {
+    async.omit(null, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
@@ -583,7 +450,10 @@ parallel('#omitSeries', function() {
 
     var order = [];
     var collection = [1, 3, 2, 4];
-    async.omitSeries(collection, omitIterator(order), function(res) {
+    async.omitSeries(collection, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         '2': 2,
@@ -598,45 +468,7 @@ parallel('#omitSeries', function() {
 
     var order = [];
     var collection = [1, 3, 2, 4];
-    async.omitSeries(collection, omitIteratorWithKey(order), function(res) {
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
-        '2': 2,
-        '3': 4
-      });
-      assert.deepEqual(order, [
-        [1, 0],
-        [3, 1],
-        [2, 2],
-        [4, 3]
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator to series by collection of array and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = [1, 3, 2, 4];
-    async.omitSeries(collection, omitIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
-        '2': 2,
-        '3': 4
-      });
-      assert.deepEqual(order, [1, 3, 2, 4]);
-      done();
-    });
-  });
-
-  it('should execute iterator to series by collection of array with passing index and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = [1, 3, 2, 4];
-    async.omitSeries(collection, omitIteratorWithKeyAndError(order), function(err, res) {
+    async.omitSeries(collection, omitIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -663,7 +495,10 @@ parallel('#omitSeries', function() {
       b: 3,
       c: 2
     };
-    async.omitSeries(collection, omitIterator(order), function(res) {
+    async.omitSeries(collection, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         a: 4,
@@ -682,52 +517,7 @@ parallel('#omitSeries', function() {
       b: 3,
       c: 2
     };
-    async.omitSeries(collection, omitIteratorWithKey(order), function(res) {
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
-        a: 4,
-        c: 2
-      });
-      assert.deepEqual(order, [
-        [4, 'a'],
-        [3, 'b'],
-        [2, 'c']
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator to series by collection of object and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = {
-      a: 4,
-      b: 3,
-      c: 2
-    };
-    async.omitSeries(collection, omitIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
-        a: 4,
-        c: 2
-      });
-      assert.deepEqual(order, [4, 3, 2]);
-      done();
-    });
-  });
-
-  it('should execute iterator to series by collection of object with passing key and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = {
-      a: 4,
-      b: 3,
-      c: 2
-    };
-    async.omitSeries(collection, omitIteratorWithKeyAndError(order), function(err, res) {
+    async.omitSeries(collection, omitIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -752,7 +542,10 @@ parallel('#omitSeries', function() {
     collection.set('a', 4);
     collection.set('b', 3);
     collection.set('c', 2);
-    async.omitSeries(collection, omitIterator(order), function(res) {
+    async.omitSeries(collection, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         a: 4,
@@ -770,50 +563,7 @@ parallel('#omitSeries', function() {
     collection.set('a', 4);
     collection.set('b', 3);
     collection.set('c', 2);
-    async.omitSeries(collection, omitIteratorWithKey(order), function(res) {
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
-        a: 4,
-        c: 2
-      });
-      assert.deepEqual(order, [
-        [4, 'a'],
-        [3, 'b'],
-        [2, 'c']
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator to series by collection of Map and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = new util.Map();
-    collection.set('a', 4);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.omitSeries(collection, omitIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
-        a: 4,
-        c: 2
-      });
-      assert.deepEqual(order, [4, 3, 2]);
-      done();
-    });
-  });
-
-  it('should execute iterator to series by collection of Map with passing key and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = new util.Map();
-    collection.set('a', 4);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.omitSeries(collection, omitIteratorWithKeyAndError(order), function(err, res) {
+    async.omitSeries(collection, omitIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -840,7 +590,10 @@ parallel('#omitSeries', function() {
       c: 2.6
     };
 
-    async.omitSeries(collection, omitIterator(order), function(res) {
+    async.omitSeries(collection, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, [1.1, 3.5, 2.6]);
@@ -849,27 +602,6 @@ parallel('#omitSeries', function() {
   });
 
   it('should execute on asynchronous', function(done) {
-
-    var sync = true;
-    var collection = {
-      a: 1,
-      b: 3,
-      c: 2
-    };
-    var iterator = function(n, key, callback) {
-      callback(n % 2);
-    };
-    async.omitSeries(collection, iterator, function(res) {
-      assert.strictEqual(sync, false);
-      assert.deepEqual(res, {
-        c: 2
-      });
-      done();
-    });
-    sync = false;
-  });
-
-  it('should execute on asynchronous and get 2nd callback argument', function(done) {
 
     var sync = true;
     var collection = {
@@ -1062,7 +794,10 @@ parallel('#omitSeries', function() {
 
     var order = [];
     var array = [];
-    async.omitSeries(array, omitIterator(order), function(res) {
+    async.omitSeries(array, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
       done();
@@ -1073,7 +808,10 @@ parallel('#omitSeries', function() {
 
     var order = [];
     var object = {};
-    async.omitSeries(object, omitIterator(order), function(res) {
+    async.omitSeries(object, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
@@ -1084,7 +822,10 @@ parallel('#omitSeries', function() {
   it('should return response immediately if collection is function', function(done) {
 
     var order = [];
-    async.omitSeries(function() {}, omitIterator(order), function(res) {
+    async.omitSeries(function() {}, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
@@ -1095,7 +836,10 @@ parallel('#omitSeries', function() {
   it('should return response immediately if collection is undefined', function(done) {
 
     var order = [];
-    async.omitSeries(undefined, omitIterator(order), function(res) {
+    async.omitSeries(undefined, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
@@ -1106,7 +850,10 @@ parallel('#omitSeries', function() {
   it('should return response immediately if collection is null', function(done) {
 
     var order = [];
-    async.omitSeries(null, omitIterator(order), function(res) {
+    async.omitSeries(null, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
@@ -1123,7 +870,10 @@ parallel('#omitLimit', function() {
     var order = [];
     var collection = [1, 5, 3, 2, 4];
 
-    async.omitLimit(collection, 2, omitIterator(order), function(res) {
+    async.omitLimit(collection, 2, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         '3': 2,
@@ -1139,48 +889,7 @@ parallel('#omitLimit', function() {
     var order = [];
     var collection = [1, 5, 3, 2, 4];
 
-    async.omitLimit(collection, 2, omitIteratorWithKey(order), function(res) {
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
-        '3': 2,
-        '4': 4
-      });
-      assert.deepEqual(order, [
-        [1, 0],
-        [3, 2],
-        [5, 1],
-        [2, 3],
-        [4, 4]
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator in limited by collection of array and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = [1, 5, 3, 2, 4];
-
-    async.omitLimit(collection, 2, omitIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
-        '3': 2,
-        '4': 4
-      });
-      assert.deepEqual(order, [1, 3, 5, 2, 4]);
-      done();
-    });
-  });
-
-  it('should execute iterator in limited by collection of array with passing index and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = [1, 5, 3, 2, 4];
-
-    async.omitLimit(collection, 2, omitIteratorWithKeyAndError(order), function(err, res) {
+    async.omitLimit(collection, 2, omitIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -1210,7 +919,10 @@ parallel('#omitLimit', function() {
       d: 2,
       e: 4
     };
-    async.omitLimit(collection, 2, omitIterator(order), function(res) {
+    async.omitLimit(collection, 2, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         d: 2,
@@ -1231,58 +943,7 @@ parallel('#omitLimit', function() {
       d: 2,
       e: 4
     };
-    async.omitLimit(collection, 2, omitIteratorWithKey(order), function(res) {
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
-        d: 2,
-        e: 4
-      });
-      assert.deepEqual(order, [
-        [1, 'a'],
-        [3, 'c'],
-        [5, 'b'],
-        [2, 'd'],
-        [4, 'e']
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator in limited by collection of object and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = {
-      a: 1,
-      b: 5,
-      c: 3,
-      d: 2,
-      e: 4
-    };
-    async.omitLimit(collection, 2, omitIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
-        d: 2,
-        e: 4
-      });
-      assert.deepEqual(order, [1, 3, 5, 2, 4]);
-      done();
-    });
-  });
-
-  it('should execute iterator in limited by collection of collection with passing key and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = {
-      a: 1,
-      b: 5,
-      c: 3,
-      d: 2,
-      e: 4
-    };
-    async.omitLimit(collection, 2, omitIteratorWithKeyAndError(order), function(err, res) {
+    async.omitLimit(collection, 2, omitIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -1311,7 +972,10 @@ parallel('#omitLimit', function() {
     collection.set('c', 3);
     collection.set('d', 2);
     collection.set('e', 4);
-    async.omitLimit(collection, 2, omitIterator(order), function(res) {
+    async.omitLimit(collection, 2, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         d: 2,
@@ -1331,56 +995,7 @@ parallel('#omitLimit', function() {
     collection.set('c', 3);
     collection.set('d', 2);
     collection.set('e', 4);
-    async.omitLimit(collection, 2, omitIteratorWithKey(order), function(res) {
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
-        d: 2,
-        e: 4
-      });
-      assert.deepEqual(order, [
-        [1, 'a'],
-        [3, 'c'],
-        [5, 'b'],
-        [2, 'd'],
-        [4, 'e']
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator in limited by collection of Map and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = new util.Map();
-    collection.set('a', 1);
-    collection.set('b', 5);
-    collection.set('c', 3);
-    collection.set('d', 2);
-    collection.set('e', 4);
-    async.omitLimit(collection, 2, omitIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
-        d: 2,
-        e: 4
-      });
-      assert.deepEqual(order, [1, 3, 5, 2, 4]);
-      done();
-    });
-  });
-
-  it('should execute iterator in limited by collection of Map with passing key and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = new util.Map();
-    collection.set('a', 1);
-    collection.set('b', 5);
-    collection.set('c', 3);
-    collection.set('d', 2);
-    collection.set('e', 4);
-    async.omitLimit(collection, 2, omitIteratorWithKeyAndError(order), function(err, res) {
+    async.omitLimit(collection, 2, omitIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -1409,7 +1024,10 @@ parallel('#omitLimit', function() {
       c: 2.7
     };
 
-    async.omitLimit(collection, 2, omitIterator(order), function(res) {
+    async.omitLimit(collection, 2, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, [1.1, 3.5, 2.7]);
@@ -1422,7 +1040,10 @@ parallel('#omitLimit', function() {
     var order = [];
     var collection = [1, 3, 4, 2, 3, 1, 3];
 
-    async.omitLimit(collection, Infinity, omitIterator(order), function(res) {
+    async.omitLimit(collection, Infinity, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         '2': 4,
@@ -1434,30 +1055,6 @@ parallel('#omitLimit', function() {
   });
 
   it('should execute on asynchronous', function(done) {
-
-    var sync = true;
-    var collection = {
-      a: 1,
-      b: 3,
-      c: 2,
-      d: 4,
-      e: 5
-    };
-    var iterator = function(n, key, callback) {
-      callback(n % 2);
-    };
-    async.omitLimit(collection, 2, iterator, function(res) {
-      assert.strictEqual(sync, false);
-      assert.deepEqual(res, {
-        c: 2,
-        d: 4
-      });
-      done();
-    });
-    sync = false;
-  });
-
-  it('should execute on asynchronous and get 2nd callback argument', function(done) {
 
     var sync = true;
     var collection = {
@@ -1650,7 +1247,10 @@ parallel('#omitLimit', function() {
 
     var order = [];
     var array = [];
-    async.omitLimit(array, 3, omitIterator(order), function(res) {
+    async.omitLimit(array, 3, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
@@ -1662,7 +1262,10 @@ parallel('#omitLimit', function() {
 
     var order = [];
     var object = {};
-    async.omitLimit(object, 2, omitIterator(order), function(res) {
+    async.omitLimit(object, 2, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
@@ -1673,7 +1276,10 @@ parallel('#omitLimit', function() {
   it('should return response immediately if collection is function', function(done) {
 
     var order = [];
-    async.omitLimit(function() {}, 2, omitIterator(order), function(res) {
+    async.omitLimit(function() {}, 2, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
@@ -1684,7 +1290,10 @@ parallel('#omitLimit', function() {
   it('should return response immediately if collection is undefined', function(done) {
 
     var order = [];
-    async.omitLimit(undefined, 2, omitIterator(order), function(res) {
+    async.omitLimit(undefined, 2, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
@@ -1695,7 +1304,10 @@ parallel('#omitLimit', function() {
   it('should return response immediately if collection is null', function(done) {
 
     var order = [];
-    async.omitLimit(null, 2, omitIterator(order), function(res) {
+    async.omitLimit(null, 2, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
@@ -1707,7 +1319,10 @@ parallel('#omitLimit', function() {
 
     var order = [];
     var collection = [1, 3, 2];
-    async.omitLimit(collection, 0, omitIterator(order), function(res) {
+    async.omitLimit(collection, 0, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
@@ -1719,7 +1334,10 @@ parallel('#omitLimit', function() {
 
     var order = [];
     var collection = [1, 3, 2];
-    async.omitLimit(collection, undefined, omitIterator(order), function(res) {
+    async.omitLimit(collection, undefined, omitIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       assert.deepEqual(order, []);
