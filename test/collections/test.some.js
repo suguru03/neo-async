@@ -20,46 +20,12 @@ function someIterator(order) {
         num = self.round(num);
       }
       order.push(num);
-      callback(num % 2);
-    }, num * delay);
-  };
-}
-
-function someIteratorWithError(order) {
-
-  return function(num, callback) {
-
-    var self = this;
-
-    setTimeout(function() {
-
-      if (self && self.round) {
-        num = self.round(num);
-      }
-      order.push(num);
       callback(null, num % 2);
     }, num * delay);
   };
 }
 
 function someIteratorWithKey(order) {
-
-  return function(num, key, callback) {
-
-    var self = this;
-
-    setTimeout(function() {
-
-      if (self && self.round) {
-        num = self.round(num);
-      }
-      order.push([num, key]);
-      callback(num % 2);
-    }, num * delay);
-  };
-}
-
-function someIteratorWithKeyAndError(order) {
 
   return function(num, key, callback) {
 
@@ -82,7 +48,10 @@ parallel('#some', function() {
 
     var order = [];
     var collection = [1, 3, 2, 4];
-    async.some(collection, someIterator(order), function(res) {
+    async.some(collection, someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.ok(res);
       assert.deepEqual(order, [1]);
       done();
@@ -93,34 +62,7 @@ parallel('#some', function() {
 
     var order = [];
     var collection = [1, 3, 2, 4];
-    async.some(collection, someIteratorWithKey(order), function(res) {
-      assert.ok(res);
-      assert.deepEqual(order, [
-        [1, 0]
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of array and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = [1, 3, 2, 4];
-    async.some(collection, someIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.ok(res);
-      assert.deepEqual(order, [1]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of array with passing index and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = [1, 3, 2, 4];
-    async.some(collection, someIteratorWithKeyAndError(order), function(err, res) {
+    async.some(collection, someIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -140,7 +82,10 @@ parallel('#some', function() {
       b: 3,
       c: 2
     };
-    async.some(collection, someIterator(order), function(res) {
+    async.some(collection, someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.ok(res);
       assert.deepEqual(order, [2, 3]);
       done();
@@ -155,43 +100,7 @@ parallel('#some', function() {
       b: 3,
       c: 2
     };
-    async.some(collection, someIteratorWithKey(order), function(res) {
-      assert.ok(res);
-      assert.deepEqual(order, [
-        [2, 'c'],
-        [3, 'b']
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of object and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = {
-      a: 5,
-      b: 3,
-      c: 2
-    };
-    async.some(collection, someIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.ok(res);
-      assert.deepEqual(order, [2, 3]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of object with passing key and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = {
-      a: 5,
-      b: 3,
-      c: 2
-    };
-    async.some(collection, someIteratorWithKeyAndError(order), function(err, res) {
+    async.some(collection, someIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -211,7 +120,10 @@ parallel('#some', function() {
     collection.set('a', 5);
     collection.set('b', 3);
     collection.set('c', 2);
-    async.some(collection, someIterator(order), function(res) {
+    async.some(collection, someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.ok(res);
       assert.deepEqual(order, [2, 3]);
       done();
@@ -225,41 +137,7 @@ parallel('#some', function() {
     collection.set('a', 5);
     collection.set('b', 3);
     collection.set('c', 2);
-    async.some(collection, someIteratorWithKey(order), function(res) {
-      assert.ok(res);
-      assert.deepEqual(order, [
-        [2, 'c'],
-        [3, 'b']
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of Map and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = new util.Map();
-    collection.set('a', 5);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.some(collection, someIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.ok(res);
-      assert.deepEqual(order, [2, 3]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of Map with passing key and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = new util.Map();
-    collection.set('a', 5);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.some(collection, someIteratorWithKeyAndError(order), function(err, res) {
+    async.some(collection, someIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -281,7 +159,10 @@ parallel('#some', function() {
       c: 2.6
     };
 
-    async.some(collection, someIterator(order), function(res) {
+    async.some(collection, someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.ok(res);
       assert.deepEqual(order, [1.1]);
       done();
@@ -291,7 +172,10 @@ parallel('#some', function() {
   it('should return response immediately if collection is empty', function(done) {
 
     var order = [];
-    async.some([], someIterator(order), function(res) {
+    async.some([], someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, false);
       assert.deepEqual(order, []);
       done();
@@ -301,7 +185,10 @@ parallel('#some', function() {
   it('should return response immediately if collection is function', function(done) {
 
     var order = [];
-    async.some(function() {}, someIterator(order), function(res) {
+    async.some(function() {}, someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, false);
       assert.deepEqual(order, []);
       done();
@@ -311,7 +198,10 @@ parallel('#some', function() {
   it('should return response immediately if collection is undefined', function(done) {
 
     var order = [];
-    async.some(undefined, someIterator(order), function(res) {
+    async.some(undefined, someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, false);
       assert.deepEqual(order, []);
       done();
@@ -321,7 +211,10 @@ parallel('#some', function() {
   it('should return response immediately if collection is null', function(done) {
 
     var order = [];
-    async.some(null, someIterator(order), function(res) {
+    async.some(null, someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, false);
       assert.deepEqual(order, []);
       done();
@@ -336,7 +229,10 @@ parallel('#someSeries', function() {
 
     var order = [];
     var collection = [1, 3, 2, 4];
-    async.someSeries(collection, someIterator(order), function(res) {
+    async.someSeries(collection, someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.ok(res);
       assert.deepEqual(order, [1]);
       done();
@@ -347,34 +243,7 @@ parallel('#someSeries', function() {
 
     var order = [];
     var collection = [1, 3, 2, 4];
-    async.someSeries(collection, someIteratorWithKey(order), function(res) {
-      assert.ok(res);
-      assert.deepEqual(order, [
-        [1, 0]
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of array and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = [1, 3, 2, 4];
-    async.someSeries(collection, someIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.ok(res);
-      assert.deepEqual(order, [1]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of array with passing index and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = [1, 3, 2, 4];
-    async.someSeries(collection, someIteratorWithKeyAndError(order), function(err, res) {
+    async.someSeries(collection, someIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -394,7 +263,10 @@ parallel('#someSeries', function() {
       b: 3,
       c: 2
     };
-    async.someSeries(collection, someIterator(order), function(res) {
+    async.someSeries(collection, someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.ok(res);
       assert.deepEqual(order, [5]);
       done();
@@ -409,42 +281,7 @@ parallel('#someSeries', function() {
       b: 3,
       c: 2
     };
-    async.someSeries(collection, someIteratorWithKey(order), function(res) {
-      assert.ok(res);
-      assert.deepEqual(order, [
-        [5, 'a']
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of object and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = {
-      a: 5,
-      b: 3,
-      c: 2
-    };
-    async.someSeries(collection, someIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.ok(res);
-      assert.deepEqual(order, [5]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of object with passing key and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = {
-      a: 5,
-      b: 3,
-      c: 2
-    };
-    async.someSeries(collection, someIteratorWithKeyAndError(order), function(err, res) {
+    async.someSeries(collection, someIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -463,7 +300,10 @@ parallel('#someSeries', function() {
     collection.set('a', 5);
     collection.set('b', 3);
     collection.set('c', 2);
-    async.someSeries(collection, someIterator(order), function(res) {
+    async.someSeries(collection, someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.ok(res);
       assert.deepEqual(order, [5]);
       done();
@@ -477,40 +317,7 @@ parallel('#someSeries', function() {
     collection.set('a', 5);
     collection.set('b', 3);
     collection.set('c', 2);
-    async.someSeries(collection, someIteratorWithKey(order), function(res) {
-      assert.ok(res);
-      assert.deepEqual(order, [
-        [5, 'a']
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of Map and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = new util.Map();
-    collection.set('a', 5);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.someSeries(collection, someIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.ok(res);
-      assert.deepEqual(order, [5]);
-      done();
-    });
-  });
-
-  it('should execute iterator by collection of Map with passing key and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = new util.Map();
-    collection.set('a', 5);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.someSeries(collection, someIteratorWithKeyAndError(order), function(err, res) {
+    async.someSeries(collection, someIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -531,7 +338,10 @@ parallel('#someSeries', function() {
       c: 2.6
     };
 
-    async.someSeries(collection, someIterator(order), function(res) {
+    async.someSeries(collection, someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.ok(res);
       assert.deepEqual(order, [1.1]);
       done();
@@ -539,25 +349,6 @@ parallel('#someSeries', function() {
   });
 
   it('should execute on asynchronous', function(done) {
-
-    var sync = true;
-    var collection = {
-      a: 1,
-      b: 3,
-      c: 2
-    };
-    var iterator = function(n, key, callback) {
-      callback(key === 'c');
-    };
-    async.someSeries(collection, iterator, function(res) {
-      assert.strictEqual(sync, false);
-      assert.strictEqual(res, true);
-      done();
-    });
-    sync = false;
-  });
-
-  it('should execute on asynchronous and get 2nd callback argument', function(done) {
 
     var sync = true;
     var collection = {
@@ -582,7 +373,10 @@ parallel('#someSeries', function() {
   it('should return response immediately if collection is empty', function(done) {
 
     var order = [];
-    async.someSeries([], someIterator(order), function(res) {
+    async.someSeries([], someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, false);
       assert.deepEqual(order, []);
       done();
@@ -592,7 +386,10 @@ parallel('#someSeries', function() {
   it('should return response immediately if collection is function', function(done) {
 
     var order = [];
-    async.someSeries(function() {}, someIterator(order), function(res) {
+    async.someSeries(function() {}, someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, false);
       assert.deepEqual(order, []);
       done();
@@ -603,7 +400,10 @@ parallel('#someSeries', function() {
   it('should return response immediately if collection is undefined', function(done) {
 
     var order = [];
-    async.someSeries(undefined, someIterator(order), function(res) {
+    async.someSeries(undefined, someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, false);
       assert.deepEqual(order, []);
       done();
@@ -613,7 +413,10 @@ parallel('#someSeries', function() {
   it('should return response immediately if collection is null', function(done) {
 
     var order = [];
-    async.someSeries(null, someIterator(order), function(res) {
+    async.someSeries(null, someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, false);
       assert.deepEqual(order, []);
       done();
@@ -629,7 +432,10 @@ parallel('#someLimit', function() {
     var order = [];
     var collection = [2, 4, 3, 2];
 
-    async.someLimit(collection, 2, someIterator(order), function(res) {
+    async.someLimit(collection, 2, someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.ok(res);
       assert.deepEqual(order, [2, 4, 3]);
       done();
@@ -641,38 +447,7 @@ parallel('#someLimit', function() {
     var order = [];
     var collection = [2, 4, 3, 2];
 
-    async.someLimit(collection, 2, someIteratorWithKey(order), function(res) {
-      assert.ok(res);
-      assert.deepEqual(order, [
-        [2, 0],
-        [4, 1],
-        [3, 2]
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator in limited by collection of array and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = [2, 4, 3, 2];
-
-    async.someLimit(collection, 2, someIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.ok(res);
-      assert.deepEqual(order, [2, 4, 3]);
-      done();
-    });
-  });
-
-  it('should execute iterator in limited by collection of array with passing index and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = [2, 4, 3, 2];
-
-    async.someLimit(collection, 2, someIteratorWithKeyAndError(order), function(err, res) {
+    async.someLimit(collection, 2, someIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -695,7 +470,10 @@ parallel('#someLimit', function() {
       c: 3,
       d: 2
     };
-    async.someLimit(collection, 2, someIterator(order), function(res) {
+    async.someLimit(collection, 2, someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.ok(res);
       assert.deepEqual(order, [2, 4, 3]);
       done();
@@ -711,32 +489,16 @@ parallel('#someLimit', function() {
       c: 3,
       d: 2
     };
-    async.someLimit(collection, 2, someIteratorWithKey(order), function(res) {
+    async.someLimit(collection, 2, someIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.ok(res);
       assert.deepEqual(order, [
         [2, 'a'],
         [4, 'b'],
         [3, 'c']
       ]);
-      done();
-    });
-  });
-
-  it('should execute iterator in limited by collection of object and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = {
-      a: 2,
-      b: 4,
-      c: 3,
-      d: 2
-    };
-    async.someLimit(collection, 2, someIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.ok(res);
-      assert.deepEqual(order, [2, 4, 3]);
       done();
     });
   });
@@ -749,7 +511,10 @@ parallel('#someLimit', function() {
     collection.set('b', 4);
     collection.set('c', 3);
     collection.set('d', 2);
-    async.someLimit(collection, 2, someIterator(order), function(res) {
+    async.someLimit(collection, 2, someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.ok(res);
       assert.deepEqual(order, [2, 4, 3]);
       done();
@@ -764,44 +529,7 @@ parallel('#someLimit', function() {
     collection.set('b', 4);
     collection.set('c', 3);
     collection.set('d', 2);
-    async.someLimit(collection, 2, someIteratorWithKey(order), function(res) {
-      assert.ok(res);
-      assert.deepEqual(order, [
-        [2, 'a'],
-        [4, 'b'],
-        [3, 'c']
-      ]);
-      done();
-    });
-  });
-
-  it('should execute iterator in limited by collection of Map and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = new util.Map();
-    collection.set('a', 2);
-    collection.set('b', 4);
-    collection.set('c', 3);
-    collection.set('d', 2);
-    async.someLimit(collection, 2, someIteratorWithError(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.ok(res);
-      assert.deepEqual(order, [2, 4, 3]);
-      done();
-    });
-  });
-
-  it('should execute iterator in limited by collection of Map with passing key and get 2nd callback argument', function(done) {
-
-    var order = [];
-    var collection = new util.Map();
-    collection.set('a', 2);
-    collection.set('b', 4);
-    collection.set('c', 3);
-    collection.set('d', 2);
-    async.someLimit(collection, 2, someIteratorWithKeyAndError(order), function(err, res) {
+    async.someLimit(collection, 2, someIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -824,7 +552,10 @@ parallel('#someLimit', function() {
       c: 2.7
     };
 
-    async.someLimit(collection, 2, someIterator(order), function(res) {
+    async.someLimit(collection, 2, someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.ok(res);
       assert.deepEqual(order, [1.1]);
       done();
@@ -836,7 +567,10 @@ parallel('#someLimit', function() {
     var order = [];
     var collection = [2, 3, 1];
 
-    async.someLimit(collection, Infinity, someIterator(order), function(res) {
+    async.someLimit(collection, Infinity, someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.ok(res);
       assert.deepEqual(order, [1]);
       done();
@@ -844,27 +578,6 @@ parallel('#someLimit', function() {
   });
 
   it('should execute on asynchronous', function(done) {
-
-    var sync = true;
-    var collection = {
-      a: 1,
-      b: 3,
-      c: 2,
-      d: 4,
-      e: 5
-    };
-    var iterator = function(n, key, callback) {
-      callback(key === 'e');
-    };
-    async.someLimit(collection, 2, iterator, function(res) {
-      assert.strictEqual(sync, false);
-      assert.strictEqual(res, true);
-      done();
-    });
-    sync = false;
-  });
-
-  it('should execute on asynchronous and get 2nd callback argument', function(done) {
 
     var sync = true;
     var collection = {
@@ -891,7 +604,10 @@ parallel('#someLimit', function() {
   it('should return response immediately if collection is empty', function(done) {
 
     var order = [];
-    async.someLimit([], 2, someIterator(order), function(res) {
+    async.someLimit([], 2, someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, false);
       assert.deepEqual(order, []);
       done();
@@ -901,7 +617,10 @@ parallel('#someLimit', function() {
   it('should return response immediately if collection is function', function(done) {
 
     var order = [];
-    async.someLimit(function() {}, 2, someIterator(order), function(res) {
+    async.someLimit(function() {}, 2, someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, false);
       assert.deepEqual(order, []);
       done();
@@ -911,7 +630,10 @@ parallel('#someLimit', function() {
   it('should return response immediately if collection is undefined', function(done) {
 
     var order = [];
-    async.someLimit(undefined, 2, someIterator(order), function(res) {
+    async.someLimit(undefined, 2, someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, false);
       assert.deepEqual(order, []);
       done();
@@ -921,7 +643,10 @@ parallel('#someLimit', function() {
   it('should return response immediately if collection is null', function(done) {
 
     var order = [];
-    async.someLimit(null, 2, someIterator(order), function(res) {
+    async.someLimit(null, 2, someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, false);
       assert.deepEqual(order, []);
       done();
@@ -932,7 +657,10 @@ parallel('#someLimit', function() {
 
     var order = [];
     var collection = [1, 3, 2];
-    async.someLimit(collection, 0, someIterator(order), function(res) {
+    async.someLimit(collection, 0, someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, false);
       assert.deepEqual(order, []);
       done();
@@ -943,7 +671,10 @@ parallel('#someLimit', function() {
 
     var order = [];
     var collection = [1, 3, 2];
-    async.someLimit(collection, undefined, someIterator(order), function(res) {
+    async.someLimit(collection, undefined, someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
       assert.strictEqual(res, false);
       assert.deepEqual(order, []);
       done();
