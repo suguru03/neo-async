@@ -521,6 +521,61 @@ parallel('#queue', function() {
     };
   });
 
+  it('should get workers list', function(done) {
+    var order = [];
+    var q = async.queue(function(task, callback) {
+      var name = task.name;
+      order.push(['process', name]);
+      setTimeout(function() {
+        order.push(['called', name]);
+        callback();
+      }, 100);
+    }, 5);
+
+    q.pause();
+    _.times(10, function(n) {
+      q.push({
+        name: ++n
+      });
+    });
+    setTimeout(q.resume, 100);
+    setTimeout(function() {
+      var list = q.workersList();
+      assert.strictEqual(list.length, 5);
+      assert.strictEqual(list[0].data.name, 6);
+      assert.strictEqual(list[1].data.name, 7);
+      assert.strictEqual(list[2].data.name, 8);
+      assert.strictEqual(list[3].data.name, 9);
+      assert.strictEqual(list[4].data.name, 10);
+    }, 250);
+
+    q.drain = function() {
+      assert.deepEqual(order, [
+        ['process', 1],
+        ['process', 2],
+        ['process', 3],
+        ['process', 4],
+        ['process', 5],
+        ['called', 1],
+        ['process', 6],
+        ['called', 2],
+        ['process', 7],
+        ['called', 3],
+        ['process', 8],
+        ['called', 4],
+        ['process', 9],
+        ['called', 5],
+        ['process', 10],
+        ['called', 6],
+        ['called', 7],
+        ['called', 8],
+        ['called', 9],
+        ['called', 10]
+      ]);
+      done();
+    };
+  });
+
 });
 
 parallel('#priorityQueue', function() {
