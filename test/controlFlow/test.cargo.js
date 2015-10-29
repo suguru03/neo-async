@@ -212,9 +212,47 @@ parallel('#cargo', function() {
       ]);
       assert.strictEqual(drainCounter, 2);
       assert.ok(saturated);
+      assert.ok(empty);
       done();
     }, 100);
 
+  });
+
+  it('should get workers list', function(done) {
+
+    var order = [];
+    var workersList = [];
+    var tasks = [0, 1, 2, 3, 4];
+    var payload = 3;
+    var worker = function(tasks, callback) {
+      order.push(tasks);
+      workersList.push(c.workersList());
+      callback();
+    };
+    var c = async.cargo(worker, payload);
+    c.push(tasks);
+    c.drain = function() {
+      assert.deepEqual(order, [
+        [0, 1, 2],
+        [3, 4]
+      ]);
+      var noop = _.get(workersList, [0, 0, 'callback']);
+      assert.deepEqual(workersList, [
+        [{
+          data: 0, callback: noop
+        }, {
+          data: 1, callback: noop
+        }, {
+          data: 2, callback: noop
+        }],
+        [{
+          data: 3, callback: noop
+        }, {
+          data: 4, callback: noop
+        }]
+      ]);
+      done();
+    };
   });
 
 });
