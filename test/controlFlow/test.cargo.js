@@ -6,13 +6,14 @@ var assert = require('power-assert');
 var parallel = require('mocha.parallel');
 
 var async = global.async || require('../../');
+var delay = require('../config').delay;
 
 parallel('#cargo', function() {
 
   it('should execute in accordance with payload', function(done) {
 
     var order = [];
-    var delays = [40, 40, 20];
+    var delays = [4 * delay, 4 * delay, 2 * delay];
     var iterator = function(tasks, callback) {
       setTimeout(function() {
         order.push('process ' + tasks.join(' '));
@@ -44,7 +45,7 @@ parallel('#cargo', function() {
         assert.strictEqual(cargo.length(), 1);
         order.push('callback ' + 3);
       });
-    }, 20);
+    }, 2 * delay);
 
     setTimeout(function() {
       cargo.push(4, function(err, arg) {
@@ -60,7 +61,7 @@ parallel('#cargo', function() {
         order.push('callback ' + 5);
         assert.strictEqual(cargo.length(), 0);
       });
-    }, 30);
+    }, 3 * delay);
 
     setTimeout(function() {
       assert.deepEqual(order, [
@@ -70,14 +71,19 @@ parallel('#cargo', function() {
       ]);
       assert.strictEqual(cargo.length(), 0);
       done();
-    }, 200);
+    }, 20 * delay);
 
   });
 
   it('should execute without callback', function(done) {
 
     var order = [];
-    var delays = [40, 20, 60, 20];
+    var delays = [
+      4 * delay,
+      2 * delay,
+      6 * delay,
+      2 * delay
+    ];
 
     var c = async.cargo(function(tasks, callback) {
       setTimeout(function() {
@@ -89,12 +95,12 @@ parallel('#cargo', function() {
     c.push(1);
     setTimeout(function() {
       c.push(2);
-    }, 30);
+    }, 3 * delay);
     setTimeout(function() {
       c.push(3);
       c.push(4);
       c.push(5);
-    }, 45);
+    }, 4.5 * delay);
 
     setTimeout(function() {
       assert.deepEqual(order, [
@@ -104,14 +110,14 @@ parallel('#cargo', function() {
         'process 5'
       ]);
       done();
-    }, 200);
+    }, 20 * delay);
 
   });
 
   it('should execute with bulk tasks', function(done) {
 
     var order = [];
-    var delays = [30, 10];
+    var delays = [3 * delay, delay];
 
     var c = async.cargo(function(tasks, callback) {
       setTimeout(function() {
@@ -137,7 +143,7 @@ parallel('#cargo', function() {
         'callback 4'
       ]);
       done();
-    }, 200);
+    }, 20 * delay);
   });
 
   it('should execute drain once', function(done) {
@@ -197,7 +203,7 @@ parallel('#cargo', function() {
     c.empty = function() {
       empty = true;
     };
-    setTimeout(loadCargo, 50);
+    setTimeout(loadCargo, 5 * delay);
 
     setTimeout(function() {
       assert.deepEqual(order, [
@@ -214,7 +220,7 @@ parallel('#cargo', function() {
       assert.ok(saturated);
       assert.ok(empty);
       done();
-    }, 100);
+    }, 10 * delay);
 
   });
 
@@ -239,16 +245,21 @@ parallel('#cargo', function() {
       var noop = _.get(workersList, [0, 0, 'callback']);
       assert.deepEqual(workersList, [
         [{
-          data: 0, callback: noop
+          data: 0,
+          callback: noop
         }, {
-          data: 1, callback: noop
+          data: 1,
+          callback: noop
         }, {
-          data: 2, callback: noop
+          data: 2,
+          callback: noop
         }],
         [{
-          data: 3, callback: noop
+          data: 3,
+          callback: noop
         }, {
-          data: 4, callback: noop
+          data: 4,
+          callback: noop
         }]
       ]);
       done();
