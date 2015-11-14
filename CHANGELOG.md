@@ -1,3 +1,25 @@
+<a name"v1.7.0"></a>
+## v1.7.0 (2015-11-14)
+
+
+#### Features
+
+* **auto:** add feature of concurrency control ([59230095](https://github.com/suguru03/neo-async/commit/59230095))
+* **cargo:** add `workersList` ([0583bd94](https://github.com/suguru03/neo-async/commit/0583bd94))
+* **queue:** add `workersList` and rename `task` to `data` in task param ([21cd097a](https://github.com/suguru03/neo-async/commit/21cd097a))
+
+
+#### Other Changes
+
+* **CHANGELOG:** v1.6.0 [ci skip] ([78cd148e](https://github.com/suguru03/neo-async/commit/78cd148e))
+* **cargo:** fix to use delay of config ([d85b4a61](https://github.com/suguru03/neo-async/commit/d85b4a61))
+* **changelog:** modify changelog task ([7936eb98](https://github.com/suguru03/neo-async/commit/7936eb98))
+* **gh-pages:** modify gh-pages task ([1234aa14](https://github.com/suguru03/neo-async/commit/1234aa14))
+* **queue:** add to check pause in worker with concurrency ([ac25d007](https://github.com/suguru03/neo-async/commit/ac25d007))
+* **travis:**
+  * fix test process ([eba556f5](https://github.com/suguru03/neo-async/commit/eba556f5))
+  * add node v5 ([4b025c0a](https://github.com/suguru03/neo-async/commit/4b025c0a))
+
 <a name"v1.6.0"></a>
 ## v1.6.0 (2015-10-22)
 
@@ -798,7 +820,7 @@
 * Modify waterfall function to respond quickly ([2d7af49c](https://github.com/suguru03/neo-async/commit/2d7af49c))
 
 <a name"v0.4.5"></a>
-### v0.4.5 (2015-10-23)
+### v0.4.5 (2015-11-14)
 
 
 #### Bug Fixes
