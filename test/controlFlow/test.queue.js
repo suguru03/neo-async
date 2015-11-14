@@ -702,4 +702,33 @@ parallel('#priorityQueue', function() {
     queue.push();
   });
 
+  it('should pause in worker with concurrency', function(done) {
+
+    var order = [];
+    var q = async.queue(function(task, callback) {
+      if (task.isLongRunning) {
+        q.pause();
+        setTimeout(function() {
+          order.push(task.id);
+          q.resume();
+          callback();
+        }, 500);
+      } else {
+        order.push(task.id);
+        callback();
+      }
+    }, 10);
+
+    q.push({ id: 1, isLongRunning: true });
+    q.push({ id: 2 });
+    q.push({ id: 3 });
+    q.push({ id: 4 });
+    q.push({ id: 5 });
+
+    setTimeout(function() {
+      assert.deepEqual(order, [1, 2, 3, 4, 5]);
+      done();
+    }, 1000);
+  });
+
 });
