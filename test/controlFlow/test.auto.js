@@ -5,6 +5,7 @@ var assert = require('power-assert');
 var parallel = require('mocha.parallel');
 
 var async = global.async || require('../../');
+var delay = require('../config').delay;
 
 parallel('#auto', function() {
 
@@ -151,6 +152,60 @@ parallel('#auto', function() {
         task2: 'task2',
         task3: 'task3'
       });
+      done();
+    });
+  });
+
+  it('should execute in limited by concurrency', function(done) {
+    var order = [];
+    var tasks = {
+      task1: function(callback) {
+        order.push('task1');
+        callback();
+      },
+      task2: ['task1', function(callback) {
+        setTimeout(function() {
+          order.push('task2');
+          callback();
+        }, delay * 2);
+      }],
+      task3: ['task1', function(callback) {
+        setTimeout(function() {
+          order.push('task3');
+          callback();
+        }, delay * 2);
+      }],
+      task4: ['task1', function(callback) {
+        setTimeout(function() {
+          order.push('task4');
+          callback();
+        }, delay * 1);
+      }],
+      task5: ['task1', function(callback) {
+        setTimeout(function() {
+          order.push('task5');
+          callback();
+        }, delay * 1);
+      }],
+      task6: ['task1', function(callback) {
+        setTimeout(function() {
+          order.push('task6');
+          callback();
+        }, delay * 1);
+      }]
+    };
+    async.auto(tasks, 2, function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, [
+        'task1',
+        'task2',
+        'task3',
+        'task6',
+        'task5',
+        'task4'
+      ]);
       done();
     });
   });

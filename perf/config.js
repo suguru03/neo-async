@@ -1506,7 +1506,8 @@ module.exports = {
     }
   },
   'queue': {
-    times: 10000,
+    functions: [0, 2],
+    times: 1000,
     setup: function() {
       worker = function(data, callback) {
         callback();
@@ -1517,7 +1518,7 @@ module.exports = {
       q.drain = function() {
         callback();
       };
-      _.times(100, function(n) {
+      _.times(1000, function(n) {
         q.push(n, function() {});
       });
     }

@@ -2,7 +2,7 @@ MOCHA=./node_modules/mocha/bin/_mocha
 ISTANBUL=./node_modules/.bin/istanbul
 
 test-cov: clean
-	$(ISTANBUL) cover $(MOCHA) --require ./node_modules/intelli-espower-loader --report lcovonly -- -R spec ./test/*/*.js
+	$(ISTANBUL) cover $(MOCHA) --report lcovonly -- -R spec ./test/*/*.js
 
 test-codecov:
 	cat ./coverage/lcov.info | ./node_modules/codecov.io/bin/codecov.io.js --verbose
