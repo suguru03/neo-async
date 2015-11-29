@@ -1325,6 +1325,7 @@ module.exports = {
     }
   },
   'whilst': {
+    functions: [1, 2],
     setup: function(count) {
       test = function() {
         return current++ < count;
