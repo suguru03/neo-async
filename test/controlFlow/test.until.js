@@ -1,6 +1,7 @@
 /* global it */
 'use strict';
 
+var _ = require('lodash');
 var assert = require('power-assert');
 var parallel = require('mocha.parallel');
 
@@ -91,18 +92,27 @@ parallel('#until', function() {
     sync = false;
   });
 
+  it('should execute callback immediately if first test is truthy', function(done) {
+
+    var test = function() {
+      return true;
+    };
+    var iterator = function(callback) {
+      callback();
+    };
+    async.until(test, iterator, done);
+  });
+
   it('should get multiple result', function(done) {
 
     var count = 0;
     var limit = 5;
     var test = function() {
+      assert.strictEqual(arguments.length, count);
       return count === limit;
     };
     var iterator = function(callback) {
-      if (++count < limit) {
-        return async.nextTick(callback);
-      }
-      callback(null, 1, 2, 3, 4, 5);
+      callback.apply(null, [null].concat(_.range(++count)));
     };
     async.until(test, iterator, function(err, res1, res2, res3, res4) {
       if (err) {
@@ -110,10 +120,10 @@ parallel('#until', function() {
       }
       assert.strictEqual(count, 5);
       assert.strictEqual(arguments.length, 6);
-      assert.strictEqual(res1, 1);
-      assert.strictEqual(res2, 2);
-      assert.strictEqual(res3, 3);
-      assert.strictEqual(res4, 4);
+      assert.strictEqual(res1, 0);
+      assert.strictEqual(res2, 1);
+      assert.strictEqual(res3, 2);
+      assert.strictEqual(res4, 3);
       done();
     });
   });
@@ -260,14 +270,13 @@ parallel('#doUntil', function() {
 
     var count = 0;
     var limit = 5;
-    var test = function() {
+    var test = function(arg) {
+      assert.strictEqual(arg, 0);
+      assert.strictEqual(arguments.length, count);
       return count === limit;
     };
     var iterator = function(callback) {
-      if (++count < limit) {
-        return async.nextTick(callback);
-      }
-      callback(null, 1, 2, 3, 4, 5);
+      callback.apply(null, [null].concat(_.range(++count)));
     };
     async.doUntil(iterator, test, function(err, res1, res2, res3, res4) {
       if (err) {
@@ -275,10 +284,10 @@ parallel('#doUntil', function() {
       }
       assert.strictEqual(count, 5);
       assert.strictEqual(arguments.length, 6);
-      assert.strictEqual(res1, 1);
-      assert.strictEqual(res2, 2);
-      assert.strictEqual(res3, 3);
-      assert.strictEqual(res4, 4);
+      assert.strictEqual(res1, 0);
+      assert.strictEqual(res2, 1);
+      assert.strictEqual(res3, 2);
+      assert.strictEqual(res4, 3);
       done();
     });
   });
