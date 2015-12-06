@@ -3026,11 +3026,11 @@
   var parallel = createParallel(arrayEachFunc, baseEachFunc);
 
   /**
-   * @version 1.7.0
+   * @version 1.7.1
    * @namespace async
    */
   var async = {
-    VERSION: '1.7.0',
+    VERSION: '1.7.1',
 
     // Collections
     each: each,
@@ -8452,26 +8452,44 @@
    */
   function whilst(test, iterator, callback) {
     callback = callback || noop;
-    var sync = true;
-    iterate();
-    sync = false;
+    var sync = false;
+    if (test()) {
+      iterate();
+    } else {
+      callback();
+    }
 
     function iterate() {
-      if (test()) {
-        iterator(function(err) {
-          if (err) {
-            return callback(err);
-          }
-          if (sync) {
-            async.nextTick(iterate);
-          } else {
-            sync = true;
-            iterate();
-          }
-          sync = false;
-        });
+      if (sync) {
+        async.nextTick(next);
       } else {
-        callback();
+        sync = true;
+        iterator(done);
+      }
+      sync = false;
+    }
+
+    function next() {
+      iterator(done);
+    }
+
+    function done(err, arg) {
+      if (err) {
+        return callback(err);
+      }
+      if (arguments.length <= 2) {
+        if (test(arg)) {
+          iterate();
+        } else {
+          callback(undefined, arg);
+        }
+        return;
+      }
+      arg = _slice(arguments, 1);
+      if (test.apply(null, arg)) {
+        iterate();
+      } else {
+        callback.apply(null, [undefined].concat(arg));
       }
     }
   }
@@ -8485,27 +8503,41 @@
    */
   function doWhilst(iterator, test, callback) {
     callback = callback || noop;
-    var sync = true;
-    iterate();
-    sync = false;
+    var sync = false;
+    next();
 
     function iterate() {
-      iterator(function(err, arg) {
-        if (err) {
-          return callback(err);
-        }
-        if (arguments.length <= 2 ? test(arg) : test.apply(null, _slice(arguments, 1))) {
-          if (sync) {
-            async.nextTick(iterate);
-          } else {
-            sync = true;
-            iterate();
-          }
-          sync = false;
+      if (sync) {
+        async.nextTick(next);
+      } else {
+        sync = true;
+        iterator(done);
+      }
+      sync = false;
+    }
+
+    function next() {
+      iterator(done);
+    }
+
+    function done(err, arg) {
+      if (err) {
+        return callback(err);
+      }
+      if (arguments.length <= 2) {
+        if (test(arg)) {
+          iterate();
         } else {
-          callback();
+          callback(undefined, arg);
         }
-      });
+        return;
+      }
+      arg = _slice(arguments, 1);
+      if (test.apply(null, arg)) {
+        iterate();
+      } else {
+        callback.apply(null, [undefined].concat(arg));
+      }
     }
   }
 
@@ -8518,26 +8550,44 @@
    */
   function until(test, iterator, callback) {
     callback = callback || noop;
-    var sync = true;
-    iterate();
-    sync = false;
+    var sync = false;
+    if (!test()) {
+      iterate();
+    } else {
+      callback();
+    }
 
     function iterate() {
-      if (!test()) {
-        iterator(function(err) {
-          if (err) {
-            return callback(err);
-          }
-          if (sync) {
-            async.nextTick(iterate);
-          } else {
-            sync = true;
-            iterate();
-          }
-          sync = false;
-        });
+      if (sync) {
+        async.nextTick(next);
       } else {
-        callback();
+        sync = true;
+        iterator(done);
+      }
+      sync = false;
+    }
+
+    function next() {
+      iterator(done);
+    }
+
+    function done(err, arg) {
+      if (err) {
+        return callback(err);
+      }
+      if (arguments.length <= 2) {
+        if (!test(arg)) {
+          iterate();
+        } else {
+          callback(undefined, arg);
+        }
+        return;
+      }
+      arg = _slice(arguments, 1);
+      if (!test.apply(null, arg)) {
+        iterate();
+      } else {
+        callback.apply(null, [undefined].concat(arg));
       }
     }
   }
@@ -8551,27 +8601,41 @@
    */
   function doUntil(iterator, test, callback) {
     callback = callback || noop;
-    var sync = true;
-    iterate();
-    sync = false;
+    var sync = false;
+    next();
 
     function iterate() {
-      iterator(function(err, arg) {
-        if (err) {
-          return callback(err);
-        }
-        if (arguments.length <= 2 ? !test(arg) : !test.apply(null, _slice(arguments, 1))) {
-          if (sync) {
-            async.nextTick(iterate);
-          } else {
-            sync = true;
-            iterate();
-          }
-          sync = false;
+      if (sync) {
+        async.nextTick(next);
+      } else {
+        sync = true;
+        iterator(done);
+      }
+      sync = false;
+    }
+
+    function next() {
+      iterator(done);
+    }
+
+    function done(err, arg) {
+      if (err) {
+        return callback(err);
+      }
+      if (arguments.length <= 2) {
+        if (!test(arg)) {
+          iterate();
         } else {
-          callback();
+          callback(undefined, arg);
         }
-      });
+        return;
+      }
+      arg = _slice(arguments, 1);
+      if (!test.apply(null, arg)) {
+        iterate();
+      } else {
+        callback.apply(null, [undefined].concat(arg));
+      }
     }
   }
 
@@ -9088,7 +9152,7 @@
    * @param {Funciton} [callback]
    */
   function auto(tasks, concurrency, callback) {
-    if (!callback) {
+    if (typeof concurrency === 'function') {
       callback = concurrency;
       concurrency = null;
     }
