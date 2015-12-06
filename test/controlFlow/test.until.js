@@ -1,6 +1,7 @@
 /* global it */
 'use strict';
 
+var _ = require('lodash');
 var assert = require('power-assert');
 var parallel = require('mocha.parallel');
 
@@ -22,16 +23,17 @@ parallel('#until', function() {
     };
     var iterator = function(callback) {
       order.iterator.push(count++);
-      callback();
+      callback(null, count);
     };
 
-    async.until(test, iterator, function(err) {
+    async.until(test, iterator, function(err, res) {
       if (err) {
         return done(err);
       }
 
       assert.deepEqual(order.iterator, [0, 1, 2, 3, 4]);
       assert.deepEqual(order.test, [0, 1, 2, 3, 4, 5]);
+      assert.strictEqual(res, 5);
       done();
     });
   });
@@ -53,16 +55,17 @@ parallel('#until', function() {
       assert.strictEqual(this, undefined);
       result.push(count * count);
       order.iterator.push(count++);
-      callback();
+      callback(null, count);
     };
 
-    async.until(test, iterator, function(err) {
+    async.until(test, iterator, function(err, res) {
       if (err) {
         return done(err);
       }
       assert.deepEqual(order.iterator, [0, 1, 2, 3, 4]);
       assert.deepEqual(order.test, [0, 1, 2, 3, 4, 5]);
       assert.deepEqual(result, [0, 1, 4, 9, 16]);
+      assert.strictEqual(res, 5);
       done();
     }, Math);
   });
@@ -87,6 +90,42 @@ parallel('#until', function() {
       done();
     });
     sync = false;
+  });
+
+  it('should execute callback immediately if first test is truthy', function(done) {
+
+    var test = function() {
+      return true;
+    };
+    var iterator = function(callback) {
+      callback();
+    };
+    async.until(test, iterator, done);
+  });
+
+  it('should get multiple result', function(done) {
+
+    var count = 0;
+    var limit = 5;
+    var test = function() {
+      assert.strictEqual(arguments.length, count);
+      return count === limit;
+    };
+    var iterator = function(callback) {
+      callback.apply(null, [null].concat(_.range(++count)));
+    };
+    async.until(test, iterator, function(err, res1, res2, res3, res4) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(count, 5);
+      assert.strictEqual(arguments.length, 6);
+      assert.strictEqual(res1, 0);
+      assert.strictEqual(res2, 1);
+      assert.strictEqual(res3, 2);
+      assert.strictEqual(res4, 3);
+      done();
+    });
   });
 
   it('should throw error', function(done) {
@@ -131,15 +170,16 @@ parallel('#doUntil', function() {
     };
     var iterator = function(callback) {
       order.iterator.push(count++);
-      callback();
+      callback(null, count);
     };
 
-    async.doUntil(iterator, test, function(err) {
+    async.doUntil(iterator, test, function(err, res) {
       if (err) {
         return done(err);
       }
       assert.deepEqual(order.iterator, [0, 1, 2, 3, 4]);
       assert.deepEqual(order.test, [1, 2, 3, 4, 5]);
+      assert.strictEqual(res, 5);
       done();
     });
   });
@@ -161,16 +201,17 @@ parallel('#doUntil', function() {
       assert.strictEqual(this, undefined);
       result.push(count * count);
       order.iterator.push(count++);
-      callback();
+      callback(null, count);
     };
 
-    async.doUntil(iterator, test, function(err) {
+    async.doUntil(iterator, test, function(err, res) {
       if (err) {
         return done(err);
       }
       assert.deepEqual(order.iterator, [0, 1, 2, 3, 4]);
       assert.deepEqual(order.test, [1, 2, 3, 4, 5]);
       assert.deepEqual(result, [0, 1, 4, 9, 16]);
+      assert.strictEqual(res, 5);
       done();
     }, Math);
   });
@@ -223,6 +264,32 @@ parallel('#doUntil', function() {
       done();
     });
     sync = false;
+  });
+
+  it('should get multiple result', function(done) {
+
+    var count = 0;
+    var limit = 5;
+    var test = function(arg) {
+      assert.strictEqual(arg, 0);
+      assert.strictEqual(arguments.length, count);
+      return count === limit;
+    };
+    var iterator = function(callback) {
+      callback.apply(null, [null].concat(_.range(++count)));
+    };
+    async.doUntil(iterator, test, function(err, res1, res2, res3, res4) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(count, 5);
+      assert.strictEqual(arguments.length, 6);
+      assert.strictEqual(res1, 0);
+      assert.strictEqual(res2, 1);
+      assert.strictEqual(res3, 2);
+      assert.strictEqual(res4, 3);
+      done();
+    });
   });
 
   it('should throw error', function(done) {

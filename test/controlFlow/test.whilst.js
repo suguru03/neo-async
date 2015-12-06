@@ -1,6 +1,7 @@
 /* global it */
 'use strict';
 
+var _ = require('lodash');
 var assert = require('power-assert');
 var parallel = require('mocha.parallel');
 
@@ -22,16 +23,17 @@ parallel('#whilst', function() {
     };
     var iterator = function(callback) {
       order.iterator.push(count++);
-      callback();
+      callback(null, count);
     };
 
-    async.whilst(test, iterator, function(err) {
+    async.whilst(test, iterator, function(err, res) {
       if (err) {
         return done(err);
       }
 
       assert.deepEqual(order.iterator, [0, 1, 2, 3, 4]);
       assert.deepEqual(order.test, [0, 1, 2, 3, 4, 5]);
+      assert.strictEqual(res, 5);
       done();
     });
   });
@@ -53,10 +55,10 @@ parallel('#whilst', function() {
       assert.strictEqual(this, undefined);
       result.push(count * count);
       order.iterator.push(count++);
-      callback();
+      callback(null, count);
     };
 
-    async.whilst(test, iterator, function(err) {
+    async.whilst(test, iterator, function(err, res) {
       if (err) {
         return done(err);
       }
@@ -64,6 +66,7 @@ parallel('#whilst', function() {
       assert.deepEqual(order.iterator, [0, 1, 2, 3, 4]);
       assert.deepEqual(order.test, [0, 1, 2, 3, 4, 5]);
       assert.deepEqual(result, [0, 1, 4, 9, 16]);
+      assert.strictEqual(res, 5);
       done();
     }, Math);
   });
@@ -78,16 +81,53 @@ parallel('#whilst', function() {
     };
     var iterator = function(callback) {
       count++;
-      callback();
+      callback(null, count);
     };
-    async.whilst(test, iterator, function(err) {
+    async.whilst(test, iterator, function(err, res) {
       if (err) {
         return done(err);
       }
       assert.strictEqual(sync, false);
+      assert.strictEqual(res, 5);
       done();
     });
     sync = false;
+  });
+
+  it('should execute callback immediately if first test is falsy', function(done) {
+
+    var test = function() {
+      return false;
+    };
+    var iterator = function(callback) {
+      callback();
+    };
+    async.whilst(test, iterator, done);
+  });
+
+  it('should get multiple result', function(done) {
+
+    var count = 0;
+    var limit = 5;
+    var test = function() {
+      assert.strictEqual(arguments.length, count);
+      return count < limit;
+    };
+    var iterator = function(callback) {
+      callback.apply(null, [null].concat(_.range(++count)));
+    };
+    async.whilst(test, iterator, function(err, res1, res2, res3, res4) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(count, 5);
+      assert.strictEqual(arguments.length, 6);
+      assert.strictEqual(res1, 0);
+      assert.strictEqual(res2, 1);
+      assert.strictEqual(res3, 2);
+      assert.strictEqual(res4, 3);
+      done();
+    });
   });
 
   it('should throw error', function(done) {
@@ -137,15 +177,16 @@ parallel('#doWhilst', function() {
     };
     var iterator = function(callback) {
       order.iterator.push(count++);
-      callback();
+      callback(null, count);
     };
 
-    async.doWhilst(iterator, test, function(err) {
+    async.doWhilst(iterator, test, function(err, res) {
       if (err) {
         return done(err);
       }
       assert.deepEqual(order.iterator, [0, 1, 2, 3, 4]);
       assert.deepEqual(order.test, [1, 2, 3, 4, 5]);
+      assert.strictEqual(res, 5);
       done();
     });
   });
@@ -167,16 +208,17 @@ parallel('#doWhilst', function() {
       assert.strictEqual(this, undefined);
       result.push(count * count);
       order.iterator.push(count++);
-      callback();
+      callback(null, count);
     };
 
-    async.doWhilst(iterator, test, function(err) {
+    async.doWhilst(iterator, test, function(err, res) {
       if (err) {
         return done(err);
       }
       assert.deepEqual(order.iterator, [0, 1, 2, 3, 4]);
       assert.deepEqual(order.test, [1, 2, 3, 4, 5]);
       assert.deepEqual(result, [0, 1, 4, 9, 16]);
+      assert.strictEqual(res, 5);
       done();
     }, Math);
   });
@@ -198,12 +240,13 @@ parallel('#doWhilst', function() {
       callback(null, count);
     };
 
-    async.doWhilst(iterator, test, function(err) {
+    async.doWhilst(iterator, test, function(err, res) {
       if (err) {
         return done(err);
       }
       assert.deepEqual(order.iterator, [0, 1, 2, 3, 4]);
       assert.deepEqual(order.test, [1, 2, 3, 4, 5]);
+      assert.strictEqual(res, 5);
       done();
     });
   });
@@ -228,6 +271,32 @@ parallel('#doWhilst', function() {
       done();
     });
     sync = false;
+  });
+
+  it('should get multiple result', function(done) {
+
+    var count = 0;
+    var limit = 5;
+    var test = function(arg) {
+      assert.strictEqual(arg, 0);
+      assert.strictEqual(arguments.length, count);
+      return count < limit;
+    };
+    var iterator = function(callback) {
+      callback.apply(null, [null].concat(_.range(++count)));
+    };
+    async.doWhilst(iterator, test, function(err, res1, res2, res3, res4) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(count, 5);
+      assert.strictEqual(arguments.length, 6);
+      assert.strictEqual(res1, 0);
+      assert.strictEqual(res2, 1);
+      assert.strictEqual(res3, 2);
+      assert.strictEqual(res4, 3);
+      done();
+    });
   });
 
   it('should throw error', function(done) {

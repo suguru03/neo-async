@@ -105,15 +105,30 @@ parallel('#auto', function() {
 
   it('should execute without callback', function(done) {
 
-    async.auto({
+    var tasks = {
       task1: function(callback) {
         callback();
       },
       task2: ['task1', function(callback) {
         callback();
-        done();
       }]
-    });
+    };
+    async.auto(tasks);
+    setTimeout(done, delay);
+  });
+
+  it('should execute without callback', function(done) {
+
+    var tasks = {
+      task1: function(callback) {
+        callback();
+      },
+      task2: ['task1', function(callback) {
+        callback();
+      }]
+    };
+    async.auto(tasks, 1);
+    setTimeout(done, delay);
   });
 
   it('should throw error and get safe results', function(done) {

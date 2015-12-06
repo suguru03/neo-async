@@ -1,3 +1,24 @@
+<a name"v1.7.1"></a>
+### v1.7.1 (2015-12-06)
+
+
+#### Bug Fixes
+
+* **auto:** fix a bug when it has concurrency without callback ([d98dc8ac](https://github.com/suguru03/neo-async/commit/d98dc8ac))
+
+
+#### Features
+
+* **doWhilst:** modify to get the last result and improve performance ([6204531b](https://github.com/suguru03/neo-async/commit/6204531b))
+* **whilst:** fix to get the last result ([6a33ef46](https://github.com/suguru03/neo-async/commit/6a33ef46))
+
+
+#### Other Changes
+
+* feat(until) modify to get the last result ([f9445e91](https://github.com/suguru03/neo-async/commit/f9445e91))
+* **CHANGELOG:** v1.7.0 [ci skip] ([c01e5431](https://github.com/suguru03/neo-async/commit/c01e5431))
+* **whilst:** add test case ([1ed7c530](https://github.com/suguru03/neo-async/commit/1ed7c530))
+
 <a name"v1.7.0"></a>
 ## v1.7.0 (2015-11-14)
 
@@ -820,7 +841,7 @@
 * Modify waterfall function to respond quickly ([2d7af49c](https://github.com/suguru03/neo-async/commit/2d7af49c))
 
 <a name"v0.4.5"></a>
-### v0.4.5 (2015-11-14)
+### v0.4.5 (2015-12-06)
 
 
 #### Bug Fixes
