@@ -167,15 +167,16 @@ parallel('#doWhilst', function() {
     };
     var iterator = function(callback) {
       order.iterator.push(count++);
-      callback();
+      callback(null, count);
     };
 
-    async.doWhilst(iterator, test, function(err) {
+    async.doWhilst(iterator, test, function(err, res) {
       if (err) {
         return done(err);
       }
       assert.deepEqual(order.iterator, [0, 1, 2, 3, 4]);
       assert.deepEqual(order.test, [1, 2, 3, 4, 5]);
+      assert.strictEqual(res, 5);
       done();
     });
   });
@@ -197,16 +198,17 @@ parallel('#doWhilst', function() {
       assert.strictEqual(this, undefined);
       result.push(count * count);
       order.iterator.push(count++);
-      callback();
+      callback(null, count);
     };
 
-    async.doWhilst(iterator, test, function(err) {
+    async.doWhilst(iterator, test, function(err, res) {
       if (err) {
         return done(err);
       }
       assert.deepEqual(order.iterator, [0, 1, 2, 3, 4]);
       assert.deepEqual(order.test, [1, 2, 3, 4, 5]);
       assert.deepEqual(result, [0, 1, 4, 9, 16]);
+      assert.strictEqual(res, 5);
       done();
     }, Math);
   });
@@ -228,12 +230,13 @@ parallel('#doWhilst', function() {
       callback(null, count);
     };
 
-    async.doWhilst(iterator, test, function(err) {
+    async.doWhilst(iterator, test, function(err, res) {
       if (err) {
         return done(err);
       }
       assert.deepEqual(order.iterator, [0, 1, 2, 3, 4]);
       assert.deepEqual(order.test, [1, 2, 3, 4, 5]);
+      assert.strictEqual(res, 5);
       done();
     });
   });
@@ -258,6 +261,33 @@ parallel('#doWhilst', function() {
       done();
     });
     sync = false;
+  });
+
+  it('should get multiple result', function(done) {
+
+    var count = 0;
+    var limit = 5;
+    var test = function() {
+      return count < limit;
+    };
+    var iterator = function(callback) {
+      if (++count < limit) {
+        return async.nextTick(callback);
+      }
+      callback(null, 1, 2, 3, 4, 5);
+    };
+    async.doWhilst(iterator, test, function(err, res1, res2, res3, res4) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(count, 5);
+      assert.strictEqual(arguments.length, 6);
+      assert.strictEqual(res1, 1);
+      assert.strictEqual(res2, 2);
+      assert.strictEqual(res3, 3);
+      assert.strictEqual(res4, 4);
+      done();
+    });
   });
 
   it('should throw error', function(done) {
