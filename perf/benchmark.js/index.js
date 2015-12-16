@@ -28,7 +28,7 @@ if (!_.isEmpty(args)) {
   });
 }
 
-async.safe.eachSeries(tasks, function(task, name, next) {
+async.eachSeries(tasks, function(task, name, next) {
   var avaiable = task.avaiable === undefined ? defaults.avaiable : task.avaiable;
   if (!avaiable) {
     return next();
