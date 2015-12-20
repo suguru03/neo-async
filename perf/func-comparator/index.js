@@ -1,14 +1,26 @@
 'use strict';
 
+var path = require('path');
+
 var _ = require('lodash');
 var Comparator = require('func-comparator').Comparator;
 
 var async = require('../../');
 var functions = {
   'async': require('async'),
-  'neo-async_v0': require('neo-async'),
-  'neo-async_v1': async
+  'neo-async_pre': require('neo-async'),
+  'neo-async_current': async
 };
+
+console.log('--------------------------------------');
+_.forEach(functions, function(async, key) {
+  var version = async.VERSION;
+  if (!version) {
+    var p = path.resolve(__dirname, '../../', 'node_modules', key, 'package.json');
+    version = _.get(require(p), 'version');
+  }
+  console.log('[' + key + '] v' + version);
+});
 
 var config = global.config || require('../config');
 

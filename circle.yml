@@ -4,5 +4,5 @@ machine:
 
 test:
   override:
-    - npm install neo-async@v1.7.0
+    - npm install neo-async@v1.7.0 -f
     - node perf/func-comparator

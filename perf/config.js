@@ -12,7 +12,7 @@ module.exports = {
     avaiable: true,
     count: 100,
     times: 500000,
-    functions: ['async', 'neo-async_v0', 'neo-async_v1']
+    functions: ['async', 'neo-async_pre', 'neo-async_current']
   },
   'each:array': {
     setup: function(count) {
@@ -49,7 +49,7 @@ module.exports = {
       async: function(async, callback) {
         async.forEachOf(collection, iterator, callback); // not use only_once
       },
-      'neo-async_v1': function(async, callback) {
+      'neo-async_current': function(async, callback) {
         async.each(collection, iterator, callback);
       }
     }
@@ -1319,7 +1319,7 @@ module.exports = {
       'default': function(async, callback) {
         async.waterfall(tasks, callback);
       },
-      'neo-async_v1': function(async, callback) {
+      'neo-async_current': function(async, callback) {
         async.angelFall(tasks, callback);
       }
     }
