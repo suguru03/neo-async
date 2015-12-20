@@ -1,0 +1,8 @@
+machine:
+  node:
+    version: 5
+
+test:
+  override:
+    - npm install neo-async@v1.7.0
+    - node perf/func-comparator
