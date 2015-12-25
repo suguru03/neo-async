@@ -5,4 +5,4 @@ machine:
 test:
   override:
     - npm install neo-async@v1.7.0 -f
-    - node perf/func-comparator
+    - node perf/func-comparator each map filter reject detect reduce sortBy some every concat parallel series waterfall whilst do until during times
