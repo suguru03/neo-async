@@ -3026,11 +3026,11 @@
   var parallel = createParallel(arrayEachFunc, baseEachFunc);
 
   /**
-   * @version 1.7.1
+   * @version 1.7.2
    * @namespace async
    */
   var async = {
-    VERSION: '1.7.1',
+    VERSION: '1.7.2',
 
     // Collections
     each: each,
@@ -9180,7 +9180,7 @@
       var size = task.length;
       var requires = task.slice(0, size - 1);
       var _task = task[size - 1];
-      if (ready()) {
+      if (callback !== noop && ready()) {
         runningTasks++;
         return _task(done, results);
       }
