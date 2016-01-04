@@ -1,3 +1,16 @@
+<a name"v1.7.2"></a>
+### v1.7.2 (2016-01-03)
+
+
+#### Bug Fixes
+
+* **auto:** fix to stop after an synchronous error ([dd92a34c](https://github.com/suguru03/neo-async/commit/dd92a34c))
+
+
+#### Other Changes
+
+* **CHANGELOG:** v1.7.1 [ci skip] ([bcafae7e](https://github.com/suguru03/neo-async/commit/bcafae7e))
+
 <a name"v1.7.1"></a>
 ### v1.7.1 (2015-12-06)
 
@@ -841,7 +854,7 @@
 * Modify waterfall function to respond quickly ([2d7af49c](https://github.com/suguru03/neo-async/commit/2d7af49c))
 
 <a name"v0.4.5"></a>
-### v0.4.5 (2015-12-06)
+### v0.4.5 (2016-01-03)
 
 
 #### Bug Fixes
