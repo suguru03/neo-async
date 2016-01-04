@@ -225,4 +225,20 @@ parallel('#auto', function() {
     });
   });
 
+  it('should stop execution if a synchronous error occur', function(done) {
+
+    async.auto({
+      task1: function(callback) {
+        callback('error');
+      },
+      task2: function(callback) {
+        assert.ok(false);
+        callback();
+      }
+    }, 1, function(err) {
+      assert.strictEqual(err, 'error');
+      setTimeout(done, delay);
+    });
+  });
+
 });
