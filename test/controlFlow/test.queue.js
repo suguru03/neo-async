@@ -576,6 +576,75 @@ parallel('#queue', function() {
     };
   });
 
+  it('should have a default buffer property that equals 25% of the concurrenct rate', function(done) {
+
+    var concurrency = 10;
+    var worker = function(task, callback) {
+      assert.ok(false);
+      async.setImmediate(callback);
+    };
+    var queue = async.queue(worker, concurrency);
+    assert.strictEqual(queue.buffer, 2.5);
+    setTimeout(done, 50);
+  });
+
+  it('should allow a user to change the buffer property', function(done) {
+
+    var concurrency = 10;
+    var worker = function(task, callback) {
+      assert.ok(false);
+      async.setImmediate(callback);
+    };
+    var queue = async.queue(worker, concurrency);
+    queue.buffer = 4;
+    assert.notStrictEqual(queue.buffer, 2.5);
+    assert.strictEqual(queue.buffer, 4);
+    setTimeout(done, 50);
+  });
+
+  it('should call the unsaturated callback if tasks length is less than concurrency minus buffer', function(done) {
+
+    var order = [];
+    var concurrency = 10;
+    var worker = function(task, callback) {
+      order.push('worker_' + task);
+      async.setImmediate(callback);
+    };
+    var queue = async.queue(worker, concurrency);
+    queue.unsaturated = function() {
+      order.push('unsaturated');
+    };
+    queue.empty = function() {
+      order.push('empty');
+    };
+    queue.push('test1', function() { order.push('test1'); });
+    queue.push('test2', function() { order.push('test2'); });
+    queue.push('test3', function() { order.push('test3'); });
+    queue.push('test4', function() { order.push('test4'); });
+    queue.push('test5', function() { order.push('test5'); });
+    setTimeout(function() {
+      assert.deepEqual([
+        'unsaturated',
+        'unsaturated',
+        'unsaturated',
+        'unsaturated',
+        'unsaturated',
+        'worker_test1',
+        'worker_test2',
+        'worker_test3',
+        'worker_test4',
+        'empty',
+        'worker_test5',
+        'test1',
+        'test2',
+        'test3',
+        'test4',
+        'test5'
+      ], order);
+      done();
+    }, 50);
+  });
+
 });
 
 parallel('#priorityQueue', function() {
@@ -705,7 +774,7 @@ parallel('#priorityQueue', function() {
   it('should pause in worker with concurrency', function(done) {
 
     var order = [];
-    var q = async.queue(function(task, callback) {
+    var q = async.priorityQueue(function(task, callback) {
       if (task.isLongRunning) {
         q.pause();
         setTimeout(function() {
@@ -729,6 +798,75 @@ parallel('#priorityQueue', function() {
       assert.deepEqual(order, [1, 2, 3, 4, 5]);
       done();
     }, 1000);
+  });
+
+  it('should have a default buffer property that equals 25% of the concurrenct rate', function(done) {
+
+    var concurrency = 10;
+    var worker = function(task, callback) {
+      assert.ok(false);
+      async.setImmediate(callback);
+    };
+    var queue = async.priorityQueue(worker, concurrency);
+    assert.strictEqual(queue.buffer, 2.5);
+    setTimeout(done, 50);
+  });
+
+  it('should allow a user to change the buffer property', function(done) {
+
+    var concurrency = 10;
+    var worker = function(task, callback) {
+      assert.ok(false);
+      async.setImmediate(callback);
+    };
+    var queue = async.priorityQueue(worker, concurrency);
+    queue.buffer = 4;
+    assert.notStrictEqual(queue.buffer, 2.5);
+    assert.strictEqual(queue.buffer, 4);
+    setTimeout(done, 50);
+  });
+
+  it('should call the unsaturated callback if tasks length is less than concurrency minus buffer', function(done) {
+
+    var order = [];
+    var concurrency = 10;
+    var worker = function(task, callback) {
+      order.push('worker_' + task);
+      async.setImmediate(callback);
+    };
+    var queue = async.priorityQueue(worker, concurrency);
+    queue.unsaturated = function() {
+      order.push('unsaturated');
+    };
+    queue.empty = function() {
+      order.push('empty');
+    };
+    queue.push('test1', 5, function() { order.push('test1'); });
+    queue.push('test2', 4, function() { order.push('test2'); });
+    queue.push('test3', 3, function() { order.push('test3'); });
+    queue.push('test4', 2, function() { order.push('test4'); });
+    queue.push('test5', 1, function() { order.push('test5'); });
+    setTimeout(function() {
+      assert.deepEqual([
+        'unsaturated',
+        'unsaturated',
+        'unsaturated',
+        'unsaturated',
+        'unsaturated',
+        'worker_test5',
+        'worker_test4',
+        'worker_test3',
+        'worker_test2',
+        'empty',
+        'worker_test1',
+        'test5',
+        'test4',
+        'test3',
+        'test2',
+        'test1'
+      ], order);
+      done();
+    }, 50);
   });
 
 });
