@@ -1,3 +1,18 @@
+<a name"v1.7.3"></a>
+### v1.7.3 (2016-02-24)
+
+
+#### Features
+
+* **index:** add index params ([4a5e0b15](https://github.com/suguru03/neo-async/commit/4a5e0b15))
+* **queue:** add unsaturation event ([d4373f76](https://github.com/suguru03/neo-async/commit/d4373f76))
+
+
+#### Other Changes
+
+* **CHANGELOG:** v1.7.2 [ci skip] ([32024c6b](https://github.com/suguru03/neo-async/commit/32024c6b))
+* **LICENSE:** fix year range [ci skip] ([f2190a54](https://github.com/suguru03/neo-async/commit/f2190a54))
+
 <a name"v1.7.2"></a>
 ### v1.7.2 (2016-01-03)
 
@@ -854,7 +869,7 @@
 * Modify waterfall function to respond quickly ([2d7af49c](https://github.com/suguru03/neo-async/commit/2d7af49c))
 
 <a name"v0.4.5"></a>
-### v0.4.5 (2016-01-03)
+### v0.4.5 (2016-02-24)
 
 
 #### Bug Fixes
