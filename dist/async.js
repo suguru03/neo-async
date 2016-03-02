@@ -4,8 +4,8 @@
 
   var root = this;
   var previos_async = root && root.async;
-  var noop = function() {};
-  var throwError = function() {
+  var noop = function noop() {};
+  var throwError = function throwError() {
     throw new Error('Callback was already called.');
   };
 
@@ -3026,11 +3026,84 @@
   var parallel = createParallel(arrayEachFunc, baseEachFunc);
 
   /**
-   * @version 1.7.3
+   * @memberof async
+   * @namespace race
+   * @param {Array|Object} tasks - functions
+   * @param {Function} callback
+   * @example
+   *
+   * // array
+   * var called = 0;
+   * var tasks = [
+   *   function(done) {
+   *     setTimeout(function() {
+   *       called++;
+   *       done(null, '1');
+   *     }, 30);
+   *   },
+   *   function(done) {
+   *     setTimeout(function() {
+   *       called++;
+   *       done(null, '2');
+   *     }, 20);
+   *   },
+   *   function(done) {
+   *     setTimeout(function() {
+   *       called++;
+   *       done(null, '3');
+   *     }, 10);
+   *   }
+   * ];
+   * async.race(tasks, function(err, res) {
+   *   console.log(res); // '3'
+   *   console.log(called); // 1
+   *   setTimeout(function() {
+   *     console.log(called); // 3
+   *   }, 50);
+   * });
+   *
+   * @example
+   *
+   * // object
+   * var called = 0;
+   * var tasks = {
+   *   'test1': function(done) {
+   *     setTimeout(function() {
+   *       called++;
+   *       done(null, '1');
+   *     }, 30);
+   *   },
+   *   'test2': function(done) {
+   *     setTimeout(function() {
+   *       called++;
+   *       done(null, '2');
+   *     }, 20);
+   *   },
+   *   'test3': function(done) {
+   *     setTimeout(function() {
+   *       called++;
+   *       done(null, '3');
+   *     }, 10);
+   *   }
+   * };
+   * async.race(tasks, function(err, res) {
+   *   console.log(res); // '3'
+   *   console.log(called); // 1
+   *   setTimeout(function() {
+   *     console.log(called); // 3
+   *     done();
+   *   }, 50);
+   * });
+   *
+   */
+  var race = createRace();
+
+  /**
+   * @version 1.7.4
    * @namespace async
    */
   var index = {
-    VERSION: '1.7.3',
+    VERSION: '1.7.4',
 
     // Collections
     each: each,
@@ -3123,6 +3196,7 @@
     times: times,
     timesSeries: timesSeries,
     timesLimit: timesLimit,
+    race: race,
 
     // Utils
     memoize: memoize,
@@ -3239,6 +3313,7 @@
     times: times,
     timesSeries: timesSeries,
     timesLimit: timesLimit,
+    race: race,
 
     // Utils
     memoize: memoize,
@@ -9616,6 +9691,43 @@
         sync = false;
       };
     }
+  }
+
+  /**
+   * @private
+   */
+  function createRace() {
+
+    function once(func) {
+      return function(err, res) {
+        if (func === null) {
+          return;
+        }
+        func(err, res);
+        func = null;
+      };
+    }
+
+    return function race(tasks, callback) {
+      callback = once(callback || noop);
+      var size, keys;
+      var index = -1;
+      if (Array.isArray(tasks)) {
+        size = tasks.length;
+        while (++index < size) {
+          tasks[index](callback);
+        }
+      } else if (tasks && typeof tasks === 'object') {
+        keys = Object.keys(tasks);
+        size = keys.length;
+        while (++index < size) {
+          tasks[keys[index]](callback);
+        }
+      }
+      if (!size) {
+        callback();
+      }
+    };
   }
 
   /**
