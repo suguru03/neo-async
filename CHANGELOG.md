@@ -1,3 +1,18 @@
+<a name"v1.7.4"></a>
+### v1.7.4 (2016-03-01)
+
+
+#### Features
+
+* **async:** add function names ([45987149](https://github.com/suguru03/neo-async/commit/45987149))
+* **race:** add feature of `race` ([5fc91d41](https://github.com/suguru03/neo-async/commit/5fc91d41))
+
+
+#### Other Changes
+
+* **CHANGELOG:** v1.7.3 [ci skip] ([3753291a](https://github.com/suguru03/neo-async/commit/3753291a))
+* **race:** add example [ci skip] ([b365d41e](https://github.com/suguru03/neo-async/commit/b365d41e))
+
 <a name"v1.7.3"></a>
 ### v1.7.3 (2016-02-24)
 
@@ -869,7 +884,7 @@
 * Modify waterfall function to respond quickly ([2d7af49c](https://github.com/suguru03/neo-async/commit/2d7af49c))
 
 <a name"v0.4.5"></a>
-### v0.4.5 (2016-02-24)
+### v0.4.5 (2016-03-01)
 
 
 #### Bug Fixes
