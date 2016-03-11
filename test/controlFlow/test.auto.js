@@ -59,7 +59,7 @@ parallel('#auto', function() {
     var order = [];
 
     async.auto({
-      task1: ['task2', function(callback, results) {
+      task1: ['task2', function(results, callback) {
         assert.strictEqual(results.task2, 'task2');
         setTimeout(function() {
           order.push('task1');
@@ -72,12 +72,12 @@ parallel('#auto', function() {
           callback(null, 'task2');
         });
       },
-      task3: ['task2', function(callback, results) {
+      task3: ['task2', function(results, callback) {
         assert.strictEqual(results.task2, 'task2');
         order.push('task3');
         callback();
       }],
-      task4: ['task1', 'task2', function(callback, results) {
+      task4: ['task1', 'task2', function(results, callback) {
         assert.deepEqual(results.task1, ['task1a', 'task1b']);
         assert.strictEqual(results.task2, 'task2');
         order.push('task4');
@@ -136,7 +136,7 @@ parallel('#auto', function() {
     var order = [];
 
     async.auto({
-      task1: ['task2', function(callback, results) {
+      task1: ['task2', function(results, callback) {
         assert.strictEqual(results.task2, 'task2');
         setTimeout(function() {
           order.push('task1');
@@ -149,12 +149,12 @@ parallel('#auto', function() {
           callback(null, 'task2');
         });
       },
-      task3: ['task2', function(callback, results) {
+      task3: ['task2', function(results, callback) {
         assert.strictEqual(results.task2, 'task2');
         order.push('task3');
         callback('error', 'task3');
       }],
-      task4: ['task1', 'task2', function(callback, results) {
+      task4: ['task1', 'task2', function(results, callback) {
         assert.deepEqual(results.task1, ['task1a', 'task1b']);
         assert.strictEqual(results.task2, 'task2');
         order.push('task4');
@@ -174,9 +174,8 @@ parallel('#auto', function() {
   it('should execute in limited by concurrency', function(done) {
     var order = [];
     var tasks = {
-      task1: function(callback) {
+      task1: function() {
         order.push('task1');
-        callback();
       },
       task2: ['task1', function(callback) {
         setTimeout(function() {
@@ -237,6 +236,23 @@ parallel('#auto', function() {
       }
     }, 1, function(err) {
       assert.strictEqual(err, 'error');
+      setTimeout(done, delay);
+    });
+  });
+
+  it('should throw error if static error occur', function(done) {
+
+    async.auto({
+      task1: function() {
+        throw new Error('error');
+      },
+      task2: function(callback) {
+        assert.ok(false);
+        callback();
+      }
+    }, 1, function(err) {
+      assert.ok(err);
+      assert.strictEqual(err.message, 'error');
       setTimeout(done, delay);
     });
   });
