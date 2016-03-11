@@ -40,5 +40,6 @@ exports.Map = typeof Map === 'function' ? Map : (function() {
 })();
 
 exports.errorChecker = function(err) {
+  assert.ok(err);
   assert.strictEqual(err.message, 'Callback was already called.');
 };

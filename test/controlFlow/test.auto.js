@@ -1,11 +1,14 @@
 /* global it */
 'use strict';
 
+var domain = require('domain');
+
 var assert = require('power-assert');
 var parallel = require('mocha.parallel');
 
 var async = global.async || require('../../');
 var delay = require('../config').delay;
+var util = require('../util');
 
 parallel('#auto', function() {
 
@@ -223,6 +226,28 @@ parallel('#auto', function() {
       ]);
       done();
     });
+  });
+
+  it('should throw error if double callback', function(done) {
+
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        done();
+      })
+      .run(function() {
+        async.auto({
+          task1: function(callback) {
+            setImmediate(function() {
+              callback();
+              callback();
+            });
+          },
+          task2: function(callback) {
+            callback();
+          }
+        });
+      });
   });
 
   it('should stop execution if a synchronous error occur', function(done) {
