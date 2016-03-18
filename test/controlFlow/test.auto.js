@@ -52,7 +52,14 @@ parallel('#auto', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(order, ['task2', 'task6', 'task3', 'task5', 'task1', 'task4']);
+      assert.deepEqual(order, [
+        'task2',
+        'task3',
+        'task6',
+        'task5',
+        'task1',
+        'task4'
+      ]);
       done();
     });
   });
@@ -223,9 +230,9 @@ parallel('#auto', function() {
         'task1',
         'task2',
         'task3',
-        'task6',
+        'task4',
         'task5',
-        'task4'
+        'task6'
       ]);
       done();
     });

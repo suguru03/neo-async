@@ -63,8 +63,8 @@ parallel('#autoInject', function() {
       });
       assert.deepEqual(order, [
         'task2',
-        'task6',
         'task3',
+        'task6',
         'task5',
         'task1',
         'task4'
