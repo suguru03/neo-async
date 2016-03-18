@@ -85,6 +85,9 @@ parallel('#auto', function() {
         assert.strictEqual(results.task2, 'task2');
         order.push('task4');
         callback(null, 'task4');
+      }],
+      task5: ['task4', function() {
+        return 'task5';
       }]
     }, function(err, results) {
       if (err) {
@@ -95,7 +98,8 @@ parallel('#auto', function() {
         task1: ['task1a', 'task1b'],
         task2: 'task2',
         task3: undefined,
-        task4: 'task4'
+        task4: 'task4',
+        task5: 'task5'
       });
       done();
     });
