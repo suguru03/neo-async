@@ -1,3 +1,16 @@
+<a name"v1.7.5"></a>
+### v1.7.5 (2016-03-15)
+
+
+#### Bug Fixes
+
+* **auto:** fix to avoid double callback ([bf36d767](https://github.com/suguru03/neo-async/commit/bf36d767))
+
+
+#### Other Changes
+
+* **CHANGELOG:** v1.7.4 [ci skip] ([9f81b406](https://github.com/suguru03/neo-async/commit/9f81b406))
+
 <a name"v1.7.4"></a>
 ### v1.7.4 (2016-03-01)
 
@@ -884,7 +897,7 @@
 * Modify waterfall function to respond quickly ([2d7af49c](https://github.com/suguru03/neo-async/commit/2d7af49c))
 
 <a name"v0.4.5"></a>
-### v0.4.5 (2016-03-01)
+### v0.4.5 (2016-03-15)
 
 
 #### Bug Fixes

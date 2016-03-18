@@ -3099,11 +3099,11 @@
   var race = createRace();
 
   /**
-   * @version 1.7.4
+   * @version 1.7.5
    * @namespace async
    */
   var index = {
-    VERSION: '1.7.4',
+    VERSION: '1.7.5',
 
     // Collections
     each: each,
@@ -9374,6 +9374,7 @@
 
     _objectEach(tasks, function(task, key) {
       task = Array.isArray(task) ? task : [task];
+      var called = false;
       var size = task.length;
       var requires = task.slice(0, size - 1);
       var _task = task[size - 1];
@@ -9384,6 +9385,10 @@
       addListener(listener);
 
       function done(err) {
+        if (called) {
+          throwError();
+        }
+        called = true;
         runningTasks--;
         var args = _slice(arguments, 1);
         if (args.length <= 1) {
