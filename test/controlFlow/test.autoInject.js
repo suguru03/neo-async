@@ -1,6 +1,7 @@
 /* global it */
 'use strict';
 
+var _ = require('lodash');
 var assert = require('power-assert');
 var parallel = require('mocha.parallel');
 
@@ -108,11 +109,67 @@ parallel('#autoInject', function() {
     });
   });
 
-  it('should execute multiple tasks', function(done) {
+  it('should execute tasks', function(done) {
 
     var order = [];
     async.autoInject({
-      task1: ['task2', function(callback) {
+      task1: function(callback) {
+        order.push('task1');
+        callback(null, 1);
+      },
+      task2: ['task3', function(task3, callback) {
+        order.push('task2');
+        assert.strictEqual(task3, 3);
+        callback(null, 2);
+      }],
+      task2_1: ['task3', function(callback) {
+        order.push('task2_1');
+        assert.ok(_.isFunction(callback));
+        assert.strictEqual(arguments.length, 1);
+        callback();
+      }],
+      task2_2: function(task3, callback) {
+        order.push('task2_2');
+        assert.strictEqual(task3, 3);
+        callback();
+      },
+      task2_3: ['task1', 'task3', function(task3, task1, callback) {
+        order.push('task2_3');
+        assert.strictEqual(task1, 1);
+        assert.strictEqual(task3, 3);
+        callback();
+      }],
+      task2_4: ['task3', function(task1, callback) {
+        order.push('task2_4');
+        assert.strictEqual(task1, 1);
+        callback();
+      }],
+      task3: function (callback) {
+        order.push('task3');
+        callback(null, 3);
+      }
+    }, function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, [
+        'task1',
+        'task3',
+        'task2',
+        'task2_1',
+        'task2_2',
+        'task2_3',
+        'task2_4'
+      ]);
+      done();
+    });
+  });
+
+  it('should execute complex tasks', function(done) {
+
+    var order = [];
+    async.autoInject({
+      task1: ['task3', 'task2', function(callback) {
         order.push('task1');
         callback(null, 1);
       }],
