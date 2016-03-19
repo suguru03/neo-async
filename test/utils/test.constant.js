@@ -19,4 +19,17 @@ parallel('#constant', function() {
       done();
     });
   });
+
+  it('should ignore other arguments', function(done) {
+    async.constant(1, 2, 3)(4, 5, 6, 7, function(err, result1, result2, result3) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(result1, 1);
+      assert.deepEqual(result2, 2);
+      assert.deepEqual(result3, 3);
+      assert.strictEqual(arguments.length, 4);
+      done();
+    });
+  });
 });
