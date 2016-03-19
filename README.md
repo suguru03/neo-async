@@ -145,6 +145,7 @@ bower install neo-async
 - [`auto`](#auto)
 - [`retry`](#retry)
 - [`iterator`](#iterator)
+- [`timeout`](http://suguru03.github.io/neo-async/doc/async.timeout.html)
 - [`times`](http://suguru03.github.io/neo-async/doc/async.times.html)
 - [`timesSeries`](http://suguru03.github.io/neo-async/doc/async.timesSeries.html)
 - [`timesLimit`](http://suguru03.github.io/neo-async/doc/async.timesLimit.html)
