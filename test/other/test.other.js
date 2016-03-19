@@ -122,6 +122,16 @@ parallel('#nextTick', function() {
     async.eachSeries(array, iterator, done);
   });
 
+  it('should pass extra arguments', function(done) {
+
+    async.nextTick(function(a, b, c, d) {
+      assert.strictEqual(a, 1);
+      assert.strictEqual(b, 2);
+      assert.strictEqual(c, 3);
+      assert.strictEqual(d, undefined);
+      done();
+    }, 1, 2, 3);
+  });
 });
 
 parallel('#setImmediate', function() {
@@ -152,6 +162,22 @@ parallel('#setImmediate', function() {
     assert.strictEqual(typeof async.setImmediate, 'function');
     assert.notStrictEqual(async.setImmediate, process.nextTick);
     async.nextTick(done);
+  });
+
+  it('should pass extra arguments', function(done) {
+
+    var _setImmediate = setImmediate;
+    setImmediate = undefined;
+    delete(require.cache[asyncPath]);
+    var async = require(asyncPath);
+    setImmediate = _setImmediate;
+    async.setImmediate(function(a, b, c, d) {
+      assert.strictEqual(a, 1);
+      assert.strictEqual(b, 2);
+      assert.strictEqual(c, 3);
+      assert.strictEqual(d, undefined);
+      done();
+    }, 1, 2, 3);
   });
 });
 
