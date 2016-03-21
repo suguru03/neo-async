@@ -293,4 +293,24 @@ parallel('#auto', function() {
     });
   });
 
+  it('should avoid unnecessary deferrals', function(done) {
+
+    var sync = true;
+    async.auto({
+      task1: function(callback) {
+        callback(null, 1);
+      },
+      task2: ['task1', function(results, callback) {
+        callback();
+      }]
+    }, function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.ok(sync);
+      done();
+    });
+    sync = false;
+  });
+
 });
