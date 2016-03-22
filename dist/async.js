@@ -3099,11 +3099,11 @@
   var race = createRace();
 
   /**
-   * @version 1.7.5
+   * @version 1.8.0
    * @namespace async
    */
   var index = {
-    VERSION: '1.7.5',
+    VERSION: '1.8.0',
 
     // Collections
     each: each,
@@ -3193,6 +3193,7 @@
     nextTick: _nextTick,
     safeNextTick: _safeNextTick,
     setImmediate: _setImmediate,
+    timeout: timeout,
     times: times,
     timesSeries: timesSeries,
     timesLimit: timesLimit,
@@ -3310,6 +3311,7 @@
     nextTick: _nextTick,
     safeNextTick: _safeNextTick,
     setImmediate: _setImmediate,
+    timeout: timeout,
     times: times,
     timesSeries: timesSeries,
     timesLimit: timesLimit,
@@ -9538,6 +9540,57 @@
           args[index] = arguments[index];
         }
         return func.bind.apply(func, args);
+    }
+  }
+
+  /**
+   * @memberof async
+   * @namespace timeout
+   * @param {Function} func
+   * @param {number} millisec
+   */
+  function timeout(func, millisec) {
+    var callback, timer;
+    return wrappedFunc;
+
+    function wrappedFunc() {
+      timer = setTimeout(timeoutCallback, millisec);
+      var args = _baseSlice(arguments);
+      var lastIndex = args.length - 1;
+      callback = args[lastIndex];
+      args[lastIndex] = injectedCallback;
+      simpleApply(func, args);
+    }
+
+    function timeoutCallback() {
+      var err = new Error('Callback function time out.');
+      err.code = 'ETIMEDOUT';
+      timer = null;
+      callback(err);
+    }
+
+    function injectedCallback() {
+      if (timer !== null) {
+        simpleApply(callback, _baseSlice(arguments));
+        clearTimeout(timer);
+      }
+    }
+
+    function simpleApply(func, args) {
+      switch(args.length) {
+        case 0:
+          func();
+          break;
+        case 1:
+          func(args[0]);
+          break;
+        case 2:
+          func(args[0], args[1]);
+          break;
+        default:
+          func.apply(null, args);
+          break;
+      }
     }
   }
 
