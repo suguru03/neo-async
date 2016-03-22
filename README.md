@@ -1,19 +1,21 @@
 # Neo-Async v1.8.0
 
+<img src="https://raw.githubusercontent.com/wiki/suguru03/neo-async/images/neo_async_v2.png" width="230px" />
+
 [![npm](https://img.shields.io/npm/v/neo-async.svg)](https://www.npmjs.com/package/neo-async)
 [![Travis](https://img.shields.io/travis/suguru03/neo-async.svg)](https://travis-ci.org/suguru03/neo-async)
 [![Codecov](https://img.shields.io/codecov/c/github/suguru03/neo-async.svg)](https://codecov.io/github/suguru03/neo-async?branch=master)
 [![Dependency Status](https://gemnasium.com/suguru03/neo-async.svg)](https://gemnasium.com/suguru03/neo-async)
 [![npm](https://img.shields.io/npm/dm/neo-async.svg)](https://www.npmjs.com/package/neo-async)
 
+![nodei](https://nodei.co/npm/neo-async.png?downloads=true&downloadRank=true)
+
+
 Neo-Async is thought to be used as a drop-in replacement for [Async](https://github.com/caolan/async), it almost fully covers its functionality and runs [faster](#speed-comparison).
 
 [Async](https://github.com/caolan/async) allows double callbacks in `waterfall`, but Neo-Async does not allow. ([test](https://github.com/suguru03/async/tree/neo-async/test))
 PR is welcome ! Especially improvement for English documents :)
 
-![Neo-Async](https://raw.githubusercontent.com/wiki/suguru03/neo-async/images/neo_async.png)
-
-![nodei](https://nodei.co/npm/neo-async.png?downloads=true&downloadRank=true)
 
 ## Installation
 
