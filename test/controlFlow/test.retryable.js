@@ -54,7 +54,7 @@ parallel('#retryable', function() {
     var start = Date.now();
     var opts = {
       times: 3,
-      interval: delay
+      interval: delay * 3
     };
     async.auto({
       foo: function(callback) {

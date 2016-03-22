@@ -100,7 +100,7 @@ parallel('#retry', function() {
   it('should retry with interval when all attempts succeeds', function(done) {
 
     var times = 3;
-    var interval = delay;
+    var interval = delay * 3;
     var callCount = 0;
     var error = 'ERROR';
     var erroredResult = 'RESULT';
