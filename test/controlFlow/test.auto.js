@@ -16,7 +16,7 @@ parallel('#auto', function() {
 
     var order = [];
     var tasks = {
-      task1: ['task2', function(callback) {
+      task1: ['task2', function(results, callback) {
         setTimeout(function() {
           order.push('task1');
           callback();
@@ -28,21 +28,21 @@ parallel('#auto', function() {
           callback();
         }, 50);
       },
-      task3: ['task2', function(callback) {
+      task3: ['task2', function(results, callback) {
         order.push('task3');
         callback();
       }],
-      task4: ['task1', 'task2', function(callback) {
+      task4: ['task1', 'task2', function(results, callback) {
         order.push('task4');
         callback();
       }],
-      task5: ['task2', function(callback) {
+      task5: ['task2', function(results, callback) {
         setTimeout(function() {
           order.push('task5');
           callback();
         }, 0);
       }],
-      task6: ['task2', function(callback) {
+      task6: ['task2', function(results, callback) {
         order.push('task6');
         callback();
       }]
@@ -92,9 +92,6 @@ parallel('#auto', function() {
         assert.strictEqual(results.task2, 'task2');
         order.push('task4');
         callback(null, 'task4');
-      }],
-      task5: ['task4', function() {
-        return 'task5';
       }]
     }, function(err, results) {
       if (err) {
@@ -105,8 +102,7 @@ parallel('#auto', function() {
         task1: ['task1a', 'task1b'],
         task2: 'task2',
         task3: undefined,
-        task4: 'task4',
-        task5: 'task5'
+        task4: 'task4'
       });
       done();
     });
@@ -123,7 +119,7 @@ parallel('#auto', function() {
       task1: function(callback) {
         callback();
       },
-      task2: ['task1', function(callback) {
+      task2: ['task1', function(results, callback) {
         callback();
       }]
     };
@@ -137,7 +133,7 @@ parallel('#auto', function() {
       task1: function(callback) {
         callback();
       },
-      task2: ['task1', function(callback) {
+      task2: ['task1', function(results, callback) {
         callback();
       }]
     };
@@ -188,34 +184,35 @@ parallel('#auto', function() {
   it('should execute in limited by concurrency', function(done) {
     var order = [];
     var tasks = {
-      task1: function() {
+      task1: function(callback) {
         order.push('task1');
+        callback();
       },
-      task2: ['task1', function(callback) {
+      task2: ['task1', function(results, callback) {
         setTimeout(function() {
           order.push('task2');
           callback();
         }, delay * 2);
       }],
-      task3: ['task1', function(callback) {
+      task3: ['task1', function(results, callback) {
         setTimeout(function() {
           order.push('task3');
           callback();
         }, delay * 2);
       }],
-      task4: ['task1', function(callback) {
+      task4: ['task1', function(results, callback) {
         setTimeout(function() {
           order.push('task4');
           callback();
         }, delay * 1);
       }],
-      task5: ['task1', function(callback) {
+      task5: ['task1', function(results, callback) {
         setTimeout(function() {
           order.push('task5');
           callback();
         }, delay * 1);
       }],
-      task6: ['task1', function(callback) {
+      task6: ['task1', function(results, callback) {
         setTimeout(function() {
           order.push('task6');
           callback();
@@ -272,23 +269,6 @@ parallel('#auto', function() {
       }
     }, 1, function(err) {
       assert.strictEqual(err, 'error');
-      setTimeout(done, delay);
-    });
-  });
-
-  it('should throw error if static error occur', function(done) {
-
-    async.auto({
-      task1: function() {
-        throw new Error('error');
-      },
-      task2: function(callback) {
-        assert.ok(false);
-        callback();
-      }
-    }, 1, function(err) {
-      assert.ok(err);
-      assert.strictEqual(err.message, 'error');
       setTimeout(done, delay);
     });
   });

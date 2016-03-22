@@ -209,10 +209,6 @@ parallel('#autoInject', function() {
           order.push('task7');
           callback(null, 7);
         }, delay);
-      },
-      task8: function() {
-        order.push('task8');
-        return 8;
       }
     }, function(err, result) {
       if (err) {
@@ -225,11 +221,9 @@ parallel('#autoInject', function() {
         task4: 4,
         task5: 5,
         task6: 6,
-        task7: 7,
-        task8: 8
+        task7: 7
       });
       assert.deepEqual(order, [
-        'task8',
         'task7',
         'task6',
         'task5',
