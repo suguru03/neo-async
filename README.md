@@ -1,4 +1,4 @@
-# Neo-Async v1.7.5
+# Neo-Async v1.8.0
 
 [![npm](https://img.shields.io/npm/v/neo-async.svg)](https://www.npmjs.com/package/neo-async)
 [![Travis](https://img.shields.io/travis/suguru03/neo-async.svg)](https://travis-ci.org/suguru03/neo-async)
@@ -145,6 +145,7 @@ bower install neo-async
 - [`auto`](#auto)
 - [`retry`](#retry)
 - [`iterator`](#iterator)
+- [`timeout`](http://suguru03.github.io/neo-async/doc/async.timeout.html)
 - [`times`](http://suguru03.github.io/neo-async/doc/async.times.html)
 - [`timesSeries`](http://suguru03.github.io/neo-async/doc/async.timesSeries.html)
 - [`timesLimit`](http://suguru03.github.io/neo-async/doc/async.timesLimit.html)

@@ -1,3 +1,20 @@
+<a name"v1.8.0"></a>
+## v1.8.0 (2016-03-21)
+
+
+#### Features
+
+* **nextTick:**
+  * revert not to pass extra arguments ([631c1833](https://github.com/suguru03/neo-async/commit/631c1833))
+  * fix to pass extra arguments ([78ea8f2f](https://github.com/suguru03/neo-async/commit/78ea8f2f))
+* **timeout:** add `timeout` ([32bad257](https://github.com/suguru03/neo-async/commit/32bad257))
+
+
+#### Other Changes
+
+* **CHANGELOG:** v1.7.5 [ci skip] ([0796b268](https://github.com/suguru03/neo-async/commit/0796b268))
+* **README:** add `timeout` document ([028e71f0](https://github.com/suguru03/neo-async/commit/028e71f0))
+
 <a name"v1.7.5"></a>
 ### v1.7.5 (2016-03-15)
 
@@ -897,7 +914,7 @@
 * Modify waterfall function to respond quickly ([2d7af49c](https://github.com/suguru03/neo-async/commit/2d7af49c))
 
 <a name"v0.4.5"></a>
-### v0.4.5 (2016-03-15)
+### v0.4.5 (2016-03-21)
 
 
 #### Bug Fixes
