@@ -106,7 +106,7 @@ parallel('#transform', function() {
       b: 3,
       c: 2
     };
-    async.transform(collection, transformIterator(order), function(err, res) {
+    async.transform(collection, [], transformIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -114,7 +114,7 @@ parallel('#transform', function() {
       assert.deepEqual(res, [3, 5]);
       assert.deepEqual(order, [2, 3, 5]);
       done();
-    }, []);
+    });
   });
 
   it('should execute iterator by collection of object with passing key', function(done) {
@@ -150,7 +150,7 @@ parallel('#transform', function() {
     collection.set('a', 5);
     collection.set('b', 3);
     collection.set('c', 2);
-    async.transform(collection, transformIterator(order), function(err, res) {
+    async.transform(collection, [], transformIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -158,7 +158,7 @@ parallel('#transform', function() {
       assert.deepEqual(res, [3, 5]);
       assert.deepEqual(order, [2, 3, 5]);
       done();
-    }, []);
+    });
   });
 
   it('should execute iterator by collection of Map with passing key', function(done) {
@@ -217,7 +217,7 @@ parallel('#transform', function() {
       c: 2,
       'break': 3.5
     };
-    async.transform(collection, transformIteratorWithKey(order), function(err, res) {
+    async.transform(collection, [], transformIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -230,7 +230,7 @@ parallel('#transform', function() {
         [3.5, 'break']
       ]);
       done();
-    }, []);
+    });
   });
 
   it('should execute iterator without binding', function(done) {
@@ -242,7 +242,7 @@ parallel('#transform', function() {
       c: 2.6
     };
 
-    async.transform(collection, transformIteratorWithKey(order), function(err, res) {
+    async.transform(collection, {}, transformIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -254,7 +254,7 @@ parallel('#transform', function() {
         [3.5, 'b']
       ]);
       done();
-    }, {}, Math);
+    }, Math);
   });
 
   it('should throw error', function(done) {
@@ -354,14 +354,14 @@ parallel('#transform', function() {
     var iterator = function(memo, value, key, callback) {
       callback();
     };
-    async.transform([], iterator, function(err, res) {
+    async.transform([], {}, iterator, function(err, res) {
       if (err) {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       done();
-    }, {});
+    });
   });
 
   it('should return accumulator immediately if object is empty', function(done) {
@@ -369,14 +369,14 @@ parallel('#transform', function() {
     var iterator = function(memo, value, key, callback) {
       callback();
     };
-    async.transform({}, iterator, function(err, res) {
+    async.transform({}, [], iterator, function(err, res) {
       if (err) {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       done();
-    }, []);
+    });
   });
 
 });
@@ -426,7 +426,7 @@ parallel('#transformSeries', function() {
       b: 3,
       c: 2
     };
-    async.transformSeries(collection, transformIterator(order), function(err, res) {
+    async.transformSeries(collection, [], transformIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -434,7 +434,7 @@ parallel('#transformSeries', function() {
       assert.deepEqual(res, [5, 3]);
       assert.deepEqual(order, [5, 3, 2]);
       done();
-    }, []);
+    });
   });
 
   it('should execute iterator to series by collection of object with passing key', function(done) {
@@ -470,7 +470,7 @@ parallel('#transformSeries', function() {
     collection.set('a', 5);
     collection.set('b', 3);
     collection.set('c', 2);
-    async.transformSeries(collection, transformIterator(order), function(err, res) {
+    async.transformSeries(collection, [], transformIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -478,7 +478,7 @@ parallel('#transformSeries', function() {
       assert.deepEqual(res, [5, 3]);
       assert.deepEqual(order, [5, 3, 2]);
       done();
-    }, []);
+    });
   });
 
   it('should execute iterator to series by collection of Map with passing key', function(done) {
@@ -540,7 +540,7 @@ parallel('#transformSeries', function() {
       c: 2.6
     };
 
-    async.transformSeries(collection, transformIteratorWithKey(order), function(err, res) {
+    async.transformSeries(collection, undefined, transformIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -552,7 +552,7 @@ parallel('#transformSeries', function() {
         [2.6, 'c']
       ]);
       done();
-    }, undefined, Math);
+    });
   });
 
   it('should execute on asynchronous', function(done) {
@@ -625,7 +625,7 @@ parallel('#transformSeries', function() {
           process.nextTick(callback);
           process.nextTick(callback);
         };
-        async.transformSeries(collection, iterator);
+        async.transformSeries(collection, iterator, _.noop);
       });
   });
 
@@ -706,14 +706,14 @@ parallel('#transformSeries', function() {
     var iterator = function(memo, value, key, callback) {
       callback();
     };
-    async.transformSeries([], iterator, function(err, res) {
+    async.transformSeries([], {}, iterator, function(err, res) {
       if (err) {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       done();
-    }, {});
+    });
   });
 
   it('should return accumulator immediately if object is empty', function(done) {
@@ -721,14 +721,14 @@ parallel('#transformSeries', function() {
     var iterator = function(memo, value, key, callback) {
       callback();
     };
-    async.transformSeries({}, iterator, function(err, res) {
+    async.transformSeries({}, [], iterator, function(err, res) {
       if (err) {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       done();
-    }, []);
+    });
   });
 
 });
@@ -783,7 +783,7 @@ parallel('#transformLimit', function() {
       d: 2,
       e: 4
     };
-    async.transformLimit(collection, 2, transformIterator(order), function(err, res) {
+    async.transformLimit(collection, 2, [], transformIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -791,7 +791,7 @@ parallel('#transformLimit', function() {
       assert.deepEqual(res, [1, 3, 5]);
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
-    }, []);
+    });
   });
 
   it('should execute iterator in limited by collection of object with passing key', function(done) {
@@ -834,7 +834,7 @@ parallel('#transformLimit', function() {
     collection.set('c', 3);
     collection.set('d', 2);
     collection.set('e', 4);
-    async.transformLimit(collection, 2, transformIterator(order), function(err, res) {
+    async.transformLimit(collection, 2, [], transformIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -842,7 +842,7 @@ parallel('#transformLimit', function() {
       assert.deepEqual(res, [1, 3, 5]);
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
-    }, []);
+    });
   });
 
   it('should execute iterator in limited by collection of Map with passing key', function(done) {
@@ -912,7 +912,7 @@ parallel('#transformLimit', function() {
       c: 2.7
     };
 
-    async.transformLimit(collection, 2, transformIterator(order), function(err, res) {
+    async.transformLimit(collection, 2, [], transformIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -920,7 +920,7 @@ parallel('#transformLimit', function() {
       assert.deepEqual(res, []);
       assert.deepEqual(order, [1.1, 3.5, 2.7]);
       done();
-    }, [], Math);
+    }, Math);
   });
 
   it('should execute like parallel if limit is Infinity', function(done) {
@@ -1099,14 +1099,14 @@ parallel('#transformLimit', function() {
     var iterator = function(memo, value, key, callback) {
       callback();
     };
-    async.transformLimit([], 4, iterator, function(err, res) {
+    async.transformLimit([], 4, {}, iterator, function(err, res) {
       if (err) {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {});
       done();
-    }, {});
+    });
   });
 
   it('should return accumulator immediately if object is empty', function(done) {
@@ -1114,14 +1114,14 @@ parallel('#transformLimit', function() {
     var iterator = function(memo, value, key, callback) {
       callback();
     };
-    async.transformLimit({}, 4, iterator, function(err, res) {
+    async.transformLimit({}, 4, [], iterator, function(err, res) {
       if (err) {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       done();
-    }, []);
+    });
   });
 
 });
