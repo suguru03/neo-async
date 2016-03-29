@@ -185,7 +185,7 @@ parallel('#queue', function() {
 
     domain.create()
       .on('error', function(err) {
-        assert.strictEqual(err.message, 'concurrency must be more than 1');
+        assert.strictEqual(err.message, 'Concurrency must not be zero');
         done();
       })
       .run(function() {
