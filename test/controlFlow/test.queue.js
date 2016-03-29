@@ -419,7 +419,7 @@ parallel('#queue', function() {
     q.concurrency = 3;
 
     q.saturated = function() {
-      assert.strictEqual(q.length(), 3);
+      assert.strictEqual(q.running(), q.concurrency);
       calls.push('saturated');
     };
     q.empty = function() {
@@ -431,14 +431,16 @@ parallel('#queue', function() {
       assert.strictEqual(q.running(), 0);
       calls.push('drain');
       assert.deepEqual(calls, [
-        'saturated',
         'process foo',
         'process bar',
+        'saturated',
         'process zoo',
         'foo cb',
+        'saturated',
         'process poo',
         'bar cb',
         'empty',
+        'saturated',
         'process moo',
         'zoo cb',
         'poo cb',
@@ -601,50 +603,6 @@ parallel('#queue', function() {
     assert.strictEqual(queue.buffer, 4);
     setTimeout(done, 50);
   });
-
-  it('should call the unsaturated callback if tasks length is less than concurrency minus buffer', function(done) {
-
-    var order = [];
-    var concurrency = 10;
-    var worker = function(task, callback) {
-      order.push('worker_' + task);
-      async.setImmediate(callback);
-    };
-    var queue = async.queue(worker, concurrency);
-    queue.unsaturated = function() {
-      order.push('unsaturated');
-    };
-    queue.empty = function() {
-      order.push('empty');
-    };
-    queue.push('test1', function() { order.push('test1'); });
-    queue.push('test2', function() { order.push('test2'); });
-    queue.push('test3', function() { order.push('test3'); });
-    queue.push('test4', function() { order.push('test4'); });
-    queue.push('test5', function() { order.push('test5'); });
-    setTimeout(function() {
-      assert.deepEqual([
-        'unsaturated',
-        'unsaturated',
-        'unsaturated',
-        'unsaturated',
-        'unsaturated',
-        'worker_test1',
-        'worker_test2',
-        'worker_test3',
-        'worker_test4',
-        'empty',
-        'worker_test5',
-        'test1',
-        'test2',
-        'test3',
-        'test4',
-        'test5'
-      ], order);
-      done();
-    }, 50);
-  });
-
 });
 
 parallel('#priorityQueue', function() {
@@ -827,7 +785,6 @@ parallel('#priorityQueue', function() {
   });
 
   it('should call the unsaturated callback if tasks length is less than concurrency minus buffer', function(done) {
-
     var order = [];
     var concurrency = 10;
     var worker = function(task, callback) {
@@ -847,12 +804,7 @@ parallel('#priorityQueue', function() {
     queue.push('test4', 2, function() { order.push('test4'); });
     queue.push('test5', 1, function() { order.push('test5'); });
     setTimeout(function() {
-      assert.deepEqual([
-        'unsaturated',
-        'unsaturated',
-        'unsaturated',
-        'unsaturated',
-        'unsaturated',
+      assert.deepEqual(order, [
         'worker_test5',
         'worker_test4',
         'worker_test3',
@@ -860,11 +812,16 @@ parallel('#priorityQueue', function() {
         'empty',
         'worker_test1',
         'test5',
+        'unsaturated',
         'test4',
+        'unsaturated',
         'test3',
+        'unsaturated',
         'test2',
-        'test1'
-      ], order);
+        'unsaturated',
+        'test1',
+        'unsaturated'
+      ]);
       done();
     }, 50);
   });
