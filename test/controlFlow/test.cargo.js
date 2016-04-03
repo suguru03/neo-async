@@ -72,7 +72,6 @@ parallel('#cargo', function() {
       assert.strictEqual(cargo.length(), 0);
       done();
     }, 20 * delay);
-
   });
 
   it('should execute without callback', function(done) {
@@ -224,7 +223,7 @@ parallel('#cargo', function() {
 
   });
 
-  it('should get workers list', function(done) {
+  it.skip('should get workers list', function(done) {
 
     var order = [];
     var workersList = [];
@@ -232,7 +231,7 @@ parallel('#cargo', function() {
     var payload = 3;
     var worker = function(tasks, callback) {
       order.push(tasks);
-      workersList.push(c.workersList());
+      workersList.push(_.cloneDeep(c.workersList()));
       callback();
     };
     var c = async.cargo(worker, payload);
@@ -264,6 +263,56 @@ parallel('#cargo', function() {
       ]);
       done();
     };
+  });
+
+  it('should check events', function (done) {
+
+    var calls = [];
+    var q = async.cargo(function(task, cb) {
+      // nop
+      calls.push('process ' + task);
+      async.setImmediate(cb);
+    }, 1);
+    q.concurrency = 3;
+
+    q.saturated = function() {
+      assert(q.running() === 3, 'cargo should be saturated now');
+      calls.push('saturated');
+    };
+    q.empty = function() {
+      assert(q.length() === 0, 'cargo should be empty now');
+      calls.push('empty');
+    };
+    q.drain = function() {
+      assert(
+        q.length() === 0 && q.running() === 0,
+        'cargo should be empty now and no more workers should be running'
+      );
+      calls.push('drain');
+      assert.deepEqual(calls, [
+        'process foo',
+        'process bar',
+        'saturated',
+        'process zoo',
+        'foo cb',
+        'saturated',
+        'process poo',
+        'bar cb',
+        'empty',
+        'saturated',
+        'process moo',
+        'zoo cb',
+        'poo cb',
+        'moo cb',
+        'drain'
+      ]);
+      done();
+    };
+    q.push('foo', function () {calls.push('foo cb');});
+    q.push('bar', function () {calls.push('bar cb');});
+    q.push('zoo', function () {calls.push('zoo cb');});
+    q.push('poo', function () {calls.push('poo cb');});
+    q.push('moo', function () {calls.push('moo cb');});
   });
 
 });

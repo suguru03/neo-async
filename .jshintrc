@@ -32,7 +32,7 @@
 
   "boss": false,
   "debug": false,
-  "eqnull": false,
+  "eqnull": true,
   "esnext": true,
   "evil": true,
   "expr": false,

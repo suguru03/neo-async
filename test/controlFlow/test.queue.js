@@ -18,7 +18,7 @@ parallel('#queue', function() {
       process: []
     };
     var delays = [160, 80, 240, 80];
-    var worker = function(data, callback) {
+    var worker = function piyo(data, callback) {
       setTimeout(function() {
         order.process.push(data);
         callback('err', 'arg');
