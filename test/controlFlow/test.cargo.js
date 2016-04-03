@@ -223,7 +223,7 @@ parallel('#cargo', function() {
 
   });
 
-  it.skip('should get workers list', function(done) {
+  it('should get workers list', function(done) {
 
     var order = [];
     var workersList = [];
