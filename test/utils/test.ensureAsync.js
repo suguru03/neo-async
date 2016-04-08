@@ -39,4 +39,30 @@ parallel('#ensureAsync', function() {
     });
     sync = false;
   });
+
+  it('should bind context', function(done) {
+
+    var func = function(callback) {
+      callback(this);
+    };
+    var newFunc = async.ensureAsync(func);
+    newFunc = newFunc.bind(Math);
+    newFunc(function(res) {
+      assert.strictEqual(res, Math);
+      done();
+    });
+  });
+
+  it('should not override the bound context of function', function(done) {
+
+    var func = function(callback) {
+      callback(this);
+    };
+    var newFunc = func.bind(Math);
+    newFunc = async.ensureAsync(newFunc);
+    newFunc(function(res) {
+      assert.strictEqual(res, Math);
+      done();
+    });
+  });
 });
