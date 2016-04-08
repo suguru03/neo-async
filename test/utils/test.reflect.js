@@ -18,7 +18,7 @@ parallel('#reflect', function() {
         callback('error2', 2);
       }),
       async.reflect(function(callback) {
-        callback(null, 2);
+        callback(null, 3);
       })
     ];
     async.parallel(tasks, function(err, res) {
@@ -28,7 +28,7 @@ parallel('#reflect', function() {
       assert.deepEqual(res, [
         { error: 'error' },
         { error: 'error2' },
-        { value: 2 }
+        { value: 3 }
       ]);
       done();
     });
@@ -103,6 +103,59 @@ parallel('#reflect', function() {
       }
       assert.deepEqual(res, {
         value: [3, 4, 1]
+      });
+      done();
+    });
+  });
+});
+
+parallel('#reflectAll', function() {
+
+  it('should execute array tasks', function(done) {
+    var tasks = [
+      function(done) {
+        done('error', 1);
+      },
+      function(done) {
+        done('error2', 2);
+      },
+      function(done) {
+        done(null, 3);
+      }
+    ];
+    async.parallel(async.reflectAll(tasks), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [
+        { error: 'error' },
+        { error: 'error2' },
+        { value: 3 }
+      ]);
+      done();
+    });
+  });
+
+  it('should execute object tasks', function(done) {
+    var tasks = {
+      a: function(done) {
+        done('error', 1);
+      },
+      b: function(done) {
+        done('error2', 2);
+      },
+      c: function(done) {
+        done(null, 3, 4, 5);
+      }
+    };
+    async.parallel(async.reflectAll(tasks), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, {
+        a: { error: 'error' },
+        b: { error: 'error2' },
+        c: { value: [3, 4, 5] }
       });
       done();
     });
