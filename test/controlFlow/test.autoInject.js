@@ -50,18 +50,12 @@ parallel('#autoInject', function() {
         order.push('task6');
         callback(null, 6);
       }
-    }, function(err, result) {
+    }, function(err, task1, task2) {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(result, {
-        task1: 1,
-        task2: 2,
-        task3: 3,
-        task4: 4,
-        task5: 5,
-        task6: 6
-      });
+      assert.strictEqual(task1, 1);
+      assert.strictEqual(task2, 2);
       assert.deepEqual(order, [
         'task2',
         'task3',
@@ -91,15 +85,10 @@ parallel('#autoInject', function() {
         order.push('task3');
         callback(null, 3);
       }
-    }, function(err, result) {
+    }, function(err) {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(result, {
-        task1: 1,
-        task2: 2,
-        task3: 3
-      });
       assert.deepEqual(order, [
         'task1',
         'task3',
@@ -210,19 +199,11 @@ parallel('#autoInject', function() {
           callback(null, 7);
         }, delay);
       }
-    }, function(err, result) {
+    }, function(err, task6) {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(result, {
-        task1: 1,
-        task2: 2,
-        task3: 3,
-        task4: 4,
-        task5: 5,
-        task6: 6,
-        task7: 7
-      });
+      assert.strictEqual(task6, 6);
       assert.deepEqual(order, [
         'task7',
         'task6',
@@ -234,6 +215,29 @@ parallel('#autoInject', function() {
       ]);
       done();
     });
+  });
+
+  it('should work with array results', function(done) {
+
+    async.autoInject({
+      task1: function(callback) {
+        callback(null, 1);
+      },
+      task2: function(task3, callback) {
+        callback(null, 2);
+      },
+      task3: function(callback) {
+        callback(null, 3);
+      },
+      task4: function(callback) {
+        callback('error', 4);
+      }
+    }, ['task3', 'task1', function(err, task3, task1) {
+      assert.ok(err);
+      assert.strictEqual(task3, 3);
+      assert.strictEqual(task1, 1);
+      done();
+    }]);
   });
 
 });

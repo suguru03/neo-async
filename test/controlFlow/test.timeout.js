@@ -24,7 +24,7 @@ parallel('#timeout', function() {
     ], function(err, res) {
       assert.ok(err);
       assert.strictEqual(err.code, 'ETIMEDOUT');
-      assert.strictEqual(err.message, 'Callback function time out.');
+      assert.strictEqual(err.message, 'Callback function "anonymous" time out.');
       assert.strictEqual(res[0], 'I did not time out');
       done();
     });
@@ -32,21 +32,23 @@ parallel('#timeout', function() {
 
   it('timeout with parallel', function(done) {
 
+    var info = { info: 'info' };
     async.parallel([
       async.timeout(function(callback) {
         setTimeout(function() {
           callback(null, 'I did not time out');
         }, delay);
       }, delay * 2),
-      async.timeout(function(callback) {
+      async.timeout(function timer(callback) {
         setTimeout(function() {
           callback(null, 'I will time out');
         }, delay * 3);
-      }, delay * 2)
+      }, delay * 2, info)
     ], function(err, res) {
       assert.ok(err);
       assert.strictEqual(err.code, 'ETIMEDOUT');
-      assert.strictEqual(err.message, 'Callback function time out.');
+      assert.strictEqual(err.message, 'Callback function "timer" time out.');
+      assert.strictEqual(err.info, info);
       assert.strictEqual(res[0], 'I did not time out');
       done();
     });
