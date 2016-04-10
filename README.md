@@ -8,14 +8,10 @@
 [![Dependency Status](https://gemnasium.com/suguru03/neo-async.svg)](https://gemnasium.com/suguru03/neo-async)
 [![npm](https://img.shields.io/npm/dm/neo-async.svg)](https://www.npmjs.com/package/neo-async)
 
-![nodei](https://nodei.co/npm/neo-async.png?downloads=true&downloadRank=true)
+[![nodei](https://nodei.co/npm/neo-async.png?downloads=true&downloadRank=true)](https://www.npmjs.com/package/neo-async)
 
 
 Neo-Async is thought to be used as a drop-in replacement for [Async](https://github.com/caolan/async), it almost fully covers its functionality and runs [faster](#speed-comparison).
-
-[Async](https://github.com/caolan/async) allows double callbacks in `waterfall`, but Neo-Async does not allow. ([test](https://github.com/suguru03/async/tree/neo-async/test))
-PR is welcome ! Especially improvement for English documents :)
-
 
 ## Installation
 
@@ -38,9 +34,6 @@ $ npm install neo-async
 ```
 ```js
 var async = require('neo-async');
-
-// safe mode
-var async = require('neo-async').safe; // avoid stack overflow if iterator is called on sync.
 ```
 
 #### replacement
@@ -107,18 +100,18 @@ bower install neo-async
 - [`foldl`](http://suguru03.github.io/neo-async/doc/async.reduce.html) -> [`reduce`](http://suguru03.github.io/neo-async/doc/async.reduce.html)
 - [`reduceRight`](http://suguru03.github.io/neo-async/doc/async.reduceRight.html)
 - [`foldr`](http://suguru03.github.io/neo-async/doc/async.reduceRight.html) -> [`reduceRight`](http://suguru03.github.io/neo-async/doc/async.reduceRight.html)
-- [`transform`](http://suguru03.github.io/neo-async/doc/async.transform.html) *
+- [`transform`](http://suguru03.github.io/neo-async/doc/async.transform.html)
 - [`transformSeries`](http://suguru03.github.io/neo-async/doc/async.transformSeries.html) *
 - [`transformLimit`](http://suguru03.github.io/neo-async/doc/async.transformLimit.html) *
 - [`sortBy`](http://suguru03.github.io/neo-async/doc/async.sortBy.html)
-- [`sortBySeries`](http://suguru03.github.io/neo-async/doc/async.sortBySeries.html)
+- [`sortBySeries`](http://suguru03.github.io/neo-async/doc/async.sortBySeries.html) *
 - [`sortByLimit`](http://suguru03.github.io/neo-async/doc/async.sortByLimit.html) *
 - [`some`](http://suguru03.github.io/neo-async/doc/async.some.html)
 - [`someSeries`](http://suguru03.github.io/neo-async/doc/async.someSeries.html)
 - [`someLimit`](http://suguru03.github.io/neo-async/doc/async.someLimit.html)
 - [`any`](http://suguru03.github.io/neo-async/doc/async.some.html) -> [`some`](http://suguru03.github.io/neo-async/doc/async.some.html)
 - [`every`](http://suguru03.github.io/neo-async/doc/async.every.html)
-- [`everySeries`](http://suguru03.github.io/neo-async/doc/async.everySeries.html) *
+- [`everySeries`](http://suguru03.github.io/neo-async/doc/async.everySeries.html)
 - [`everyLimit`](http://suguru03.github.io/neo-async/doc/async.everyLimit.html)
 - [`all`](http://suguru03.github.io/neo-async/doc/async.every.html) -> [`every`](http://suguru03.github.io/neo-async/doc/async.every.html)
 - [`concat`](http://suguru03.github.io/neo-async/doc/async.concat.html)
@@ -145,31 +138,34 @@ bower install neo-async
 - [`priorityQueue`](#priorityQueue)
 - [`cargo`](#cargo)
 - [`auto`](#auto)
+- [`autoInject`](#autoInject)
 - [`retry`](#retry)
+- [`retryable`](#retryable)
 - [`iterator`](#iterator)
-- [`timeout`](http://suguru03.github.io/neo-async/doc/async.timeout.html)
 - [`times`](http://suguru03.github.io/neo-async/doc/async.times.html)
 - [`timesSeries`](http://suguru03.github.io/neo-async/doc/async.timesSeries.html)
 - [`timesLimit`](http://suguru03.github.io/neo-async/doc/async.timesLimit.html)
+- [`race`](#race)
 
 ### Utils
 - [`apply`](#apply)
-- [`nextTick`](#nextTick)
 - [`setImmediate`](#setImmediate)
-- [`safeNextTick`](#safeNextTick) *
-- [`asyncify`](#asyncify)
-- [`wrapSync`](#asyncify) -> [`asyncify`](#asyncify)
-- [`constant`](#constant)
-- [`ensureAsync`](#ensureAsync)
+- [`nextTick`](#nextTick)
 - [`memoize`](#memoize)
 - [`unmemoize`](#unmemoize)
+- [`ensureAsync`](#ensureAsync)
+- [`constant`](#constant)
+- [`asyncify`](#asyncify)
+- [`wrapSync`](#asyncify) -> [`asyncify`](#asyncify)
 - [`log`](#log)
 - [`dir`](#dir)
 - [`createLogger`](#createLogger)
 - [`noConflict`](#noConflict)
+- [`timeout`](http://suguru03.github.io/neo-async/doc/async.timeout.html)
+- [`reflect`](#reflect)
+- [`reflectAll`](#reflectAll)
 - [`eventEmitter`](#eventEmitter) *
 - [`EventEmitter`](#EventEmitter) *
-- [`safe`](#safe) *
 
 ### Safe
 
