@@ -48,7 +48,6 @@ parallel('#define', function() {
     require(asyncPath);
     define = null;
   });
-
 });
 
 parallel('#nextTick', function() {
@@ -187,10 +186,9 @@ parallel('#check functions', function() {
 
   it('should have async functions', function() {
     _.forOwn(require('async'), function(func, key) {
-      assert.ok(async[key]);
+      assert.ok(async[key], key + ' wasn\'t found.');
     });
   });
-
 });
 
 parallel('#other', function() {
@@ -225,6 +223,18 @@ parallel('#other', function() {
     assert.ok(context.neo_async);
     _.forOwn(context.neo_async, function(func, key) {
       assert.ok(async[key]);
+    });
+  });
+});
+
+parallel('#default', function() {
+
+  'use strict';
+
+  it('should have same functions', function() {
+
+    _.forOwn(async['default'], function(value, key) {
+      assert.ok(async[key], key + ' wasn\'t found.');
     });
   });
 });
