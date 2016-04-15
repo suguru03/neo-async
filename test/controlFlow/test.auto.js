@@ -293,4 +293,69 @@ parallel('#auto', function() {
     sync = false;
   });
 
+  it('auto prevent dead-locks due to inexistant dependencies', function() {
+
+    var err;
+    try {
+      async.auto({
+        task1: ['noexist', function(results, callback) {
+          callback(null, 'task1');
+        }]
+      });
+    } catch(e) {
+      err = e;
+      assert.ok(e);
+      assert(/^async.auto task `noexist` has non-existent dependency/.test(e.message));
+    }
+    assert.ok(err);
+  });
+
+  it('auto prevent dead-locks due to all cyclic dependencies', function() {
+
+    var err;
+    try {
+      async.auto({
+        task1: ['task2', function(results, callback) {
+          callback(null, 'task1');
+        }],
+        task2: ['task1', function(results, callback) {
+          callback(null, 'task2');
+        }]
+      });
+    } catch(e) {
+      err = e;
+      assert.ok(e);
+      assert.strictEqual(e.message, 'async.auto task has cyclic dependencies');
+    }
+    assert.ok(err);
+  });
+
+  it('auto prevent dead-locks due to some cyclic dependencies', function() {
+
+    var err;
+    try {
+      async.auto({
+        task1: ['task2', function(results, callback) {
+          callback(null, 'task1');
+        }],
+        task2: ['task1', function(results, callback) {
+          callback(null, 'task2');
+        }],
+        task3: function(callback) {
+          callback(null, 'task3');
+        },
+        task4: ['task5', function(results, callback) {
+          callback(null, 'task4');
+        }],
+        task5: ['task4', function(results, callback) {
+          callback(null, 'task5');
+        }]
+      });
+    } catch(e) {
+      err = e;
+      assert.ok(e);
+      assert.strictEqual(e.message, 'async.auto task has cyclic dependencies');
+    }
+    assert.ok(err);
+  });
 });
