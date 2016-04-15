@@ -8,7 +8,7 @@ var async = require('../../');
 
 parallel('#ensureAsync', function() {
 
-  it('should call function on asynchronous', function(done) {
+  it('should call function with synchronous', function(done) {
 
     var sync = true;
     var func = function(callback) {
@@ -18,7 +18,7 @@ parallel('#ensureAsync', function() {
       if (err) {
         return done(err);
       }
-      assert.strictEqual(sync, false);
+      assert.strictEqual(sync, true);
       done();
     });
     sync = false;
