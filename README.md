@@ -13,6 +13,9 @@
 
 Neo-Async is thought to be used as a drop-in replacement for [Async](https://github.com/caolan/async), it almost fully covers its functionality and runs [faster](#speed-comparison).
 
+## Code Coverage
+![coverage](https://raw.githubusercontent.com/wiki/suguru03/neo-async/images/coverage.png)
+
 ## Installation
 
 ### In a browser
