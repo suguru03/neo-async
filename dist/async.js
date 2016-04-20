@@ -3099,11 +3099,11 @@
   var race = createRace();
 
   /**
-   * @version 1.8.0
+   * @version 1.8.1
    * @namespace async
    */
   var index = {
-    VERSION: '1.8.0',
+    VERSION: '1.8.1',
 
     // Collections
     each: each,
@@ -9227,8 +9227,9 @@
         return;
       }
       q.paused = false;
-      _times(q.concurrency, function() {
-        async.setImmediate(q.process);
+      var count = q.concurrency < q.tasks.length ? q.concurrency : q.tasks.length;
+      _times(count, function() {
+        async.nextTick(q.process);
       });
     }
   }
