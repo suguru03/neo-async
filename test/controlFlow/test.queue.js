@@ -645,6 +645,26 @@ parallel('#queue', function() {
     }, 50);
   });
 
+  it('should execute even if concurrency is infinity', function(done) {
+
+    var called = 0;
+    var queue = async.queue(function(data, callback) {
+      called++;
+      callback(null, data);
+    }, Infinity);
+    queue.pause();
+    _.times(10, function(n) {
+      queue.push(n, function(err, res) {
+        assert.strictEqual(res, n);
+      });
+    });
+    queue.resume();
+    setTimeout(function() {
+      assert.strictEqual(called, 10);
+      done();
+    }, 50);
+  });
+
 });
 
 parallel('#priorityQueue', function() {
