@@ -950,4 +950,35 @@ parallel('#someLimit', function() {
     });
   });
 
+  it('should stop execution when result is found', function(done) {
+
+    var order = [];
+    var collection = [3, 1, 2];
+    async.someLimit(collection, 2, someIterator(order), function(res) {
+      order.push('callback');
+      assert.strictEqual(res, true);
+    });
+    setTimeout(function() {
+      assert.deepEqual(order, [1, 'callback', 3]);
+      done();
+    }, 5 * delay);
+  });
+
+  it('should stop execution when result is found', function(done) {
+
+    var order = [];
+    var collection = [3, 1, 2];
+    async.someLimit(collection, 2, someIteratorWithError(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      order.push('callback');
+      assert.strictEqual(res, true);
+    });
+    setTimeout(function() {
+      assert.deepEqual(order, [1, 'callback', 3]);
+      done();
+    }, 5 * delay);
+  });
+
 });
