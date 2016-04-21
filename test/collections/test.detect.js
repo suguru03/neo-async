@@ -996,4 +996,22 @@ parallel('#detectLimit', function() {
     });
   });
 
+  it('should stop execution', function(done) {
+
+    var order = [];
+    var collection = [2, 1, 3];
+    async.detectLimit(collection, 2, detectIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      order.push('callback');
+      assert.strictEqual(res, 1);
+    });
+    setTimeout(function() {
+      console.log(order);
+      assert.deepEqual(order, [1, 'callback', 2]);
+      done();
+    }, 10 * delay);
+  });
+
 });
