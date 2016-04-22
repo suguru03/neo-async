@@ -37,14 +37,15 @@
     throw new Error('Callback was already called.');
   };
 
-  var argsRegex =  /^function\s*[^\(]*\(\s*([^\)]*)\)/m;
   var objectTypes = {
     'function': true,
     'object': true
   };
   var iteratorSymbol = typeof Symbol === 'function' &amp;&amp; Symbol.iterator;
 
-  var _nextTick, asyncNextTick, asyncSetImmediate;
+  var _nextTick;
+  var _safeNextTick;
+  var _setImmediate;
   createImmediate();
 
   /**
@@ -3126,11 +3127,11 @@
   var race = createRace();
 
   /**
-   * @version 1.8.0
+   * @version 1.8.2
    * @namespace async
    */
   var index = {
-    VERSION: '1.8.0',
+    VERSION: '1.8.2',
 
     // Collections
     each: each,
@@ -3214,13 +3215,12 @@
     priorityQueue: priorityQueue,
     cargo: cargo,
     auto: auto,
-    autoInject: autoInject,
     retry: retry,
-    retryable: retryable,
     iterator: iterator,
     apply: apply,
-    nextTick: asyncNextTick,
-    setImmediate: asyncSetImmediate,
+    nextTick: _nextTick,
+    safeNextTick: _safeNextTick,
+    setImmediate: _setImmediate,
     timeout: timeout,
     times: times,
     timesSeries: timesSeries,
@@ -3239,10 +3239,14 @@
     createLogger: createLogger,
     noConflict: noConflict,
     eventEmitter: eventEmitter,
-    EventEmitter: EventEmitter
+    EventEmitter: EventEmitter,
+
+    safe: undefined
   };
 
-  var exports = {
+  index.safe = safe();
+
+  var async = {
     VERSION: index.VERSION,
 
     'default': index,
@@ -3329,13 +3333,12 @@
     priorityQueue: priorityQueue,
     cargo: cargo,
     auto: auto,
-    autoInject: autoInject,
     retry: retry,
-    retryable: retryable,
     iterator: iterator,
     apply: apply,
-    nextTick: asyncNextTick,
-    setImmediate: asyncSetImmediate,
+    nextTick: _nextTick,
+    safeNextTick: _safeNextTick,
+    setImmediate: _setImmediate,
     timeout: timeout,
     times: times,
     timesSeries: timesSeries,
@@ -3352,24 +3355,25 @@
     log: createLogger('log'),
     dir: createLogger('dir'),
     createLogger: createLogger,
-    // TODO remove
     noConflict: noConflict,
     eventEmitter: eventEmitter,
-    EventEmitter: EventEmitter
+    EventEmitter: EventEmitter,
+
+    safe: index.safe
   };
 
   if (objectTypes[typeof define] &amp;&amp; define &amp;&amp; define.amd) {
     // AMD / RequireJS
     define([], function() {
-      return exports;
+      return async;
     });
   } else if (objectTypes[typeof module] &amp;&amp; module &amp;&amp; module.exports) {
     // Node.js
-    module.exports = exports;
+    module.exports = async;
   } else if (root &amp;&amp; objectTypes[typeof root.async]) {
-    root.neo_async = exports;
+    root.neo_async = async;
   } else {
-    root.async = exports;
+    root.async = async;
   }
 
   /**
@@ -3377,20 +3381,15 @@
    */
   function createImmediate() {
     var delay = function delay(fn) {
-      var args = _slice(arguments, 1);
-      setTimeout(function() {
-        fn.apply(null, args);
-      });
+      setTimeout(fn, 0);
     };
-    asyncSetImmediate = typeof setImmediate === 'function' ? setImmediate : delay;
+    _setImmediate = typeof setImmediate === 'function' ? setImmediate : delay;
     if (typeof process === 'object' &amp;&amp; typeof process.nextTick === 'function') {
-      _nextTick = /^v0.10/.test(process.version) ? asyncSetImmediate : process.nextTick;
-      asyncNextTick = /^v0/.test(process.version) ? asyncSetImmediate : process.nextTick;
+      _nextTick = _safeNextTick = /^v0.10/.test(process.version) ? _setImmediate : process.nextTick;
     } else {
-      asyncNextTick = _nextTick = asyncSetImmediate;
+      _nextTick = _safeNextTick = _setImmediate;
     }
   }
-
 
   // base on lodash
   /**
@@ -3951,6 +3950,23 @@
   /**
    * @private
    * @param {Array} array
+   * @param {Function} iterator
+   */
+  function _arrayEvery(array, iterator) {
+    var size = array.length;
+    var index = -1;
+
+    while (++index &lt; size) {
+      if (!iterator(array[index])) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * @private
+   * @param {Array} array
    */
   function _arrayClone(array) {
     var size = array.length;
@@ -3999,6 +4015,22 @@
 
   /**
    * @private
+   * @param {Array} array
+   * @param {*} value
+   */
+  function _indexOf(array, value) {
+    var index = -1;
+    var size = array.length;
+
+    while (++index &lt; size) {
+      if (array[index] === value) {
+        return index;
+      }
+    }
+  }
+
+  /**
+   * @private
    * @param {Object} a
    * @param {Object} b
    */
@@ -4018,6 +4050,144 @@
       func(err, res);
       func = null;
     };
+  }
+
+  /**
+   * for node v0.10.x
+   * @memberof async
+   * @namespace safe
+   */
+  function safe() {
+    var iteratorRegExp = new RegExp('^(each|foreach|map|filter|select|reject|detect|pick|reduce|inject|fold|transform|sortby|some|any|every|all|concat|times)|(whilst|until|during)$|^forever$');
+    var zeroIndexRegExp = new RegExp(/^do|^forever$/);
+    var secondIndexRegExp = new RegExp(/^reduce|Limit$/);
+    var safeTaskRegExp = new RegExp(/^parallel|^(series|waterfall|auto)$/);
+
+    var safeAsync = {};
+    _objectEach(index, function(func, key) {
+      if (typeof func !== 'function') {
+        safeAsync[key] = func;
+        return;
+      }
+
+      // tasks
+      if (safeTaskRegExp.test(key)) {
+        return createSafeTasks(func, key);
+      }
+
+      // iterator
+      if (iteratorRegExp.test(key.toLowerCase())) {
+        return createSafeIterator(func, key);
+      }
+      // unavaiable safe fucntion
+      safeAsync[key] = func;
+    });
+    safeAsync.safe = safe;
+    return safeAsync;
+
+    function createSafeIterator(func, key) {
+      var index = zeroIndexRegExp.test(key) ? 0 : secondIndexRegExp.test(key) ? 2 : 1;
+      var funcLength = func.length;
+      safeAsync[key] = safeCollection;
+
+      function safeCollection() {
+        var items = _baseSlice(arguments);
+        var iterator = items[index];
+        switch (iterator.length) {
+          case 1:
+            items[index] = function(done) {
+              async.safeNextTick(function() {
+                iterator(done);
+              });
+            };
+            break;
+          case 2:
+            items[index] = function(arg1, done) {
+              async.safeNextTick(function() {
+                iterator(arg1, done);
+              });
+            };
+            break;
+          case 3:
+            items[index] = function(arg1, arg2, done) {
+              async.safeNextTick(function() {
+                iterator(arg1, arg2, done);
+              });
+            };
+            break;
+          case 4:
+            items[index] = function(arg1, arg2, arg3, done) {
+              async.safeNextTick(function() {
+                iterator(arg1, arg2, arg3, done);
+              });
+            };
+            break;
+          default:
+            items[index] = function() {
+              var args = _baseSlice(arguments);
+              async.safeNextTick(function() {
+                iterator.apply(null, args);
+              });
+            };
+            break;
+        }
+
+        switch (funcLength) {
+          case 2:
+            return func(items[0], items[1]);
+          case 3:
+            return func(items[0], items[1], items[2]);
+          case 4:
+            return func(items[0], items[1], items[2], items[3]);
+          case 5:
+            return func(items[0], items[1], items[2], items[3], items[4]);
+        }
+      }
+    }
+
+    function createSafeTasks(func, key) {
+      var index = 0;
+      if (/^waterfall$/.test(key)) {
+        safeAsync[key] = safeWaterfall;
+        return;
+      }
+      var funcLength = func.length;
+      safeAsync[key] = safeTasks;
+
+      function safeTasks() {
+        var items = _baseSlice(arguments);
+        var tasks = items[index];
+        if (Array.isArray(tasks)) {
+          _arrayEach(tasks, function(task, index) {
+            tasks[index] = createSafeFunction(task);
+          });
+        } else if (tasks &amp;&amp; typeof tasks === 'object') {
+          _objectEach(tasks, function(task, key) {
+            tasks[key] = createSafeFunction(task);
+          });
+        }
+        switch (funcLength) {
+          case 2:
+            func(items[0], items[1]);
+            break;
+          case 3:
+            func(items[0], items[1], items[2]);
+            break;
+        }
+
+        function createSafeFunction(task) {
+          if (typeof task !== 'function') {
+            return task;
+          }
+          return function safeFuncion() {
+            var args = _baseSlice(arguments);
+            async.safeNextTick(function() {
+              task.apply(null, args);
+            });
+          };
+        }
+      }
+    }
   }
 
   /**
@@ -4131,10 +4301,12 @@
    */
   function createFilter(arrayEach, baseEach, symbolEach, bool) {
 
-    return function(collection, iterator, callback) {
+    return function commonFilter(collection, iterator, callback) {
       callback = callback || noop;
       var size, keys, result;
       var completed = 0;
+      var enableError = callback.length === 2;
+      var createCallback = enableError ? createFilterCallbackWithError : createFilterCallback;
 
       if (Array.isArray(collection)) {
         size = collection.length;
@@ -4152,10 +4324,25 @@
         baseEach(collection, iterator, createCallback, keys);
       }
       if (!size) {
-        return callback(undefined, []);
+        return enableError ? callback(undefined, []) : callback([]);
       }
 
-      function createCallback(index, value) {
+      function createFilterCallback(index, value) {
+        return function done(res) {
+          if (index === null) {
+            throwError();
+          }
+          if (!!res === bool) {
+            result[index] = value;
+          }
+          index = null;
+          if (++completed === size) {
+            callback(_compact(result));
+          }
+        };
+      }
+
+      function createFilterCallbackWithError(index, value) {
         return function done(err, res) {
           if (index === null) {
             throwError();
@@ -4184,12 +4371,14 @@
    */
   function createFilterSeries(bool) {
 
-    return function(collection, iterator, callback) {
+    return function commonFilterSeries(collection, iterator, callback) {
       callback = callback || noop;
       var size, key, value, keys, iter, values, iterate;
       var sync = true;
       var completed = 0;
       var result = [];
+      var enableError = callback.length === 2;
+      var done = enableError ? filterCallbackWithError : filterCallback;
 
       if (Array.isArray(collection)) {
         size = collection.length;
@@ -4205,7 +4394,7 @@
         iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
       }
       if (!size) {
-        return callback(undefined, []);
+        return enableError ? callback(undefined, []) : callback([]);
       }
       iterate();
       sync = false;
@@ -4243,7 +4432,21 @@
         iterator(value, key, done);
       }
 
-      function done(err, res) {
+      function filterCallback(res) {
+        if (!!res === bool) {
+          result[result.length] = value;
+        }
+        if (++completed >= size) {
+          callback(result);
+          callback = throwError;
+        } else if (sync) {
+          async.nextTick(iterate);
+        } else {
+          iterate();
+        }
+      }
+
+      function filterCallbackWithError(err, res) {
         if (err) {
           callback(err, result);
           callback = throwError;
@@ -4256,7 +4459,7 @@
           callback(undefined, result);
           callback = throwError;
         } else if (sync) {
-          _nextTick(iterate);
+          async.nextTick(iterate);
         } else {
           iterate();
         }
@@ -4270,12 +4473,14 @@
    */
   function createFilterLimit(bool) {
 
-    return function(collection, limit, iterator, callback) {
+    return function commonFilterLimit(collection, limit, iterator, callback) {
       callback = callback || noop;
       var size, index, key, value, keys, iter, item, iterate, result;
       var sync = true;
       var started = 0;
       var completed = 0;
+      var enableError = callback.length === 2;
+      var createCallback = enableError ? filterCallbackWithError : filterCallback;
 
       if (Array.isArray(collection)) {
         size = collection.length;
@@ -4291,7 +4496,7 @@
         iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
       }
       if (!size || isNaN(limit) || limit &lt; 1) {
-        return callback(undefined, []);
+        return enableError ? callback(undefined, []) : callback([]);
       }
       result = Array(size);
       _times(limit > size ? size : limit, iterate);
@@ -4344,7 +4549,27 @@
         }
       }
 
-      function createCallback(value, index) {
+      function filterCallback(value, index) {
+        return function(res) {
+          if (index === null) {
+            throwError();
+          }
+          if (!!res === bool) {
+            result[index] = value;
+          }
+          index = null;
+          if (++completed >= size) {
+            callback(_compact(result));
+            callback = throwError;
+          } else if (sync) {
+            async.nextTick(iterate);
+          } else {
+            iterate();
+          }
+        };
+      }
+
+      function filterCallbackWithError(value, index) {
         return function(err, res) {
           if (index === null) {
             throwError();
@@ -4364,7 +4589,7 @@
             callback(undefined, _compact(result));
             callback = throwError;
           } else if (sync) {
-            _nextTick(iterate);
+            async.nextTick(iterate);
           } else {
             iterate();
           }
@@ -4519,7 +4744,7 @@
       } else if (bool === false) {
         callback();
       } else if (sync) {
-        _nextTick(iterate);
+        async.nextTick(iterate);
       } else {
         sync = true;
         iterate();
@@ -4695,7 +4920,7 @@
         callback();
         callback = noop;
       } else if (sync) {
-        _nextTick(iterate);
+        async.nextTick(iterate);
       } else {
         sync = true;
         iterate();
@@ -4836,7 +5061,7 @@
         callback(undefined, result);
         callback = throwError;
       } else if (sync) {
-        _nextTick(iterate);
+        async.nextTick(iterate);
       } else {
         sync = true;
         iterate();
@@ -5000,7 +5225,7 @@
           callback(undefined, result);
           callback = throwError;
         } else if (sync) {
-          _nextTick(iterate);
+          async.nextTick(iterate);
         } else {
           sync = true;
           iterate();
@@ -5148,7 +5373,7 @@
         callback(undefined, result);
         callback = throwError;
       } else if (sync) {
-        _nextTick(iterate);
+        async.nextTick(iterate);
       } else {
         sync = true;
         iterate();
@@ -5314,7 +5539,7 @@
           callback(undefined, result);
           callback = throwError;
         } else if (sync) {
-          _nextTick(iterate);
+          async.nextTick(iterate);
         } else {
           sync = true;
           iterate();
@@ -5337,6 +5562,7 @@
       callback = callback || noop;
       var size, keys;
       var completed = 0;
+      var createCallback = callback.length === 2 ? createCollectionCallbackWithError : createCollectionCallback;
 
       if (Array.isArray(collection)) {
         size = collection.length;
@@ -5354,7 +5580,24 @@
         callback();
       }
 
-      function createCallback(value) {
+      function createCollectionCallback(value) {
+        var called = false;
+        return function done(res) {
+          if (called) {
+            throwError();
+          }
+          called = true;
+          if (!!res === bool) {
+            callback(value);
+            callback = noop;
+          } else if (++completed === size) {
+            callback();
+            callback = throwError;
+          }
+        };
+      }
+
+      function createCollectionCallbackWithError(value) {
         var called = false;
         return function done(err, res) {
           if (called) {
@@ -5387,6 +5630,7 @@
       var size, key, value, keys, iter, values, iterate;
       var sync = true;
       var completed = 0;
+      var done = callback.length === 2 ? detectCallbackWithError : detectCallback;
 
       if (Array.isArray(collection)) {
         size = collection.length;
@@ -5439,7 +5683,23 @@
         iterator(value, key, done);
       }
 
-      function done(err, res) {
+      function detectCallback(res) {
+        if (!!res === bool) {
+          callback(value);
+          callback = throwError;
+        } else if (++completed >= size) {
+          callback();
+          callback = throwError;
+        } else if (sync) {
+          async.nextTick(iterate);
+        } else {
+          sync = true;
+          iterate();
+        }
+        sync = false;
+      }
+
+      function detectCallbackWithError(err, res) {
         if (err) {
           callback(err);
           callback = throwError;
@@ -5450,7 +5710,7 @@
           callback();
           callback = throwError;
         } else if (sync) {
-          _nextTick(iterate);
+          async.nextTick(iterate);
         } else {
           sync = true;
           iterate();
@@ -5466,12 +5726,13 @@
    */
   function createDetectLimit(bool) {
 
-    return function(collection, limit, iterator, callback) {
+    return function detectLimit(collection, limit, iterator, callback) {
       callback = callback || noop;
       var size, index, key, value, keys, iter, item, iterate;
       var sync = true;
       var started = 0;
       var completed = 0;
+      var createCallback = callback.length === 2 ? detectCallbackWithError : detectCallback;
 
       if (Array.isArray(collection)) {
         size = collection.length;
@@ -5538,7 +5799,31 @@
         }
       }
 
-      function createCallback(value) {
+      function detectCallback(value) {
+        var called = false;
+        return function(res) {
+          if (called) {
+            throwError();
+          }
+          called = true;
+          if (!!res === bool) {
+            callback(value);
+            callback = noop;
+            iterate = noop;
+          } else if (++completed >= size) {
+            callback();
+            callback = throwError;
+          } else if (sync) {
+            async.nextTick(iterate);
+          } else {
+            sync = true;
+            iterate();
+          }
+          sync = false;
+        };
+      }
+
+      function detectCallbackWithError(value) {
         var called = false;
         return function(err, res) {
           if (called) {
@@ -5552,11 +5837,12 @@
           } else if (!!res === bool) {
             callback(undefined, value);
             callback = noop;
+            iterate = noop;
           } else if (++completed >= size) {
             callback();
             callback = throwError;
           } else if (sync) {
-            _nextTick(iterate);
+            async.nextTick(iterate);
           } else {
             sync = true;
             iterate();
@@ -5576,11 +5862,13 @@
    */
   function createPick(arrayEach, baseEach, symbolEach, bool) {
 
-    return function(collection, iterator, callback) {
+    return function commonPick(collection, iterator, callback) {
       callback = callback || noop;
       var size, keys;
       var completed = 0;
       var result = {};
+      var enableError = callback.length === 2;
+      var createCallback = enableError ? createPickCallbackWithError : createPickCallback;
 
       if (Array.isArray(collection)) {
         size = collection.length;
@@ -5595,10 +5883,25 @@
         baseEach(collection, iterator, createCallback, keys);
       }
       if (!size) {
-        return callback(undefined, {});
+        return enableError ? callback(undefined, {}) : callback({});
       }
 
-      function createCallback(key, value) {
+      function createPickCallback(key, value) {
+        return function done(res) {
+          if (key === null) {
+            throwError();
+          }
+          if (!!res === bool) {
+            result[key] = value;
+          }
+          key = null;
+          if (++completed === size) {
+            callback(result);
+          }
+        };
+      }
+
+      function createPickCallbackWithError(key, value) {
         return function done(err, res) {
           if (key === null) {
             throwError();
@@ -5628,12 +5931,14 @@
    */
   function createPickSeries(bool) {
 
-    return function(collection, iterator, callback) {
+    return function commonPickSeries(collection, iterator, callback) {
       callback = callback || noop;
       var size, key, value, keys, iter, values, iterate;
       var sync = true;
       var result = {};
       var completed = 0;
+      var enableError = callback.length === 2;
+      var done = enableError ? pickCallbackWithError : pickCallback;
 
       if (Array.isArray(collection)) {
         size = collection.length;
@@ -5649,7 +5954,7 @@
         iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
       }
       if (!size) {
-        return callback(undefined, {});
+        return enableError ? callback(undefined, {}) : callback({});
       }
       iterate();
       sync = false;
@@ -5692,7 +5997,23 @@
         iterator(value, key, done);
       }
 
-      function done(err, res) {
+      function pickCallback(res) {
+        if (!!res === bool) {
+          result[key] = value;
+        }
+        if (++completed >= size) {
+          callback(result);
+          callback = throwError;
+        } else if (sync) {
+          async.nextTick(iterate);
+        } else {
+          sync = true;
+          iterate();
+        }
+        sync = false;
+      }
+
+      function pickCallbackWithError(err, res) {
         if (err) {
           callback(err, result);
           callback = throwError;
@@ -5705,7 +6026,7 @@
           callback(undefined, result);
           callback = throwError;
         } else if (sync) {
-          _nextTick(iterate);
+          async.nextTick(iterate);
         } else {
           sync = true;
           iterate();
@@ -5721,13 +6042,15 @@
    */
   function createPickLimit(bool) {
 
-    return function(collection, limit, iterator, callback) {
+    return function commonPickLimit(collection, limit, iterator, callback) {
       callback = callback || noop;
       var size, index, key, value, keys, iter, item, iterate;
       var sync = true;
       var result = {};
       var started = 0;
       var completed = 0;
+      var enableError = callback.length === 2;
+      var createCallback = enableError ? createPickCallbackWithError : createPickCallback;
 
       if (Array.isArray(collection)) {
         size = collection.length;
@@ -5743,7 +6066,7 @@
         iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
       }
       if (!size || isNaN(limit) || limit &lt; 1) {
-        return callback(undefined, {});
+        return enableError ? callback(undefined, {}) : callback({});
       }
       _times(limit > size ? size : limit, iterate);
       sync = false;
@@ -5795,7 +6118,29 @@
         }
       }
 
-      function createCallback(value, key) {
+      function createPickCallback(value, key) {
+        return function(res) {
+          if (key === null) {
+            throwError();
+          }
+          if (!!res === bool) {
+            result[key] = value;
+          }
+          key = null;
+          if (++completed >= size) {
+            callback(result);
+            callback = throwError;
+          } else if (sync) {
+            async.nextTick(iterate);
+          } else {
+            sync = true;
+            iterate();
+          }
+          sync = false;
+        };
+      }
+
+      function createPickCallbackWithError(value, key) {
         return function(err, res) {
           if (key === null) {
             throwError();
@@ -5815,7 +6160,7 @@
             callback(undefined, result);
             callback = throwError;
           } else if (sync) {
-            _nextTick(iterate);
+            async.nextTick(iterate);
           } else {
             sync = true;
             iterate();
@@ -5962,7 +6307,7 @@
         callback(undefined, result);
         callback = throwError;
       } else if (sync) {
-        _nextTick(function() {
+        async.nextTick(function() {
           iterate(result);
         });
       } else {
@@ -6109,7 +6454,7 @@
         callback(undefined, result);
         callback = throwError;
       } else if (sync) {
-        _nextTick(function() {
+        async.nextTick(function() {
           iterate(result);
         });
       } else {
@@ -6307,7 +6652,7 @@
         callback(undefined, result);
         callback = throwError;
       } else if (sync) {
-        _nextTick(iterate);
+        async.nextTick(iterate);
       } else {
         sync = true;
         iterate();
@@ -6476,7 +6821,7 @@
         callback = noop;
         iterate = noop;
       } else if (sync) {
-        _nextTick(iterate);
+        async.nextTick(iterate);
       } else {
         sync = true;
         iterate();
@@ -6683,7 +7028,7 @@
         callback(undefined, _pluck(result, 'value'));
         callback = throwError;
       } else if (sync) {
-        _nextTick(iterate);
+        async.nextTick(iterate);
       } else {
         sync = true;
         iterate();
@@ -6854,7 +7199,7 @@
           callback(undefined, _pluck(result, 'value'));
           callback = throwError;
         } else if (sync) {
-          _nextTick(iterate);
+          async.nextTick(iterate);
         } else {
           sync = true;
           iterate();
@@ -7001,9 +7346,13 @@
    */
   function some(collection, iterator, callback) {
     callback = callback || noop;
-    detect(collection, iterator, done);
+    detect(collection, iterator, callback.length === 2 ? doneWithError : done);
 
-    function done(err, res) {
+    function done(res) {
+      callback(!!res);
+    }
+
+    function doneWithError(err, res) {
       callback(err, !!res);
     }
   }
@@ -7145,9 +7494,13 @@
    */
   function someSeries(collection, iterator, callback) {
     callback = callback || noop;
-    detectSeries(collection, iterator, done);
+    detectSeries(collection, iterator, callback.length === 2 ? doneWithError : done);
 
-    function done(err, res) {
+    function done(res) {
+      callback(!!res);
+    }
+
+    function doneWithError(err, res) {
       callback(err, !!res);
     }
   }
@@ -7290,9 +7643,13 @@
    */
   function someLimit(collection, limit, iterator, callback) {
     callback = callback || noop;
-    detectLimit(collection, limit, iterator, done);
+    detectLimit(collection, limit, iterator, callback.length === 2 ? doneWithError : done);
 
-    function done(err, res) {
+    function done(res) {
+      callback(!!res);
+    }
+
+    function doneWithError(err, res) {
       callback(err, !!res);
     }
   }
@@ -7309,9 +7666,13 @@
 
     return function every(collection, iterator, callback) {
       callback = callback || noop;
-      deny(collection, iterator, done);
+      deny(collection, iterator, callback.length === 2 ? doneWithError : done);
 
-      function done(err, res) {
+      function done(res) {
+        callback(!res);
+      }
+
+      function doneWithError(err, res) {
         callback(err, !res);
       }
     };
@@ -7326,9 +7687,13 @@
 
     return function everySeries(collection, iterator, callback) {
       callback = callback || noop;
-      denySeries(collection, iterator, done);
+      denySeries(collection, iterator, callback.length === 2 ? doneWithError : done);
 
-      function done(err, res) {
+      function done(res) {
+        callback(!res);
+      }
+
+      function doneWithError(err, res) {
         callback(err, !res);
       }
     };
@@ -7343,9 +7708,13 @@
 
     return function everyLimit(collection, limit, iterator, callback) {
       callback = callback || noop;
-      denyLimit(collection, limit, iterator, done);
+      denyLimit(collection, limit, iterator, callback.length === 2 ? doneWithError : done);
 
-      function done(err, res) {
+      function done(res) {
+        callback(!res);
+      }
+
+      function doneWithError(err, res) {
         callback(err, !res);
       }
     };
@@ -7529,7 +7898,7 @@
         callback(undefined, result);
         callback = throwError;
       } else if (sync) {
-        _nextTick(iterate);
+        async.nextTick(iterate);
       } else {
         sync = true;
         iterate();
@@ -7686,7 +8055,7 @@
         callback(undefined, result);
         callback = throwError;
       } else if (sync) {
-        _nextTick(iterate);
+        async.nextTick(iterate);
       } else {
         sync = true;
         iterate();
@@ -7863,7 +8232,7 @@
         callback(undefined, result);
         callback = throwError;
       } else if (sync) {
-        _nextTick(iterate);
+        async.nextTick(iterate);
       } else {
         sync = true;
         iterate();
@@ -8000,7 +8369,7 @@
         if (++completed >= size) {
           callback(undefined, result);
         } else if (sync) {
-          _nextTick(iterate);
+          async.nextTick(iterate);
         } else {
           sync = true;
           iterate();
@@ -8123,12 +8492,71 @@
       func = tasks[completed];
       args = arguments;
       if (sync) {
-        _nextTick(iterate);
+        async.nextTick(iterate);
       } else {
         sync = true;
         iterate();
       }
       sync = false;
+    }
+  }
+
+  /**
+   * @private
+   * @param {Array} tasks - functions
+   */
+  function safeWaterfall(tasks, callback) {
+    callback = callback || noop;
+    if (!checkWaterfallTasks(tasks, callback)) {
+      return;
+    }
+    var called;
+    var size = tasks.length;
+    var args = [];
+    iterate(0);
+
+    function iterate(completed) {
+      called = false;
+      var func = tasks[completed];
+      switch (args.length) {
+        case 0:
+        case 1:
+          return func(done);
+        case 2:
+          return func(args[1], done);
+        case 3:
+          return func(args[1], args[2], done);
+        case 4:
+          return func(args[1], args[2], args[3], done);
+        case 5:
+          return func(args[1], args[2], args[3], args[4], done);
+        case 6:
+          return func(args[1], args[2], args[3], args[4], args[5], done);
+        default:
+          args = _slice(args, 1);
+          args.push(done);
+          return func.apply(null, args);
+      }
+
+      function done(err) {
+        if (called) {
+          throwError();
+        }
+        called = true;
+        if (err) {
+          callback(err);
+        } else if (++completed >= size) {
+          callback.apply(null, _baseSlice(arguments));
+        } else {
+          args = arguments;
+          async.safeNextTick(function() {
+            iterate(completed);
+          });
+          return;
+        }
+        iterate = throwError;
+        callback = throwError;
+      }
     }
   }
 
@@ -8226,7 +8654,7 @@
       func = tasks[completed];
       args = arguments;
       if (sync) {
-        _nextTick(iterate);
+        async.nextTick(iterate);
       } else {
         sync = true;
         iterate();
@@ -8253,7 +8681,7 @@
 
     function iterate() {
       if (sync) {
-        _nextTick(next);
+        async.nextTick(next);
       } else {
         sync = true;
         iterator(done);
@@ -8300,7 +8728,7 @@
 
     function iterate() {
       if (sync) {
-        _nextTick(next);
+        async.nextTick(next);
       } else {
         sync = true;
         iterator(done);
@@ -8351,7 +8779,7 @@
 
     function iterate() {
       if (sync) {
-        _nextTick(next);
+        async.nextTick(next);
       } else {
         sync = true;
         iterator(done);
@@ -8398,7 +8826,7 @@
 
     function iterate() {
       if (sync) {
-        _nextTick(next);
+        async.nextTick(next);
       } else {
         sync = true;
         iterator(done);
@@ -8529,7 +8957,7 @@
         throw err;
       }
       if (sync) {
-        _nextTick(iterate);
+        async.nextTick(iterate);
       } else {
         sync = true;
         iterate();
@@ -8629,7 +9057,7 @@
 
       if (tasks === undefined || !_tasks.length) {
         if (q.idle()) {
-          _nextTick(function() {
+          async.nextTick(function() {
             if (typeof q.drain === 'function') {
               q.drain();
             }
@@ -8655,7 +9083,7 @@
         if (q.tasks.length &lt;= (q.concurrency - q.buffer)) {
           q.unsaturated();
         }
-        _nextTick(q.process);
+        async.nextTick(q.process);
       });
     }
   }
@@ -8702,7 +9130,7 @@
 
       if (tasks === undefined || !_tasks.length) {
         if (q.idle()) {
-          _nextTick(function() {
+          async.nextTick(function() {
             if (typeof q.drain === 'function') {
               q.drain();
             }
@@ -8727,7 +9155,7 @@
         if (q.tasks.length &lt;= (q.concurrency - q.buffer)) {
           q.unsaturated();
         }
-        _nextTick(q.process);
+        async.nextTick(q.process);
       });
 
       function getIndex(priority) {
@@ -8783,7 +9211,7 @@
           q.drain();
         }
         if (sync) {
-          _nextTick(q.process);
+          async.nextTick(q.process);
         } else {
           q.process();
         }
@@ -8828,8 +9256,9 @@
         return;
       }
       q.paused = false;
-      _times(q.concurrency, function() {
-        _nextTick(q.process);
+      var count = q.concurrency &lt; q.tasks.length ? q.concurrency : q.tasks.length;
+      _times(count, function() {
+        async.nextTick(q.process);
       });
     }
   }
@@ -8869,7 +9298,7 @@
           c.saturated();
         }
       });
-      _nextTick(c.process);
+      async.nextTick(c.process);
     }
 
     function run() {
@@ -8956,278 +9385,131 @@
       callback = concurrency;
       concurrency = null;
     }
-    var keys = Object.keys(tasks);
-    var runningTasks = 0;
-    var readyTasks = [];
-    var listeners = {};
-    var results = {};
     callback = once(callback || noop);
-    concurrency = concurrency || keys.length;
+    var keys = Object.keys(tasks);
+    var remainingTasks = keys.length;
+    if (!remainingTasks) {
+      return callback();
+    }
+    if (!concurrency) {
+      concurrency = remainingTasks;
+    }
+
+    var runningTasks = 0;
+    var listeners = [];
+    var results = {};
+    addListener(function() {
+      if (!remainingTasks) {
+        callback(undefined, results);
+      }
+    });
 
     _objectEach(tasks, function(task, key) {
-      // no dependencies
-      var _task, taskSize;
-      if (!Array.isArray(task)) {
-        _task = task;
-        taskSize = 0;
-        readyTasks.push(listener);
-        return;
+      task = Array.isArray(task) ? task : [task];
+      var called = false;
+      var size = task.length;
+      var requires = task.slice(0, size - 1);
+      var _task = task[size - 1];
+      if (callback !== noop &amp;&amp; ready()) {
+        runningTasks++;
+        return _task(done, results);
       }
-      var dependencySize = task.length - 1;
-      _task = task[dependencySize];
-      taskSize = dependencySize;
-      if (dependencySize === 0) {
-        readyTasks.push(listener);
-        return;
-      }
-      // dependencies
-      var index = -1;
-      while (++index &lt; dependencySize) {
-        var dependencyName = task[index];
-        var taskListeners = listeners[dependencyName];
-        if (!taskListeners) {
-          taskListeners = listeners[dependencyName] = [];
-        }
-        taskListeners.push(taskListener);
-      }
+      addListener(listener);
 
-      function done(err, arg) {
-        if (key === null) {
+      function done(err) {
+        if (called) {
           throwError();
         }
+        called = true;
         runningTasks--;
-        if (arguments.length > 2) {
-          arg = _slice(arguments, 1);
+        var args = _slice(arguments, 1);
+        if (args.length &lt;= 1) {
+          args = args[0];
         }
+
         if (err) {
           var safeResults = _objectClone(results);
-          safeResults[key] = arg;
-          key = null;
+          safeResults[key] = args;
           callback(err, safeResults);
           callback = noop;
           return;
         }
-        results[key] = arg;
-        taskComplete(key);
-        key = null;
+        results[key] = args;
+        async.nextTick(taskComplete);
+      }
+
+      function ready() {
+        return runningTasks &lt; concurrency &amp;&amp; !_has(results, key) &amp;&amp; _arrayEvery(requires, function(_key) {
+          return _has(results, _key);
+        });
       }
 
       function listener() {
-        if (callback === noop) {
-          return;
-        }
-        runningTasks++;
-        if (taskSize > 0) {
-          _task(results, done);
-        } else {
-          _task(done);
-        }
-      }
-
-      function taskListener() {
-        if (--dependencySize === 0) {
-          readyTasks.push(listener);
+        if (ready()) {
+          runningTasks++;
+          removeListener(listener);
+          _task(done, results);
         }
       }
     }, keys);
 
-    proceedQueue();
+    function addListener(fn) {
+      // TODO
+      listeners.unshift(fn);
+    }
 
-    function proceedQueue() {
-      if (readyTasks.length === 0 &amp;&amp; runningTasks === 0) {
-        return callback(undefined, results);
-      }
-      while (readyTasks.length &amp;&amp; runningTasks &lt; concurrency) {
-        readyTasks.shift()();
+    function removeListener(fn) {
+      var index = _indexOf(listeners, fn);
+      if (index >= 0) {
+        listeners.splice(index, 1);
       }
     }
 
-    function taskComplete(key) {
-      var taskListeners = listeners[key] || [];
-      _arrayEach(taskListeners, function(task) {
-        task();
+    function taskComplete() {
+      remainingTasks--;
+      _arrayEach(listeners.slice(0), function(fn) {
+        fn();
       });
-      proceedQueue();
-    }
-  }
-
-  /**
-   * parse function arguments for `autoInject`
-   *
-   * @private
-   */
-  function parseParams(func) {
-    return func.toString().match(argsRegex)[1].split(/\s*\,\s*/);
-  }
-
-  /**
-   * @memberof async
-   * @namespace autoInject
-   * @param {Object} tasks
-   * @param {number} [concurrency]
-   * @param {Funciton} [callback]
-   */
-  function autoInject(tasks, concurrency, callback) {
-    var newTasks = {};
-    _objectEach(tasks, iterator);
-    auto(newTasks, concurrency, callback);
-
-    function iterator(task, key) {
-      var params, taskLength;
-      if (Array.isArray(task)) {
-        params = _arrayClone(task);
-        taskLength = params.length - 1;
-        task = params[taskLength];
-      } else if (task.length === 0) {
-        throw new Error('autoInject task functions require explicit parameters.');
-      } else if (task.length === 1) {
-        newTasks[key] = task;
-        return;
-      } else {
-        params = parseParams(task);
-        taskLength = params.length - 1;
-      }
-      params[taskLength] = newTask;
-      newTasks[key] = params;
-
-      function newTask(results, done) {
-        switch (taskLength) {
-          case 0:
-            task(done);
-            break;
-          case 1:
-            task(results[params[0]], done);
-            break;
-          case 2:
-            task(results[params[0]], results[params[1]], done);
-            break;
-          case 3:
-            task(results[params[0]], results[params[1]], results[params[2]], done);
-            break;
-          default:
-            var i = -1;
-            while(++i &lt; taskLength - 1) {
-              params[i] = results[params[i]];
-            }
-            params[i] = done;
-            task.apply(null, params);
-            break;
-        }
-      }
     }
   }
 
   /**
    * @memberof async
    * @namespace retry
-   * @param {integer|Object|Function} times
-   * @param {Function} [task]
-   * @param {Function} [callback]
    */
-  function retry(times, task, callback) {
+  function retry(limit, task, callback) {
     var DEFAULT_TIMES = 5;
-    var DEFAULT_INTERVAL = 0;
-    var interval;
-    if (arguments.length &lt; 3 &amp;&amp; typeof times === 'function') {
-      callback = task || noop;
-      task = times;
-      times = DEFAULT_TIMES;
-    } else {
-      callback = callback || noop;
-      switch (typeof times) {
-        case 'object':
-          interval = +times.interval || DEFAULT_INTERVAL;
-          times = +times.times || DEFAULT_TIMES;
-          break;
-        case 'number':
-          times = times || DEFAULT_TIMES;
-          break;
-        case 'string':
-          times = +times || DEFAULT_TIMES;
-          break;
-        default:
-          throw new Error('Invalid arguments for async.retry');
-      }
+    if (typeof limit === 'function') {
+      callback = task;
+      task = limit;
+      limit = DEFAULT_TIMES;
     }
-    if (typeof task !== 'function') {
-      throw new Error('Invalid arguments for async.retry');
-    }
+    limit = parseInt(limit, 10) || DEFAULT_TIMES;
 
-    if (interval) {
-      task(intervalCallback);
-    } else {
-      task(simpleCallback);
-    }
+    return typeof callback === 'function' ? wrappedTask() : wrappedTask;
 
-    function simpleIterator() {
-      task(simpleCallback);
-    }
+    function wrappedTask(wrappedCallback, wrappedResults) {
+      callback = wrappedCallback || callback || noop;
+      var result = {};
+      timesSeries(limit, iterator, done);
 
-    function simpleCallback(err, res) {
-      if (--times === 0 || !err) {
-        return callback(err, res);
-      }
-      simpleIterator();
-    }
-
-    function intervalIterator() {
-      task(intervalCallback);
-    }
-
-    function intervalCallback(err, res) {
-      if (--times === 0 || !err) {
-        return callback(err, res);
-      }
-      setTimeout(intervalIterator, interval);
-    }
-  }
-
-  function retryable(opts, task) {
-    if (!task) {
-      task = opts;
-      opts = null;
-    }
-    return done;
-
-    function done() {
-      var taskFn;
-      var args = _baseSlice(arguments);
-      var lastIndex = args.length - 1;
-      var callback = args[lastIndex];
-      switch (task.length) {
-        case 1:
-          taskFn = task1;
-          break;
-        case 2:
-          taskFn = task2;
-          break;
-        case 3:
-          taskFn = task3;
-          break;
-        default:
-          taskFn = task4;
-      }
-      if (opts) {
-        retry(opts, taskFn, callback);
-      } else {
-        retry(taskFn, callback);
+      function done() {
+        var err = result.err;
+        var res = result.res;
+        callback(err, res);
       }
 
-      function task1(done) {
-        task(done);
-      }
-
-      function task2(done) {
-        task(args[0], done);
-      }
-
-      function task3(done) {
-        task(args[0], args[1], done);
-      }
-
-      function task4(callback) {
-        args[lastIndex] = callback;
-        task.apply(null, args);
+      function iterator(n, callback) {
+        task(function(err, res) {
+          result = {
+            err: err,
+            res: res
+          };
+          if (!err) {
+            return callback(true);
+          }
+          callback(err &amp;&amp; n === (limit - 1));
+        }, wrappedResults);
       }
     }
   }
@@ -9429,7 +9711,7 @@
         callback(undefined, result);
         callback = throwError;
       } else if (sync) {
-        _nextTick(iterate);
+        async.nextTick(iterate);
       } else {
         sync = true;
         iterate();
@@ -9489,7 +9771,7 @@
           callback(undefined, result);
           callback = throwError;
         } else if (sync) {
-          _nextTick(iterate);
+          async.nextTick(iterate);
         } else {
           sync = true;
           iterate();
@@ -9552,7 +9834,7 @@
       var callback = args.pop();
       var key = hasher.apply(null, args);
       if (_has(memo, key)) {
-        _nextTick(function() {
+        async.nextTick(function() {
           callback.apply(null, memo[key]);
         });
         return;
@@ -9605,7 +9887,7 @@
       args.push(function() {
         var innerArgs = arguments;
         if (sync) {
-          _nextTick(function() {
+          async.safeNextTick(function() {
             callback.apply(null, innerArgs);
           });
         } else {
@@ -9624,7 +9906,6 @@
   function constant( /* values... */ ) {
     var args = [null].concat(_baseSlice(arguments));
     return function(callback) {
-      callback = arguments[arguments.length - 1];
       callback.apply(this, args);
     };
   }
@@ -9684,7 +9965,7 @@
    */
   function noConflict() {
     root.async = previos_async;
-    return exports;
+    return async;
   }
 
   // base on EventEmitter
@@ -9949,13 +10230,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="async.html">async</a></li><li><a href="async.angelFall.html">angelFall</a></li><li><a href="async.apply.html">apply</a></li><li><a href="async.applyEach.html">applyEach</a></li><li><a href="async.auto.html">auto</a></li><li><a href="async.autoInject.html">autoInject</a></li><li><a href="async.cargo.html">cargo</a></li><li><a href="async.compose.html">compose</a></li><li><a href="async.concat.html">concat</a></li><li><a href="async.concatLimit.html">concatLimit</a></li><li><a href="async.concatSeries.html">concatSeries</a></li><li><a href="async.constant.html">constant</a></li><li><a href="async.createLogger.html">createLogger</a></li><li><a href="async.detect.html">detect</a></li><li><a href="async.detectLimit.html">detectLimit</a></li><li><a href="async.detectSeries.html">detectSeries</a></li><li><a href="async.doDuring.html">doDuring</a></li><li><a href="async.doUntil.html">doUntil</a></li><li><a href="async.doWhilst.html">doWhilst</a></li><li><a href="async.during.html">during</a></li><li><a href="async.each.html">each</a></li><li><a href="async.eachLimit.html">eachLimit</a></li><li><a href="async.eachSeries.html">eachSeries</a></li><li><a href="async.ensureAsync.html">ensureAsync</a></li><li><a href="async.EventEmitter.html">EventEmitter</a></li><li><a href="async.eventEmitter_.html">eventEmitter</a></li><li><a href="async.every.html">every</a></li><li><a href="async.everyLimit.html">everyLimit</a></li><li><a href="async.everySeries.html">everySeries</a></li><li><a href="async.filter.html">filter</a></li><li><a href="async.filterLimit.html">filterLimit</a></li><li><a href="async.filterSeries.html">filterSeries</a></li><li><a href="async.forever.html">forever</a></li><li><a href="async.iterator.html">iterator</a></li><li><a href="async.map.html">map</a></li><li><a href="async.mapLimit.html">mapLimit</a></li><li><a href="async.mapSeries.html">mapSeries</a></li><li><a href="async.mapValues.html">mapValues</a></li><li><a href="async.mapValuesLimit.html">mapValuesLimit</a></li><li><a href="async.mapValuesSeries.html">mapValuesSeries</a></li><li><a href="async.memoize.html">memoize</a></li><li><a href="async.noConflict.html">noConflict</a></li><li><a href="async.omit.html">omit</a></li><li><a href="async.omitLimit.html">omitLimit</a></li><li><a href="async.omitSeries.html">omitSeries</a></li><li><a href="async.parallel.html">parallel</a></li><li><a href="async.parallelLimit.html">parallelLimit</a></li><li><a href="async.pick.html">pick</a></li><li><a href="async.pickLimit.html">pickLimit</a></li><li><a href="async.pickSeries.html">pickSeries</a></li><li><a href="async.priorityQueue.html">priorityQueue</a></li><li><a href="async.queue.html">queue</a></li><li><a href="async.race.html">race</a></li><li><a href="async.reduce.html">reduce</a></li><li><a href="async.reduceRight.html">reduceRight</a></li><li><a href="async.reject.html">reject</a></li><li><a href="async.rejectLimit.html">rejectLimit</a></li><li><a href="async.rejectSeries.html">rejectSeries</a></li><li><a href="async.retry.html">retry</a></li><li><a href="async.seq.html">seq</a></li><li><a href="async.series.html">series</a></li><li><a href="async.some.html">some</a></li><li><a href="async.someLimit.html">someLimit</a></li><li><a href="async.someSeries.html">someSeries</a></li><li><a href="async.sortBy.html">sortBy</a></li><li><a href="async.sortByLimit.html">sortByLimit</a></li><li><a href="async.sortBySeries.html">sortBySeries</a></li><li><a href="async.timeout.html">timeout</a></li><li><a href="async.times.html">times</a></li><li><a href="async.timesLimit.html">timesLimit</a></li><li><a href="async.timesSeries.html">timesSeries</a></li><li><a href="async.transform.html">transform</a></li><li><a href="async.transformLimit.html">transformLimit</a></li><li><a href="async.transformSeries.html">transformSeries</a></li><li><a href="async.unmemoize.html">unmemoize</a></li><li><a href="async.until.html">until</a></li><li><a href="async.waterfall.html">waterfall</a></li><li><a href="async.whilst.html">whilst</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="async.html">async</a></li><li><a href="async.angelFall.html">angelFall</a></li><li><a href="async.apply.html">apply</a></li><li><a href="async.applyEach.html">applyEach</a></li><li><a href="async.auto.html">auto</a></li><li><a href="async.cargo.html">cargo</a></li><li><a href="async.compose.html">compose</a></li><li><a href="async.concat.html">concat</a></li><li><a href="async.concatLimit.html">concatLimit</a></li><li><a href="async.concatSeries.html">concatSeries</a></li><li><a href="async.constant.html">constant</a></li><li><a href="async.createLogger.html">createLogger</a></li><li><a href="async.detect.html">detect</a></li><li><a href="async.detectLimit.html">detectLimit</a></li><li><a href="async.detectSeries.html">detectSeries</a></li><li><a href="async.doDuring.html">doDuring</a></li><li><a href="async.doUntil.html">doUntil</a></li><li><a href="async.doWhilst.html">doWhilst</a></li><li><a href="async.during.html">during</a></li><li><a href="async.each.html">each</a></li><li><a href="async.eachLimit.html">eachLimit</a></li><li><a href="async.eachSeries.html">eachSeries</a></li><li><a href="async.ensureAsync.html">ensureAsync</a></li><li><a href="async.EventEmitter.html">EventEmitter</a></li><li><a href="async.eventEmitter_.html">eventEmitter</a></li><li><a href="async.every.html">every</a></li><li><a href="async.everyLimit.html">everyLimit</a></li><li><a href="async.everySeries.html">everySeries</a></li><li><a href="async.filter.html">filter</a></li><li><a href="async.filterLimit.html">filterLimit</a></li><li><a href="async.filterSeries.html">filterSeries</a></li><li><a href="async.forever.html">forever</a></li><li><a href="async.iterator.html">iterator</a></li><li><a href="async.map.html">map</a></li><li><a href="async.mapLimit.html">mapLimit</a></li><li><a href="async.mapSeries.html">mapSeries</a></li><li><a href="async.mapValues.html">mapValues</a></li><li><a href="async.mapValuesLimit.html">mapValuesLimit</a></li><li><a href="async.mapValuesSeries.html">mapValuesSeries</a></li><li><a href="async.memoize.html">memoize</a></li><li><a href="async.noConflict.html">noConflict</a></li><li><a href="async.omit.html">omit</a></li><li><a href="async.omitLimit.html">omitLimit</a></li><li><a href="async.omitSeries.html">omitSeries</a></li><li><a href="async.parallel.html">parallel</a></li><li><a href="async.parallelLimit.html">parallelLimit</a></li><li><a href="async.pick.html">pick</a></li><li><a href="async.pickLimit.html">pickLimit</a></li><li><a href="async.pickSeries.html">pickSeries</a></li><li><a href="async.priorityQueue.html">priorityQueue</a></li><li><a href="async.queue.html">queue</a></li><li><a href="async.race.html">race</a></li><li><a href="async.reduce.html">reduce</a></li><li><a href="async.reduceRight.html">reduceRight</a></li><li><a href="async.reject.html">reject</a></li><li><a href="async.rejectLimit.html">rejectLimit</a></li><li><a href="async.rejectSeries.html">rejectSeries</a></li><li><a href="async.retry.html">retry</a></li><li><a href="async.safe.html">safe</a></li><li><a href="async.seq.html">seq</a></li><li><a href="async.series.html">series</a></li><li><a href="async.some.html">some</a></li><li><a href="async.someLimit.html">someLimit</a></li><li><a href="async.someSeries.html">someSeries</a></li><li><a href="async.sortBy.html">sortBy</a></li><li><a href="async.sortByLimit.html">sortByLimit</a></li><li><a href="async.sortBySeries.html">sortBySeries</a></li><li><a href="async.timeout.html">timeout</a></li><li><a href="async.times.html">times</a></li><li><a href="async.timesLimit.html">timesLimit</a></li><li><a href="async.timesSeries.html">timesSeries</a></li><li><a href="async.transform.html">transform</a></li><li><a href="async.transformLimit.html">transformLimit</a></li><li><a href="async.transformSeries.html">transformSeries</a></li><li><a href="async.unmemoize.html">unmemoize</a></li><li><a href="async.until.html">until</a></li><li><a href="async.waterfall.html">waterfall</a></li><li><a href="async.whilst.html">whilst</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Tue Mar 22 2016 00:20:25 GMT-0700 (PDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Apr 21 2016 23:05:49 GMT-0700 (PDT)
 </footer>
 
 <script> prettyPrint(); </script>
