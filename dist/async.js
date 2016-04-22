@@ -3099,11 +3099,11 @@
   var race = createRace();
 
   /**
-   * @version 1.8.1
+   * @version 1.8.2
    * @namespace async
    */
   var index = {
-    VERSION: '1.8.1',
+    VERSION: '1.8.2',
 
     // Collections
     each: each,
@@ -5809,6 +5809,7 @@
           } else if (!!res === bool) {
             callback(undefined, value);
             callback = noop;
+            iterate = noop;
           } else if (++completed >= size) {
             callback();
             callback = throwError;
