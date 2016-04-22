@@ -236,6 +236,19 @@ parallel('#every', function() {
     });
   });
 
+  it('should return an error', function(done) {
+
+    var collection = [1, 3, 2, 4];
+    var iterator = function(value, key, callback) {
+      callback('error');
+    };
+    async.every(collection, iterator, function(err, res) {
+      assert.ok(err);
+      assert.strictEqual(res, undefined);
+      done();
+    });
+  });
+
 });
 
 parallel('#everySeries', function() {
@@ -399,6 +412,19 @@ parallel('#everySeries', function() {
       done();
     });
     sync = false;
+  });
+
+  it('should return an error', function(done) {
+
+    var collection = [1, 3, 2, 4];
+    var iterator = function(value, key, callback) {
+      callback('error');
+    };
+    async.everySeries(collection, iterator, function(err, res) {
+      assert.ok(err);
+      assert.strictEqual(res, undefined);
+      done();
+    });
   });
 
   it('should throw error if double callback', function(done) {
@@ -705,6 +731,19 @@ parallel('#everyLimit', function() {
       }
       assert.strictEqual(res, true);
       assert.deepEqual(order, []);
+      done();
+    });
+  });
+
+  it('should return an error', function(done) {
+
+    var collection = [1, 3, 2, 4];
+    var iterator = function(value, key, callback) {
+      callback('error');
+    };
+    async.everyLimit(collection, 1, iterator, function(err, res) {
+      assert.ok(err);
+      assert.strictEqual(res, undefined);
       done();
     });
   });
