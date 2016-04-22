@@ -16,3 +16,8 @@ minify:
 cp:
 	cp ./lib/async.min.js ./dist/async.min.js
 	cp ./lib/async.js ./dist/async.js
+
+npm-test:
+	DELAY=20 npm test
+
+release: npm-test minify cp
