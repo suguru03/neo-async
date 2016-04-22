@@ -221,6 +221,19 @@ parallel('#some', function() {
     });
   });
 
+  it('should return an error', function(done) {
+
+    var collection = [1, 3, 2, 4];
+    var iterator = function(value, key, callback) {
+      callback('error');
+    };
+    async.some(collection, iterator, function(err, res) {
+      assert.ok(err);
+      assert.strictEqual(res, undefined);
+      done();
+    });
+  });
+
 });
 
 parallel('#someSeries', function() {
@@ -419,6 +432,19 @@ parallel('#someSeries', function() {
       }
       assert.strictEqual(res, false);
       assert.deepEqual(order, []);
+      done();
+    });
+  });
+
+  it('should return an error', function(done) {
+
+    var collection = [1, 3, 2, 4];
+    var iterator = function(value, key, callback) {
+      callback('error');
+    };
+    async.someSeries(collection, iterator, function(err, res) {
+      assert.ok(err);
+      assert.strictEqual(res, undefined);
       done();
     });
   });
@@ -677,6 +703,19 @@ parallel('#someLimit', function() {
       }
       assert.strictEqual(res, false);
       assert.deepEqual(order, []);
+      done();
+    });
+  });
+
+  it('should return an error', function(done) {
+
+    var collection = [1, 3, 2, 4];
+    var iterator = function(value, key, callback) {
+      callback('error');
+    };
+    async.someLimit(collection, 2, iterator, function(err, res) {
+      assert.ok(err);
+      assert.strictEqual(res, undefined);
       done();
     });
   });
