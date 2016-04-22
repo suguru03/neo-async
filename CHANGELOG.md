@@ -1,3 +1,31 @@
+<a name"v1.8.2"></a>
+### v1.8.2 (2016-04-21)
+
+
+#### Bug Fixes
+
+* **detectLimit:** fix to stop when result is found ([0ad61770](https://github.com/suguru03/neo-async/commit/0ad61770))
+
+
+#### Other Changes
+
+* **Makefile:** add release task ([b4f8b4af](https://github.com/suguru03/neo-async/commit/b4f8b4af))
+* **everyLimit:** add test ([97012114](https://github.com/suguru03/neo-async/commit/97012114))
+* **someLimit:** add test ([3e0d588b](https://github.com/suguru03/neo-async/commit/3e0d588b))
+
+<a name"v1.8.1"></a>
+### v1.8.1 (2016-04-19)
+
+
+#### Bug Fixes
+
+* **queue:** fix `resume` to work even if concurrency is `Infinity` ([d8e348ab](https://github.com/suguru03/neo-async/commit/d8e348ab))
+
+
+#### Other Changes
+
+* **CHANGELOG:** v1.8.0 [ci skip] ([7ac6b32c](https://github.com/suguru03/neo-async/commit/7ac6b32c))
+
 <a name"v1.8.0"></a>
 ## v1.8.0 (2016-03-21)
 
@@ -914,7 +942,7 @@
 * Modify waterfall function to respond quickly ([2d7af49c](https://github.com/suguru03/neo-async/commit/2d7af49c))
 
 <a name"v0.4.5"></a>
-### v0.4.5 (2016-03-21)
+### v0.4.5 (2016-04-21)
 
 
 #### Bug Fixes
