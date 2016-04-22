@@ -201,8 +201,7 @@ parallel('#filter', function() {
     };
     async.filter(collection, iterator, function(err, res) {
       assert.ok(err);
-      assert.strictEqual(res.length, 2);
-      assert.deepEqual(res, [1, 2]);
+      assert.strictEqual(res, undefined);
       done();
     });
   });
@@ -527,8 +526,7 @@ parallel('#filterSeries', function() {
     };
     async.filterSeries(collection, iterator, function(err, res) {
       assert.ok(err);
-      assert.strictEqual(res.length, 1);
-      assert.deepEqual(res, [1]);
+      assert.strictEqual(res, undefined);
       done();
     });
   });
@@ -856,9 +854,7 @@ parallel('#filterLimit', function() {
 
     async.filterLimit(collection, 2, iterator, function(err, res) {
       assert.ok(err);
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.strictEqual(res.length, 2);
-      assert.deepEqual(res, [1, 3]);
+      assert.strictEqual(res, undefined);
       assert.deepEqual(order, [
         [1, 0],
         [3, 2],

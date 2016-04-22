@@ -190,6 +190,23 @@ parallel('#reject', function() {
     }, Math);
   });
 
+  it('should throw error', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    var iterator = function(num, callback) {
+      setTimeout(function() {
+        order.push(num);
+        callback(num === 3, true);
+      }, num * delay);
+    };
+    async.reject(collection, iterator, function(err, res) {
+      assert.ok(err);
+      assert.strictEqual(res, undefined);
+      done();
+    });
+  });
+
   it('should throw error if double callback', function(done) {
 
     var errorCallCount = 0;
@@ -483,6 +500,23 @@ parallel('#rejectSeries', function() {
       done();
     });
     sync = false;
+  });
+
+  it('should throw error', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    var iterator = function(num, callback) {
+      setTimeout(function() {
+        order.push(num);
+        callback(num === 3, true);
+      }, num * delay);
+    };
+    async.rejectSeries(collection, iterator, function(err, res) {
+      assert.ok(err);
+      assert.strictEqual(res, undefined);
+      done();
+    });
   });
 
   it('should throw error if double callback', function(done) {
@@ -871,6 +905,23 @@ parallel('#rejectLimit', function() {
       assert.strictEqual(res.length, 0);
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
+      done();
+    });
+  });
+
+  it('should throw error', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    var iterator = function(num, callback) {
+      setTimeout(function() {
+        order.push(num);
+        callback(num === 3, true);
+      }, num * delay);
+    };
+    async.rejectLimit(collection, 2, iterator, function(err, res) {
+      assert.ok(err);
+      assert.strictEqual(res, undefined);
       done();
     });
   });
