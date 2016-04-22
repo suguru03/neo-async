@@ -748,4 +748,22 @@ parallel('#everyLimit', function() {
     });
   });
 
+  it('should stop execution', function(done) {
+
+    var order = [];
+    var collection = [3, 2, 1];
+    async.everyLimit(collection, 2, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      order.push('callback');
+      assert.strictEqual(res, false);
+    });
+    setTimeout(function() {
+      console.log(order);
+      assert.deepEqual(order, [2, 'callback', 3]);
+      done();
+    }, 10 * delay);
+  });
+
 });
