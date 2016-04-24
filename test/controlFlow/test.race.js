@@ -10,6 +10,7 @@ var async = global.async || require('../../');
 parallel('#race', function() {
 
   it('should call each funciton in parallel and callback with first result', function(done) {
+
     var called = 0;
     var tasks = _.times(10, function(index) {
       return function(next) {
@@ -31,6 +32,7 @@ parallel('#race', function() {
   });
 
   it('should callback funciton in parallel with object tasks', function(done) {
+
     var called = 0;
     var tasks = _.mapValues(_.times(5, function(index) {
       return function(next) {
@@ -53,6 +55,7 @@ parallel('#race', function() {
   });
 
   it('should callback with the first error', function(done) {
+
     var tasks = _.times(6, function(index) {
       return function(next) {
         setTimeout(function() {
@@ -69,10 +72,21 @@ parallel('#race', function() {
   });
 
   it('should callback when task is empty', function(done) {
+
     async.race([], function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(res, undefined);
+      done();
+    });
+  });
+
+  it('should return TypeError if first argument is not an array or an object', function(done) {
+
+    async.race(null, function(err, res) {
+      assert.ok(err);
+      assert.ok(err instanceof TypeError);
       assert.strictEqual(res, undefined);
       done();
     });
