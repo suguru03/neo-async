@@ -24,7 +24,7 @@ parallel('#timeout', function() {
     ], function(err, res) {
       assert.ok(err);
       assert.strictEqual(err.code, 'ETIMEDOUT');
-      assert.strictEqual(err.message, 'Callback function "anonymous" time out.');
+      assert.strictEqual(err.message, 'Callback function "anonymous" timed out.');
       assert.strictEqual(res[0], 'I did not time out');
       done();
     });
@@ -47,7 +47,7 @@ parallel('#timeout', function() {
     ], function(err, res) {
       assert.ok(err);
       assert.strictEqual(err.code, 'ETIMEDOUT');
-      assert.strictEqual(err.message, 'Callback function "timer" time out.');
+      assert.strictEqual(err.message, 'Callback function "timer" timed out.');
       assert.strictEqual(err.info, info);
       assert.strictEqual(res[0], 'I did not time out');
       done();
