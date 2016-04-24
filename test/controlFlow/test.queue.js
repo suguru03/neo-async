@@ -8,6 +8,8 @@ var assert = require('power-assert');
 var parallel = require('mocha.parallel');
 
 var async = global.async || require('../../');
+var delay = require('../config').delay;
+var util = require('../util');
 
 parallel('#queue', function() {
 
@@ -622,6 +624,47 @@ parallel('#queue', function() {
       assert.strictEqual(called, 10);
       done();
     }, 50);
+  });
+
+  it('should throw an error if callback is not function', function() {
+
+    var worker = function(task, callback) {
+      assert.ok(false);
+      async.setImmediate(callback);
+    };
+    var queue = async.queue(worker);
+    try {
+      queue.push(1, 2);
+    } catch(e) {
+      assert.ok(e);
+      assert.strictEqual(e.message, 'task callback must be a function');
+    }
+  });
+
+  it('should throw an error if callback is called twice', function(done) {
+
+    var worker = function(task, callback) {
+      callback(null, task);
+      callback(null, task);
+    };
+    var called = 0;
+    var queue = async.queue(worker);
+    domain.create()
+      .on('error', util.errorChecker)
+      .run(function() {
+        queue.push(1, function(err, res) {
+          if (err) {
+            return done(err);
+          }
+          assert.strictEqual(res, 1);
+          assert.strictEqual(++called, 1);
+        });
+      });
+
+    setTimeout(function() {
+      assert.strictEqual(called, 1);
+      done();
+    }, delay);
   });
 
 });
