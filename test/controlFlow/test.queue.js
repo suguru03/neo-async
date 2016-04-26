@@ -667,6 +667,50 @@ parallel('#queue', function() {
     }, delay);
   });
 
+  it('should pass more than 2 arguments', function(done) {
+
+    var worker = function(data, callback) {
+      switch (data) {
+        case 0:
+          return callback(null, 1, 2);
+        case 1:
+          return callback(null, 2, 3, 4);
+        case 2:
+          return callback(null, 3, 4, 5, 6);
+      }
+    };
+
+    var queue = async.queue(worker);
+    queue.push(0, function(err, res1, res2, res3, res4) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res1, 1);
+      assert.strictEqual(res2, 2);
+      assert.strictEqual(res3, undefined);
+      assert.strictEqual(res4, undefined);
+    });
+    queue.push(1, function(err, res1, res2, res3, res4) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res1, 2);
+      assert.strictEqual(res2, 3);
+      assert.strictEqual(res3, 4);
+      assert.strictEqual(res4, undefined);
+    });
+    queue.push(2, function(err, res1, res2, res3, res4) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res1, 3);
+      assert.strictEqual(res2, 4);
+      assert.strictEqual(res3, 5);
+      assert.strictEqual(res4, 6);
+    });
+    setTimeout(done, delay);
+  });
+
 });
 
 parallel('#priorityQueue', function() {
