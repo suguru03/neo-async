@@ -108,6 +108,40 @@ parallel('#auto', function() {
     });
   });
 
+  it('should execute even if array task dosen\'t have nay dependencies', function(done) {
+
+    var order = [];
+    async.auto({
+      task1: function(callback) {
+        order.push('task1');
+        callback(null, 'task1');
+      },
+      task2: ['task3', function(task3, callback) {
+        order.push('task2');
+        callback(null, 'task2');
+      }],
+      task3: [function(callback) {
+        order.push('task3');
+        callback(null, 'task3');
+      }]
+    }, function(err, results) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, [
+        'task1',
+        'task3',
+        'task2'
+      ]);
+      assert.deepEqual(results, {
+        task1: 'task1',
+        task2: 'task2',
+        task3: 'task3'
+      });
+      done();
+    });
+  });
+
   it('should execute even if object is empty', function(done) {
 
     async.auto({}, done);
