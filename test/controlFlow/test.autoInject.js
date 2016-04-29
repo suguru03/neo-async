@@ -78,10 +78,10 @@ parallel('#autoInject', function() {
 
     var order = [];
     async.autoInject({
-      task1: function(callback) {
+      task1: [function(callback) {
         order.push('task1');
         callback(null, 1);
-      },
+      }],
       task2: ['task3', function(task3, callback) {
         assert.strictEqual(task3, 3);
         order.push('task2');
@@ -170,10 +170,12 @@ parallel('#autoInject', function() {
 
     var order = [];
     async.autoInject({
-      task1: ['task3', 'task2', function(arg1, arg2, callback) {
+      task1: ['task3', 'task2', 'task5', 'task6', function(arg1, arg2, arg3, arg4, callback) {
         order.push('task1');
         assert.strictEqual(arg1, 3);
         assert.strictEqual(arg2, 2);
+        assert.strictEqual(arg3, 5);
+        assert.strictEqual(arg4, 6);
         callback(null, 1);
       }],
       task2: function(task3, callback) {
@@ -234,6 +236,44 @@ parallel('#autoInject', function() {
       ]);
       done();
     });
+  });
+
+  it('should throw an error if task argument length is zero', function() {
+
+    var err;
+    try {
+      async.autoInject({
+        task1: function() {
+        },
+        task2: function(task1, callback) {
+          assert(false);
+          callback();
+        }
+      });
+    } catch(e) {
+      err = e;
+      assert.ok(e);
+      assert.strictEqual(e.message, 'autoInject task functions require explicit parameters.');
+    }
+    assert.ok(err);
+  });
+
+  it('should throw an error if array task length is empty', function() {
+
+    var err;
+    try {
+      async.autoInject({
+        task1: [],
+        task2: function(task1, callback) {
+          callback();
+        }
+      });
+    } catch(e) {
+      err = e;
+      assert.ok(e);
+      assert.strictEqual(e.message, 'autoInject task functions require explicit parameters.');
+    }
+    assert.ok(err);
   });
 
 });
