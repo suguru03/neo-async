@@ -49,6 +49,43 @@ parallel('#retryable', function() {
     });
   });
 
+  it('should execute even if callback function length is more than 2', function(done) {
+
+    async.autoInject({
+      a: [async.retryable(function(callback) {
+        callback(null, 'a');
+      })],
+      b: ['a', async.retryable(function(a, callback) {
+        callback(null, 'b');
+      })],
+      c: ['a', 'b', async.retryable(function(a, b, callback) {
+        callback(null, 'c');
+      })],
+      d: ['a', 'b', 'c', async.retryable(function(a, b, c, callback) {
+        callback(null, 'd');
+      })],
+      e: ['a', 'b', 'c', 'd', async.retryable(function(a, b, c, d, callback) {
+        callback(null, 'e');
+      })],
+      f: ['a', 'b', 'c', 'd', 'e', async.retryable(function(a, b, c, d, e, callback) {
+        callback(null, 'f');
+      })]
+    }, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, {
+        a: 'a',
+        b: 'b',
+        c: 'c',
+        d: 'd',
+        e: 'e',
+        f: 'f'
+      });
+      done();
+    });
+  });
+
   it('should work as sn embedded task with interval', function(done) {
 
     var start = Date.now();
