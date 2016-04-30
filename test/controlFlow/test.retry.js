@@ -67,6 +67,21 @@ parallel('#retry', function() {
     }, delay);
   });
 
+  it('should execute even if type of times is string', function(done) {
+
+    var times = '3';
+    var callCount = 0;
+    var fn = function(callback) {
+      callCount++;
+      callback();
+    };
+    async.retry(times, fn);
+    setTimeout(function() {
+      assert.strictEqual(callCount, 1);
+      done();
+    }, delay);
+  });
+
   it('should throw error if arguments are empty', function() {
 
     try {
