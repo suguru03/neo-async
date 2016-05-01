@@ -1008,7 +1008,6 @@ parallel('#detectLimit', function() {
       assert.strictEqual(res, 1);
     });
     setTimeout(function() {
-      console.log(order);
       assert.deepEqual(order, [1, 'callback', 2]);
       done();
     }, 10 * delay);

@@ -760,7 +760,6 @@ parallel('#everyLimit', function() {
       assert.strictEqual(res, false);
     });
     setTimeout(function() {
-      console.log(order);
       assert.deepEqual(order, [2, 'callback', 3]);
       done();
     }, 10 * delay);
