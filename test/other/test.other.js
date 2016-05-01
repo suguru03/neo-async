@@ -1,7 +1,5 @@
 /* global it */
 
-define = function() {};
-
 var fs = require('fs');
 var vm = require('vm');
 var path = require('path');
@@ -12,43 +10,6 @@ var parallel = require('mocha.parallel');
 
 var async = global.async || require('../../');
 var asyncPath = global.async_path || path.resolve(__dirname, '../../lib/async.js');
-
-parallel('#define', function() {
-
-  'use strict';
-
-  it('should check define', function(done) {
-
-    var context = {
-      define: function(array, callback) {
-        assert.deepEqual(array, []);
-        var _async = callback();
-        assert.deepEqual(_.keys(async), _.keys(_async));
-        done();
-      },
-      console: console,
-      require: require,
-      exports: exports,
-      module: module
-    };
-    context.define.amd = true;
-    vm.runInNewContext(fs.readFileSync(asyncPath), context);
-  });
-
-  it('should check for coverage', function(done) {
-
-    define = function(array, callback) {
-      assert.deepEqual(array, []);
-      var _async = callback();
-      assert.deepEqual(_.keys(async), _.keys(_async));
-      done();
-    };
-    define.amd = true;
-    delete(require.cache[asyncPath]);
-    require(asyncPath);
-    define = null;
-  });
-});
 
 parallel('#nextTick', function() {
 
