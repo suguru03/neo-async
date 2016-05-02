@@ -174,8 +174,6 @@ bower install neo-async
 - [`timeout`](http://suguru03.github.io/neo-async/doc/async.timeout.html)
 - [`reflect`](#reflect)
 - [`reflectAll`](#reflectAll)
-- [`eventEmitter`](#eventEmitter) *
-- [`EventEmitter`](#EventEmitter) *
 
 ### Safe
 
