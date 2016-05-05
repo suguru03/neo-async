@@ -392,4 +392,26 @@ parallel('#auto', function() {
     }
     assert.ok(err);
   });
+
+  it('should throw an error if tasks have cyclic dependencies', function() {
+
+    var err;
+    var task = function(name) {
+      return function(results, callback) {
+        callback(null, 'task ' + name);
+      };
+    };
+    try {
+      async.auto({
+        a: ['c', task('a')],
+        b: ['a', task('b')],
+        c: ['b', task('c')]
+      });
+    } catch(e) {
+      err = e;
+      assert.ok(e);
+      assert.strictEqual(e.message, 'async.auto task has cyclic dependencies');
+    }
+    assert.ok(err);
+  });
 });
