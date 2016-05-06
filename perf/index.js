@@ -9,10 +9,12 @@ var count = argv.c || argv.count;
 var times = argv.t || argv.times;
 var target = argv.target; // -t <function name>
 
-var benchmarks = benchmark ? [benchmark] : [
+var benchmarks = _.filter([
   'benchmark',
   'func-comparator'
-];
+], function(name) {
+  return benchmark ? RegExp(benchmark).test(name) : name;
+});
 benchmarks = _.transform(benchmarks, function(result, name) {
   result[name] = require('./' + name);
 }, {});
@@ -70,7 +72,8 @@ async.eachSeries(tasks, function(task, name, done) {
         var name = data.name;
         var mean = data.mean;
         var diff = (_.first(array).mean) / mean;
-        console.log('[' + (++index) + ']', '"' + name + '"', (mean.toPrecision(3)) + 'μs' + '[' + diff.toPrecision(3) + ']');
+        var rate = mean / (_.first(array).mean);
+        console.log('[%d] "%s" %sμs[%s][%s]', ++index, name, mean.toPrecision(3), diff.toPrecision(3), rate.toPrecision(3));
       });
       next();
     });
