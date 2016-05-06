@@ -6,7 +6,7 @@
   "scripts": {
     "test": "istanbul cover ./node_modules/.bin/_mocha --report lcovonly -- -R spec ./test --recursive",
     "clean": "rm -rf coverage",
-    "cov:99.8": "grep Lines | perl -nle 'my ($l, $c, $p, @d) = split(/[\\s%]+/); exit(($p > 99.8) == 0)'"
+    "cov:100": "grep Lines | perl -nle 'my ($l, $c, $p, @d) = split(/[\\s%]+/); exit(($p == 100) == 0)'"
   },
   "license": "MIT",
   "keywords": "async, util",
@@ -24,9 +24,6 @@
     "dist/async.js",
     "dist/async.min.js"
   ],
-  "directories": {
-    "test": "test/"
-  },
   "dependencies": {},
   "devDependencies": {
     "async": "git://github.com/caolan/async.git",
@@ -42,7 +39,6 @@
     "gulp-jscs": "^3.0.2",
     "gulp-mocha": "^2.2.0",
     "gulp-util": "^3.0.7",
-    "intelli-espower-loader": "^0.5.0",
     "istanbul": "^0.4.3",
     "jsdoc": "^3.4.0",
     "jshint": "^2.9.2",
@@ -51,7 +47,6 @@
     "mocha": "^2.4.5",
     "mocha.parallel": "^0.12.0",
     "neo-async": "^0.6.5",
-    "power-assert": "^0.10.0",
     "q": "^1.4.1",
     "require-dir": "^0.3.0"
   }

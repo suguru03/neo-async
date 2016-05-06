@@ -7,6 +7,9 @@ test-cov: clean
 test-codecov:
 	cat ./coverage/lcov.info | ./node_modules/codecov.io/bin/codecov.io.js --verbose
 
+release-test:
+	DELAY=20 npm test | npm run-script cov:100
+
 clean:
 	rm -rf coverage
 
@@ -17,7 +20,4 @@ cp:
 	cp ./lib/async.min.js ./dist/async.min.js
 	cp ./lib/async.js ./dist/async.js
 
-npm-test:
-	DELAY=20 npm test
-
-release: npm-test minify cp
+release: release-test minify cp
