@@ -231,6 +231,29 @@ parallel('#map', function() {
       });
   });
 
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    async.map([1, 2], function(item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+          done();
+        }
+      }
+    }, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
+  });
+
   it('should return response immediately if array is empty', function(done) {
 
     var order = [];
