@@ -1,7 +1,8 @@
 /* global it */
 'use strict';
 
-var assert = require('power-assert');
+var assert = require('assert');
+
 var parallel = require('mocha.parallel');
 
 var async = global.async || require('../../');

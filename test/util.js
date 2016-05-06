@@ -1,7 +1,8 @@
 /* global it */
 'use strict';
 
-var assert = require('power-assert');
+var assert = require('assert');
+
 var _it = typeof Symbol === 'function' ? it : it.skip;
 _it.only = _it.only || function skipOnly(key) {
   it.only(key);

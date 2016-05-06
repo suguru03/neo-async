@@ -3,9 +3,9 @@
 var fs = require('fs');
 var vm = require('vm');
 var path = require('path');
+var assert = require('assert');
 
 var _ = require('lodash');
-var assert = require('power-assert');
 var parallel = require('mocha.parallel');
 
 var async = global.async || require('../../');

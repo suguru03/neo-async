@@ -1,10 +1,10 @@
 /* global it */
 'use strict';
 
+var assert = require('assert');
 var domain = require('domain');
 
 var _ = require('lodash');
-var assert = require('power-assert');
 var parallel = require('mocha.parallel');
 
 var async = global.async || require('../../');
