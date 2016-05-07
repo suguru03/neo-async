@@ -148,31 +148,6 @@ parallel('#angelFall', function() {
     });
   });
 
-  it('should execute with asynchronous', function(done) {
-
-    var sync = true;
-    var order = [];
-    async.angelFall([
-      function(next) {
-        order.push(1);
-        next();
-        order.push(2);
-      },
-      function(next) {
-        order.push(3);
-        next();
-      }
-    ], function(err) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(sync, false);
-      assert.deepEqual(order, [1, 2, 3]);
-      done();
-    });
-    sync = false;
-  });
-
   it('should execute even if task does not have an argument', function(done) {
 
     var order = [];
