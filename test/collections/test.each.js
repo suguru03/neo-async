@@ -4,6 +4,7 @@
 var assert = require('assert');
 var domain = require('domain');
 
+var _ = require('lodash');
 var parallel = require('mocha.parallel');
 
 var async = global.async || require('../../');
@@ -12,15 +13,16 @@ var util = require('../util');
 
 function eachIterator(order) {
 
-  return function(num, callback) {
+  return function(value, callback) {
 
     var self = this;
+    var num = _.isArray(value) ? _.last(value) : value;
 
     setTimeout(function() {
       if (self && self.round) {
         num = self.round(num);
       }
-      order.push(num);
+      order.push(value);
       callback();
     }, num * delay);
   };
@@ -28,15 +30,16 @@ function eachIterator(order) {
 
 function eachIteratorWithKey(order) {
 
-  return function(num, key, callback) {
+  return function(value, key, callback) {
 
     var self = this;
+    var num = _.isArray(value) ? _.last(value) : value;
 
     setTimeout(function() {
       if (self && self.round) {
         num = self.round(num);
       }
-      order.push([num, key]);
+      order.push([value, key]);
       callback();
     }, num * delay);
   };
@@ -112,6 +115,41 @@ parallel('#each', function() {
     });
   });
 
+  it('should execute iterator by collection of Set', function(done) {
+
+    var order = [];
+    var set = new util.Set();
+    set.add(1);
+    set.add(3);
+    set.add(2);
+    async.each(set, eachIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, [1, 2, 3]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Set with passing key', function(done) {
+    var order = [];
+    var set = new util.Set();
+    set.add(1);
+    set.add(3);
+    set.add(2);
+    async.each(set, eachIteratorWithKey(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, [
+        [1, 0],
+        [2, 2],
+        [3, 1]
+      ]);
+      done();
+    });
+  });
+
   it('should execute iterator by collection of Map', function(done) {
 
     var order = [];
@@ -123,7 +161,11 @@ parallel('#each', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(order, [1, 2, 3]);
+      assert.deepEqual(order, [
+        ['a', 1],
+        ['c', 2],
+        ['b', 3]
+      ]);
       done();
     });
   });
@@ -139,9 +181,9 @@ parallel('#each', function() {
         return done(err);
       }
       assert.deepEqual(order, [
-        [1, 'a'],
-        [2, 'c'],
-        [3, 'b']
+        [['a', 1], 0],
+        [['c', 2], 2],
+        [['b', 3], 1]
       ]);
       done();
     });
@@ -407,6 +449,41 @@ parallel('#eachSeries', function() {
     });
   });
 
+  it('should execute iterator to series by collection of Set', function(done) {
+
+    var order = [];
+    var set = new util.Set();
+    set.add(1);
+    set.add(3);
+    set.add(2);
+    async.eachSeries(set, eachIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, [1, 3, 2]);
+      done();
+    });
+  });
+
+  it('should execute iterator to series by collection of Set with passing key', function(done) {
+    var order = [];
+    var set = new util.Set();
+    set.add(1);
+    set.add(3);
+    set.add(2);
+    async.eachSeries(set, eachIteratorWithKey(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, [
+        [1, 0],
+        [3, 1],
+        [2, 2]
+      ]);
+      done();
+    });
+  });
+
   it('should execute iterator to series by collection of Map', function(done) {
 
     var order = [];
@@ -418,7 +495,11 @@ parallel('#eachSeries', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(order, [1, 3, 2]);
+      assert.deepEqual(order, [
+        ['a', 1],
+        ['b', 3],
+        ['c', 2]
+      ]);
       done();
     });
   });
@@ -434,13 +515,14 @@ parallel('#eachSeries', function() {
         return done(err);
       }
       assert.deepEqual(order, [
-        [1, 'a'],
-        [3, 'b'],
-        [2, 'c']
+        [['a', 1], 0],
+        [['b', 3], 1],
+        [['c', 2], 2]
       ]);
       done();
     });
   });
+
 
   it('should execute iterator to series without binding', function(done) {
 
@@ -686,6 +768,47 @@ parallel('#eachLimit', function() {
     });
   });
 
+  it('should execute iterator in limited by collection of Set', function(done) {
+
+    var order = [];
+    var set = new util.Set();
+    set.add(1);
+    set.add(5);
+    set.add(3);
+    set.add(4);
+    set.add(2);
+    async.eachLimit(set, 2, eachIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, [1, 3, 5, 2, 4]);
+      done();
+    });
+  });
+
+  it('should execute iterator in limited by collection of Set with passing key', function(done) {
+    var order = [];
+    var set = new util.Set();
+    set.add(1);
+    set.add(5);
+    set.add(3);
+    set.add(4);
+    set.add(2);
+    async.eachLimit(set, 2, eachIteratorWithKey(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(order, [
+        [1, 0],
+        [3, 2],
+        [5, 1],
+        [2, 4],
+        [4, 3]
+      ]);
+      done();
+    });
+  });
+
   it('should execute iterator in limited by collection of Map', function(done) {
 
     var order = [];
@@ -699,7 +822,13 @@ parallel('#eachLimit', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(order, [1, 3, 5, 2, 4]);
+      assert.deepEqual(order, [
+        ['a', 1],
+        ['c', 3],
+        ['b', 5],
+        ['e', 2],
+        ['d', 4]
+      ]);
       done();
     });
   });
@@ -717,11 +846,11 @@ parallel('#eachLimit', function() {
         return done(err);
       }
       assert.deepEqual(order, [
-        [1, 'a'],
-        [3, 'c'],
-        [5, 'b'],
-        [2, 'e'],
-        [4, 'd']
+        [ ['a', 1], 0],
+        [ ['c', 3], 2],
+        [ ['b', 5], 1],
+        [ ['e', 2], 4],
+        [ ['d', 4], 3]
       ]);
       done();
     });

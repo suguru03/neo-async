@@ -34,7 +34,7 @@ gulp.task('test', function() {
 });
 
 gulp.task('test:min', function() {
-  var filepath = path.resolve(__dirname, '../../', '../lib/async.min.js');
+  var filepath = path.resolve(__dirname, '../../', 'lib/async.min.js');
   global.async = require(filepath);
   global.async_path = filepath;
   test();
