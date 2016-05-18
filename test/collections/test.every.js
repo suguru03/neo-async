@@ -4,6 +4,7 @@
 var assert = require('assert');
 var domain = require('domain');
 
+var _ = require('lodash');
 var parallel = require('mocha.parallel');
 
 var async = global.async || require('../../');
@@ -12,16 +13,17 @@ var util = require('../util');
 
 function everyIterator(order) {
 
-  return function(num, callback) {
+  return function(value, callback) {
 
     var self = this;
+    var num = _.isArray(value) ? _.last(value) : value;
 
     setTimeout(function() {
 
       if (self && self.round) {
         num = self.round(num);
       }
-      order.push(num);
+      order.push(value);
       callback(null, num % 2);
     }, num * delay);
   };
@@ -29,16 +31,17 @@ function everyIterator(order) {
 
 function everyIteratorWithKey(order) {
 
-  return function(num, key, callback) {
+  return function(value, key, callback) {
 
     var self = this;
+    var num = _.isArray(value) ? _.last(value) : value;
 
     setTimeout(function() {
 
       if (self && self.round) {
         num = self.round(num);
       }
-      order.push([num, key]);
+      order.push([value, key]);
       callback(null, num % 2);
     }, num * delay);
   };
@@ -91,7 +94,7 @@ parallel('#every', function() {
     });
   });
 
-  it('should execute iterator by collection of Map', function(done) {
+  it('should execute iterator by collection of object', function(done) {
 
     var order = [];
     var collection = {
@@ -109,7 +112,7 @@ parallel('#every', function() {
     });
   });
 
-  it('should execute iterator by collection of Map with passing key', function(done) {
+  it('should execute iterator by collection of object with passing key', function(done) {
 
     var order = [];
     var collection = {
@@ -129,14 +132,14 @@ parallel('#every', function() {
     });
   });
 
-  it('should execute iterator by collection of Map', function(done) {
+  it('should execute iterator by collection of Set', function(done) {
 
     var order = [];
-    var collection = new util.Map();
-    collection.set('a', 4);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.every(collection, everyIterator(order), function(err, res) {
+    var set = new util.Set();
+    set.add(5);
+    set.add(3);
+    set.add(2);
+    async.every(set, everyIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -146,20 +149,58 @@ parallel('#every', function() {
     });
   });
 
-  it('should execute iterator by collection of Map with passing key', function(done) {
+  it('should execute iterator by collection of Set with passing key', function(done) {
 
     var order = [];
-    var collection = new util.Map();
-    collection.set('a', 4);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.every(collection, everyIteratorWithKey(order), function(err, res) {
+    var set = new util.Set();
+    set.add(4);
+    set.add(3);
+    set.add(2);
+    async.every(set, everyIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
       assert.strictEqual(res, false);
       assert.deepEqual(order, [
-        [2, 'c']
+        [2, 2]
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Map', function(done) {
+
+    var order = [];
+    var map = new util.Map();
+    map.set('a', 4);
+    map.set('b', 3);
+    map.set('c', 2);
+    async.every(map, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [
+        ['c', 2]
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Map with passing key', function(done) {
+
+    var order = [];
+    var map = new util.Map();
+    map.set('a', 4);
+    map.set('b', 3);
+    map.set('c', 2);
+    async.every(map, everyIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [
+        [ ['c', 2], 2]
       ]);
       done();
     });
@@ -337,14 +378,14 @@ parallel('#everySeries', function() {
     });
   });
 
-  it('should execute iterator by collection of Map', function(done) {
+  it('should execute iterator by collection of Set', function(done) {
 
     var order = [];
-    var collection = new util.Map();
-    collection.set('a', 4);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.everySeries(collection, everyIterator(order), function(err, res) {
+    var set = new util.Set();
+    set.add(4);
+    set.add(3);
+    set.add(2);
+    async.everySeries(set, everyIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -354,20 +395,58 @@ parallel('#everySeries', function() {
     });
   });
 
-  it('should execute iterator by collection of Map with passing key', function(done) {
+  it('should execute iterator by collection of Set with passing key', function(done) {
 
     var order = [];
-    var collection = new util.Map();
-    collection.set('a', 4);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.everySeries(collection, everyIteratorWithKey(order), function(err, res) {
+    var set = new util.Set();
+    set.add(4);
+    set.add(3);
+    set.add(2);
+    async.everySeries(set, everyIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
       assert.strictEqual(res, false);
       assert.deepEqual(order, [
-        [4, 'a']
+        [4, 0]
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Map', function(done) {
+
+    var order = [];
+    var map = new util.Map();
+    map.set('a', 4);
+    map.set('b', 3);
+    map.set('c', 2);
+    async.everySeries(map, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [
+        ['a', 4]
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Map with passing key', function(done) {
+
+    var order = [];
+    var map = new util.Map();
+    map.set('a', 4);
+    map.set('b', 3);
+    map.set('c', 2);
+    async.everySeries(map, everyIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [
+        [ ['a', 4], 0]
       ]);
       done();
     });
@@ -582,15 +661,15 @@ parallel('#everyLimit', function() {
     });
   });
 
-  it('should execute iterator by collection of Map', function(done) {
+  it('should execute iterator by collection of Set', function(done) {
 
     var order = [];
-    var collection = new util.Map();
-    collection.set('a', 1);
-    collection.set('b', 5);
-    collection.set('c', 2);
-    collection.set('d', 4);
-    async.everyLimit(collection, 2, everyIterator(order), function(err, res) {
+    var set = new util.Set();
+    set.add(1);
+    set.add(5);
+    set.add(2);
+    set.add(4);
+    async.everyLimit(set, 2, everyIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -600,22 +679,64 @@ parallel('#everyLimit', function() {
     });
   });
 
-  it('should execute iterator by collection of Map with passing key', function(done) {
+  it('should execute iterator by collection of Set with passing key', function(done) {
 
     var order = [];
-    var collection = new util.Map();
-    collection.set('a', 1);
-    collection.set('b', 5);
-    collection.set('c', 2);
-    collection.set('d', 4);
-    async.everyLimit(collection, 2, everyIteratorWithKey(order), function(err, res) {
+    var set = new util.Set();
+    set.add(1);
+    set.add(5);
+    set.add(2);
+    set.add(4);
+    async.everyLimit(set, 2, everyIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
       assert.strictEqual(res, false);
       assert.deepEqual(order, [
-        [1, 'a'],
-        [2, 'c']
+        [1, 0],
+        [2, 2]
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Map', function(done) {
+
+    var order = [];
+    var map = new util.Map();
+    map.set('a', 1);
+    map.set('b', 5);
+    map.set('c', 2);
+    map.set('d', 4);
+    async.everyLimit(map, 2, everyIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [
+        ['a', 1],
+        ['c', 2]
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Map with passing key', function(done) {
+
+    var order = [];
+    var map = new util.Map();
+    map.set('a', 1);
+    map.set('b', 5);
+    map.set('c', 2);
+    map.set('d', 4);
+    async.everyLimit(map, 2, everyIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, false);
+      assert.deepEqual(order, [
+        [ ['a', 1], 0],
+        [ ['c', 2], 2]
       ]);
       done();
     });
