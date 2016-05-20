@@ -1,7 +1,8 @@
 {
 
   "predef": [
-    "define"
+    "define",
+    "Symbol"
   ],
 
   "indent": 2,
