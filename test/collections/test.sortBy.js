@@ -4,6 +4,7 @@
 var assert = require('assert');
 var domain = require('domain');
 
+var _ = require('lodash');
 var parallel = require('mocha.parallel');
 
 var async = global.async || require('../../');
@@ -12,16 +13,17 @@ var util = require('../util');
 
 function sortByIterator(order) {
 
-  return function(num, callback) {
+  return function(value, callback) {
 
     var self = this;
+    var num = _.isArray(value) ? _.last(value) : value;
 
     setTimeout(function() {
 
       if (self && self.round) {
         num = self.round(num);
       }
-      order.push(num);
+      order.push(value);
       callback(null, num * 2);
     }, num * delay);
   };
@@ -29,16 +31,17 @@ function sortByIterator(order) {
 
 function sortByIteratorWithKey(order) {
 
-  return function(num, key, callback) {
+  return function(value, key, callback) {
 
     var self = this;
+    var num = _.isArray(value) ? _.last(value) : value;
 
     setTimeout(function() {
 
       if (self && self.round) {
         num = self.round(num);
       }
-      order.push([num, key]);
+      order.push([value, key]);
       callback(null, num * 2);
     }, num * delay);
   };
@@ -118,19 +121,67 @@ parallel('#sortBy', function() {
     });
   });
 
-  it('should execute iterator by collection of Map', function(done) {
+  it('should execute iterator by collection of Set', function(done) {
 
     var order = [];
-    var collection = new util.Map();
-    collection.set('a', 1);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.sortBy(collection, sortByIterator(order), function(err, res) {
+    var set = new util.Set();
+    set.add(1);
+    set.add(3);
+    set.add(2);
+    async.sortBy(set, sortByIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 2, 3]);
       assert.deepEqual(order, [1, 2, 3]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Set with passing key', function(done) {
+    var order = [];
+    var set = new util.Set();
+    set.add(1);
+    set.add(3);
+    set.add(2);
+    async.sortBy(set, sortByIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.deepEqual(res, [1, 2, 3]);
+      assert.deepEqual(order, [
+        [1, 0],
+        [2, 2],
+        [3, 1]
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Map', function(done) {
+
+    var order = [];
+    var map = new util.Map();
+    map.set('a', 1);
+    map.set('b', 3);
+    map.set('c', 2);
+    async.sortBy(map, sortByIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.deepEqual(res, [
+        ['a', 1],
+        ['c', 2],
+        ['b', 3]
+      ]);
+      assert.deepEqual(order, [
+        ['a', 1],
+        ['c', 2],
+        ['b', 3]
+      ]);
       done();
     });
   });
@@ -138,19 +189,24 @@ parallel('#sortBy', function() {
   it('should execute iterator by collection of Map with passing key', function(done) {
 
     var order = [];
-    var collection = new util.Map();
-    collection.set('a', 1);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.sortBy(collection, sortByIteratorWithKey(order), function(err, res) {
+    var map = new util.Map();
+    map.set('a', 1);
+    map.set('b', 3);
+    map.set('c', 2);
+    async.sortBy(map, sortByIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [1, 2, 3]);
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.deepEqual(res, [
+        ['a', 1],
+        ['c', 2],
+        ['b', 3]
+      ]);
       assert.deepEqual(order, [
-        [1, 'a'],
-        [2, 'c'],
-        [3, 'b']
+        [['a', 1], 0],
+        [['c', 2], 2],
+        [['b', 3], 1]
       ]);
       done();
     });
@@ -330,39 +386,91 @@ parallel('#sortBySeries', function() {
     });
   });
 
-  it('should execute iterator by collection of Map', function(done) {
+  it('should execute iterator to series by collection of Set', function(done) {
 
     var order = [];
-    var collection = new util.Map();
-    collection.set('a', 1);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.sortBySeries(collection, sortByIterator(order), function(err, res) {
+    var set = new util.Set();
+    set.add(1);
+    set.add(3);
+    set.add(2);
+    async.sortBySeries(set, sortByIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 2, 3]);
       assert.deepEqual(order, [1, 3, 2]);
       done();
     });
   });
 
-  it('should execute iterator by collection of Map with passing key', function(done) {
-
+  it('should execute iterator to series by collection of Set with passing key', function(done) {
     var order = [];
-    var collection = new util.Map();
-    collection.set('a', 1);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.sortBySeries(collection, sortByIteratorWithKey(order), function(err, res) {
+    var set = new util.Set();
+    set.add(1);
+    set.add(3);
+    set.add(2);
+    async.sortBySeries(set, sortByIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 2, 3]);
       assert.deepEqual(order, [
-        [1, 'a'],
-        [3, 'b'],
-        [2, 'c']
+        [1, 0],
+        [3, 1],
+        [2, 2]
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator to series by collection of Map', function(done) {
+
+    var order = [];
+    var map = new util.Map();
+    map.set('a', 1);
+    map.set('b', 3);
+    map.set('c', 2);
+    async.sortBySeries(map, sortByIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.deepEqual(res, [
+        ['a', 1],
+        ['c', 2],
+        ['b', 3]
+      ]);
+      assert.deepEqual(order, [
+        ['a', 1],
+        ['b', 3],
+        ['c', 2]
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator to series by collection of Map with passing key', function(done) {
+    var order = [];
+    var map = new util.Map();
+    map.set('a', 1);
+    map.set('b', 3);
+    map.set('c', 2);
+    async.sortBySeries(map, sortByIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.deepEqual(res, [
+        ['a', 1],
+        ['c', 2],
+        ['b', 3]
+      ]);
+      assert.deepEqual(order, [
+        [['a', 1], 0],
+        [['b', 3], 1],
+        [['c', 2], 2]
       ]);
       done();
     });
@@ -594,45 +702,109 @@ parallel('#sortByLimit', function() {
     });
   });
 
-  it('should execute iterator by collection of Map', function(done) {
+  it('should execute iterator in limited by collection of Set', function(done) {
 
     var order = [];
-    var collection = new util.Map();
-    collection.set('a', 1);
-    collection.set('b', 5);
-    collection.set('c', 3);
-    collection.set('d', 2);
-    collection.set('e', 4);
-    async.sortByLimit(collection, 2, sortByIterator(order), function(err, res) {
+    var set = new util.Set();
+    set.add(1);
+    set.add(5);
+    set.add(3);
+    set.add(4);
+    set.add(2);
+    async.sortByLimit(set, 2, sortByIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 2, 3, 4, 5]);
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
   });
 
-  it('should execute iterator by collection of Map', function(done) {
-
+  it('should execute iterator in limited by collection of Set with passing key', function(done) {
     var order = [];
-    var collection = new util.Map();
-    collection.set('a', 1);
-    collection.set('b', 5);
-    collection.set('c', 3);
-    collection.set('d', 2);
-    collection.set('e', 4);
-    async.sortByLimit(collection, 2, sortByIteratorWithKey(order), function(err, res) {
+    var set = new util.Set();
+    set.add(1);
+    set.add(5);
+    set.add(3);
+    set.add(4);
+    set.add(2);
+    async.sortByLimit(set, 2, sortByIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, [1, 2, 3, 4, 5]);
       assert.deepEqual(order, [
-        [1, 'a'],
-        [3, 'c'],
-        [5, 'b'],
-        [2, 'd'],
-        [4, 'e']
+        [1, 0],
+        [3, 2],
+        [5, 1],
+        [2, 4],
+        [4, 3]
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator in limited by collection of Map', function(done) {
+
+    var order = [];
+    var map = new util.Map();
+    map.set('a', 1);
+    map.set('b', 5);
+    map.set('c', 3);
+    map.set('d', 4);
+    map.set('e', 2);
+    async.sortByLimit(map, 2, sortByIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.deepEqual(res, [
+        ['a', 1],
+        ['e', 2],
+        ['c', 3],
+        ['d', 4],
+        ['b', 5]
+      ]);
+      assert.deepEqual(order, [
+        ['a', 1],
+        ['c', 3],
+        ['b', 5],
+        ['e', 2],
+        ['d', 4]
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator in limited by collection of Map with passing key', function(done) {
+    var order = [];
+    var map = new util.Map();
+    map.set('a', 1);
+    map.set('b', 5);
+    map.set('c', 3);
+    map.set('d', 4);
+    map.set('e', 2);
+    async.sortByLimit(map, 2, sortByIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+      assert.deepEqual(res, [
+        ['a', 1],
+        ['e', 2],
+        ['c', 3],
+        ['d', 4],
+        ['b', 5]
+      ]);
+      assert.deepEqual(order, [
+        [['a', 1], 0],
+        [['c', 3], 2],
+        [['b', 5], 1],
+        [['e', 2], 4],
+        [['d', 4], 3]
       ]);
       done();
     });
