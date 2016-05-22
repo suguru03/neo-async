@@ -13,9 +13,10 @@ var util = require('../util');
 
 function reduceIterator(order) {
 
-  return function(memo, num, callback) {
+  return function(memo, value, callback) {
 
     var self = this;
+    var num = _.isArray(value) ? _.last(value) : value;
 
     setTimeout(function() {
 
@@ -23,13 +24,13 @@ function reduceIterator(order) {
         num = self.round(num);
       }
       if (_.isArray(memo)) {
-        memo.push(num);
+        memo.push(value);
       } else if (_.isNumber(memo)) {
         memo += num;
       } else {
-        memo[num] = num;
+        memo[num] = value;
       }
-      order.push(num);
+      order.push(value);
       callback(null, memo);
     }, num * delay);
   };
@@ -37,9 +38,10 @@ function reduceIterator(order) {
 
 function reduceIteratorWithKey(order) {
 
-  return function(memo, num, key, callback) {
+  return function(memo, value, key, callback) {
 
     var self = this;
+    var num = _.isArray(value) ? _.last(value) : value;
 
     setTimeout(function() {
 
@@ -47,13 +49,13 @@ function reduceIteratorWithKey(order) {
         num = self.round(num);
       }
       if (_.isArray(memo)) {
-        memo.push(num);
+        memo.push(value);
       } else if (_.isNumber(memo)) {
         memo += num;
       } else {
-        memo[num] = num;
+        memo[num] = value;
       }
-      order.push([num, key]);
+      order.push([value, key]);
       callback(null, memo);
     }, num * delay);
   };
@@ -156,14 +158,14 @@ parallel('#reduce', function() {
     });
   });
 
-  it('should get object by collection of Map', function(done) {
+  it('should get object by collection of Set', function(done) {
 
     var order = [];
-    var collection = new util.Map();
-    collection.set('a', 5);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.reduce(collection, {}, reduceIterator(order), function(err, res) {
+    var set = new util.Set();
+    set.add(5);
+    set.add(3);
+    set.add(2);
+    async.reduce(set, {}, reduceIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -177,14 +179,14 @@ parallel('#reduce', function() {
     });
   });
 
-  it('should get object by collection of Map with passing key', function(done) {
+  it('should get object by collection of Set with passing key', function(done) {
 
     var order = [];
-    var collection = new util.Map();
-    collection.set('a', 5);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.reduce(collection, {}, reduceIteratorWithKey(order), function(err, res) {
+    var set = new util.Set();
+    set.add(5);
+    set.add(3);
+    set.add(2);
+    async.reduce(set, {}, reduceIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -194,9 +196,59 @@ parallel('#reduce', function() {
         5: 5
       });
       assert.deepEqual(order, [
-        [5, 'a'],
-        [3, 'b'],
-        [2, 'c']
+        [5, 0],
+        [3, 1],
+        [2, 2]
+      ]);
+      done();
+    });
+  });
+
+  it('should get object by collection of Map', function(done) {
+
+    var order = [];
+    var map = new util.Map();
+    map.set('a', 5);
+    map.set('b', 3);
+    map.set('c', 2);
+    async.reduce(map, {}, reduceIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, {
+        2: ['c', 2],
+        3: ['b', 3],
+        5: ['a', 5]
+      });
+      assert.deepEqual(order, [
+        ['a', 5],
+        ['b', 3],
+        ['c', 2]
+      ]);
+      done();
+    });
+  });
+
+  it('should get object by collection of Map with passing key', function(done) {
+
+    var order = [];
+    var map = new util.Map();
+    map.set('a', 5);
+    map.set('b', 3);
+    map.set('c', 2);
+    async.reduce(map, {}, reduceIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, {
+        2: ['c', 2],
+        3: ['b', 3],
+        5: ['a', 5]
+      });
+      assert.deepEqual(order, [
+        [['a', 5], 0],
+        [['b', 3], 1],
+        [['c', 2], 2]
       ]);
       done();
     });
@@ -457,14 +509,14 @@ parallel('#reduceRight', function() {
     });
   });
 
-  it('should get object by collection of Map', function(done) {
+  it('should get object by collection of Set', function(done) {
 
     var order = [];
-    var collection = new util.Map();
-    collection.set('a', 5);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.reduceRight(collection, {}, reduceIterator(order), function(err, res) {
+    var set = new util.Set();
+    set.add(5);
+    set.add(3);
+    set.add(2);
+    async.reduceRight(set, {}, reduceIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -478,14 +530,14 @@ parallel('#reduceRight', function() {
     });
   });
 
-  it('should get object by collection of Map with passing key', function(done) {
+  it('should get object by collection of Set with passing key', function(done) {
 
     var order = [];
-    var collection = new util.Map();
-    collection.set('a', 5);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.reduceRight(collection, {}, reduceIteratorWithKey(order), function(err, res) {
+    var set = new util.Set();
+    set.add(5);
+    set.add(3);
+    set.add(2);
+    async.reduceRight(set, {}, reduceIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
@@ -495,9 +547,59 @@ parallel('#reduceRight', function() {
         5: 5
       });
       assert.deepEqual(order, [
-        [2, 'c'],
-        [3, 'b'],
-        [5, 'a']
+        [2, 2],
+        [3, 1],
+        [5, 0]
+      ]);
+      done();
+    });
+  });
+
+  it('should get object by collection of Map', function(done) {
+
+    var order = [];
+    var map = new util.Map();
+    map.set('a', 5);
+    map.set('b', 3);
+    map.set('c', 2);
+    async.reduceRight(map, {}, reduceIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, {
+        2: ['c', 2],
+        3: ['b', 3],
+        5: ['a', 5]
+      });
+      assert.deepEqual(order, [
+        ['c', 2],
+        ['b', 3],
+        ['a', 5]
+      ]);
+      done();
+    });
+  });
+
+  it('should get object by collection of Map with passing key', function(done) {
+
+    var order = [];
+    var map = new util.Map();
+    map.set('a', 5);
+    map.set('b', 3);
+    map.set('c', 2);
+    async.reduceRight(map, {}, reduceIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, {
+        2: ['c', 2],
+        3: ['b', 3],
+        5: ['a', 5]
+      });
+      assert.deepEqual(order, [
+        [['c', 2], 2],
+        [['b', 3], 1],
+        [['a', 5], 0]
       ]);
       done();
     });
