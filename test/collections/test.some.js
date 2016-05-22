@@ -3,6 +3,7 @@
 
 var assert = require('assert');
 
+var _ = require('lodash');
 var parallel = require('mocha.parallel');
 
 var async = global.async || require('../../');
@@ -11,16 +12,17 @@ var util = require('../util');
 
 function someIterator(order) {
 
-  return function(num, callback) {
+  return function(value, callback) {
 
     var self = this;
+    var num = _.isArray(value) ? _.last(value) : value;
 
     setTimeout(function() {
 
       if (self && self.round) {
         num = self.round(num);
       }
-      order.push(num);
+      order.push(value);
       callback(null, num % 2);
     }, num * delay);
   };
@@ -28,16 +30,17 @@ function someIterator(order) {
 
 function someIteratorWithKey(order) {
 
-  return function(num, key, callback) {
+  return function(value, key, callback) {
 
     var self = this;
+    var num = _.isArray(value) ? _.last(value) : value;
 
     setTimeout(function() {
 
       if (self && self.round) {
         num = self.round(num);
       }
-      order.push([num, key]);
+      order.push([value, key]);
       callback(null, num % 2);
     }, num * delay);
   };
@@ -53,7 +56,7 @@ parallel('#some', function() {
       if (err) {
         return done(err);
       }
-      assert.ok(res);
+      assert.strictEqual(res, true);
       assert.deepEqual(order, [1]);
       done();
     });
@@ -67,7 +70,7 @@ parallel('#some', function() {
       if (err) {
         return done(err);
       }
-      assert.ok(res);
+      assert.strictEqual(res, true);
       assert.deepEqual(order, [
         [1, 0]
       ]);
@@ -87,7 +90,7 @@ parallel('#some', function() {
       if (err) {
         return done(err);
       }
-      assert.ok(res);
+      assert.strictEqual(res, true);
       assert.deepEqual(order, [2, 3]);
       done();
     });
@@ -105,7 +108,7 @@ parallel('#some', function() {
       if (err) {
         return done(err);
       }
-      assert.ok(res);
+      assert.strictEqual(res, true);
       assert.deepEqual(order, [
         [2, 'c'],
         [3, 'b']
@@ -114,19 +117,59 @@ parallel('#some', function() {
     });
   });
 
-  it('should execute iterator by collection of Map', function(done) {
+  it('should execute iterator by collection of Set', function(done) {
 
     var order = [];
-    var collection = new util.Map();
-    collection.set('a', 5);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.some(collection, someIterator(order), function(err, res) {
+    var set = new util.Set();
+    set.add(5);
+    set.add(3);
+    set.add(2);
+    async.some(set, someIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
-      assert.ok(res);
+      assert.strictEqual(res, true);
       assert.deepEqual(order, [2, 3]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Set with passing key', function(done) {
+
+    var order = [];
+    var set = new util.Set();
+    set.add(5);
+    set.add(3);
+    set.add(2);
+    async.some(set, someIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, true);
+      assert.deepEqual(order, [
+        [2, 2],
+        [3, 1]
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Map', function(done) {
+
+    var order = [];
+    var map = new util.Map();
+    map.set('a', 5);
+    map.set('b', 3);
+    map.set('c', 2);
+    async.some(map, someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, true);
+      assert.deepEqual(order, [
+        ['c', 2],
+        ['b', 3]
+      ]);
       done();
     });
   });
@@ -134,18 +177,18 @@ parallel('#some', function() {
   it('should execute iterator by collection of Map with passing key', function(done) {
 
     var order = [];
-    var collection = new util.Map();
-    collection.set('a', 5);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.some(collection, someIteratorWithKey(order), function(err, res) {
+    var map = new util.Map();
+    map.set('a', 5);
+    map.set('b', 3);
+    map.set('c', 2);
+    async.some(map, someIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
-      assert.ok(res);
+      assert.strictEqual(res, true);
       assert.deepEqual(order, [
-        [2, 'c'],
-        [3, 'b']
+        [['c', 2], 2],
+        [['b', 3], 1]
       ]);
       done();
     });
@@ -164,7 +207,7 @@ parallel('#some', function() {
       if (err) {
         return done(err);
       }
-      assert.ok(res);
+      assert.strictEqual(res, true);
       assert.deepEqual(order, [1.1]);
       done();
     }, Math);
@@ -247,7 +290,7 @@ parallel('#someSeries', function() {
       if (err) {
         return done(err);
       }
-      assert.ok(res);
+      assert.strictEqual(res, true);
       assert.deepEqual(order, [1]);
       done();
     });
@@ -261,7 +304,7 @@ parallel('#someSeries', function() {
       if (err) {
         return done(err);
       }
-      assert.ok(res);
+      assert.strictEqual(res, true);
       assert.deepEqual(order, [
         [1, 0]
       ]);
@@ -281,7 +324,7 @@ parallel('#someSeries', function() {
       if (err) {
         return done(err);
       }
-      assert.ok(res);
+      assert.strictEqual(res, true);
       assert.deepEqual(order, [5]);
       done();
     });
@@ -299,9 +342,46 @@ parallel('#someSeries', function() {
       if (err) {
         return done(err);
       }
-      assert.ok(res);
+      assert.strictEqual(res, true);
       assert.deepEqual(order, [
         [5, 'a']
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Set', function(done) {
+
+    var order = [];
+    var set = new util.Set();
+    set.add(4);
+    set.add(3);
+    set.add(2);
+    async.someSeries(set, someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, true);
+      assert.deepEqual(order, [4, 3]);
+      done();
+    });
+  });
+
+  it('should execute iterator by collection of Set with passing key', function(done) {
+
+    var order = [];
+    var set = new util.Set();
+    set.add(4);
+    set.add(3);
+    set.add(2);
+    async.someSeries(set, someIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, true);
+      assert.deepEqual(order, [
+        [4, 0],
+        [3, 1]
       ]);
       done();
     });
@@ -310,16 +390,19 @@ parallel('#someSeries', function() {
   it('should execute iterator by collection of Map', function(done) {
 
     var order = [];
-    var collection = new util.Map();
-    collection.set('a', 5);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.someSeries(collection, someIterator(order), function(err, res) {
+    var map = new util.Map();
+    map.set('a', 4);
+    map.set('b', 3);
+    map.set('c', 2);
+    async.someSeries(map, someIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
-      assert.ok(res);
-      assert.deepEqual(order, [5]);
+      assert.strictEqual(res, true);
+      assert.deepEqual(order, [
+        ['a', 4],
+        ['b', 3]
+      ]);
       done();
     });
   });
@@ -327,17 +410,18 @@ parallel('#someSeries', function() {
   it('should execute iterator by collection of Map with passing key', function(done) {
 
     var order = [];
-    var collection = new util.Map();
-    collection.set('a', 5);
-    collection.set('b', 3);
-    collection.set('c', 2);
-    async.someSeries(collection, someIteratorWithKey(order), function(err, res) {
+    var map = new util.Map();
+    map.set('a', 4);
+    map.set('b', 3);
+    map.set('c', 2);
+    async.someSeries(map, someIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
-      assert.ok(res);
+      assert.strictEqual(res, true);
       assert.deepEqual(order, [
-        [5, 'a']
+        [['a', 4], 0],
+        [['b', 3], 1]
       ]);
       done();
     });
@@ -356,7 +440,7 @@ parallel('#someSeries', function() {
       if (err) {
         return done(err);
       }
-      assert.ok(res);
+      assert.strictEqual(res, true);
       assert.deepEqual(order, [1.1]);
       done();
     }, Math);
@@ -463,7 +547,7 @@ parallel('#someLimit', function() {
       if (err) {
         return done(err);
       }
-      assert.ok(res);
+      assert.strictEqual(res, true);
       assert.deepEqual(order, [2, 4, 3]);
       done();
     });
@@ -478,7 +562,7 @@ parallel('#someLimit', function() {
       if (err) {
         return done(err);
       }
-      assert.ok(res);
+      assert.strictEqual(res, true);
       assert.deepEqual(order, [
         [2, 0],
         [4, 1],
@@ -501,7 +585,7 @@ parallel('#someLimit', function() {
       if (err) {
         return done(err);
       }
-      assert.ok(res);
+      assert.strictEqual(res, true);
       assert.deepEqual(order, [2, 4, 3]);
       done();
     });
@@ -520,7 +604,7 @@ parallel('#someLimit', function() {
       if (err) {
         return done(err);
       }
-      assert.ok(res);
+      assert.strictEqual(res, true);
       assert.deepEqual(order, [
         [2, 'a'],
         [4, 'b'],
@@ -530,20 +614,64 @@ parallel('#someLimit', function() {
     });
   });
 
-  it('should execute iterator in limited by collection of Map', function(done) {
+  it('should execute iterator in limited by collection of Set', function(done) {
 
     var order = [];
-    var collection = new util.Map();
-    collection.set('a', 2);
-    collection.set('b', 4);
-    collection.set('c', 3);
-    collection.set('d', 2);
-    async.someLimit(collection, 2, someIterator(order), function(err, res) {
+    var set = new util.Set();
+    set.add(2);
+    set.add(4);
+    set.add(3);
+    set.add(2);
+    async.someLimit(set, 2, someIterator(order), function(err, res) {
       if (err) {
         return done(err);
       }
-      assert.ok(res);
+      assert.strictEqual(res, true);
       assert.deepEqual(order, [2, 4, 3]);
+      done();
+    });
+  });
+
+  it('should execute iterator in limited by collection of Set with passing key', function(done) {
+
+    var order = [];
+    var set = new util.Set();
+    set.add(2);
+    set.add(4);
+    set.add(3);
+    set.add(2);
+    async.someLimit(set, 2, someIteratorWithKey(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, true);
+      assert.deepEqual(order, [
+        [2, 0],
+        [4, 1],
+        [3, 2]
+      ]);
+      done();
+    });
+  });
+
+  it('should execute iterator in limited by collection of Map', function(done) {
+
+    var order = [];
+    var map = new util.Map();
+    map.set('a', 2);
+    map.set('b', 4);
+    map.set('c', 3);
+    map.set('d', 2);
+    async.someLimit(map, 2, someIterator(order), function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, true);
+      assert.deepEqual(order, [
+        ['a', 2],
+        ['b', 4],
+        ['c', 3]
+      ]);
       done();
     });
   });
@@ -551,20 +679,20 @@ parallel('#someLimit', function() {
   it('should execute iterator in limited by collection of Map with passing key', function(done) {
 
     var order = [];
-    var collection = new util.Map();
-    collection.set('a', 2);
-    collection.set('b', 4);
-    collection.set('c', 3);
-    collection.set('d', 2);
-    async.someLimit(collection, 2, someIteratorWithKey(order), function(err, res) {
+    var map = new util.Map();
+    map.set('a', 2);
+    map.set('b', 4);
+    map.set('c', 3);
+    map.set('d', 2);
+    async.someLimit(map, 2, someIteratorWithKey(order), function(err, res) {
       if (err) {
         return done(err);
       }
-      assert.ok(res);
+      assert.strictEqual(res, true);
       assert.deepEqual(order, [
-        [2, 'a'],
-        [4, 'b'],
-        [3, 'c']
+        [['a', 2], 0],
+        [['b', 4], 1],
+        [['c', 3], 2]
       ]);
       done();
     });
@@ -583,7 +711,7 @@ parallel('#someLimit', function() {
       if (err) {
         return done(err);
       }
-      assert.ok(res);
+      assert.strictEqual(res, true);
       assert.deepEqual(order, [1.1]);
       done();
     }, Math);
@@ -598,7 +726,7 @@ parallel('#someLimit', function() {
       if (err) {
         return done(err);
       }
-      assert.ok(res);
+      assert.strictEqual(res, true);
       assert.deepEqual(order, [1]);
       done();
     });
