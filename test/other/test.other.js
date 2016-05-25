@@ -1,4 +1,4 @@
-/* global it */
+/* global it, before, after */
 
 var fs = require('fs');
 var vm = require('vm');
@@ -197,5 +197,62 @@ parallel('#default', function() {
     _.forOwn(async['default'], function(value, key) {
       assert.ok(async[key], key + ' wasn\'t found.');
     });
+  });
+});
+
+parallel('#safe', function() {
+
+  'use strict';
+
+  it('should execute on asynchronous', function(done) {
+
+    async.safe();
+    var sync = true;
+    var collection = [1, 3, 2];
+    var iterator = function(value, key, callback) {
+      // sync call
+      callback();
+    };
+
+    async.eachSeries(collection, iterator, function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(sync, false);
+      done();
+    });
+    sync = false;
+  });
+});
+
+parallel('#fast', function() {
+
+  'use strict';
+
+  before(function() {
+    async.fast();
+  });
+
+  after(function() {
+    async.safe();
+  });
+
+  it('should execute on synchronous', function(done) {
+
+    var sync = true;
+    var collection = [1, 3, 2];
+    var iterator = function(value, key, callback) {
+      // sync call
+      callback();
+    };
+
+    async.eachSeries(collection, iterator, function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(sync, true);
+      done();
+    });
+    sync = false;
   });
 });
