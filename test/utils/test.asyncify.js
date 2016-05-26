@@ -73,4 +73,33 @@ parallel('#asyncify', function() {
       done();
     });
   });
+
+  it('should avoid TypeError if return object is null', function(done) {
+
+    var func = function() {
+      return null;
+    };
+    async.asyncify(func)(function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, null);
+      done();
+    });
+  });
+
+  it('should throw an error if reject is called', function(done) {
+
+    var func = function(arg) {
+      var d = Q.defer();
+      d.reject(arg + ' rejected');
+      return d.promise;
+    };
+    async.asyncify(func)('argument', function(err) {
+      assert.ok(err);
+      assert.strictEqual(err.message, 'argument rejected');
+      done();
+    });
+  });
+
 });
