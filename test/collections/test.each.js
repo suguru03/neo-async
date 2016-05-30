@@ -364,8 +364,8 @@ parallel('#each', function() {
         } catch(e) {
           assert.ok(e);
           util.errorChecker(e);
-          done();
         }
+        done();
       }
     }, function(err) {
       assert.ok(err);
@@ -685,6 +685,28 @@ parallel('#eachSeries', function() {
     });
   });
 
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    async.eachSeries([1, 2], function(item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+        }
+        done();
+      }
+    }, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
+  });
 });
 
 parallel('#eachLimit', function() {
@@ -920,6 +942,29 @@ parallel('#eachLimit', function() {
       assert.ok(err);
       assert.deepEqual(order, [1, 2, 3]);
       done();
+    });
+  });
+
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    async.eachLimit([1, 2], 2, function(item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+        }
+        done();
+      }
+    }, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
     });
   });
 
