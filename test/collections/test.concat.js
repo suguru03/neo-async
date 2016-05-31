@@ -289,6 +289,29 @@ parallel('#concat', function() {
     });
   });
 
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    async.concat([1, 2], function(item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+        }
+        done();
+      }
+    }, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
+  });
+
   it('should return response immediately if object is empty', function(done) {
 
     var order = [];
@@ -605,6 +628,29 @@ parallel('#concatSeries', function() {
         };
         async.concatSeries(collection, iterator);
       });
+  });
+
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    async.concat([1, 2], function(item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+        }
+        done();
+      }
+    }, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -953,6 +999,29 @@ parallel('#concatLimit', function() {
       assert.deepEqual(res, [1, 2, 3]);
       assert.deepEqual(order, [1, 2, 3]);
       done();
+    });
+  });
+
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    async.concatLimit([1, 2], 2, function(item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+        }
+        done();
+      }
+    }, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
     });
   });
 
