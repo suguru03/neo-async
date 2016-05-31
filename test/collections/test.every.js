@@ -225,6 +225,29 @@ parallel('#every', function() {
     }, Math);
   });
 
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    async.every([1, 2], function(item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+        }
+        done();
+      }
+    }, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
+  });
+
   it('should return response immediately if collection is empty', function(done) {
 
     var order = [];
@@ -533,6 +556,29 @@ parallel('#everySeries', function() {
       });
   });
 
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    async.everySeries([1, 2], function(item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+        }
+        done();
+      }
+    }, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
+  });
+
   it('should return response immediately if collection is empty', function(done) {
 
     var order = [];
@@ -773,7 +819,29 @@ parallel('#everyLimit', function() {
       assert.deepEqual(order, [1, 3, 5, 9]);
       done();
     });
+  });
 
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    async.everyLimit([1, 2], 2, function(item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+        }
+        done();
+      }
+    }, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
   });
 
   it('should return response immediately if collection is empty', function(done) {
