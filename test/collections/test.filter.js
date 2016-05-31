@@ -308,6 +308,29 @@ parallel('#filter', function() {
       });
   });
 
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    async.filter([1, 2], function(item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+        }
+        done();
+      }
+    }, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
+  });
+
   it('should not throw error of double callback', function(done) {
 
     var collection = [
@@ -649,34 +672,27 @@ parallel('#filterSeries', function() {
       });
   });
 
-  it('should throw error if double callback', function(done) {
+  it('should avoid double callback', function(done) {
 
-    var errorCallCount = 0;
-    setTimeout(function() {
-      assert.strictEqual(errorCallCount, 4);
-      done();
-    }, delay);
-
-    domain.create()
-      .on('error', util.errorChecker)
-      .on('error', function() {
-        errorCallCount++;
-      })
-      .run(function() {
-        var collection = [1, 3, 2, 4];
-        var iterator = function(num, callback) {
-          process.nextTick(callback);
-          process.nextTick(callback);
-        };
-        async.filterSeries(collection, iterator, function(err, res) {
-          if (err) {
-            return done(err);
-          }
-          assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-          assert.strictEqual(res.length, 0);
-          assert.deepEqual(res, []);
-        });
-      });
+    var called = false;
+    async.filterSeries([1, 2], function(item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+        }
+        done();
+      }
+    }, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
   });
 
   it('should return response immediately if collection is empty', function(done) {
@@ -1044,7 +1060,7 @@ parallel('#filterLimit', function() {
       });
   });
 
-  it('should throw error if callback has 2rd argument and called twice', function(done) {
+  it('should throw error if callback has 2nd argument and called twice', function(done) {
 
     var errorCallCount = 0;
     setTimeout(function() {
@@ -1072,6 +1088,29 @@ parallel('#filterLimit', function() {
           assert.deepEqual(res, []);
         });
       });
+  });
+
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    async.filterLimit([1, 2], 2, function(item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+        }
+        done();
+      }
+    }, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
   });
 
   it('should return response immediately if collection is empty', function(done) {
