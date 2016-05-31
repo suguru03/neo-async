@@ -297,6 +297,29 @@ parallel('#detect', function() {
       });
   });
 
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    async.detect([1, 2], function(item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+        }
+        done();
+      }
+    }, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
+  });
+
   it('should return response immediately if array is empty', function(done) {
 
     var order = [];
@@ -623,6 +646,29 @@ parallel('#detectSeries', function() {
         };
         async.detectSeries(collection, iterator);
       });
+  });
+
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    async.detectSeries([1, 2], function(item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+        }
+        done();
+      }
+    }, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
   });
 
   it('should throw error if double callback', function(done) {
@@ -996,6 +1042,29 @@ parallel('#detectLimit', function() {
         };
         async.detectLimit(collection, 2, iterator);
       });
+  });
+
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    async.detectLimit([1, 2], 2, function(item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+        }
+        done();
+      }
+    }, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
   });
 
   it('should throw error if double callback', function(done) {
