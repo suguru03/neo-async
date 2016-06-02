@@ -413,6 +413,29 @@ parallel('#pick', function() {
       });
   });
 
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    async.pick([1, 2, 3], function(item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+          done();
+        }
+      }
+    }, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
+  });
+
   it('should return response immediately if array is empty', function(done) {
 
     var order = [];
@@ -876,6 +899,29 @@ parallel('#pickSeries', function() {
           assert.deepEqual(res, {});
         });
       });
+  });
+
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    async.pickSeries([1, 2, 3], function(item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+          done();
+        }
+      }
+    }, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -1399,6 +1445,29 @@ parallel('#pickLimit', function() {
           assert.deepEqual(res, {});
         });
       });
+  });
+
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    async.pickLimit([1, 2, 3], 2, function(item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+          done();
+        }
+      }
+    }, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
   });
 
   it('should return response immediately if array is empty', function(done) {
