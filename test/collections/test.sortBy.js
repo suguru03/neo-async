@@ -271,6 +271,29 @@ parallel('#sortBy', function() {
       });
   });
 
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    async.sortBy([1, 2, 3], function(item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+          done();
+        }
+      }
+    }, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
+  });
+
   it('should return response immediately if collection is function', function(done) {
 
     var order = [];
@@ -535,6 +558,27 @@ parallel('#sortBySeries', function() {
     });
   });
 
+  it('should throw error', function(done) {
+
+    var order = [];
+    var collection = [1, 3, 2];
+    var iterator = function(num, index, callback) {
+      setTimeout(function() {
+        order.push([num, index]);
+        callback(num === 3, num);
+      }, num * delay);
+    };
+    async.sortBySeries(collection, iterator, function(err, res) {
+      assert.ok(err);
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, [
+        [1, 0],
+        [3, 1]
+      ]);
+      done();
+    });
+  });
+
   it('should throw error if double callback', function(done) {
 
     var errorCallCount = 0;
@@ -558,24 +602,26 @@ parallel('#sortBySeries', function() {
       });
   });
 
-  it('should throw error', function(done) {
+  it('should avoid double callback', function(done) {
 
-    var order = [];
-    var collection = [1, 3, 2];
-    var iterator = function(num, index, callback) {
-      setTimeout(function() {
-        order.push([num, index]);
-        callback(num === 3, num);
-      }, num * delay);
-    };
-    async.sortBySeries(collection, iterator, function(err, res) {
+    var called = false;
+    async.sortBySeries([1, 2, 3], function(item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+          done();
+        }
+      }
+    }, function(err) {
       assert.ok(err);
-      assert.strictEqual(res, undefined);
-      assert.deepEqual(order, [
-        [1, 0],
-        [3, 1]
-      ]);
-      done();
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
     });
   });
 
@@ -885,6 +931,27 @@ parallel('#sortByLimit', function() {
     });
   });
 
+  it('should throw error', function(done) {
+
+    var order = [];
+    var collection = [1, 5, 3];
+    var iterator = function(num, index, callback) {
+      setTimeout(function() {
+        order.push([num, index]);
+        callback(num === 3, num);
+      }, num * delay);
+    };
+    async.sortByLimit(collection, 2, iterator, function(err, res) {
+      assert.ok(err);
+      assert.strictEqual(res, undefined);
+      assert.deepEqual(order, [
+        [1, 0],
+        [3, 2]
+      ]);
+      done();
+    });
+  });
+
   it('should throw error if double callback', function(done) {
 
     var errorCallCount = 0;
@@ -908,24 +975,26 @@ parallel('#sortByLimit', function() {
       });
   });
 
-  it('should throw error', function(done) {
+  it('should avoid double callback', function(done) {
 
-    var order = [];
-    var collection = [1, 5, 3];
-    var iterator = function(num, index, callback) {
-      setTimeout(function() {
-        order.push([num, index]);
-        callback(num === 3, num);
-      }, num * delay);
-    };
-    async.sortByLimit(collection, 2, iterator, function(err, res) {
+    var called = false;
+    async.sortByLimit([1, 2, 3], 2, function(item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+          done();
+        }
+      }
+    }, function(err) {
       assert.ok(err);
-      assert.strictEqual(res, undefined);
-      assert.deepEqual(order, [
-        [1, 0],
-        [3, 2]
-      ]);
-      done();
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
     });
   });
 
