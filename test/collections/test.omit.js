@@ -423,6 +423,29 @@ parallel('#omit', function() {
       });
   });
 
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    async.omit([1, 2, 3], function(item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+          done();
+        }
+      }
+    }, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
+  });
+
   it('should return response immediately if array is empty', function(done) {
 
     var order = [];
@@ -891,6 +914,29 @@ parallel('#omitSeries', function() {
           });
         });
       });
+  });
+
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    async.omitSeries([1, 2, 3], function(item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+          done();
+        }
+      }
+    }, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
   });
 
   it('should return response immediately if array is empty', function(done) {
@@ -1402,6 +1448,29 @@ parallel('#omitLimit', function() {
           });
         });
       });
+  });
+
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    async.omitLimit([1, 2, 3], 2, function(item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+          done();
+        }
+      }
+    }, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
   });
 
   it('should return response immediately if array is empty', function(done) {
