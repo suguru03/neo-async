@@ -329,6 +329,29 @@ parallel('#transform', function() {
     });
   });
 
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    async.transform([1, 2, 3], function(memo, item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+          done();
+        }
+      }
+    }, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
+  });
+
   it('should return response immediately if array is empty', function(done) {
 
     var iterator = function(memo, value, key, callback) {
@@ -731,6 +754,29 @@ parallel('#transformSeries', function() {
       });
   });
 
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    async.transformSeries([1, 2, 3], function(memo, item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+          done();
+        }
+      }
+    }, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
+  });
+
   it('should return response immediately if array is empty', function(done) {
 
     var iterator = function(memo, value, key, callback) {
@@ -1099,6 +1145,29 @@ parallel('#transformLimit', function() {
       assert.deepEqual(res, [1, 3]);
       assert.deepEqual(order, [1, 3]);
       done();
+    });
+  });
+
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    async.transformLimit([1, 2, 3], 2, function(memo, item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+          done();
+        }
+      }
+    }, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
     });
   });
 
