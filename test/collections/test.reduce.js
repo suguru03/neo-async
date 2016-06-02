@@ -343,6 +343,29 @@ parallel('#reduce', function() {
       });
   });
 
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    async.reduce([1, 2, 3], 0, function(memo, item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+          done();
+        }
+      }
+    }, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
+  });
+
   it('should return response immediately if array is empty', function(done) {
 
     var order = [];
@@ -688,6 +711,29 @@ parallel('#reduceRight', function() {
         };
         async.reduceRight(collection, [], iterator);
       });
+  });
+
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    async.reduceRight([1, 2, 3], 0, function(memo, item, callback) {
+      try {
+        callback(item);
+      } catch (exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+          done();
+        }
+      }
+    }, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
   });
 
   it('should return response immediately if array is empty', function(done) {
