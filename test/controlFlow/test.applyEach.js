@@ -3,9 +3,11 @@
 
 var assert = require('assert');
 
+var _ = require('lodash');
 var parallel = require('mocha.parallel');
 
 var async = global.async || require('../../');
+var util = require('../util');
 
 parallel('#applyEach', function() {
 
@@ -80,6 +82,32 @@ parallel('#applyEach', function() {
     });
   });
 
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    var tasks = _.times(3, function(n) {
+      return function(val, callback) {
+        try {
+          callback(val + n);
+        } catch(exception) {
+          try {
+            callback(exception);
+          } catch(e) {
+            assert.ok(e);
+            util.errorChecker(e);
+          }
+          done();
+        }
+      };
+    });
+    async.applyEach(tasks, 5, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
+  });
+
 });
 
 parallel('#applyEachSeries', function() {
@@ -119,4 +147,29 @@ parallel('#applyEachSeries', function() {
     });
   });
 
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    var tasks = _.times(3, function(n) {
+      return function(val, callback) {
+        try {
+          callback(val + n);
+        } catch(exception) {
+          try {
+            callback(exception);
+          } catch(e) {
+            assert.ok(e);
+            util.errorChecker(e);
+          }
+          done();
+        }
+      };
+    });
+    async.applyEachSeries(tasks, 5, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
+  });
 });
