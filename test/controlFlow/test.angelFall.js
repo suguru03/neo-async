@@ -182,37 +182,6 @@ parallel('#angelFall', function() {
     });
   });
 
-  it('should throw error if task which does not have an argument throws error', function(done) {
-
-    var order = [];
-    async.angelFall([
-      function() {
-        order.push(1);
-        return 1;
-      },
-      function(next) {
-        order.push(2);
-        next();
-      },
-      function(arg, next) {
-        order.push(3);
-        next();
-      },
-      function() {
-        order.push(4);
-        throw new Error('error');
-      },
-      function(arg, next) {
-        order.push(5);
-        next();
-      }
-    ], function(err) {
-      assert.ok(err);
-      assert.deepEqual(order, [1, 2, 3, 4]);
-      done();
-    });
-  });
-
   it('should throw error', function(done) {
 
     var numbers = [1, 3, 2, 4];
@@ -286,6 +255,63 @@ parallel('#angelFall', function() {
       assert.ok(err);
       done();
     }, Math);
+  });
+
+  it('should throw error if task which does not have an argument throws error', function(done) {
+
+    var order = [];
+    async.angelFall([
+      function() {
+        order.push(1);
+        return 1;
+      },
+      function(next) {
+        order.push(2);
+        next();
+      },
+      function(arg, next) {
+        order.push(3);
+        next();
+      },
+      function() {
+        order.push(4);
+        throw new Error('error');
+      },
+      function(arg, next) {
+        order.push(5);
+        next();
+      }
+    ], function(err) {
+      assert.ok(err);
+      assert.deepEqual(order, [1, 2, 3, 4]);
+      done();
+    });
+  });
+
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    var tasks = _.times(3, function(n) {
+      return function(callback) {
+        try {
+          callback('error' + n);
+        } catch (exception) {
+          try {
+            callback(exception);
+          } catch(e) {
+            assert.ok(e);
+            util.errorChecker(e);
+          }
+          done();
+        }
+      };
+    });
+    async.angelFall(tasks, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
   });
 
   it('should return response immediately if array task is empty', function(done) {
