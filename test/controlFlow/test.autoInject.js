@@ -8,6 +8,7 @@ var parallel = require('mocha.parallel');
 
 var async = global.async || require('../../');
 var delay = require('../config').delay;
+var util = require('../util');
 
 parallel('#autoInject', function() {
 
@@ -309,4 +310,30 @@ parallel('#autoInject', function() {
     )();
     /* jshint +W061 */
   }
+
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    var tasks = {
+      task1: function(callback) {
+        try {
+          callback('error');
+        } catch(exception) {
+          try {
+            callback(exception);
+          } catch(e) {
+            assert.ok(e);
+            util.errorChecker(e);
+          }
+          done();
+        }
+      }
+    };
+    async.autoInject(tasks, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
+  });
 });
