@@ -279,7 +279,10 @@ parallel('#map', function() {
 
   it('should avoid double callback', function(done) {
 
-    var called = false;
+    var called = {
+      iterator: false,
+      callback: false
+    };
     async.map([1, 2], function(item, callback) {
       try {
         callback(item);
@@ -288,16 +291,18 @@ parallel('#map', function() {
           callback(exception);
         } catch(e) {
           assert.ok(e);
+          assert.strictEqual(called.iterator, false);
           util.errorChecker(e);
-          done();
+          called.iterator = true;
         }
       }
     }, function(err) {
       assert.ok(err);
-      assert.strictEqual(called, false);
-      called = true;
+      assert.strictEqual(called.callback, false);
+      called.callback = true;
       async.nothing();
     });
+    setTimeout(done, delay);
   });
 
   it('should return response immediately if array is empty', function(done) {
