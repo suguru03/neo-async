@@ -212,4 +212,30 @@ parallel('#series', function() {
       });
   });
 
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    var tasks = _.times(3, function(n) {
+      return function(callback) {
+        try {
+          callback('error' + n);
+        } catch (exception) {
+          try {
+            callback(exception);
+          } catch(e) {
+            assert.ok(e);
+            util.errorChecker(e);
+          }
+          done();
+        }
+      };
+    });
+    async.series(tasks, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
+  });
+
 });
