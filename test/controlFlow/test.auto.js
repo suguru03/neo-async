@@ -215,6 +215,32 @@ parallel('#auto', function() {
     });
   });
 
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    var tasks = {
+      task1: function(callback) {
+        try {
+          callback('error');
+        } catch(exception) {
+          try {
+            callback(exception);
+          } catch(e) {
+            assert.ok(e);
+            util.errorChecker(e);
+          }
+          done();
+        }
+      }
+    };
+    async.auto(tasks, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
+  });
+
   it('should execute in limited by concurrency', function(done) {
     var order = [];
     var tasks = {
