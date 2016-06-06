@@ -8,6 +8,7 @@ var parallel = require('mocha.parallel');
 
 var async = global.async || require('../../');
 var delay = require('../config').delay;
+var util = require('../util');
 
 parallel('#cargo', function() {
 
@@ -314,6 +315,31 @@ parallel('#cargo', function() {
     q.push('zoo', function () {calls.push('zoo cb');});
     q.push('poo', function () {calls.push('poo cb');});
     q.push('moo', function () {calls.push('moo cb');});
+  });
+
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    var iterator = function(task, callback) {
+      try {
+        callback('error');
+      } catch(exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+        }
+        done();
+      }
+    };
+    var cargo = async.cargo(iterator);
+    cargo.push(1, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
   });
 
 });

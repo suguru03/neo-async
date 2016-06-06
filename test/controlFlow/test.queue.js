@@ -208,6 +208,31 @@ parallel('#queue', function() {
       });
   });
 
+  it('should avoid double callback', function(done) {
+
+    var called = false;
+    var iterator = function(task, callback) {
+      try {
+        callback('error');
+      } catch(exception) {
+        try {
+          callback(exception);
+        } catch(e) {
+          assert.ok(e);
+          util.errorChecker(e);
+        }
+        done();
+      }
+    };
+    var queue = async.queue(iterator);
+    queue.push(1, function(err) {
+      assert.ok(err);
+      assert.strictEqual(called, false);
+      called = true;
+      async.nothing();
+    });
+  });
+
   it('should execute while changing concurrency', function(done) {
 
     var order = {
