@@ -272,7 +272,10 @@ parallel('#each', function() {
 
   it('should avoid double callback', function(done) {
 
-    var called = false;
+    var called = {
+      iterator: false,
+      callback: false
+    };
     async.each([1, 2], function(item, callback) {
       try {
         callback(item);
@@ -281,16 +284,18 @@ parallel('#each', function() {
           callback(exception);
         } catch(e) {
           assert.ok(e);
+          assert.strictEqual(called.iterator, false);
           util.errorChecker(e);
+          called.iterator = true;
         }
-        done();
       }
     }, function(err) {
       assert.ok(err);
-      assert.strictEqual(called, false);
-      called = true;
+      assert.strictEqual(called.callback, false);
+      called.callback = true;
       async.nothing();
     });
+    setTimeout(done, delay);
   });
 
   it('should break if respond equals false', function(done) {
