@@ -16,7 +16,7 @@ function test() {
     config.delay = delay;
   }
   gulp.src([
-      './test/**/test.' + filename + '.js'
+      './test/**/test.' + filename + '*'
     ])
     .pipe(mocha({
       reporter: 'spec',
