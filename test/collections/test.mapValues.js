@@ -281,7 +281,6 @@ parallel('#mapValues', function() {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         '0': 1,
-        '1': 3,
         '2': 2
       });
       assert.deepEqual(order, [1, 2, 3]);
@@ -671,8 +670,7 @@ parallel('#mapValuesSeries', function() {
       assert.ok(err);
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
-        '0': 1,
-        '1': 3
+        '0': 1
       });
       assert.deepEqual(order, [1, 3]);
       done();
@@ -1122,7 +1120,6 @@ parallel('#mapValuesLimit', function() {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
       assert.deepEqual(res, {
         '0': 1,
-        '1': 3,
         '3': 2
       });
       assert.deepEqual(order, [1, 2, 3]);
