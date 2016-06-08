@@ -7,6 +7,7 @@ var _ = require('lodash');
 var parallel = require('mocha.parallel');
 
 var async = global.async || require('../../');
+var delay = require('../config').delay;
 
 parallel('#whilst', function() {
 
@@ -129,6 +130,23 @@ parallel('#whilst', function() {
       assert.strictEqual(res4, 3);
       done();
     });
+  });
+
+  it('should execute without callback', function(done) {
+    var count = 0;
+    var limit = 5;
+    var test = function() {
+      return count < limit;
+    };
+    var iterator = function(callback) {
+      count++;
+      callback();
+    };
+    async.whilst(test, iterator);
+    setTimeout(function() {
+      assert.strictEqual(count, 5);
+      done();
+    }, delay);
   });
 
   it('should throw error', function(done) {
@@ -298,6 +316,23 @@ parallel('#doWhilst', function() {
       assert.strictEqual(res4, 3);
       done();
     });
+  });
+
+  it('should execute without callback', function(done) {
+    var count = 0;
+    var limit = 5;
+    var test = function() {
+      return count < limit;
+    };
+    var iterator = function(callback) {
+      count++;
+      callback();
+    };
+    async.doWhilst(iterator, test);
+    setTimeout(function() {
+      assert.strictEqual(count, 5);
+      done();
+    }, delay);
   });
 
   it('should throw error', function(done) {
