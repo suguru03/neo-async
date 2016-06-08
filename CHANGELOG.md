@@ -1,3 +1,197 @@
+<a name"v2.0.0-rc.1"></a>
+### v2.0.0-rc.1 (2016-06-08)
+
+
+#### Bug Fixes
+
+* **angelFall:** fix to avoid double callback #19 ([994a9c62](https://github.com/suguru03/neo-async/commit/994a9c62))
+* **async:** fix to call first task with asynchronous ([1f10e6da](https://github.com/suguru03/neo-async/commit/1f10e6da))
+* **asyncify:** fix to avoid TypeError and return Error instance ([71061b21](https://github.com/suguru03/neo-async/commit/71061b21))
+* **auto:**
+  * fix not to use `once` ([db13e80a](https://github.com/suguru03/neo-async/commit/db13e80a))
+  * fix to stop after an synchronous error ([6bb54512](https://github.com/suguru03/neo-async/commit/6bb54512))
+* **autoInject:**
+  * fix to support es6 ([b48e546f](https://github.com/suguru03/neo-async/commit/b48e546f))
+  * fix task handling and add test ([e2f1bac4](https://github.com/suguru03/neo-async/commit/e2f1bac4))
+  * revert injection of results ([6ad24f61](https://github.com/suguru03/neo-async/commit/6ad24f61))
+  * fix not to inject if task is array ([b6c6376d](https://github.com/suguru03/neo-async/commit/b6c6376d))
+* **concat:** fix to avoid double callback ([9f4d9a0c](https://github.com/suguru03/neo-async/commit/9f4d9a0c))
+* **detect:** fix to avoid double callback ([111d2085](https://github.com/suguru03/neo-async/commit/111d2085))
+* **detectLimit:** fix to stop execution ([cd6bcf8b](https://github.com/suguru03/neo-async/commit/cd6bcf8b))
+* **each:**
+  * fix to avoid double callback ([06ff385b](https://github.com/suguru03/neo-async/commit/06ff385b))
+  * fix to avoid double callback ([04092aa7](https://github.com/suguru03/neo-async/commit/04092aa7))
+* **ensureAsync:** fix to call on asynchronous ([726941ab](https://github.com/suguru03/neo-async/commit/726941ab))
+* **every:** fix not to return result if error occurred ([f81faf85](https://github.com/suguru03/neo-async/commit/f81faf85))
+* **filter:**
+  * fix to avoid double callback ([13bd4b03](https://github.com/suguru03/neo-async/commit/13bd4b03))
+  * fix not to return result if error occurred ([976cbaea](https://github.com/suguru03/neo-async/commit/976cbaea))
+* **map:**
+  * fix not to add result if error occurred ([6eb97d3f](https://github.com/suguru03/neo-async/commit/6eb97d3f))
+  * fix to avoid double callback ([069545dd](https://github.com/suguru03/neo-async/commit/069545dd))
+  * fix to avoid double callback ([47e3257c](https://github.com/suguru03/neo-async/commit/47e3257c))
+* **mapValues:** fix to avoid double callback ([1103b757](https://github.com/suguru03/neo-async/commit/1103b757))
+* **omit:** fix to avoid double callback #19 ([8a3c40a8](https://github.com/suguru03/neo-async/commit/8a3c40a8))
+* **once:** make `once` exception safe ([351557cf](https://github.com/suguru03/neo-async/commit/351557cf))
+* **parallel:** fix to avoid double callback #19 ([a170a679](https://github.com/suguru03/neo-async/commit/a170a679))
+* **queue:**
+  * fix to use sync function ([25374b4f](https://github.com/suguru03/neo-async/commit/25374b4f))
+  * fix `resume` to work even if concurrency is `Infinity` ([b31b9e55](https://github.com/suguru03/neo-async/commit/b31b9e55))
+* **race:** fix to return an `TypeError` if tasks is not an collection ([86418b0e](https://github.com/suguru03/neo-async/commit/86418b0e))
+* **series:** fix to avoid double callback #19 ([1ade9136](https://github.com/suguru03/neo-async/commit/1ade9136))
+* **some:** fix not to return result if error occurred ([f05aa565](https://github.com/suguru03/neo-async/commit/f05aa565))
+* **sortBy:** fix to avoid double callback #19 ([4528af30](https://github.com/suguru03/neo-async/commit/4528af30))
+* **timeout:** fix error message ([f7bd736d](https://github.com/suguru03/neo-async/commit/f7bd736d))
+* **transform:** fix to avoid double callback #19 ([94536f2a](https://github.com/suguru03/neo-async/commit/94536f2a))
+* **waterfall:** fix to avoid double callback #19 ([4ad5741d](https://github.com/suguru03/neo-async/commit/4ad5741d))
+
+
+#### Features
+
+* **applyEach:** fix to return results like `async.map` ([2716747f](https://github.com/suguru03/neo-async/commit/2716747f))
+* **async:**
+  * modify not to check whether first task is sync ([722bea63](https://github.com/suguru03/neo-async/commit/722bea63))
+  * clean up and remove `noConflict` ([413b99da](https://github.com/suguru03/neo-async/commit/413b99da))
+  * fix error handling to return null instead of undefined ([71d5d17a](https://github.com/suguru03/neo-async/commit/71d5d17a))
+  * add some alias ([90abf985](https://github.com/suguru03/neo-async/commit/90abf985))
+  * fix to throw null to first argument if error does not occur ([4405730f](https://github.com/suguru03/neo-async/commit/4405730f))
+  * remove unnecessary function ([b4576d42](https://github.com/suguru03/neo-async/commit/b4576d42))
+  * fix not to use name of `async` ([e933784c](https://github.com/suguru03/neo-async/commit/e933784c))
+  * remove common function name ([0fff29d8](https://github.com/suguru03/neo-async/commit/0fff29d8))
+* **auto:**
+  * add error handling to prevent dead locks ([b7cda5c8](https://github.com/suguru03/neo-async/commit/b7cda5c8))
+  * fix not to allow sync call ([bce3708a](https://github.com/suguru03/neo-async/commit/bce3708a))
+  * fix `addListener` to use `Array#push` ([dda108a2](https://github.com/suguru03/neo-async/commit/dda108a2))
+  * improve to get result by sync function ([f601e9df](https://github.com/suguru03/neo-async/commit/f601e9df))
+  * fix argument order and improve task handling ([5a3b8470](https://github.com/suguru03/neo-async/commit/5a3b8470))
+* **autoInject:**
+  * fix to inject final callback ([4c662aae](https://github.com/suguru03/neo-async/commit/4c662aae))
+  * improve feature of injection ([c910d4a8](https://github.com/suguru03/neo-async/commit/c910d4a8))
+  * add `autoInject` ([5a04b2ad](https://github.com/suguru03/neo-async/commit/5a04b2ad))
+* **concat:** fix specification of es6 iterator ([03e9564e](https://github.com/suguru03/neo-async/commit/03e9564e))
+* **constant:**
+  * fix to be able to function length ([21b752db](https://github.com/suguru03/neo-async/commit/21b752db))
+  * support dynamic arguments ([1929e19a](https://github.com/suguru03/neo-async/commit/1929e19a))
+* **detect:**
+  * fix specification of es6 iterator ([5b01079e](https://github.com/suguru03/neo-async/commit/5b01079e))
+  * modify to simplify ([b8383225](https://github.com/suguru03/neo-async/commit/b8383225))
+* **detectLimit:** modify to simplify ([40f9f054](https://github.com/suguru03/neo-async/commit/40f9f054))
+* **detectSeries:** modify to simplify ([9760fb25](https://github.com/suguru03/neo-async/commit/9760fb25))
+* **each:** change specification of es6 itrator ([0671f06c](https://github.com/suguru03/neo-async/commit/0671f06c))
+* **ensureAsync:** remove unnecessary sync check ([0929ea23](https://github.com/suguru03/neo-async/commit/0929ea23))
+* **fast:** add fast and safe mode ([86b1ae5d](https://github.com/suguru03/neo-async/commit/86b1ae5d))
+* **filter:**
+  * fix specification of es6 iterator ([0b437ff0](https://github.com/suguru03/neo-async/commit/0b437ff0))
+  * modify to simplify ([f7e1a24f](https://github.com/suguru03/neo-async/commit/f7e1a24f))
+* **filterLimit:** modify to simplify ([0e47b8d0](https://github.com/suguru03/neo-async/commit/0e47b8d0))
+* **filterSeries:** modify to simplify ([680be75d](https://github.com/suguru03/neo-async/commit/680be75d))
+* **map:** fix specification of es6 iterator ([a999cfb7](https://github.com/suguru03/neo-async/commit/a999cfb7))
+* **mapValues:** fix specification of es6 iterator ([410f35ea](https://github.com/suguru03/neo-async/commit/410f35ea))
+* **nextTick:** fix to pass extra arguments on node@v0.11,0.12 ([e30decaf](https://github.com/suguru03/neo-async/commit/e30decaf))
+* **omit:** fix specification of es6 iterator ([1997cc49](https://github.com/suguru03/neo-async/commit/1997cc49))
+* **pick:** modify to simplify ([7674740e](https://github.com/suguru03/neo-async/commit/7674740e))
+* **queue:**
+  * add error handler #20 #22 ([8342aa0a](https://github.com/suguru03/neo-async/commit/8342aa0a))
+  * fix `queue` events ([aef2fc91](https://github.com/suguru03/neo-async/commit/aef2fc91))
+  * fix `saturated` and `unsaturated` events in queues ([4a24cc70](https://github.com/suguru03/neo-async/commit/4a24cc70))
+  * fix error message ([c35f4c21](https://github.com/suguru03/neo-async/commit/c35f4c21))
+* **reduce:** fix specification of es6 iterator ([24f0ed63](https://github.com/suguru03/neo-async/commit/24f0ed63))
+* **reflect:** add `reflect` ([be41dad7](https://github.com/suguru03/neo-async/commit/be41dad7))
+* **reflectAll:** add `reflectAll` ([e0ec4061](https://github.com/suguru03/neo-async/commit/e0ec4061))
+* **retry:**
+  * add feature to allow custom retry interval #21 ([567eaa12](https://github.com/suguru03/neo-async/commit/567eaa12))
+  * add interval feature and improve performance ([40545479](https://github.com/suguru03/neo-async/commit/40545479))
+* **retryable:** add `retryable` ([35a77590](https://github.com/suguru03/neo-async/commit/35a77590))
+* **seq:** fix to execute without callback #20 ([fbebcb79](https://github.com/suguru03/neo-async/commit/fbebcb79))
+* **some:** modify to simplify ([e2762c81](https://github.com/suguru03/neo-async/commit/e2762c81))
+* **sortBy:** fix specification of es6 iterator ([2722ac4b](https://github.com/suguru03/neo-async/commit/2722ac4b))
+* **transform:**
+  * fix specification of es6 iterator ([5c495c83](https://github.com/suguru03/neo-async/commit/5c495c83))
+  * fix argument order ([b045c7a6](https://github.com/suguru03/neo-async/commit/b045c7a6))
+
+
+#### Other Changes
+
+* update README ([35288399](https://github.com/suguru03/neo-async/commit/35288399))
+* Merge branch 'v1.x' ([75d252be](https://github.com/suguru03/neo-async/commit/75d252be))
+* Merge branch 'v1.x' ([f54f1e2f](https://github.com/suguru03/neo-async/commit/f54f1e2f))
+* Merge branch 'v1.x' ([f93a4f1c](https://github.com/suguru03/neo-async/commit/f93a4f1c))
+* Merge branch 'v1.x' ([01c3e901](https://github.com/suguru03/neo-async/commit/01c3e901))
+* Merge branch 'v1.x' ([ebd1b899](https://github.com/suguru03/neo-async/commit/ebd1b899))
+* Merge branch 'v1.x' ([a7fd399b](https://github.com/suguru03/neo-async/commit/a7fd399b))
+* Merge branch 'v1.x' ([152a31ae](https://github.com/suguru03/neo-async/commit/152a31ae))
+* Merge branch 'v1.x' ([e1e3062e](https://github.com/suguru03/neo-async/commit/e1e3062e))
+* ***:** fix test process ([57662c33](https://github.com/suguru03/neo-async/commit/57662c33))
+* **CHANGELOG:** v1.8.2 [ci skip] ([2ad7cf08](https://github.com/suguru03/neo-async/commit/2ad7cf08))
+* **Makefile:** add release task ([d181630a](https://github.com/suguru03/neo-async/commit/d181630a))
+* **README:**
+  * clean up [ci skip] ([08e90fd0](https://github.com/suguru03/neo-async/commit/08e90fd0))
+  * fix to use npm stat path [ci skip] ([bbf6e009](https://github.com/suguru03/neo-async/commit/bbf6e009))
+  * remove `EventEmitter` ([56234b7d](https://github.com/suguru03/neo-async/commit/56234b7d))
+  * add code coverage [ci skip] ([98769049](https://github.com/suguru03/neo-async/commit/98769049))
+  * update README ([ea1a0b96](https://github.com/suguru03/neo-async/commit/ea1a0b96))
+  * change to new logo [ci skip] ([2284d1cc](https://github.com/suguru03/neo-async/commit/2284d1cc))
+* **applyEach:** add test #19 ([a1c29b03](https://github.com/suguru03/neo-async/commit/a1c29b03))
+* **async:**
+  * fix functin order ([24d80a69](https://github.com/suguru03/neo-async/commit/24d80a69))
+  * refactor inner functions ([f0ad3d0c](https://github.com/suguru03/neo-async/commit/f0ad3d0c))
+* **auto:**
+  * add test #19 ([767245c3](https://github.com/suguru03/neo-async/commit/767245c3))
+  * add test ([5d7377a3](https://github.com/suguru03/neo-async/commit/5d7377a3))
+  * add test ([a2e95b9b](https://github.com/suguru03/neo-async/commit/a2e95b9b))
+  * refactor `auto` not to use `nextTick` ([a7bf39dd](https://github.com/suguru03/neo-async/commit/a7bf39dd))
+* **autoInject:**
+  * add test #19 ([0f8d70dc](https://github.com/suguru03/neo-async/commit/0f8d70dc))
+  * add sample test case ([0b6ec0b0](https://github.com/suguru03/neo-async/commit/0b6ec0b0))
+* **circle:**
+  * remove to check benchmark ([9a70848d](https://github.com/suguru03/neo-async/commit/9a70848d))
+  * add circleci config for observing performance ([e59115e5](https://github.com/suguru03/neo-async/commit/e59115e5))
+* **concat:** modify to reduce function call ([d5541c2e](https://github.com/suguru03/neo-async/commit/d5541c2e))
+* **detectLimit:** remove console.log ([ff01aad3](https://github.com/suguru03/neo-async/commit/ff01aad3))
+* **each:** modify to reduce function call ([f5c586d8](https://github.com/suguru03/neo-async/commit/f5c586d8))
+* **ensureAsync:**
+  * fix not to use `Array#pop` and `Array#push` ([faf24778](https://github.com/suguru03/neo-async/commit/faf24778))
+  * add bind test case ([4b7df573](https://github.com/suguru03/neo-async/commit/4b7df573))
+* **eventEmitter:** remove `eventEmitter` ([ce8ca372](https://github.com/suguru03/neo-async/commit/ce8ca372))
+* **every:**
+  * add test ([9d34758d](https://github.com/suguru03/neo-async/commit/9d34758d))
+  * add test case ([deb6f8f8](https://github.com/suguru03/neo-async/commit/deb6f8f8))
+* **everyLimit:** add test ([8a0d08a8](https://github.com/suguru03/neo-async/commit/8a0d08a8))
+* **jsbeautify:** fix jsbeautify config [ci skip] ([d49c90b3](https://github.com/suguru03/neo-async/commit/d49c90b3))
+* **package:**
+  * update dev dependencies ([ad70cd3b](https://github.com/suguru03/neo-async/commit/ad70cd3b))
+  * fix to check curent async ([ecafd851](https://github.com/suguru03/neo-async/commit/ecafd851))
+* **perf:**
+  * add RAEDME.md [ci skip] ([97e44f4d](https://github.com/suguru03/neo-async/commit/97e44f4d))
+  * update benchmark tools ([b8673222](https://github.com/suguru03/neo-async/commit/b8673222))
+  * fix circleci config and remove unnecessary files ([901e8ecc](https://github.com/suguru03/neo-async/commit/901e8ecc))
+  * display version ([3c73356e](https://github.com/suguru03/neo-async/commit/3c73356e))
+  * fix to work perf [ci skip] ([0a256e5b](https://github.com/suguru03/neo-async/commit/0a256e5b))
+* **pick:**
+  * add test #19 ([9ee457f0](https://github.com/suguru03/neo-async/commit/9ee457f0))
+  * add test ([7038bbcb](https://github.com/suguru03/neo-async/commit/7038bbcb))
+* **queue:**
+  * add test #19 ([fc6412e1](https://github.com/suguru03/neo-async/commit/fc6412e1))
+  * add test ([c72ed57e](https://github.com/suguru03/neo-async/commit/c72ed57e))
+  * add test ([8c4a53f3](https://github.com/suguru03/neo-async/commit/8c4a53f3))
+  * refactor `queue` ([f8c9e8e4](https://github.com/suguru03/neo-async/commit/f8c9e8e4))
+* **reject:** add test ([097f9b57](https://github.com/suguru03/neo-async/commit/097f9b57))
+* **retry:**
+  * add test ([83b0b599](https://github.com/suguru03/neo-async/commit/83b0b599))
+  * add test ([4d3a36f8](https://github.com/suguru03/neo-async/commit/4d3a36f8))
+  * change interval time ([ee0b0439](https://github.com/suguru03/neo-async/commit/ee0b0439))
+* **retryable:** add test ([caa8bab4](https://github.com/suguru03/neo-async/commit/caa8bab4))
+* **safe:** remove safe functions ([4557374c](https://github.com/suguru03/neo-async/commit/4557374c))
+* **some:**
+  * add test #19 ([adc670d7](https://github.com/suguru03/neo-async/commit/adc670d7))
+  * add test ([16ea103a](https://github.com/suguru03/neo-async/commit/16ea103a))
+* **someLimit:** add test ([d1010fb2](https://github.com/suguru03/neo-async/commit/d1010fb2))
+* **test:**
+  * fix gulp task [ci skip] ([73c62ce3](https://github.com/suguru03/neo-async/commit/73c62ce3))
+  * modify test process ([8079477e](https://github.com/suguru03/neo-async/commit/8079477e))
+* **travis:** apply node v6 ([bab85a81](https://github.com/suguru03/neo-async/commit/bab85a81))
+* **whilst:** add test ([a1d04dfd](https://github.com/suguru03/neo-async/commit/a1d04dfd))
+
 <a name"v1.8.2"></a>
 ### v1.8.2 (2016-04-21)
 
@@ -942,7 +1136,7 @@
 * Modify waterfall function to respond quickly ([2d7af49c](https://github.com/suguru03/neo-async/commit/2d7af49c))
 
 <a name"v0.4.5"></a>
-### v0.4.5 (2016-04-21)
+### v0.4.5 (2016-06-08)
 
 
 #### Bug Fixes
