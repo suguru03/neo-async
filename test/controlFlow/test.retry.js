@@ -152,4 +152,32 @@ parallel('#retry', function() {
     }, delay);
   });
 
+  it('retry with custom interval when all attempts fail',function(done) {
+    var times = 3;
+    var intervalFunc = function(retryCount) {
+      return retryCount * 100;
+    };
+    var callCount = 0;
+    var error = 'ERROR';
+    var erroredResult = 'RESULT';
+    var iterator = function(callback) {
+      callCount++;
+      callback(error + callCount, erroredResult + callCount); // respond with indexed values
+    };
+    var opts = {
+      times: times,
+      interval: intervalFunc
+    };
+    var start = Date.now();
+    async.retry(opts, iterator, function(err, res) {
+      var now = Date.now();
+      var diff = now - start;
+      assert.ok(diff >= 300);
+      assert.strictEqual(callCount, 3);
+      assert.strictEqual(err, error + times);
+      assert.strictEqual(res, erroredResult + times);
+      done();
+    });
+  });
+
 });
