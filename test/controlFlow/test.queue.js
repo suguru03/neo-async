@@ -208,6 +208,34 @@ parallel('#queue', function() {
       });
   });
 
+  it('should call global error handler', function(done) {
+
+    var results = [];
+    var q = async.queue(function (task, callback) {
+      callback(task.name === 'foo' ? new Error('fooError') : null);
+    }, 2);
+
+    q.error = function(err, task) {
+      assert.ok(err);
+      assert.strictEqual(err.message, 'fooError');
+      assert.strictEqual(task.name, 'foo');
+      results.push('fooError');
+    };
+
+    q.drain = function() {
+      assert.deepEqual(results, ['fooError', 'bar']);
+      done();
+    };
+
+    q.push({ name: 'foo' });
+    q.push({ name: 'bar' }, function(err) {
+      if (err) {
+        return done(err);
+      }
+      results.push('bar');
+    });
+  });
+
   it('should avoid double callback', function(done) {
 
     var called = false;
