@@ -77,9 +77,9 @@ bower install neo-async
 - [`map`](http://suguru03.github.io/neo-async/doc/async.map.html)
 - [`mapSeries`](http://suguru03.github.io/neo-async/doc/async.mapSeries.html)
 - [`mapLimit`](http://suguru03.github.io/neo-async/doc/async.mapLimit.html)
-- [`mapValues`](http://suguru03.github.io/neo-async/doc/async.mapValues.html) *
-- [`mapValuesSeries`](http://suguru03.github.io/neo-async/doc/async.mapValuesSeries.html) *
-- [`mapValuesLimit`](http://suguru03.github.io/neo-async/doc/async.mapValuesLimit.html) *
+- [`mapValues`](http://suguru03.github.io/neo-async/doc/async.mapValues.html)
+- [`mapValuesSeries`](http://suguru03.github.io/neo-async/doc/async.mapValuesSeries.html)
+- [`mapValuesLimit`](http://suguru03.github.io/neo-async/doc/async.mapValuesLimit.html)
 - [`filter`](http://suguru03.github.io/neo-async/doc/async.filter.html)
 - [`filterSeries`](http://suguru03.github.io/neo-async/doc/async.filterSeries.html)
 - [`filterLimit`](http://suguru03.github.io/neo-async/doc/async.filterLimit.html)
@@ -139,6 +139,9 @@ bower install neo-async
 - [`whilst`](#whilst)
 - [`doWhilst`](#doWhilst)
 - [`until`](#until)
+- [`doUntil`](#doUntil)
+- [`during`](#during)
+- [`doDuring`](#doDuring)
 - [`forever`](#forever)
 - [`compose`](#compose)
 - [`seq`](#seq)
@@ -169,20 +172,14 @@ bower install neo-async
 - [`wrapSync`](#asyncify) -> [`asyncify`](#asyncify)
 - [`log`](#log)
 - [`dir`](#dir)
-- [`createLogger`](#createLogger)
-- [`noConflict`](#noConflict)
 - [`timeout`](http://suguru03.github.io/neo-async/doc/async.timeout.html)
 - [`reflect`](#reflect)
 - [`reflectAll`](#reflectAll)
+- [`createLogger`](#createLogger)
 
-### Safe
-
-```js
-var async = require('neo-async').safe;
-// or
-var async = require('neo-async');
-async.safe.each(collection, iterator, callback);
-```
+## Mode
+- [`safe`](#safe) *
+- [`fast`](#fast) *
 
 ## Speed Comparison
 
