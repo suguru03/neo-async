@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Namespace: race</title>
+    <title>JSDoc: Namespace: autoInject</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Namespace: race</h1>
+    <h1 class="page-title">Namespace: autoInject</h1>
 
     
 
@@ -29,7 +29,7 @@
 <header>
     
         <h2>
-            <span class="ancestors"><a href="async.html">async</a>.</span>race</h2>
+            <span class="ancestors"><a href="async.html">async</a>.</span>autoInject</h2>
         
     
 </header>
@@ -71,7 +71,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="async.js.html">async.js</a>, <a href="async.js.html#line3042">line 3042</a>
+        <a href="async.js.html">async.js</a>, <a href="async.js.html#line8910">line 8910</a>
     </li></ul></dd>
     
 
@@ -82,70 +82,6 @@
     
 </dl>
 
-
-        
-            <h3>Examples</h3>
-            
-    <pre class="prettyprint"><code>// array
-var called = 0;
-var tasks = [
-  function(done) {
-    setTimeout(function() {
-      called++;
-      done(null, '1');
-    }, 30);
-  },
-  function(done) {
-    setTimeout(function() {
-      called++;
-      done(null, '2');
-    }, 20);
-  },
-  function(done) {
-    setTimeout(function() {
-      called++;
-      done(null, '3');
-    }, 10);
-  }
-];
-async.race(tasks, function(err, res) {
-  console.log(res); // '3'
-  console.log(called); // 1
-  setTimeout(function() {
-    console.log(called); // 3
-  }, 50);
-});</code></pre>
-
-    <pre class="prettyprint"><code>// object
-var called = 0;
-var tasks = {
-  'test1': function(done) {
-    setTimeout(function() {
-      called++;
-      done(null, '1');
-    }, 30);
-  },
-  'test2': function(done) {
-    setTimeout(function() {
-      called++;
-      done(null, '2');
-    }, 20);
-  },
-  'test3': function(done) {
-    setTimeout(function() {
-      called++;
-      done(null, '3');
-    }, 10);
-  }
-};
-async.race(tasks, function(err, res) {
-  console.log(res); // '3'
-  console.log(called); // 1
-  setTimeout(function() {
-    console.log(called); // 3
-    done();
-  }, 50);
-});</code></pre>
 
         
     
