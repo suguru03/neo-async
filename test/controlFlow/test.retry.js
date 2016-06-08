@@ -139,6 +139,21 @@ parallel('#retry', function() {
     });
   });
 
+  it('should retry with empty options', function(done) {
+
+    var callCount = 0;
+    var fn = function(callback) {
+      callCount++;
+      callback('error');
+    };
+    var opts = {};
+    async.retry(opts, fn, function(err) {
+      assert.ok(err);
+      assert.strictEqual(callCount, 5);
+      done();
+    });
+  });
+
   it('should use default times', function(done) {
 
     var called = 0;
