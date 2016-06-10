@@ -11,7 +11,9 @@
 [![nodei](https://nodei.co/npm/neo-async.png?stars=true&downloads=true&downloadRank=true)](http://npm-stat.com/charts.html?package=neo-async)
 
 
-Neo-Async is thought to be used as a drop-in replacement for [Async](https://github.com/caolan/async), it almost fully covers its functionality and runs [faster](#speed-comparison).
+Neo-Async is thought to be used as a drop-in replacement for [Async](https://github.com/caolan/async), it almost fully covers its functionality and runs [faster](#benchmark).
+
+Benchmark is [here](#benchmark)!
 
 ## Code Coverage
 ![coverage](https://raw.githubusercontent.com/wiki/suguru03/neo-async/images/coverage.png)
@@ -181,80 +183,87 @@ bower install neo-async
 - [`safe`](#safe) *
 - [`fast`](#fast) *
 
-## Speed Comparison
+## Benchmark
 
-* async v1.3.0
-* neo-async v1.3.0
+[Benchmark: Async vs Neo-Async](http://suguru03.hatenablog.com/entry/2016/06/10/135559)
 
-### Server-side
-
-Speed comparison of server-side measured by [func-comparator](https://github.com/suguru03/func-comparator).
-
-Specifications are as follows.
-
-* n times trials
-* Random execution order
-* Measure the average speed[μs] of n times
-
-__execute__
-
-* 100 times trials
-* 500000 tasks
-
-Execution environment are as follows.
-
-* node v0.10.40
-* node v0.12.7
-* iojs v2.3.4
+### How to check
 
 ```bash
-$ node perf/func-comparator
+$ git clone git@github.com:suguru03/async-benchmark.git
+$ cd async-benchmark
+$ npm install
+$ node . // It might take more than one hour...
 ```
-__result__
 
-The value is the ratio (Neo-Async/Async) of the average speed per n times.
+### Environment
 
-##### collections
+* Ubuntu v12.04
+* Node.js v6.2.1
+* async v2.0.0-rc.6
+* neo-async v2.0.0-rc.1
+* benchmark v2.1.0
+* func-comparator v0.7.1
 
-|function|node v0.10.40|node v0.12.7|iojs v2.3.4|
-|---|---|---|---|
-|each|2.01|1.95|2.19|
-|eachSeries|2.28|2.62|2.28|
-|eachLimit|2.33|3.32|2.81|
-|eachOf|1.93|1.92|2.12|
-|eachOfSeries|2.17|2.79|2.98|
-|eachOfLimit|2.03|1.54|2.57|
-|map|3.10|3.11|3.38|
-|mapSeries|2.36|1.98|2.32|
-|mapLimit|1.76|1.84|2.06|
-|filter|2.33|3.70|6.59|
-|filterSeries|2.11|2.71|3.68|
-|reject|2.71|4.38|7.33|
-|rejectSeries|2.31|3.09|3.86|
-|detect|2.31|2.69|2.92|
-|detectSeries|2.13|1.96|2.71|
-|reduce|2.09|1.94|2.26|
-|reduceRight|2.19|1.93|2.51|
-|sortBy|1.41|1.66|1.52|
-|some|2.23|2.29|2.50|
-|every|2.22|2.25|2.93|
-|concat|12.0|7.23|10.0|
-|concatSeries|8.37|5.15|8.05|
+### Result
 
-##### control flow
+Neo-Async is 1.27 ~ 10.7 times faster than Async.
 
-|function|node v0.10.40|node v0.12.7|iojs v2.3.4|
-|---|---|---|---|
-|parallel|4.13|5.00|3.37|
-|series|3.13|2.70|3.03|
-|parallelLimit|2.69|2.96|2.49|
-|waterfall|3.45|7.24|7.59|
-|whilst|1.02|1.09|1.14|
-|doWhilst|1.26|1.36|1.28|
-|until|1.02|1.08|1.13|
-|doUntil|1.25|1.31|1.34|
-|during|2.15|2.08|2.08|
-|doDuring|5.08|5.77|5.39|
-|times|4.07|3.16|3.44|
-|timesSeries|2.82|2.58|2.71|
-|timesLimit|2.23|2.05|1.93|
+The value is the ratio (Neo-Async/Async) of the average speed.
+
+#### Collections
+|function|benchmark|func-comparator|
+|---|--:|--:|
+|each|3.71|2.54|
+|eachSeries|2.14|1.90|
+|eachLimit|2.14|1.88|
+|eachOf|3.30|2.50|
+|eachOfSeries|1.97|1.83|
+|eachOfLimit|2.02|1.80|
+|map|4.20|4.11|
+|mapSeries|2.40|3.65|
+|mapLimit|2.64|2.66|
+|mapValues|5.71|5.32|
+|mapValuesSeries|3.82|3.23|
+|mapValuesLimit|3.10|2.38|
+|filter|8.11|8.76|
+|filterSeries|5.79|4.86|
+|filterLimit|4.00|3.32|
+|reject|9.47|9.52|
+|rejectSeries|7.39|4.64|
+|rejectLimit|4.54|3.49|
+|detect|6.67|6.37|
+|detectSeries|3.54|3.73|
+|detectLimit|2.38|2.62|
+|reduce|4.13|3.23|
+|reduceRight|4.23|3.24|
+|transform|5.30|5.17|
+|sortBy|2.24|2.37|
+|some|6.39|6.10|
+|someSeries|5.37|4.66|
+|someLimit|3.39|2.84|
+|every|6.85|6.27|
+|everySeries|4.53|3.90|
+|everyLimit|3.36|2.75|
+|concat|9.18|9.35|
+|concatSeries|7.49|6.09|
+
+#### Control Flow
+|funciton|benchmark|func-comparator|
+|---|--:|--:|
+|parallel|7.54|5.45|
+|series|3.29|2.41|
+|waterfall|5.12|4.27|
+|whilst|1.96|1.95|
+|doWhilst|2.07|1.96|
+|until|2.10|1.99|
+|doUntil|1.98|2.04|
+|during|10.7|7.09|
+|doDuring|5.98|6.03|
+|queue|1.83|1.75|
+|priorityQueue|1.79|1.75|
+|times|3.84|3.65|
+|race|1.45|1.27|
+|auto|3.23|3.50|
+|retry|9.43|6.78|
+
