@@ -1,27 +1,27 @@
 'use strict';
 
-var path = require('path');
+const path = require('path');
 
-var gulp = require('gulp');
-var git = require('gulp-git');
-var generator = require('changelog-generator');
+const gulp = require('gulp');
+const git = require('gulp-git');
+const generator = require('changelog-generator');
 
-var async = require('../../');
+const async = require('../../');
 
-gulp.task('changelog', function(done) {
-  var filepath = path.resolve(__dirname, '../..', 'package.json');
-  var url = require(filepath).homepage;
+gulp.task('changelog', (done) => {
+  let filepath = path.resolve(__dirname, '../..', 'package.json');
+  let url = require(filepath).homepage;
 
   async.angelFall([
 
     async.apply(generator, url),
 
     async.apply(git.exec, {
-        args: 'add ./CHANGELOG.md'
+      args: 'add ./CHANGELOG.md'
     }),
 
     async.apply(git.exec, {
-        args: 'commit -m "docs(CHANGELOG): v' + async.VERSION + ' [ci skip]"'
+      args: 'commit -m "docs(CHANGELOG): v' + async.VERSION + ' [ci skip]"'
     })
   ], done);
 });

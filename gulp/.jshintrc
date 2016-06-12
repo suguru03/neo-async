@@ -1,0 +1,68 @@
+{
+
+  "predef": [
+    "define",
+    "Symbol"
+  ],
+
+  "indent": 2,
+
+  "bitwise": false,
+  "camelcase": false,
+  "curly": false,
+  "eqeqeq": true,
+  "forin": false,
+  "immed": true,
+  "latedef": false,
+  "newcap": false,
+  "noarg": true,
+  "noempty": false,
+  "nonew": false,
+  "plusplus": false,
+  "quotmark": false,
+  "regexp": false,
+  "undef": true,
+  "unused": true,
+  "strict": true,
+  "trailing": true,
+  "maxparams": false,
+  "maxdepth": false,
+  "maxstatements": false,
+  "maxcomplexity": false,
+  "maxlen": false,
+
+  "boss": false,
+  "debug": false,
+  "eqnull": true,
+  "evil": true,
+  "expr": false,
+  "funcscope": false,
+  "globalstrict": false,
+  "lastsemic": false,
+  "laxbreak": false,
+  "laxcomma": true,
+  "loopfunc": false,
+  "multistr":  false,
+  "onecase": false,
+  "proto": true,
+  "regexdash": false,
+  "scripturl": true,
+  "smarttabs": false,
+  "shadow": false,
+  "sub": false,
+  "supernew": false,
+  "validthis": false,
+
+  "browser": true,
+  "jquery": true,
+  "node": true,
+  "worker": true,
+
+  "nomen": false,
+  "onevar": false,
+  "white": false,
+
+  "-W018": true,
+
+  "esversion":6
+}

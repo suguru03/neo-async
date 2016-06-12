@@ -1,12 +1,12 @@
 'use strict';
 
-var gulp = require('gulp');
-var jscs = require('gulp-jscs');
+const gulp = require('gulp');
+const jscs = require('gulp-jscs');
 
-var config = require('../config');
+const config = require('../config');
 
-gulp.task('jscs', function() {
-  var dirnames = config.jscs.dirnames;
+gulp.task('jscs', () => {
+  let dirnames = config.jscs.dirnames;
   return gulp.src(dirnames)
     .pipe(jscs('.jscsrc'));
 });

@@ -1,0 +1,53 @@
+rules:
+  # Possible Errors
+  no-console: 0
+  comma-dangle: 2
+  no-constant-condition: 2
+  no-unreachable: 2
+
+  # Best Practices
+  consistent-return: 0
+  curly: 2
+  dot-notation: 2
+  eqeqeq: 2
+  quotes: [2, "single"]
+  no-return-assign: 2
+  no-proto: 0
+
+  # Strict Mode
+  strict: [2, "global"]
+
+  # Variables
+  no-shadow: 0
+  no-unused-vars: 2
+  no-use-before-define: 0
+
+  # Stylistic Issues
+  indent: [2, 2]
+  camelcase: 0
+  comma-spacing: [2, { "before": false, "after": true }]
+  key-spacing: 2
+  linebreak-style: [2, "unix"]
+  new-cap: 0
+  no-underscore-dangle: 0
+  semi: [2, "always"]
+  space-unary-ops: 2
+
+  # ECMAScript 6
+  no-var: 0
+
+  # Node.js
+  no-process-exit: 0
+  callback-return: [2, ["callback", "cb", "next", "done"]]
+
+env:
+  es6: true
+  node: true
+  browser: true
+  mocha: true
+
+extends: 'eslint:recommended'
+
+ecmaFeatures:
+  jsx: true
+  experimentalObjectRestSpread: true

@@ -1,18 +1,18 @@
 'use strict';
 
-var _ = require('lodash');
-var es = require('event-stream');
-var gulp = require('gulp');
-var jsbeautifier = require('gulp-jsbeautifier');
+const _ = require('lodash');
+const es = require('event-stream');
+const gulp = require('gulp');
+const jsbeautifier = require('gulp-jsbeautifier');
 
-var config = require('../config');
+const config = require('../config');
 
 gulp.task('jsfmt', ['jsbeautifier']);
 
-gulp.task('jsbeautifier', function() {
-  var dirnames = config.jsbeautifier.dirnames;
-  var streams = _.map(dirnames, function(task) {
-    var dirname = task.slice(0, _.lastIndexOf(task, '/'));
+gulp.task('jsbeautifier', () => {
+  let dirnames = config.jsbeautifier.dirnames;
+  let streams = _.map(dirnames, (task) => {
+    let dirname = task.slice(0, _.lastIndexOf(task, '/'));
     return gulp.src(task)
       .pipe(jsbeautifier({
         config: '.jsbeautifyrc',

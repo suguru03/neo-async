@@ -1,21 +1,21 @@
 'use strict';
 
-var fs = require('fs');
-var path = require('path');
+const fs = require('fs');
+const path = require('path');
 
-var gulp = require('gulp');
-var git = require('gulp-git');
+const gulp = require('gulp');
+const git = require('gulp-git');
 
-var async = require('../../');
-var jsdoc = require('./jsdoc');
+const async = require('../../');
+const jsdoc = require('./jsdoc');
 
-gulp.task('gh-pages', function(done) {
+gulp.task('gh-pages', (done) => {
 
-  var filepath = path.resolve(__dirname, '../..', 'lib/async.js');
-  var options = {
+  let filepath = path.resolve(__dirname, '../..', 'lib/async.js');
+  let options = {
     encoding: 'utf8'
   };
-  var asyncFile = fs.readFileSync(filepath, options);
+  let asyncFile = fs.readFileSync(filepath, options);
   async.angelFall([
 
     async.apply(git.fetch, 'origin', ''),
@@ -29,10 +29,10 @@ gulp.task('gh-pages', function(done) {
     async.apply(jsdoc.create),
 
     async.apply(git.status, {
-        args: '-s ./doc'
+      args: '-s ./doc'
     }),
 
-    function(result, next) {
+    (result, next) => {
       if (!result) {
         console.log('[skip commit]');
         return checkoutMaster(done);
@@ -43,7 +43,7 @@ gulp.task('gh-pages', function(done) {
     },
 
     async.apply(git.exec, {
-        args: 'commit -m "docs(jsdoc): update jsdoc [v' + async.VERSION + ']"'
+      args: 'commit -m "docs(jsdoc): update jsdoc [v' + async.VERSION + ']"'
     }),
 
     checkoutMaster
