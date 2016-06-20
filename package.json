@@ -46,7 +46,7 @@
     "minimist": "^1.2.0",
     "mocha": "^2.4.5",
     "mocha.parallel": "^0.12.0",
-    "neo-async": "^0.6.5",
+    "neo-async": "^1.8.2",
     "q": "^1.4.1",
     "require-dir": "^0.3.0"
   }
