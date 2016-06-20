@@ -29,7 +29,7 @@
     "async": "git://github.com/caolan/async.git",
     "benchmark": "^2.1.0",
     "changelog-generator": "0.0.4",
-    "codecov.io": "^0.1.6",
+    "codecov.io": "^0.1.7",
     "event-stream": "^3.3.3",
     "func-comparator": "^0.7.2",
     "gulp": "^3.9.1",
