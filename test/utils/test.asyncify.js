@@ -104,7 +104,6 @@ parallel('#asyncify', function() {
     process.once('unhandledRejection', function(err) {
       assert.ok(err);
       assert.strictEqual(err.message, msg);
-      done();
     });
     var promisified = function(arg) {
       return new util.Promise(function(resolve) {
@@ -119,6 +118,7 @@ parallel('#asyncify', function() {
       assert.strictEqual(res, 'arg resolved');
       setTimeout(function() {
         assert.strictEqual(count, 1);
+        done();
       }, delay);
       throw new Error(msg);
     });
