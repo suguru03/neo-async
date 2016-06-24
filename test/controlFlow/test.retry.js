@@ -187,7 +187,7 @@ parallel('#retry', function() {
     async.retry(opts, iterator, function(err, res) {
       var now = Date.now();
       var diff = now - start;
-      assert.ok(diff >= 300);
+      assert.ok(diff >= 300, diff);
       assert.strictEqual(callCount, 3);
       assert.strictEqual(err, error + times);
       assert.strictEqual(res, erroredResult + times);
