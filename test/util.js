@@ -1,4 +1,4 @@
-/* global it */
+/* global it, Map, Set, Promise */
 'use strict';
 
 var assert = require('assert');
@@ -71,3 +71,5 @@ exports.errorChecker = function(err) {
   assert.ok(err);
   assert.strictEqual(err.message, 'Callback was already called.');
 };
+
+exports.Promise = typeof Promise !== 'undefined' ? Promise : require('bluebird');

@@ -28,6 +28,7 @@
   "devDependencies": {
     "async": "git://github.com/caolan/async.git",
     "benchmark": "^2.1.0",
+    "bluebird": "^3.4.1",
     "changelog-generator": "0.0.4",
     "codecov.io": "^0.1.6",
     "event-stream": "^3.3.3",
@@ -46,7 +47,6 @@
     "minimist": "^1.2.0",
     "mocha": "^2.5.3",
     "mocha.parallel": "^0.12.0",
-    "q": "^1.4.1",
     "require-dir": "^0.3.0"
   }
 }

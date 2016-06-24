@@ -1,4 +1,4 @@
-/* global it, Promise */
+/* global it */
 'use strict';
 
 var assert = require('assert');
@@ -7,7 +7,7 @@ var parallel = require('mocha.parallel');
 
 var async = require('../../');
 var delay = require('../config').delay;
-var Q = require('q');
+var util = require('../util');
 
 parallel('#asyncify', function() {
 
@@ -34,9 +34,7 @@ parallel('#asyncify', function() {
       hoge: true
     };
     var func = function() {
-      var d = Q.defer();
-      d.resolve(test);
-      return d.promise;
+      return util.Promise.resolve(test);
     };
     async.asyncify(func)(function(err, res) {
       if (err) {
@@ -64,9 +62,7 @@ parallel('#asyncify', function() {
 
     var message = 'error';
     var func = function() {
-      var d = Q.defer();
-      d.reject(new Error(message));
-      return d.promise;
+      return util.Promise.reject(new Error(message));
     };
     async.asyncify(func)(function(err) {
       assert.ok(err);
@@ -92,9 +88,7 @@ parallel('#asyncify', function() {
   it('should throw an error if reject is called', function(done) {
 
     var func = function(arg) {
-      var d = Q.defer();
-      d.reject(arg + ' rejected');
-      return d.promise;
+      return util.Promise.reject(arg + ' rejected');
     };
     async.asyncify(func)('argument', function(err) {
       assert.ok(err);
@@ -107,8 +101,13 @@ parallel('#asyncify', function() {
 
     var count = 0;
     var msg = 'error in callback';
+    process.once('unhandledRejection', function(err) {
+      assert.ok(err);
+      assert.strictEqual(err.message, msg);
+      done();
+    });
     var promisified = function(arg) {
-      return new Promise(function(resolve) {
+      return new util.Promise(function(resolve) {
         resolve(arg + ' resolved');
       });
     };
@@ -120,7 +119,6 @@ parallel('#asyncify', function() {
       assert.strictEqual(res, 'arg resolved');
       setTimeout(function() {
         assert.strictEqual(count, 1);
-        done();
       }, delay);
       throw new Error(msg);
     });
