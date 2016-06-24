@@ -1,4 +1,4 @@
-/* global it */
+/* global it, Promise */
 'use strict';
 
 var assert = require('assert');
@@ -6,6 +6,7 @@ var assert = require('assert');
 var parallel = require('mocha.parallel');
 
 var async = require('../../');
+var delay = require('../config').delay;
 var Q = require('q');
 
 parallel('#asyncify', function() {
@@ -99,6 +100,29 @@ parallel('#asyncify', function() {
       assert.ok(err);
       assert.strictEqual(err.message, 'argument rejected');
       done();
+    });
+  });
+
+  it('should avoid double callback', function(done) {
+
+    var count = 0;
+    var msg = 'error in callback';
+    var promisified = function(arg) {
+      return new Promise(function(resolve) {
+        resolve(arg + ' resolved');
+      });
+    };
+    async.asyncify(promisified)('arg', function(err, res) {
+      count++;
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, 'arg resolved');
+      setTimeout(function() {
+        assert.strictEqual(count, 1);
+        done();
+      }, delay);
+      throw new Error(msg);
     });
   });
 
