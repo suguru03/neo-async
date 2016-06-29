@@ -170,7 +170,7 @@ parallel('#retry', function() {
   it('retry with custom interval when all attempts fail',function(done) {
     var times = 3;
     var intervalFunc = function(retryCount) {
-      return retryCount * 100;
+      return retryCount * 110;
     };
     var callCount = 0;
     var error = 'ERROR';
