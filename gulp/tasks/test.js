@@ -1,10 +1,9 @@
 'use strict';
 
-const spawn = require('child_process').spawn;
-
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const spawn = require('child_process').spawn;
 
 const _ = require('lodash');
 const gulp = require('gulp');
@@ -32,9 +31,9 @@ function test() {
   .pipe(exit());
 }
 
-function fastTest() {
-  let parent = path.resolve(__dirname, '../../');
-  let base = path.resolve(parent, 'test');
+function fastTest(callback) {
+  let root = path.resolve(__dirname, '../../');
+  let base = path.resolve(root, 'test');
   let map = {};
   (function resolve(base) {
     _.forEach(fs.readdirSync(base), filename => {
@@ -50,16 +49,15 @@ function fastTest() {
     });
   })(base);
 
-  let mocha = path.resolve(parent, 'node_modules', '.bin', '_mocha');
+  let mocha = path.resolve(root, 'node_modules', '.bin', '_mocha');
   async.mapValuesLimit(map, os.cpus().length, (filepath, filename, done) => {
     let result = {
       log: '',
       err: false
     };
-    console.log('**** [%s] ****', filename);
-    let test = spawn(mocha, [filepath])
+    let test = spawn(mocha, ['--colors', filepath])
       .on('error', done)
-      .on('close', (err) => {
+      .on('close', err => {
         console.log(result.log);
         result.err = result.err || !!err;
         done(null, result);
@@ -68,27 +66,31 @@ function fastTest() {
       let buf = new Buffer(data, 'utf8');
       result.log += buf.toString();
     });
+    test.stderr.on('data', data => {
+      process.stdout.write(`${data}\n`);
+    });
   }, (err, res) => {
     if (err) {
-      throw err;
+      return callback(err);
     }
     _.chain(res)
       .pickBy(result => {
         return result.err;
       })
       .forOwn((result, key) => {
-        console.log('error:%s', key);
-        console.log(result.log);
+        console.log(`error:${key}`);
       })
       .value();
+
+    callback();
   });
 }
 
-function exec(filename, func) {
+function exec(filename, func, callback) {
   let filepath = path.resolve(__dirname, '../..', 'lib', filename);
   global.async = require(filepath);
   global.async_path = filepath;
-  func();
+  func(callback);
 }
 
 gulp.task('test', () => {
@@ -99,11 +101,11 @@ gulp.task('test:min', () => {
   exec('async.min.js', test);
 });
 
-gulp.task('test:fast', () => {
-  exec('async.js', fastTest);
+gulp.task('test:fast', done => {
+  exec('async.js', fastTest, done);
 });
 
-gulp.task('test:fast:min', () => {
-  exec('async.min.js', fastTest);
+gulp.task('test:fast:min', done => {
+  exec('async.min.js', fastTest, done);
 });
 
