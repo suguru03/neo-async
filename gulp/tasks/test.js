@@ -1,7 +1,9 @@
 'use strict';
 
+const fs = require('fs');
 const path = require('path');
 
+const _ = require('lodash');
 const gulp = require('gulp');
 const exit = require('gulp-exit');
 const mocha = require('gulp-mocha');
@@ -11,13 +13,13 @@ const executor = require('mocha-parallel-executor');
 const config = require('../../test/config');
 
 function test() {
-  let filename = gutil.env.file || '*';
-  let delay = gulp.env.delay;
+  const filename = gutil.env.file || '*';
+  const delay = gulp.env.delay;
   if (delay) {
     config.delay = delay;
   }
   gulp.src([
-    './test/**/test.' + filename + '*'
+    `./test/**/test.${filename}*`
   ])
   .pipe(mocha({
     reporter: 'spec',
@@ -27,11 +29,21 @@ function test() {
   .pipe(exit());
 }
 
-function exec(filename, func, callback) {
-  let filepath = path.resolve(__dirname, '../..', 'lib', filename);
+function exec(name, func) {
+  const filepath = path.resolve(__dirname, '../..', 'lib', name);
+  const filename = gutil.env.file;
+  let files;
+  if (filename) {
+    files = _.transform(['collections', 'controlFlow', 'other', 'utils'], (result, dir) => {
+      const p = path.resolve(__dirname, '../../', 'test', dir, `test.${filename}.js`);
+      if(fs.existsSync(p)) {
+        result.push(p);
+      }
+    });
+  }
   global.async = require(filepath);
   global.async_path = filepath;
-  func(callback);
+  func({ files: files });
 }
 
 gulp.task('test', () => {
