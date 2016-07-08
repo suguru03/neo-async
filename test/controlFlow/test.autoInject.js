@@ -311,6 +311,38 @@ parallel('#autoInject', function() {
     /* jshint +W061 */
   }
 
+  var defaultSupport = true;
+
+  try {
+    eval('function x(y = 1){ return y }');
+  }catch (e) {
+    defaultSupport = false;
+  }
+
+  if(arrowSupport && defaultSupport) {
+    // Needs to be run on ES6 only
+
+    /* eslint {no-eval: 0}*/
+    eval("(function() {                                                  " +
+       "  it('should work with es6 obj method syntax', function (done) { " +
+       "    async.autoInject({                                           " +
+       "      task1 (cb) {            cb(null, 1) },                     " +
+       "      task2 ( task3 , cb ) {  cb(null, 2) },                     " +
+       "      task3 (cb) {            cb(null, 3) },                     " +
+       "      task4 ( task2 , cb ) {  cb(null) },                        " +
+       "      task5 ( task4 = 4 , cb ) { cb(null, task4 + 1) }           " +
+       "    }, (err, results) => {                                       " +
+       "      assert.strictEqual(results.task1, 1);                      " +
+       "      assert.strictEqual(results.task3, 3);                      " +
+       "      assert.strictEqual(results.task4, undefined);              " +
+       "      assert.strictEqual(results.task5, 5);                      " +
+       "      done();                                                    " +
+       "    });                                                          " +
+       "  });                                                            " +
+       "})                                                               "
+    )();
+  }
+
   it('should avoid double callback', function(done) {
 
     var called = false;
