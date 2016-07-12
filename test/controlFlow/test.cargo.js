@@ -243,26 +243,9 @@ parallel('#cargo', function() {
         [0, 1, 2],
         [3, 4]
       ]);
-      var noop = _.get(workersList, [0, 0, 'callback']);
-      assert.deepEqual(workersList, [
-        [{
-          data: 0,
-          callback: noop
-        }, {
-          data: 1,
-          callback: noop
-        }, {
-          data: 2,
-          callback: noop
-        }],
-        [{
-          data: 3,
-          callback: noop
-        }, {
-          data: 4,
-          callback: noop
-        }]
-      ]);
+      assert.strictEqual(workersList.length, 2);
+      assert.strictEqual(workersList[0].length, 3);
+      assert.strictEqual(workersList[1].length, 2);
       done();
     };
   });
