@@ -336,7 +336,7 @@ parallel('#queue', function() {
       }, 40);
     };
 
-    queue.push(1, function(err, arg) {
+    queue.unshift(1, function(err, arg) {
       assert.strictEqual(err, 'err');
       assert.strictEqual(arg, 'arg');
       assert.strictEqual(queue.length(), 0);
