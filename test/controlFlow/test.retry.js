@@ -195,4 +195,43 @@ parallel('#retry', function() {
     });
   });
 
+  it('should return extra arguments', function(done) {
+    var func = function(callback) {
+      callback(null, 1, 2, 3);
+    };
+    async.retry(5, func, function(err, arg1, arg2, arg3) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(arguments.length, 4);
+      assert.strictEqual(arg1, 1);
+      assert.strictEqual(arg2, 2);
+      assert.strictEqual(arg3, 3);
+      done();
+    });
+  });
+
+  it('should return extra arguments with options', function(done) {
+    var func = function(callback) {
+      callback(null, 1, 2, 3);
+    };
+    var intervalFunc = function(retryCount) {
+      return retryCount * 110;
+    };
+    var opts = {
+      times: 5,
+      interval: intervalFunc
+    };
+    async.retry(opts, func, function(err, arg1, arg2, arg3) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(arguments.length, 4);
+      assert.strictEqual(arg1, 1);
+      assert.strictEqual(arg2, 2);
+      assert.strictEqual(arg3, 3);
+      done();
+    });
+  });
+
 });
