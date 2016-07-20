@@ -4,30 +4,37 @@ const fs = require('fs');
 const qs = require('querystring');
 const path = require('path');
 const http = require('http');
+const exec = require('child_process').exec;
 
 const gulp = require('gulp');
 const runSequence = require('run-sequence');
 
+const filepath =  path.resolve(__dirname, '../..', 'lib', 'async.js');
+const target = path.resolve(__dirname, '../..', 'lib', 'async.min.js');
+
 gulp.task('release', done => {
   runSequence(
-    // 'test',
-    'minify',
+    'minify:local',
     'test:min',
     done);
 });
 
+gulp.task('minify:local', done => {
+  const compilerPath = path.resolve(__dirname, '..', 'compiler.jar');
+  const command = `java -jar ${compilerPath} --js ${filepath} --js_output_file ${target}`;
+  exec(command, done);
+});
+
 gulp.task('minify', done => {
-  let filepath =  path.resolve(__dirname, '../..', 'lib', 'async.js');
-  let target = path.resolve(__dirname, '../..', 'lib', 'async.min.js');
-  let file = fs.readFileSync(filepath, 'utf8');
-  let body = qs.stringify({
+  const file = fs.readFileSync(filepath, 'utf8');
+  const body = qs.stringify({
     js_code: file,
     compilation_level: 'SIMPLE_OPTIMIZATIONS',
     // compilation_level: 'ADVANCED_OPTIMIZATIONS',
     output_format: 'text',
     output_info: 'compiled_code'
   });
-  let opts = {
+  const opts = {
     hostname: 'closure-compiler.appspot.com',
     port: 80,
     path: '/compile',
@@ -38,7 +45,7 @@ gulp.task('minify', done => {
     }
   };
   let data = '';
-  let req = http.request(opts, res => {
+  const req = http.request(opts, res => {
     res.setEncoding('utf8')
     .on('data', res => {
       data += res;
