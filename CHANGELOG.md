@@ -1,3 +1,61 @@
+<a name"v2.0.0"></a>
+## v2.0.0 (2016-07-20)
+
+
+#### Bug Fixes
+
+* **asyncify:**
+  * fix to see message param ([1af6e952](https://github.com/suguru03/neo-async/commit/1af6e952))
+  * fix to avoid double callback https://github.com/caolan/async/pull/1197 ([9a90db2c](https://github.com/suguru03/neo-async/commit/9a90db2c))
+* **queue:** fix drain ([63692572](https://github.com/suguru03/neo-async/commit/63692572))
+
+
+#### Features
+
+* **autoInject:** allow to use es6 object shorthand ([8f00360f](https://github.com/suguru03/neo-async/commit/8f00360f))
+* **queue:**
+  * implement DLL https://github.com/caolan/async/blob/master/lib/internal/DoublyLin ([0e90ed30](https://github.com/suguru03/neo-async/commit/0e90ed30))
+  * rename `task` to `_task` ([d6d398d5](https://github.com/suguru03/neo-async/commit/d6d398d5))
+* **retry:** update to return extra arguments ([c5ab7d0f](https://github.com/suguru03/neo-async/commit/c5ab7d0f))
+
+
+#### Other Changes
+
+* **CHANGELOG:** v2.0.0-rc.1 [ci skip] ([7b718833](https://github.com/suguru03/neo-async/commit/7b718833))
+* **README:** update benchmark [ci skip] ([f179f0cf](https://github.com/suguru03/neo-async/commit/f179f0cf))
+* **async:** modify to use variables ([c52d8a39](https://github.com/suguru03/neo-async/commit/c52d8a39))
+* **asyncify:**
+  * fix test ([28381813](https://github.com/suguru03/neo-async/commit/28381813))
+  * fix test cases ([cfb0de2a](https://github.com/suguru03/neo-async/commit/cfb0de2a))
+* **auto:** improve performance ([afb8a207](https://github.com/suguru03/neo-async/commit/afb8a207))
+* **gulp:** clean up tasks [ci skip] ([61c61dbc](https://github.com/suguru03/neo-async/commit/61c61dbc))
+* **package:**
+  * update benchmark to version 2.1.1 (#31) ([24b13869](https://github.com/suguru03/neo-async/commit/24b13869))
+  * update mocha-parallel-executor to version 0.2.1 (#30) ([aedbca6e](https://github.com/suguru03/neo-async/commit/aedbca6e))
+  * update gulp-git to version 1.8.0 (#27) ([1ac39dd7](https://github.com/suguru03/neo-async/commit/1ac39dd7))
+  * update run-sequence to version 1.2.2 (#26) ([98cda487](https://github.com/suguru03/neo-async/commit/98cda487))
+  * update gulp-jscs to version 4.0.0 ([7506dc8a](https://github.com/suguru03/neo-async/commit/7506dc8a))
+  * udpate dev dependencis ([0a9c8267](https://github.com/suguru03/neo-async/commit/0a9c8267))
+  * update dependencies ([3afdce4c](https://github.com/suguru03/neo-async/commit/3afdce4c))
+* **queue:**
+  * remove unnecesarry lines ([91db444c](https://github.com/suguru03/neo-async/commit/91db444c))
+  * refactor queue ([10d2a286](https://github.com/suguru03/neo-async/commit/10d2a286))
+  * improve performance ([aa163f28](https://github.com/suguru03/neo-async/commit/aa163f28))
+  * modify not to re-create inner function ([66055f73](https://github.com/suguru03/neo-async/commit/66055f73))
+* **race:** remove create function ([13a02413](https://github.com/suguru03/neo-async/commit/13a02413))
+* **release:**
+  * update release task [ci skip] ([4b6686f9](https://github.com/suguru03/neo-async/commit/4b6686f9))
+  * add relesae task [ci skip] ([f7def40e](https://github.com/suguru03/neo-async/commit/f7def40e))
+* **retry:**
+  * adjust interval time ([65771e58](https://github.com/suguru03/neo-async/commit/65771e58))
+  * add message ([aa8c1054](https://github.com/suguru03/neo-async/commit/aa8c1054))
+* **test:**
+  * improve test task [ci skip] ([2252762d](https://github.com/suguru03/neo-async/commit/2252762d))
+  * fix to use `mocha-parallel-executor` [ci skip] ([db277dae](https://github.com/suguru03/neo-async/commit/db277dae))
+  * imporve parallel tester [ci skip] ([cacad905](https://github.com/suguru03/neo-async/commit/cacad905))
+  * add parallel tester [ci skip] ([027499cf](https://github.com/suguru03/neo-async/commit/027499cf))
+* **waterfall:** clean up ([8bbbef51](https://github.com/suguru03/neo-async/commit/8bbbef51))
+
 <a name"v2.0.0-rc.1"></a>
 ### v2.0.0-rc.1 (2016-06-08)
 
@@ -1136,7 +1194,7 @@
 * Modify waterfall function to respond quickly ([2d7af49c](https://github.com/suguru03/neo-async/commit/2d7af49c))
 
 <a name"v0.4.5"></a>
-### v0.4.5 (2016-06-08)
+### v0.4.5 (2016-07-20)
 
 
 #### Bug Fixes
