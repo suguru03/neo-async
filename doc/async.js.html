@@ -45,7 +45,11 @@
   var DEFAULT_TIMES = 5;
   var DEFAULT_INTERVAL = 0;
 
-  var iteratorSymbol = typeof Symbol === 'function' &amp;&amp; Symbol.iterator;
+  var obj = 'object';
+  var func = 'function';
+  var isArray = Array.isArray;
+  var nativeKeys = Object.keys;
+  var iteratorSymbol = typeof Symbol === func &amp;&amp; Symbol.iterator;
 
   var nextTick, asyncNextTick, asyncSetImmediate;
   createImmediate();
@@ -3069,79 +3073,6 @@
 
   /**
    * @memberof async
-   * @namespace race
-   * @param {Array|Object} tasks - functions
-   * @param {Function} callback
-   * @example
-   *
-   * // array
-   * var called = 0;
-   * var tasks = [
-   *   function(done) {
-   *     setTimeout(function() {
-   *       called++;
-   *       done(null, '1');
-   *     }, 30);
-   *   },
-   *   function(done) {
-   *     setTimeout(function() {
-   *       called++;
-   *       done(null, '2');
-   *     }, 20);
-   *   },
-   *   function(done) {
-   *     setTimeout(function() {
-   *       called++;
-   *       done(null, '3');
-   *     }, 10);
-   *   }
-   * ];
-   * async.race(tasks, function(err, res) {
-   *   console.log(res); // '3'
-   *   console.log(called); // 1
-   *   setTimeout(function() {
-   *     console.log(called); // 3
-   *   }, 50);
-   * });
-   *
-   * @example
-   *
-   * // object
-   * var called = 0;
-   * var tasks = {
-   *   'test1': function(done) {
-   *     setTimeout(function() {
-   *       called++;
-   *       done(null, '1');
-   *     }, 30);
-   *   },
-   *   'test2': function(done) {
-   *     setTimeout(function() {
-   *       called++;
-   *       done(null, '2');
-   *     }, 20);
-   *   },
-   *   'test3': function(done) {
-   *     setTimeout(function() {
-   *       called++;
-   *       done(null, '3');
-   *     }, 10);
-   *   }
-   * };
-   * async.race(tasks, function(err, res) {
-   *   console.log(res); // '3'
-   *   console.log(called); // 1
-   *   setTimeout(function() {
-   *     console.log(called); // 3
-   *     done();
-   *   }, 50);
-   * });
-   *
-   */
-  var race = createRace();
-
-  /**
-   * @memberof async
    * @namespace log
    */
   var log = createLogger('log');
@@ -3153,11 +3084,11 @@
   var dir = createLogger('dir');
 
   /**
-   * @version 2.0.0-rc.1
+   * @version 2.0.0
    * @namespace async
    */
   var index = {
-    VERSION: '2.0.0-rc.1',
+    VERSION: '2.0.0',
 
     // Collections
     each: each,
@@ -3282,7 +3213,7 @@
   exports['default'] = index;
   baseEachSync(index, function(func, key) {
     exports[key] = func;
-  }, Object.keys(index));
+  }, nativeKeys(index));
 
   /**
    * @private
@@ -3294,8 +3225,8 @@
         fn.apply(null, args);
       });
     };
-    asyncSetImmediate = typeof setImmediate === 'function' ? setImmediate : delay;
-    if (typeof process === 'object' &amp;&amp; typeof process.nextTick === 'function') {
+    asyncSetImmediate = typeof setImmediate === func ? setImmediate : delay;
+    if (typeof process === obj &amp;&amp; typeof process.nextTick === func) {
       nextTick = /^v0.10/.test(process.version) ? asyncSetImmediate : process.nextTick;
       asyncNextTick = /^v0/.test(process.version) ? asyncSetImmediate : process.nextTick;
     } else {
@@ -3354,7 +3285,7 @@
    * @param {Object} object
    */
   function objectClone(object) {
-    var keys = Object.keys(object);
+    var keys = nativeKeys(object);
     var size = keys.length;
     var index = -1;
     var result = {};
@@ -3952,15 +3883,15 @@
       callback = callback || noop;
       var size, keys;
       var completed = 0;
-      if (Array.isArray(collection)) {
+      if (isArray(collection)) {
         size = collection.length;
         arrayEach(collection, iterator, done);
       } else if (!collection) {
       } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
         size = collection.size;
         symbolEach(collection, iterator, done);
-      } else if (typeof collection === 'object') {
-        keys = Object.keys(collection);
+      } else if (typeof collection === obj) {
+        keys = nativeKeys(collection);
         size = keys.length;
         baseEach(collection, iterator, done, keys);
       }
@@ -3988,10 +3919,10 @@
    * @param {Function} baseEach
    * @param {Function} symbolEach
    */
-  function createMap(arrayEach, baseEach, symbolEach, isArray) {
+  function createMap(arrayEach, baseEach, symbolEach, useArray) {
 
     var init, clone;
-    if (isArray) {
+    if (useArray) {
       init = Array;
       clone = createArray;
     } else {
@@ -4006,7 +3937,7 @@
       var size, keys, result;
       var completed = 0;
 
-      if (Array.isArray(collection)) {
+      if (isArray(collection)) {
         size = collection.length;
         result = init(size);
         arrayEach(collection, iterator, createCallback);
@@ -4015,8 +3946,8 @@
         size = collection.size;
         result = init(size);
         symbolEach(collection, iterator, createCallback);
-      } else if (typeof collection === 'object') {
-        keys = Object.keys(collection);
+      } else if (typeof collection === obj) {
+        keys = nativeKeys(collection);
         size = keys.length;
         result = init(size);
         baseEach(collection, iterator, createCallback, keys);
@@ -4060,7 +3991,7 @@
       var size, keys, result;
       var completed = 0;
 
-      if (Array.isArray(collection)) {
+      if (isArray(collection)) {
         size = collection.length;
         result = Array(size);
         arrayEach(collection, iterator, createCallback);
@@ -4069,8 +4000,8 @@
         size = collection.size;
         result = Array(size);
         symbolEach(collection, iterator, createCallback);
-      } else if (typeof collection === 'object') {
-        keys = Object.keys(collection);
+      } else if (typeof collection === obj) {
+        keys = nativeKeys(collection);
         size = keys.length;
         result = Array(size);
         baseEach(collection, iterator, createCallback, keys);
@@ -4115,7 +4046,7 @@
       var completed = 0;
       var result = [];
 
-      if (Array.isArray(collection)) {
+      if (isArray(collection)) {
         size = collection.length;
         iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
       } else if (!collection) {
@@ -4123,8 +4054,8 @@
         size = collection.size;
         iter = collection[iteratorSymbol]();
         iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
-      } else if (typeof collection === 'object') {
-        keys = Object.keys(collection);
+      } else if (typeof collection === obj) {
+        keys = nativeKeys(collection);
         size = keys.length;
         iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
       }
@@ -4200,7 +4131,7 @@
       var started = 0;
       var completed = 0;
 
-      if (Array.isArray(collection)) {
+      if (isArray(collection)) {
         size = collection.length;
         iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
       } else if (!collection) {
@@ -4208,8 +4139,8 @@
         size = collection.size;
         iter = collection[iteratorSymbol]();
         iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
-      } else if (typeof collection === 'object') {
-        keys = Object.keys(collection);
+      } else if (typeof collection === obj) {
+        keys = nativeKeys(collection);
         size = keys.length;
         iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
       }
@@ -4389,7 +4320,7 @@
     var sync = false;
     var completed = 0;
 
-    if (Array.isArray(collection)) {
+    if (isArray(collection)) {
       size = collection.length;
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
     } else if (!collection) {
@@ -4397,8 +4328,8 @@
       size = collection.size;
       iter = collection[iteratorSymbol]();
       iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
-    } else if (typeof collection === 'object') {
-      keys = Object.keys(collection);
+    } else if (typeof collection === obj) {
+      keys = nativeKeys(collection);
       size = keys.length;
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
     }
@@ -4547,7 +4478,7 @@
     var started = 0;
     var completed = 0;
 
-    if (Array.isArray(collection)) {
+    if (isArray(collection)) {
       size = collection.length;
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
     } else if (!collection) {
@@ -4555,8 +4486,8 @@
       size = collection.size;
       iter = collection[iteratorSymbol]();
       iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
-    } else if (typeof collection === 'object') {
-      keys = Object.keys(collection);
+    } else if (typeof collection === obj) {
+      keys = nativeKeys(collection);
       size = keys.length;
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
     } else {
@@ -4706,7 +4637,7 @@
     var sync = false;
     var completed = 0;
 
-    if (Array.isArray(collection)) {
+    if (isArray(collection)) {
       size = collection.length;
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
     } else if (!collection) {
@@ -4714,8 +4645,8 @@
       size = collection.size;
       iter = collection[iteratorSymbol]();
       iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
-    } else if (typeof collection === 'object') {
-      keys = Object.keys(collection);
+    } else if (typeof collection === obj) {
+      keys = nativeKeys(collection);
       size = keys.length;
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
     }
@@ -4852,7 +4783,7 @@
     var started = 0;
     var completed = 0;
 
-    if (Array.isArray(collection)) {
+    if (isArray(collection)) {
       size = collection.length;
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
     } else if (!collection) {
@@ -4860,8 +4791,8 @@
       size = collection.size;
       iter = collection[iteratorSymbol]();
       iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
-    } else if (typeof collection === 'object') {
-      keys = Object.keys(collection);
+    } else if (typeof collection === obj) {
+      keys = nativeKeys(collection);
       size = keys.length;
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
     }
@@ -5019,7 +4950,7 @@
     var result = {};
     var completed = 0;
 
-    if (Array.isArray(collection)) {
+    if (isArray(collection)) {
       size = collection.length;
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
     } else if (!collection) {
@@ -5027,8 +4958,8 @@
       size = collection.size;
       iter = collection[iteratorSymbol]();
       iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
-    } else if (typeof collection === 'object') {
-      keys = Object.keys(collection);
+    } else if (typeof collection === obj) {
+      keys = nativeKeys(collection);
       size = keys.length;
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
     }
@@ -5171,7 +5102,7 @@
     var started = 0;
     var completed = 0;
 
-    if (Array.isArray(collection)) {
+    if (isArray(collection)) {
       size = collection.length;
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
     } else if (!collection) {
@@ -5179,8 +5110,8 @@
       size = collection.size;
       iter = collection[iteratorSymbol]();
       iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
-    } else if (typeof collection === 'object') {
-      keys = Object.keys(collection);
+    } else if (typeof collection === obj) {
+      keys = nativeKeys(collection);
       size = keys.length;
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
     }
@@ -5272,15 +5203,15 @@
       var size, keys;
       var completed = 0;
 
-      if (Array.isArray(collection)) {
+      if (isArray(collection)) {
         size = collection.length;
         arrayEach(collection, iterator, createCallback);
       } else if (!collection) {
       } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
         size = collection.size;
         symbolEach(collection, iterator, createCallback);
-      } else if (typeof collection === 'object') {
-        keys = Object.keys(collection);
+      } else if (typeof collection === obj) {
+        keys = nativeKeys(collection);
         size = keys.length;
         baseEach(collection, iterator, createCallback, keys);
       }
@@ -5321,7 +5252,7 @@
       var sync = false;
       var completed = 0;
 
-      if (Array.isArray(collection)) {
+      if (isArray(collection)) {
         size = collection.length;
         iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
       } else if (!collection) {
@@ -5329,8 +5260,8 @@
         size = collection.size;
         iter = collection[iteratorSymbol]();
         iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
-      } else if (typeof collection === 'object') {
-        keys = Object.keys(collection);
+      } else if (typeof collection === obj) {
+        keys = nativeKeys(collection);
         size = keys.length;
         iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
       }
@@ -5403,7 +5334,7 @@
       var started = 0;
       var completed = 0;
 
-      if (Array.isArray(collection)) {
+      if (isArray(collection)) {
         size = collection.length;
         iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
       } else if (!collection) {
@@ -5411,8 +5342,8 @@
         size = collection.size;
         iter = collection[iteratorSymbol]();
         iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
-      } else if (typeof collection === 'object') {
-        keys = Object.keys(collection);
+      } else if (typeof collection === obj) {
+        keys = nativeKeys(collection);
         size = keys.length;
         iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
       }
@@ -5511,15 +5442,15 @@
       var completed = 0;
       var result = {};
 
-      if (Array.isArray(collection)) {
+      if (isArray(collection)) {
         size = collection.length;
         arrayEach(collection, iterator, createCallback);
       } else if (!collection) {
       } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
         size = collection.size;
         symbolEach(collection, iterator, createCallback);
-      } else if (typeof collection === 'object') {
-        keys = Object.keys(collection);
+      } else if (typeof collection === obj) {
+        keys = nativeKeys(collection);
         size = keys.length;
         baseEach(collection, iterator, createCallback, keys);
       }
@@ -5563,7 +5494,7 @@
       var result = {};
       var completed = 0;
 
-      if (Array.isArray(collection)) {
+      if (isArray(collection)) {
         size = collection.length;
         iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
       } else if (!collection) {
@@ -5571,8 +5502,8 @@
         size = collection.size;
         iter = collection[iteratorSymbol]();
         iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
-      } else if (typeof collection === 'object') {
-        keys = Object.keys(collection);
+      } else if (typeof collection === obj) {
+        keys = nativeKeys(collection);
         size = keys.length;
         iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
       }
@@ -5653,7 +5584,7 @@
       var started = 0;
       var completed = 0;
 
-      if (Array.isArray(collection)) {
+      if (isArray(collection)) {
         size = collection.length;
         iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
       } else if (!collection) {
@@ -5661,8 +5592,8 @@
         size = collection.size;
         iter = collection[iteratorSymbol]();
         iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
-      } else if (typeof collection === 'object') {
-        keys = Object.keys(collection);
+      } else if (typeof collection === obj) {
+        keys = nativeKeys(collection);
         size = keys.length;
         iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
       }
@@ -5827,7 +5758,7 @@
     var sync = false;
     var completed = 0;
 
-    if (Array.isArray(collection)) {
+    if (isArray(collection)) {
       size = collection.length;
       iterate = iterator.length === 4 ? arrayIteratorWithIndex : arrayIterator;
     } else if (!collection) {
@@ -5835,8 +5766,8 @@
       size = collection.size;
       iter = collection[iteratorSymbol]();
       iterate = iterator.length === 4 ? symbolIteratorWithKey : symbolIterator;
-    } else if (typeof collection === 'object') {
-      keys = Object.keys(collection);
+    } else if (typeof collection === obj) {
+      keys = nativeKeys(collection);
       size = keys.length;
       iterate = iterator.length === 4 ? objectIteratorWithKey : objectIterator;
     }
@@ -5965,7 +5896,7 @@
     var resIndex, index, key, keys, iter, item, col, iterate;
     var sync = false;
 
-    if (Array.isArray(collection)) {
+    if (isArray(collection)) {
       resIndex = collection.length;
       iterate = iterator.length === 4 ? arrayIteratorWithIndex : arrayIterator;
     } else if (!collection) {
@@ -5979,8 +5910,8 @@
       }
       collection = col;
       iterate = iterator.length === 4 ? arrayIteratorWithIndex : arrayIterator;
-    } else if (typeof collection === 'object') {
-      keys = Object.keys(collection);
+    } else if (typeof collection === obj) {
+      keys = nativeKeys(collection);
       resIndex = keys.length;
       iterate = iterator.length === 4 ? objectIteratorWithKey : objectIterator;
     }
@@ -6042,7 +5973,7 @@
       var size, keys, result;
       var completed = 0;
 
-      if (Array.isArray(collection)) {
+      if (isArray(collection)) {
         size = collection.length;
         result = accumulator !== undefined ? accumulator : [];
         arrayEach(collection, result, iterator, done);
@@ -6051,8 +5982,8 @@
         size = collection.size;
         result = accumulator !== undefined ? accumulator : {};
         symbolEach(collection, result, iterator, done);
-      } else if (typeof collection === 'object') {
-        keys = Object.keys(collection);
+      } else if (typeof collection === obj) {
+        keys = nativeKeys(collection);
         size = keys.length;
         result = accumulator !== undefined ? accumulator : {};
         baseEach(collection, result, iterator, done, keys);
@@ -6064,12 +5995,12 @@
       function done(err, bool) {
         if (err) {
           callback = once(callback);
-          callback(err, Array.isArray(result) ? createArray(result) : objectClone(result));
+          callback(err, isArray(result) ? createArray(result) : objectClone(result));
         } else if (++completed === size) {
           callback(null, result);
         } else if (bool === false) {
           callback = once(callback);
-          callback(null, Array.isArray(result) ? createArray(result) : objectClone(result));
+          callback(null, isArray(result) ? createArray(result) : objectClone(result));
         }
       }
     };
@@ -6162,7 +6093,7 @@
     var sync = false;
     var completed = 0;
 
-    if (Array.isArray(collection)) {
+    if (isArray(collection)) {
       size = collection.length;
       result = accumulator !== undefined ? accumulator : [];
       iterate = iterator.length === 4 ? arrayIteratorWithIndex : arrayIterator;
@@ -6172,8 +6103,8 @@
       iter = collection[iteratorSymbol]();
       result = accumulator !== undefined ? accumulator : {};
       iterate = iterator.length === 4 ? symbolIteratorWithKey : symbolIterator;
-    } else if (typeof collection === 'object') {
-      keys = Object.keys(collection);
+    } else if (typeof collection === obj) {
+      keys = nativeKeys(collection);
       size = keys.length;
       result = accumulator !== undefined ? accumulator : {};
       iterate = iterator.length === 4 ? objectIteratorWithKey : objectIterator;
@@ -6316,7 +6247,7 @@
     var started = 0;
     var completed = 0;
 
-    if (Array.isArray(collection)) {
+    if (isArray(collection)) {
       size = collection.length;
       result = accumulator !== undefined ? accumulator : [];
       iterate = iterator.length === 4 ? arrayIteratorWithIndex : arrayIterator;
@@ -6326,8 +6257,8 @@
       iter = collection[iteratorSymbol]();
       result = accumulator !== undefined ? accumulator : {};
       iterate = iterator.length === 4 ? symbolIteratorWithKey : symbolIterator;
-    } else if (typeof collection === 'object') {
-      keys = Object.keys(collection);
+    } else if (typeof collection === obj) {
+      keys = nativeKeys(collection);
       size = keys.length;
       result = accumulator !== undefined ? accumulator : {};
       iterate = iterator.length === 4 ? objectIteratorWithKey : objectIterator;
@@ -6381,13 +6312,13 @@
     function done(err, bool) {
       if (err) {
         iterate = noop;
-        callback(err, Array.isArray(result) ? createArray(result) : objectClone(result));
+        callback(err, isArray(result) ? createArray(result) : objectClone(result));
         callback = noop;
       } else if (++completed === size) {
         callback(null, result);
       } else if (bool === false) {
         iterate = noop;
-        callback(null, Array.isArray(result) ? createArray(result) : objectClone(result));
+        callback(null, isArray(result) ? createArray(result) : objectClone(result));
         callback = noop;
       } else if (sync) {
         nextTick(iterate);
@@ -6412,7 +6343,7 @@
       var size, result;
       var completed = 0;
 
-      if (Array.isArray(collection)) {
+      if (isArray(collection)) {
         size = collection.length;
         result = Array(size);
         arrayEach(collection, iterator, createCallback);
@@ -6421,8 +6352,8 @@
         size = collection.size;
         result = Array(size);
         symbolEach(collection, iterator, createCallback);
-      } else if (typeof collection === 'object') {
-        var keys = Object.keys(collection);
+      } else if (typeof collection === obj) {
+        var keys = nativeKeys(collection);
         size = keys.length;
         result = Array(size);
         baseEach(collection, iterator, createCallback, keys);
@@ -6531,7 +6462,7 @@
     var sync = false;
     var completed = 0;
 
-    if (Array.isArray(collection)) {
+    if (isArray(collection)) {
       size = collection.length;
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
     } else if (!collection) {
@@ -6539,8 +6470,8 @@
       size = collection.size;
       iter = collection[iteratorSymbol]();
       iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
-    } else if (typeof collection === 'object') {
-      keys = Object.keys(collection);
+    } else if (typeof collection === obj) {
+      keys = nativeKeys(collection);
       size = keys.length;
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
     }
@@ -6681,7 +6612,7 @@
     var started = 0;
     var completed = 0;
 
-    if (Array.isArray(collection)) {
+    if (isArray(collection)) {
       size = collection.length;
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
     } else if (!collection) {
@@ -6689,8 +6620,8 @@
       size = collection.size;
       iter = collection[iteratorSymbol]();
       iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
-    } else if (typeof collection === 'object') {
-      keys = Object.keys(collection);
+    } else if (typeof collection === obj) {
+      keys = nativeKeys(collection);
       size = keys.length;
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
     }
@@ -7292,15 +7223,15 @@
       var completed = 0;
       var result = [];
 
-      if (Array.isArray(collection)) {
+      if (isArray(collection)) {
         size = collection.length;
         arrayEach(collection, iterator, done);
       } else if (!collection) {
       } else if (iteratorSymbol &amp;&amp; collection[iteratorSymbol]) {
         size = collection.size;
         symbolEach(collection, iterator, done);
-      } else if (typeof collection === 'object') {
-        var keys = Object.keys(collection);
+      } else if (typeof collection === obj) {
+        var keys = nativeKeys(collection);
         size = keys.length;
         baseEach(collection, iterator, done, keys);
       }
@@ -7310,7 +7241,7 @@
 
       function done(err, array) {
         if (array) {
-          Array.prototype.push.apply(result, Array.isArray(array) ? array : [array]);
+          Array.prototype.push.apply(result, isArray(array) ? array : [array]);
         }
         if (err) {
           callback = once(callback);
@@ -7400,7 +7331,7 @@
     var result = [];
     var completed = 0;
 
-    if (Array.isArray(collection)) {
+    if (isArray(collection)) {
       size = collection.length;
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
     } else if (!collection) {
@@ -7408,8 +7339,8 @@
       size = collection.size;
       iter = collection[iteratorSymbol]();
       iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
-    } else if (typeof collection === 'object') {
-      keys = Object.keys(collection);
+    } else if (typeof collection === obj) {
+      keys = nativeKeys(collection);
       size = keys.length;
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
     }
@@ -7446,7 +7377,7 @@
 
     function done(err, array) {
       if (array) {
-        Array.prototype.push.apply(result, Array.isArray(array) ? array : [array]);
+        Array.prototype.push.apply(result, isArray(array) ? array : [array]);
       }
       if (err) {
         callback(err, result);
@@ -7543,7 +7474,7 @@
     var started = 0;
     var completed = 0;
 
-    if (Array.isArray(collection)) {
+    if (isArray(collection)) {
       size = collection.length;
       iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
     } else if (!collection) {
@@ -7551,8 +7482,8 @@
       size = collection.size;
       iter = collection[iteratorSymbol]();
       iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
-    } else if (typeof collection === 'object') {
-      var keys = Object.keys(collection);
+    } else if (typeof collection === obj) {
+      var keys = nativeKeys(collection);
       size = keys.length;
       iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
     }
@@ -7601,7 +7532,7 @@
 
     function done(err, array) {
       if (array) {
-        Array.prototype.push.apply(result, Array.isArray(array) ? array : [array]);
+        Array.prototype.push.apply(result, isArray(array) ? array : [array]);
       }
       if (err) {
         iterate = noop;
@@ -7633,12 +7564,12 @@
       var size, keys, result;
       var completed = 0;
 
-      if (Array.isArray(tasks)) {
+      if (isArray(tasks)) {
         size = tasks.length;
         result = Array(size);
         arrayEach(tasks, createCallback);
-      } else if (tasks &amp;&amp; typeof tasks === 'object') {
-        keys = Object.keys(tasks);
+      } else if (tasks &amp;&amp; typeof tasks === obj) {
+        keys = nativeKeys(tasks);
         size = keys.length;
         result = {};
         baseEach(tasks, createCallback, keys);
@@ -7748,12 +7679,12 @@
     var sync = false;
     var completed = 0;
 
-    if (Array.isArray(tasks)) {
+    if (isArray(tasks)) {
       size = tasks.length;
       result = Array(size);
       iterate = arrayIterator;
-    } else if (tasks &amp;&amp; typeof tasks === 'object') {
-      keys = Object.keys(tasks);
+    } else if (tasks &amp;&amp; typeof tasks === obj) {
+      keys = nativeKeys(tasks);
       size = keys.length;
       result = {};
       iterate = objectIterator;
@@ -7878,12 +7809,12 @@
     var started = 0;
     var completed = 0;
 
-    if (Array.isArray(tasks)) {
+    if (isArray(tasks)) {
       size = tasks.length;
       result = Array(size);
       iterate = arrayIterator;
-    } else if (tasks &amp;&amp; typeof tasks === 'object') {
-      keys = Object.keys(tasks);
+    } else if (tasks &amp;&amp; typeof tasks === obj) {
+      keys = nativeKeys(tasks);
       size = keys.length;
       result = {};
       iterate = objectIterator;
@@ -7942,7 +7873,7 @@
    * @return {boolean}
    */
   function checkWaterfallTasks(tasks, callback) {
-    if (!Array.isArray(tasks)) {
+    if (!isArray(tasks)) {
       callback(new Error('First argument to waterfall must be an array of functions'));
       return false;
     }
@@ -7997,9 +7928,8 @@
     if (!checkWaterfallTasks(tasks, callback)) {
       return;
     }
+    var done, called, sync;
     var completed = 0;
-    var called = false;
-    var sync = false;
     var size = tasks.length;
     var func = tasks[completed];
     var args = [];
@@ -8010,40 +7940,47 @@
       switch (args.length) {
         case 0:
         case 1:
-          return func(done);
+          return func(next);
         case 2:
-          return func(args[1], done);
+          return func(args[1], next);
         case 3:
-          return func(args[1], args[2], done);
+          return func(args[1], args[2], next);
         case 4:
-          return func(args[1], args[2], args[3], done);
+          return func(args[1], args[2], args[3], next);
         case 5:
-          return func(args[1], args[2], args[3], args[4], done);
+          return func(args[1], args[2], args[3], args[4], next);
         case 6:
-          return func(args[1], args[2], args[3], args[4], args[5], done);
+          return func(args[1], args[2], args[3], args[4], args[5], next);
         default:
           args = slice(args, 1);
-          args.push(done);
+          args.push(next);
           return func.apply(null, args);
       }
     }
 
-    function done(err) {
+    function next(err, res) {
       if (called) {
         throwError();
       }
       called = true;
       if (err) {
-        callback(err);
-        return;
-      }
-      if (++completed >= size) {
-        callback.apply(null, createArray(arguments));
+        done = callback;
         callback = throwError;
+        done(err);
         return;
       }
-      func = tasks[completed];
+      if (++completed === size) {
+        done = callback;
+        callback = throwError;
+        if (arguments.length &lt;= 2) {
+          done(err, res);
+        } else {
+          done.apply(null, createArray(arguments));
+        }
+        return;
+      }
       args = arguments;
+      func = tasks[completed] || throwError;
       if (sync) {
         nextTick(iterate);
       } else {
@@ -8484,7 +8421,7 @@
       var self = this;
       var args = createArray(arguments);
       var callback = args[args.length - 1];
-      if (typeof callback === 'function') {
+      if (typeof callback === func) {
         args.pop();
       } else {
         callback = noop;
@@ -8501,7 +8438,7 @@
       }
 
       function done(err, res) {
-        res = Array.isArray(res) ? res : [res];
+        res = isArray(res) ? res : [res];
         res.unshift(err);
         callback.apply(self, res);
       }
@@ -8532,6 +8469,81 @@
   }
 
   /**
+   * @see https://github.com/caolan/async/blob/master/lib/internal/DoublyLinkedList.js
+   */
+  function DLL() {
+    this.head = null;
+    this.tail = null;
+    this.length = 0;
+  }
+
+  DLL.prototype._removeLink = function(node) {
+     this.head = node.next;
+    if (node.next) {
+      node.next.prev = node.prev;
+    } else {
+      this.tail = node.prev;
+    }
+    node.prev = null;
+    node.next = null;
+    this.length--;
+    return node;
+  };
+
+  DLL.prototype.empty = DLL;
+
+  DLL.prototype._setInitial = function(node) {
+    this.length = 1;
+    this.head = this.tail = node;
+  };
+
+  DLL.prototype.insertBefore = function(node, newNode) {
+    newNode.prev = node.prev;
+    newNode.next = node;
+    if (node.prev) {
+      node.prev.next = newNode;
+    } else {
+      this.head = newNode;
+    }
+    node.prev = newNode;
+    this.length++;
+  };
+
+  DLL.prototype.unshift = function(node) {
+    if (this.head) {
+      this.insertBefore(this.head, node);
+    } else {
+      this._setInitial(node);
+    }
+  };
+
+  DLL.prototype.push = function(node) {
+    var tail = this.tail;
+    if (tail) {
+      node.prev = tail;
+      node.next = tail.next;
+      this.tail = node;
+      tail.next = node;
+      this.length++;
+    } else {
+      this._setInitial(node);
+    }
+  };
+
+  DLL.prototype.shift = function() {
+      return this.head &amp;&amp; this._removeLink(this.head);
+  };
+
+  DLL.prototype.splice = function(end) {
+    var task;
+    var tasks = [];
+    while (end-- &amp;&amp; (task = this.shift())) {
+      tasks.push(task);
+    }
+    return tasks;
+  };
+
+  /**
    * @private
    */
   function baseQueue(isQueue, worker, concurrency, payload) {
@@ -8543,8 +8555,10 @@
 
     var workers = 0;
     var workersList = [];
+    var _callback, _unshift;
+
     var q = {
-      tasks: [],
+      _tasks: new DLL(),
       concurrency: concurrency,
       payload: payload,
       saturated: noop,
@@ -8577,40 +8591,43 @@
       _insert(tasks, callback, true);
     }
 
+    function _exec(task) {
+      var item = {
+        data: task,
+        callback: _callback
+      };
+      if (_unshift) {
+        q._tasks.unshift(item);
+      } else {
+        q._tasks.push(item);
+      }
+      nextTick(q.process);
+    }
+
     function _insert(tasks, callback, unshift) {
-      if (callback != null &amp;&amp; typeof callback !== 'function') {
+      if (callback == null) {
+        callback = noop;
+      } else if (typeof callback !== 'function') {
         throw new Error('task callback must be a function');
       }
       q.started = true;
-      var _tasks = Array.isArray(tasks) ? tasks : [tasks];
+      var _tasks = isArray(tasks) ? tasks : [tasks];
 
       if (tasks === undefined || !_tasks.length) {
         if (q.idle()) {
-          nextTick(function() {
-            q.drain();
-          });
+          nextTick(q.drain);
         }
         return;
       }
 
-      callback = callback || noop;
-      arrayEachSync(_tasks, function(task) {
-        var item = {
-          data: task,
-          callback: callback
-        };
-        if (unshift) {
-          q.tasks.unshift(item);
-        } else {
-          q.tasks.push(item);
-        }
-        nextTick(q.process);
-      });
+      _unshift = unshift;
+      _callback = callback;
+      arrayEachSync(_tasks, _exec);
     }
 
     function kill() {
       q.drain = noop;
-      q.tasks = [];
+      q._tasks.empty();
     }
 
     function _next(q, tasks) {
@@ -8653,7 +8670,7 @@
           q.unsaturated();
         }
 
-        if (q.tasks.length + workers === 0) {
+        if (q._tasks.length + workers === 0) {
           q.drain();
         }
         q.process();
@@ -8661,9 +8678,9 @@
     }
 
     function runQueue() {
-      while (!q.paused &amp;&amp; workers &lt; q.concurrency &amp;&amp; q.tasks.length) {
-        var task = q.tasks.shift();
-        if (q.tasks.length === 0) {
+      while (!q.paused &amp;&amp; workers &lt; q.concurrency &amp;&amp; q._tasks.length) {
+        var task = q._tasks.shift();
+        if (q._tasks.length === 0) {
           q.empty();
         }
         workers++;
@@ -8677,15 +8694,15 @@
     }
 
     function runCargo() {
-      while (!q.paused &amp;&amp; workers &lt; q.concurrency &amp;&amp; q.tasks.length) {
-        var tasks = q.tasks.splice(0, q.payload || q.tasks.length);
+      while (!q.paused &amp;&amp; workers &lt; q.concurrency &amp;&amp; q._tasks.length) {
+        var tasks = q._tasks.splice(q.payload || q._tasks.length);
         var index = -1;
         var size = tasks.length;
         var data = Array(size);
         while (++index &lt; size) {
           data[index] = tasks[index].data;
         }
-        if (q.tasks.length === 0) {
+        if (q._tasks.length === 0) {
           q.empty();
         }
         workers++;
@@ -8699,7 +8716,7 @@
     }
 
     function getLength() {
-      return q.tasks.length;
+      return q._tasks.length;
     }
 
     function running() {
@@ -8718,15 +8735,17 @@
       q.paused = true;
     }
 
+    function _resume() {
+      nextTick(q.process);
+    }
+
     function resume() {
       if (q.paused === false) {
         return;
       }
       q.paused = false;
-      var count = q.concurrency &lt; q.tasks.length ? q.concurrency : q.tasks.length;
-      timesSync(count, function() {
-        nextTick(q.process);
-      });
+      var count = q.concurrency &lt; q._tasks.length ? q.concurrency : q._tasks.length;
+      timesSync(count, _resume);
     }
   }
 
@@ -8743,57 +8762,42 @@
    * @namespace priorityQueue
    */
   function priorityQueue(worker, concurrency) {
-    var q = queue(worker, concurrency);
+    var q = baseQueue(true, worker, concurrency);
     q.push = push;
     delete q.unshift;
     return q;
 
-    // TODO
-    function _insert(tasks, priority, callback) {
+    function push(tasks, priority, callback) {
       q.started = true;
-      var _tasks = Array.isArray(tasks) ? tasks : [tasks];
+      priority = priority || 0;
+      var _tasks = isArray(tasks) ? tasks : [tasks];
+      var taskSize = _tasks.length;
 
-      if (tasks === undefined || !_tasks.length) {
+      if (tasks === undefined || taskSize === 0) {
         if (q.idle()) {
-          nextTick(function() {
-            if (typeof q.drain === 'function') {
-              q.drain();
-            }
-          });
+          nextTick(q.drain);
         }
         return;
       }
 
-      callback = typeof callback === 'function' ? callback : noop;
-      var index = getIndex(priority);
-      arrayEachSync(_tasks, function(task) {
+      callback = typeof callback === func ? callback : noop;
+      var nextNode = q._tasks.head;
+      while (nextNode &amp;&amp; priority >= nextNode.priority) {
+        nextNode = nextNode.next;
+      }
+      while (taskSize--) {
         var item = {
-          data: task,
+          data: _tasks[taskSize],
           priority: priority,
           callback: callback
         };
-        q.tasks.splice(index++, 0, item);
+        if (nextNode) {
+          q._tasks.insertBefore(nextNode, item);
+        } else {
+          q._tasks.push(item);
+        }
         nextTick(q.process);
-      });
-
-      function getIndex(priority) {
-        var tasks = q.tasks;
-        var size = tasks.length;
-        if (!size) {
-          return 0;
-        }
-        var index = -1;
-        while (++index &lt; size) {
-          if (priority &lt; tasks[index].priority) {
-            return index;
-          }
-        }
-        return index;
       }
-    }
-
-    function push(tasks, priority, callback) {
-      _insert(tasks, priority, callback);
     }
   }
 
@@ -8813,11 +8817,11 @@
    * @param {Function} [callback]
    */
   function auto(tasks, concurrency, callback) {
-    if (typeof concurrency === 'function') {
+    if (typeof concurrency === func) {
       callback = concurrency;
       concurrency = null;
     }
-    var keys = Object.keys(tasks);
+    var keys = nativeKeys(tasks);
     var rest = keys.length;
     var results = {};
     if (rest === 0) {
@@ -8829,20 +8833,23 @@
     callback = onlyOnce(callback || noop);
     concurrency = concurrency || rest;
 
-    baseEachSync(tasks, function(task, key) {
+    baseEachSync(tasks, iterator, keys);
+    proceedQueue();
+
+    function iterator(task, key) {
       // no dependencies
       var _task, _taskSize;
-      if (!Array.isArray(task)) {
+      if (!isArray(task)) {
         _task = task;
         _taskSize = 0;
-        readyTasks.push(listener);
+        readyTasks.push([_task, _taskSize, done]);
         return;
       }
       var dependencySize = task.length - 1;
       _task = task[dependencySize];
       _taskSize = dependencySize;
       if (dependencySize === 0) {
-        readyTasks.push(listener);
+        readyTasks.push([_task, _taskSize, done]);
         return;
       }
       // dependencies
@@ -8866,9 +8873,7 @@
         }
         runningTasks--;
         rest--;
-        if (arguments.length > 2) {
-          arg = slice(arguments, 1);
-        }
+        arg = arguments.length &lt;= 2 ? arg : slice(arguments, 1);
         if (err) {
           var safeResults = objectClone(results);
           safeResults[key] = arg;
@@ -8883,26 +8888,12 @@
         key = null;
       }
 
-      function listener() {
-        if (callback === noop) {
-          return;
-        }
-        runningTasks++;
-        if (_taskSize > 0) {
-          _task(results, done);
-        } else {
-          _task(done);
-        }
-      }
-
       function taskListener() {
         if (--dependencySize === 0) {
-          readyTasks.push(listener);
+          readyTasks.push([_task, _taskSize, done]);
         }
       }
-    }, keys);
-
-    proceedQueue();
+    }
 
     function proceedQueue() {
       if (readyTasks.length === 0 &amp;&amp; runningTasks === 0) {
@@ -8911,8 +8902,14 @@
         }
         return callback(null, results);
       }
-      while (readyTasks.length &amp;&amp; runningTasks &lt; concurrency) {
-        readyTasks.shift()();
+      while (readyTasks.length &amp;&amp; runningTasks &lt; concurrency &amp;&amp; callback !== noop) {
+        runningTasks++;
+        var array = readyTasks.shift();
+        if (array[1] === 0) {
+          array[0](array[2]);
+        } else {
+          array[0](results, array[2]);
+        }
       }
     }
 
@@ -8925,14 +8922,24 @@
     }
   }
 
+  var FN_ARGS = /^(function)?\s*[^\(]*\(\s*([^\)]*)\)/m;
+  var FN_ARG_SPLIT = /,/;
+  var FN_ARG = /(=.+)?(\s*)$/;
+  var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
+
   /**
    * parse function arguments for `autoInject`
    *
    * @private
    */
   function parseParams(func) {
-    var str = func.toString().match(/^(function[^\(]*)?\(?\s*([^\)=]*)/m)[2] || '';
-    return str.replace(/^\s+|\s+$/g, '').split(/\s*\,\s*/);
+    func = func.toString().replace(STRIP_COMMENTS, '');
+    func = func.match(FN_ARGS)[2].replace(' ', '');
+    func = func ? func.split(FN_ARG_SPLIT) : [];
+    func = func.map(function (arg) {
+      return arg.replace(FN_ARG, '').trim();
+    });
+    return func;
   }
 
   /**
@@ -8944,17 +8951,17 @@
    */
   function autoInject(tasks, concurrency, callback) {
     var newTasks = {};
-    baseEachSync(tasks, iterator, Object.keys(tasks));
+    baseEachSync(tasks, iterator, nativeKeys(tasks));
     auto(newTasks, concurrency, callback);
 
     function iterator(task, key) {
       var params;
       var taskLength = task.length;
 
-      if (taskLength === 0) {
-        throw new Error('autoInject task functions require explicit parameters.');
-      }
-      if (Array.isArray(task)) {
+      if (isArray(task)) {
+        if (taskLength === 0) {
+          throw new Error('autoInject task functions require explicit parameters.');
+        }
         params = createArray(task);
         taskLength = params.length - 1;
         task = params[taskLength];
@@ -8967,6 +8974,9 @@
         return;
       } else {
         params = parseParams(task);
+        if (taskLength === 0 &amp;&amp; params.length === 0) {
+          throw new Error('autoInject task functions require explicit parameters.');
+        }
         taskLength = params.length - 1;
       }
       params[taskLength] = newTask;
@@ -9006,7 +9016,7 @@
   function retry(times, task, callback) {
     var intervalFunc;
     var count = 0;
-    if (arguments.length &lt; 3 &amp;&amp; typeof times === 'function') {
+    if (arguments.length &lt; 3 &amp;&amp; typeof times === func) {
       callback = task || noop;
       task = times;
       times = DEFAULT_TIMES;
@@ -9014,7 +9024,7 @@
       callback = callback || noop;
       switch (typeof times) {
         case 'object':
-          if (typeof times.interval === 'function') {
+          if (typeof times.interval === func) {
             intervalFunc = times.interval;
           } else {
             var interval = +times.interval;
@@ -9052,7 +9062,11 @@
 
     function simpleCallback(err, res) {
       if (++count === times || !err) {
-        return callback(err, res);
+        if (arguments.length &lt;= 2) {
+          return callback(err, res);
+        }
+        var args = createArray(arguments);
+        return callback.apply(null, args);
       }
       simpleIterator();
     }
@@ -9063,7 +9077,11 @@
 
     function intervalCallback(err, res) {
       if (++count === times || !err) {
-        return callback(err, res);
+        if (arguments.length &lt;= 2) {
+          return callback(err, res);
+        }
+        var args = createArray(arguments);
+        return callback.apply(null, args);
       }
       setTimeout(intervalIterator, intervalFunc(count));
     }
@@ -9126,10 +9144,10 @@
   function iterator(tasks) {
     var size = 0;
     var keys = [];
-    if (Array.isArray(tasks)) {
+    if (isArray(tasks)) {
       size = tasks.length;
     } else {
-      keys = Object.keys(tasks);
+      keys = nativeKeys(tasks);
       size = keys.length;
     }
     return makeCallback(0);
@@ -9390,32 +9408,97 @@
   }
 
   /**
-   * @private
+   * @memberof async
+   * @namespace race
+   * @param {Array|Object} tasks - functions
+   * @param {Function} callback
+   * @example
+   *
+   * // array
+   * var called = 0;
+   * var tasks = [
+   *   function(done) {
+   *     setTimeout(function() {
+   *       called++;
+   *       done(null, '1');
+   *     }, 30);
+   *   },
+   *   function(done) {
+   *     setTimeout(function() {
+   *       called++;
+   *       done(null, '2');
+   *     }, 20);
+   *   },
+   *   function(done) {
+   *     setTimeout(function() {
+   *       called++;
+   *       done(null, '3');
+   *     }, 10);
+   *   }
+   * ];
+   * async.race(tasks, function(err, res) {
+   *   console.log(res); // '3'
+   *   console.log(called); // 1
+   *   setTimeout(function() {
+   *     console.log(called); // 3
+   *   }, 50);
+   * });
+   *
+   * @example
+   *
+   * // object
+   * var called = 0;
+   * var tasks = {
+   *   'test1': function(done) {
+   *     setTimeout(function() {
+   *       called++;
+   *       done(null, '1');
+   *     }, 30);
+   *   },
+   *   'test2': function(done) {
+   *     setTimeout(function() {
+   *       called++;
+   *       done(null, '2');
+   *     }, 20);
+   *   },
+   *   'test3': function(done) {
+   *     setTimeout(function() {
+   *       called++;
+   *       done(null, '3');
+   *     }, 10);
+   *   }
+   * };
+   * async.race(tasks, function(err, res) {
+   *   console.log(res); // '3'
+   *   console.log(called); // 1
+   *   setTimeout(function() {
+   *     console.log(called); // 3
+   *     done();
+   *   }, 50);
+   * });
+   *
    */
-  function createRace() {
-
-    return function race(tasks, callback) {
-      callback = once(callback || noop);
-      var size, keys;
-      var index = -1;
-      if (Array.isArray(tasks)) {
-        size = tasks.length;
-        while (++index &lt; size) {
-          tasks[index](callback);
-        }
-      } else if (tasks &amp;&amp; typeof tasks === 'object') {
-        keys = Object.keys(tasks);
-        size = keys.length;
-        while (++index &lt; size) {
-          tasks[keys[index]](callback);
-        }
-      } else {
-        return callback(new TypeError('First argument to race must be a collection of functions'));
+  function race(tasks, callback) {
+    callback = once(callback || noop);
+    var size, keys;
+    var index = -1;
+    if (isArray(tasks)) {
+      size = tasks.length;
+      while (++index &lt; size) {
+        tasks[index](callback);
       }
-      if (!size) {
-        callback(null);
+    } else if (tasks &amp;&amp; typeof tasks === obj) {
+      keys = nativeKeys(tasks);
+      size = keys.length;
+      while (++index &lt; size) {
+        tasks[keys[index]](callback);
       }
-    };
+    } else {
+      return callback(new TypeError('First argument to race must be a collection of functions'));
+    }
+    if (!size) {
+      callback(null);
+    }
   }
 
   /**
@@ -9514,21 +9597,21 @@
     };
   }
 
-  function asyncify(func) {
+  function asyncify(fn) {
     return function( /* args..., callback */ ) {
       var args = createArray(arguments);
       var callback = args.pop();
       var result;
       try {
-        result = func.apply(this, args);
+        result = fn.apply(this, args);
       } catch (e) {
         return callback(e);
       }
-      if (result &amp;&amp; typeof result === 'object' &amp;&amp; typeof result.then === 'function') {
+      if (result &amp;&amp; typeof result === obj &amp;&amp; typeof result.then === func) {
         result.then(function(value) {
           callback(null, value);
-        })['catch'](function(err) {
-          callback(err instanceof Error ? err : new Error(err));
+        }, function(err) {
+          callback(err.message ? err : new Error(err));
         });
       } else {
         callback(null, result);
@@ -9584,12 +9667,12 @@
    */
   function reflectAll(tasks) {
     var size, newTasks, keys;
-    if (Array.isArray(tasks)) {
+    if (isArray(tasks)) {
       size = tasks.length;
       newTasks = Array(size);
       arrayEachSync(tasks, iterate);
-    } else if (tasks &amp;&amp; typeof tasks === 'object') {
-      keys = Object.keys(tasks);
+    } else if (tasks &amp;&amp; typeof tasks === obj) {
+      keys = nativeKeys(tasks);
       size = keys.length;
       newTasks = {};
       baseEachSync(tasks, iterate, keys);
@@ -9613,7 +9696,7 @@
     };
 
     function done(err) {
-      if (typeof console === 'object') {
+      if (typeof console === obj) {
         if (err) {
           if (console.error) {
             console.error(err);
@@ -9665,7 +9748,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Jun 08 2016 00:43:05 GMT-0700 (PDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Jul 20 2016 23:00:47 GMT-0700 (PDT)
 </footer>
 
 <script> prettyPrint(); </script>
