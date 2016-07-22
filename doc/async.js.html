@@ -329,38 +329,6 @@
    *
    * @example
    *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.filter(array, iterator, function(res) {
-   *   console.log(res); // [1, 3];
-   *   console.log(order); // [1, 2, 3]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.filter(array, iterator, function(res) {
-   *   console.log(res); // [1, 3];
-   *   console.log(order); // [[1, 0], [2, 2], [3, 1]]
-   * });
-   *
-   * @example
-   *
    * // object
    * var order = [];
    * var object = { a: 1, b: 3, c: 2 };
@@ -387,38 +355,6 @@
    *   }, num * 10);
    * };
    * async.filter(object, iterator, function(err, res) {
-   *   console.log(res); // [1, 3];
-   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.filter(object, iterator, function(res) {
-   *   console.log(res); // [1, 3];
-   *   console.log(order); // [1, 2, 3]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.filter(object, iterator, function(res) {
    *   console.log(res); // [1, 3];
    *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b']]
    * });
@@ -466,38 +402,6 @@
    *
    * @example
    *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.filterSeries(array, iterator, function(res) {
-   *   console.log(res); // [1, 3];
-   *   console.log(order); // [1, 3, 2]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.filterSeries(array, iterator, function(res) {
-   *   console.log(res); // [1, 3]
-   *   console.log(order); // [[1, 0], [3, 1], [2, 2]]
-   * });
-   *
-   * @example
-   *
    * // object
    * var order = [];
    * var object = { a: 1, b: 3, c: 2 };
@@ -524,38 +428,6 @@
    *   }, num * 10);
    * };
    * async.filterSeries(object, iterator, function(err, res) {
-   *   console.log(res); // [1, 3]
-   *   console.log(order); // [[1, 'a'], [3, 'b'], [2, 'c']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.filterSeries(object, iterator, function(res) {
-   *   console.log(res); // [1, 3]
-   *   console.log(order); // [1, 3, 2]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.filterSeries(object, iterator, function(res) {
    *   console.log(res); // [1, 3]
    *   console.log(order); // [[1, 'a'], [3, 'b'], [2, 'c']]
    * });
@@ -604,38 +476,6 @@
    *
    * @example
    *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.filterLimit(array, 2, iterator, function(res) {
-   *   console.log(res); // [1, 5, 3]
-   *   console.log(order); // [1, 3, 5, 2, 4]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.filterLimit(array, 2, iterator, function(res) {
-   *   console.log(res); // [1, 5, 3]
-   *   console.log(order); // [[1, 0], [3, 2], [5, 1], [2, 4], [4, 3]]
-   * });
-   *
-   * @example
-   *
    * // object
    * var order = [];
    * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
@@ -662,38 +502,6 @@
    *   }, num * 10);
    * };
    * async.filterLimit(object, 2, iterator, function(err, res) {
-   *   console.log(res); // [1, 5, 3]
-   *   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.filterLimit(object, 2, iterator, function(res) {
-   *   console.log(res); // [1, 5, 3]
-   *   console.log(order); // [1, 3, 5, 2, 4]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.filterLimit(object, 2, iterator, function(res) {
    *   console.log(res); // [1, 5, 3]
    *   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
    * });
@@ -741,38 +549,6 @@
    *
    * @example
    *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.reject(array, iterator, function(res) {
-   *   console.log(res); // [2];
-   *   console.log(order); // [1, 2, 3]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.reject(array, iterator, function(res) {
-   *   console.log(res); // [2];
-   *   console.log(order); // [[1, 0], [2, 2], [3, 1]]
-   * });
-   *
-   * @example
-   *
    * // object
    * var order = [];
    * var object = { a: 1, b: 3, c: 2 };
@@ -799,38 +575,6 @@
    *   }, num * 10);
    * };
    * async.reject(object, iterator, function(err, res) {
-   *   console.log(res); // [2];
-   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.reject(object, iterator, function(res) {
-   *   console.log(res); // [2];
-   *   console.log(order); // [1, 2, 3]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.reject(object, iterator, function(res) {
    *   console.log(res); // [2];
    *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b']]
    * });
@@ -862,54 +606,6 @@
    *
    * @example
    *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.rejectSeries(array, iterator, function(res) {
-   *   console.log(res); // [2];
-   *   console.log(order); // [1, 3, 2]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.rejectSeries(array, iterator, function(res) {
-   *   console.log(res); // [2];
-   *   console.log(order); // [[1, 0], [3, 1], [2, 2]]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.rejectSeries(array, iterator, function(res) {
-   *   console.log(res); // [2];
-   *   console.log(order); // [[1, 0], [3, 1], [2, 2]]
-   * });
-   *
-   * @example
-   *
    * // object
    * var order = [];
    * var object = { a: 1, b: 3, c: 2 };
@@ -936,38 +632,6 @@
    *   }, num * 10);
    * };
    * async.rejectSeries(object, iterator, function(err, res) {
-   *   console.log(res); // [2];
-   *   console.log(order); // [[1, 'a'], [3, 'b'], [2, 'c']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.rejectSeries(object, iterator, function(res) {
-   *   console.log(res); // [2];
-   *   console.log(order); // [1, 3, 2]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.rejectSeries(object, iterator, function(res) {
    *   console.log(res); // [2];
    *   console.log(order); // [[1, 'a'], [3, 'b'], [2, 'c']]
    * });
@@ -1016,38 +680,6 @@
    *
    * @example
    *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.rejectLimit(array, 2, iterator, function(res) {
-   *   console.log(res); // [4, 2]
-   *   console.log(order); // [1, 3, 5, 2, 4]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.rejectLimit(array, 2, iterator, function(res) {
-   *   console.log(res); // [4, 2]
-   *   console.log(order); // [[1, 0], [3, 2], [5, 1], [2, 4], [4, 3]]
-   * });
-   *
-   * @example
-   *
    * // object
    * var order = [];
    * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
@@ -1074,38 +706,6 @@
    *   }, num * 10);
    * };
    * async.rejectLimit(object, 2, iterator, function(err, res) {
-   *   console.log(res); // [4, 2]
-   *   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.rejectLimit(object, 2, iterator, function(res) {
-   *   console.log(res); // [4, 2]
-   *   console.log(order); // [1, 3, 5, 2, 4]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.rejectLimit(object, 2, iterator, function(res) {
    *   console.log(res); // [4, 2]
    *   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
    * });
@@ -1153,38 +753,6 @@
    *
    * @example
    *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.detect(array, iterator, function(res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [1]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.detect(array, iterator, function(res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [[1, 0]]
-   * });
-   *
-   * @example
-   *
    * // object
    * var order = [];
    * var object = { a: 1, b: 3, c: 2 };
@@ -1211,38 +779,6 @@
    *   }, num * 10);
    * };
    * async.detect(object, iterator, function(err, res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [[1, 'a']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.detect(object, iterator, function(res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [1]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.detect(object, iterator, function(res) {
    *   console.log(res); // 1
    *   console.log(order); // [[1, 'a']]
    * });
@@ -1290,38 +826,6 @@
    *
    * @example
    *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.detectSeries(array, iterator, function(res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [1]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.detectSeries(array, iterator, function(res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [[1, 0]]
-   * });
-   *
-   * @example
-   *
    * // object
    * var order = [];
    * var object = { a: 1, b: 3, c: 2 };
@@ -1348,38 +852,6 @@
    *   }, num * 10);
    * };
    * async.detectSeries(object, iterator, function(err, res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [[1, 'a']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.detectSeries(object, iterator, function(res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [1]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.detectSeries(object, iterator, function(res) {
    *   console.log(res); // 1
    *   console.log(order); // [[1, 'a']]
    * });
@@ -1428,38 +900,6 @@
    *
    * @example
    *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.detectLimit(array, 2, iterator, function(res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [1]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.detectLimit(array, 2, iterator, function(res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [[1, 0]]
-   * });
-   *
-   * @example
-   *
    * // object
    * var order = [];
    * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
@@ -1486,38 +926,6 @@
    *   }, num * 10);
    * };
    * async.detectLimit(object, 2, iterator, function(err, res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [[1, 'a']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.detectLimit(object, 2, iterator, function(res) {
-   *   console.log(res); // 1
-   *   console.log(order); // [1]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.detectLimit(object, 2, iterator, function(res) {
    *   console.log(res); // 1
    *   console.log(order); // [[1, 'a']]
    * });
@@ -1565,38 +973,6 @@
    *
    * @example
    *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.every(array, iterator, function(res) {
-   *   console.log(res); // false
-   *   console.log(order); // [1, 2]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.every(array, iterator, function(res) {
-   *   console.log(res); // false
-   *   console.log(order); // [[1, 0], [2, 2]]
-   * });
-   *
-   * @example
-   *
    * // object
    * var order = [];
    * var object = { a: 1, b: 3, c: 2 };
@@ -1623,38 +999,6 @@
    *   }, num * 10);
    * };
    * async.every(object, iterator, function(err, res) {
-   *   console.log(res); // false
-   *   console.log(order); // [[1, 'a'], [2, 'c']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.every(object, iterator, function(res) {
-   *   console.log(res); // false
-   *   console.log(order); // [1, 2]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.every(object, iterator, function(res) {
    *   console.log(res); // false
    *   console.log(order); // [[1, 'a'], [2, 'c']]
    * });
@@ -1702,38 +1046,6 @@
    *
    * @example
    *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.everySeries(array, iterator, function(res) {
-   *   console.log(res); // false
-   *   console.log(order); // [1, 3, 2]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.everySeries(array, iterator, function(res) {
-   *   console.log(res); // false
-   *   console.log(order); // [[1, 0], [3, 1], [2, 2]]
-   * });
-   *
-   * @example
-   *
    * // object
    * var order = [];
    * var object = { a: 1, b: 3, c: 2 };
@@ -1762,38 +1074,6 @@
    * async.everySeries(object, iterator, function(err, res) {
    *   console.log(res); // false
    *   console.log(order); // [[1, 'a'], [3, 'b'] [2, 'c']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.every(object, iterator, function(res) {
-   *   console.log(res); // false
-   *   console.log(order); // [1, 2]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.every(object, iterator, function(res) {
-   *   console.log(res); // false
-   *   console.log(order); // [[1, 'a'], [2, 'c']]
    * });
    *
    */
@@ -1840,38 +1120,6 @@
    *
    * @example
    *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.everyLimit(array, 2, iterator, function(res) {
-   *   console.log(res); // false
-   *   console.log(order); // [1, 3, 5, 2]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.everyLimit(array, 2, iterator, function(res) {
-   *   console.log(res); // false
-   *   console.log(order); // [[1, 0], [3, 2], [5, 1], [2, 4]]
-   * });
-   *
-   * @example
-   *
    * // object
    * var order = [];
    * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
@@ -1898,38 +1146,6 @@
    *   }, num * 10);
    * };
    * async.everyLimit(object, 2, iterator, function(err, res) {
-   *   console.log(res); // false
-   *   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.everyLimit(object, 2, iterator, function(res) {
-   *   console.log(res); // false
-   *   console.log(order); // [1, 3, 5, 2]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.everyLimit(object, 2, iterator, function(res) {
    *   console.log(res); // false
    *   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e']]
    * });
@@ -1977,38 +1193,6 @@
    *
    * @example
    *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2, 4];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.pick(array, iterator, function(res) {
-   *   console.log(res); // { '0': 1, '1': 3 }
-   *   console.log(order); // [1, 2, 3, 4]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2, 4];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.pick(array, iterator, function(res) {
-   *   console.log(res); // { '0': 1, '1': 3 }
-   *   console.log(order); // [[0, 1], [2, 2], [3, 1], [4, 3]]
-   * });
-   *
-   * @example
-   *
    * // object
    * var order = [];
    * var object = { a: 1, b: 3, c: 2, d: 4 };
@@ -2035,38 +1219,6 @@
    *   }, num * 10);
    * };
    * async.pick(object, iterator, function(err, res) {
-   *   console.log(res); // { a: 1, b: 3 }
-   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b'], [4, 'd']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2, d: 4 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.pick(object, iterator, function(res) {
-   *   console.log(res); // { a: 1, b: 3 }
-   *   console.log(order); // [1, 2, 3, 4]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2, d: 4 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.pick(object, iterator, function(res) {
    *   console.log(res); // { a: 1, b: 3 }
    *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b'], [4, 'd']]
    * });
@@ -2114,38 +1266,6 @@
    *
    * @example
    *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2, 4];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.pickSeries(array, iterator, function(res) {
-   *   console.log(res); // { '0': 1, '1': 3 }
-   *   console.log(order); // [1, 3, 2, 4]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2, 4];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.pickSeries(array, iterator, function(res) {
-   *   console.log(res); // { '0': 1, '1': 3 }
-   *   console.log(order); // [[0, 1], [3, 1], [2, 2], [4, 3]]
-   * });
-   *
-   * @example
-   *
    * // object
    * var order = [];
    * var object = { a: 1, b: 3, c: 2, d: 4 };
@@ -2172,38 +1292,6 @@
    *   }, num * 10);
    * };
    * async.pickSeries(object, iterator, function(err, res) {
-   *   console.log(res); // { a: 1, b: 3 }
-   *   console.log(order); // [[1, 'a'], [3, 'b'], [2, 'c'], [4, 'd']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2, d: 4 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.pickSeries(object, iterator, function(res) {
-   *   console.log(res); // { a: 1, b: 3 }
-   *   console.log(order); // [1, 3, 2, 4]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2, d: 4 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.pickSeries(object, iterator, function(res) {
    *   console.log(res); // { a: 1, b: 3 }
    *   console.log(order); // [[1, 'a'], [3, 'b'], [2, 'c'], [4, 'd']]
    * });
@@ -2252,38 +1340,6 @@
    *
    * @example
    *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.pickLimit(array, 2, iterator, function(res) {
-   *   console.log(res); // { '0': 1, '1': 5, '2': 3 }
-   *   console.log(order); // [1, 3, 5, 2, 4]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.pickLimit(array, 2, iterator, function(res) {
-   *   console.log(res); // { '0': 1, '1': 5, '2': 3 }
-   *   console.log(order); // [[1, 0], [3, 2], [5, 1], [2, 4], [4, 3]]
-   * });
-   *
-   * @example
-   *
    * // object
    * var order = [];
    * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
@@ -2314,37 +1370,6 @@
    *   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
    * });
    *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.pickLimit(object, 2, iterator, function(res) {
-   *   console.log(res); // { a: 1, b: 5, c: 3 }
-   *   console.log(order); // [1, 3, 5, 2, 4]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.pickLimit(object, 2, iterator, function(res) {
-   *   console.log(res); // { a: 1, b: 5, c: 3 }
-   *   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
-   * });
    */
   var pickLimit = createPickLimit(true);
 
@@ -2388,38 +1413,6 @@
    *
    * @example
    *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2, 4];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.omit(array, iterator, function(res) {
-   *   console.log(res); // { '2': 2, '3': 4 }
-   *   console.log(order); // [1, 2, 3, 4]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2, 4];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.omit(array, iterator, function(res) {
-   *   console.log(res); // { '2': 2, '3': 4 }
-   *   console.log(order); // [[0, 1], [2, 2], [3, 1], [4, 3]]
-   * });
-   *
-   * @example
-   *
    * // object
    * var order = [];
    * var object = { a: 1, b: 3, c: 2, d: 4 };
@@ -2446,38 +1439,6 @@
    *   }, num * 10);
    * };
    * async.omit(object, iterator, function(err, res) {
-   *   console.log(res); // { c: 2, d: 4 }
-   *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b'], [4, 'd']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2, d: 4 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.omit(object, iterator, function(res) {
-   *   console.log(res); // { c: 2, d: 4 }
-   *   console.log(order); // [1, 2, 3, 4]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2, d: 4 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.omit(object, iterator, function(res) {
    *   console.log(res); // { c: 2, d: 4 }
    *   console.log(order); // [[1, 'a'], [2, 'c'], [3, 'b'], [4, 'd']]
    * });
@@ -2525,38 +1486,6 @@
    *
    * @example
    *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2, 4];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.omitSeries(array, iterator, function(res) {
-   *   console.log(res); // { '2': 2, '3': 4 }
-   *   console.log(order); // [1, 3, 2, 4]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2, 4];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.omitSeries(array, iterator, function(res) {
-   *   console.log(res); // { '2': 2, '3': 4 }
-   *   console.log(order); // [[0, 1], [3, 1], [2, 2], [4, 3]]
-   * });
-   *
-   * @example
-   *
    * // object
    * var order = [];
    * var object = { a: 1, b: 3, c: 2, d: 4 };
@@ -2583,38 +1512,6 @@
    *   }, num * 10);
    * };
    * async.omitSeries(object, iterator, function(err, res) {
-   *   console.log(res); // { c: 2, d: 4 }
-   *   console.log(order); // [[1, 'a'], [3, 'b'], [2, 'c'], [4, 'd']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2, d: 4 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.omitSeries(object, iterator, function(res) {
-   *   console.log(res); // { c: 2, d: 4 }
-   *   console.log(order); // [1, 3, 2, 4]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2, d: 4 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.omitSeries(object, iterator, function(res) {
    *   console.log(res); // { c: 2, d: 4 }
    *   console.log(order); // [[1, 'a'], [3, 'b'], [2, 'c'], [4, 'd']]
    * });
@@ -2663,38 +1560,6 @@
    *
    * @example
    *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.omitLimit(array, 2, iterator, function(res) {
-   *   console.log(res); // { '3': 4, '4': 2 }
-   *   console.log(order); // [1, 3, 5, 2, 4]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.omitLimit(array, 2, iterator, function(res) {
-   *   console.log(res); // { '3': 4, '4': 2 }
-   *   console.log(order); // [[1, 0], [3, 2], [5, 1], [2, 4], [4, 3]]
-   * });
-   *
-   * @example
-   *
    * // object
    * var order = [];
    * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
@@ -2725,37 +1590,6 @@
    *   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
    * });
    *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.omitLimit(object, 2, iterator, function(res) {
-   *   console.log(res); // { d: 4, e: 2 }
-   *   console.log(order); // [1, 3, 5, 2, 4]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.omitLimit(object, 2, iterator, function(res) {
-   *   console.log(res); // { d: 4, e: 2 }
-   *   console.log(order); // [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]
-   * });
    */
   var omitLimit = createPickLimit(false);
 
@@ -2795,10 +1629,10 @@
    *     done();
    *   }, num * 10);
    * };
-   * async.transform(collection, iterator, function(err, res) {
+   * async.transform(collection, {}, iterator, function(err, res) {
    *   console.log(res); // { '0': 1, '1': 3, '2': 2, '3': 4 }
    *   console.log(order); // [[1, 0], [2, 2], [3, 1], [4, 3]]
-   * }, {});
+   * });
    *
    * @example
    *
@@ -2812,10 +1646,10 @@
    *     done();
    *   }, num * 10);
    * };
-   * async.transform(collection, iterator, function(err, res) {
+   * async.transform(collection, [], iterator, function(err, res) {
    *   console.log(res); // [1, 2, 3, 4]
    *   console.log(order); // [1, 2, 3, 4]
-   * }, []);
+   * });
    *
    * @example
    *
@@ -6042,10 +4876,10 @@
    *     done();
    *   }, num * 10);
    * };
-   * async.transformSeries(collection, iterator, function(err, res) {
+   * async.transformSeries(collection, {}, iterator, function(err, res) {
    *   console.log(res); // { '0': 1, '1': 3, '2': 2, '3': 4 }
    *   console.log(order); // [[1, 0], [3, 1], [2, 2], [4, 3]]
-   * }, {});
+   * });
    *
    * @example
    *
@@ -6059,10 +4893,10 @@
    *     done();
    *   }, num * 10);
    * };
-   * async.transformSeries(collection, iterator, function(err, res) {
+   * async.transformSeries(collection, [], iterator, function(err, res) {
    *   console.log(res); // [1, 3, 2, 4]
    *   console.log(order); // [1, 3, 2, 4]
-   * }, []);
+   * });
    *
    * @example
    *
@@ -6195,10 +5029,10 @@
    *     done();
    *   }, num * 10);
    * };
-   * async.transformLimit(array, 2, iterator, function(err, res) {
+   * async.transformLimit(array, 2, {}, iterator, function(err, res) {
    *   console.log(res); // { '0': 1, '1': 5, '2': 3, '3': 4, '4': 2 }
    *   console.log(order); // [[1, 0], [3, 2], [5, 1], [2, 4], [4, 3]]
-   * }, {});
+   * });
    *
    * @example
    *
@@ -6212,10 +5046,10 @@
    *     done();
    *   }, num * 10);
    * };
-   * async.transformLimit(object, 2, iterator, function(err, res) {
+   * async.transformLimit(object, 2, [], iterator, function(err, res) {
    *   console.log(res); // [1, 3, 5, 2, 4]
    *   console.log(order); // [1, 3, 5, 2, 4]
-   * }, []);
+   * });
    *
    * @example
    *
@@ -6744,38 +5578,6 @@
    *
    * @example
    *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.some(array, iterator, function(res) {
-   *   console.log(res); // true
-   *   console.log(order); // [1]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.some(array, iterator, function(res) {
-   *   console.log(res); // true
-   *   console.log(order); // [[1, 0]]
-   * });
-   *
-   * @example
-   *
    * // object
    * var order = [];
    * var object = { a: 1, b: 3, c: 2 };
@@ -6802,38 +5604,6 @@
    *   }, num * 10);
    * };
    * async.some(object, iterator, function(err, res) {
-   *   console.log(res); // true
-   *   console.log(order); // [[1, 'a']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.some(object, iterator, function(res) {
-   *   console.log(res); // true
-   *   console.log(order); // [1]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.some(object, iterator, function(res) {
    *   console.log(res); // true
    *   console.log(order); // [[1, 'a']]
    * });
@@ -6891,38 +5661,6 @@
    *
    * @example
    *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.someSeries(array, iterator, function(res) {
-   *   console.log(res); // true
-   *   console.log(order); // [1]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 3, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.someSeries(array, iterator, function(res) {
-   *   console.log(res); // true
-   *   console.log(order); // [[1, 0]]
-   * });
-   *
-   * @example
-   *
    * // object
    * var order = [];
    * var object = { a: 1, b: 3, c: 2 };
@@ -6949,38 +5687,6 @@
    *   }, num * 10);
    * };
    * async.someSeries(object, iterator, function(err, res) {
-   *   console.log(res); // true
-   *   console.log(order); // [[1, 'a']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.someSeries(object, iterator, function(res) {
-   *   console.log(res); // true
-   *   console.log(order); // [1]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 3, c: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.someSeries(object, iterator, function(res) {
    *   console.log(res); // true
    *   console.log(order); // [[1, 'a']]
    * });
@@ -7039,38 +5745,6 @@
    *
    * @example
    *
-   * // array (not use error handling)
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.someLimit(array, 2, iterator, function(res) {
-   *   console.log(res); // true
-   *   console.log(order); // [1]
-   * });
-   *
-   * @example
-   *
-   * // array with index (not use error handling)
-   * var order = [];
-   * var array = [1, 5, 3, 4, 2];
-   * var iterator = function(num, index, done) {
-   *   setTimeout(function() {
-   *     order.push([num, index]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.someLimit(array, 2, iterator, function(res) {
-   *   console.log(res); // true
-   *   console.log(order); // [[1, 0]]
-   * });
-   *
-   * @example
-   *
    * // object
    * var order = [];
    * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
@@ -7097,38 +5771,6 @@
    *   }, num * 10);
    * };
    * async.someLimit(object, 2, iterator, function(err, res) {
-   *   console.log(res); // true
-   *   console.log(order); // [[1, 'a']]
-   * });
-   *
-   * @example
-   *
-   * // object (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, done) {
-   *   setTimeout(function() {
-   *     order.push(num);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.someLimit(object, 2, iterator, function(res) {
-   *   console.log(res); // true
-   *   console.log(order); // [1]
-   * });
-   *
-   * @example
-   *
-   * // object with key (not use error handling)
-   * var order = [];
-   * var object = { a: 1, b: 5, c: 3, d: 4, e: 2 };
-   * var iterator = function(num, key, done) {
-   *   setTimeout(function() {
-   *     order.push([num, key]);
-   *     done(num % 2);
-   *   }, num * 10);
-   * };
-   * async.someLimit(object, 2, iterator, function(res) {
    *   console.log(res); // true
    *   console.log(order); // [[1, 'a']]
    * });
@@ -9748,7 +8390,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Jul 20 2016 23:00:47 GMT-0700 (PDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Fri Jul 22 2016 13:35:21 GMT-0700 (PDT)
 </footer>
 
 <script> prettyPrint(); </script>
