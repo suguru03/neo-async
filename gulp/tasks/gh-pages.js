@@ -43,7 +43,7 @@ gulp.task('gh-pages', (done) => {
     },
 
     async.apply(git.exec, {
-      args: 'commit -m "docs(jsdoc): update jsdoc [v' + async.VERSION + ']"'
+      args: `commit -m "docs(jsdoc): update jsdoc [v${async.VERSION}] [ci skip]"`
     }),
 
     checkoutMaster
