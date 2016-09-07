@@ -234,6 +234,24 @@ parallel('#retry', function() {
     });
   });
 
+  it('should use default interval if interval is invalid string or number', function(done) {
+    var callCount = 0;
+    var func = function(callback) {
+      callback(++callCount % 2, callCount);
+    };
+    var opts = {
+      interval: 'test'
+    };
+    async.retry(opts, func, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(res, 2);
+      assert.strictEqual(callCount, 2);
+      done();
+    });
+  });
+
   it('retry when some attempts fail and error test returns false at some invokation',function(done) {
     var callCount = 0;
     var error = 'ERROR';
