@@ -1,4 +1,4 @@
-# Neo-Async v2.0.0
+# Neo-Async v2.0.1
 
 <img src="https://raw.githubusercontent.com/wiki/suguru03/neo-async/images/neo_async_v2.png" width="230px" />
 
