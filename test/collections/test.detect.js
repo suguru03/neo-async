@@ -766,6 +766,24 @@ parallel('#detectSeries', function() {
     });
   });
 
+  it('should not cause stack overflow', function(done) {
+
+    var array = _.range(10000);
+    var calls = 0;
+    async.detectSeries(array, function(data, callback) {
+      calls++;
+      setImmediate(function() {
+        callback(null, true);
+      });
+    }, function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(calls, 1);
+      done();
+    });
+  });
+
 });
 
 parallel('#detectLimit', function() {
@@ -1205,6 +1223,24 @@ parallel('#detectLimit', function() {
       assert.deepEqual(order, [1, 'callback', 2]);
       done();
     }, 10 * delay);
+  });
+
+  it('should not cause stack overflow', function(done) {
+
+    var array = _.range(10000);
+    var calls = 0;
+    async.detectLimit(array, 100, function(data, callback) {
+      calls++;
+      setImmediate(function() {
+        callback(null, true);
+      });
+    }, function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(calls, 100);
+      done();
+    });
   });
 
 });
