@@ -35,7 +35,7 @@
     "func-comparator": "^0.7.2",
     "gulp": "^3.9.1",
     "gulp-exit": "0.0.2",
-    "gulp-git": "^1.10.0",
+    "gulp-git": "^1.11.1",
     "gulp-jsbeautifier": "^2.0.3",
     "gulp-jscs": "^4.0.0",
     "gulp-mocha": "^3.0.0",
