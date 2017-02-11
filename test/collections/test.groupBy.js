@@ -922,6 +922,24 @@ parallel('#groupByLimit', function() {
     });
   });
 
+  it('should execute on asynchronous', function(done) {
+
+    var sync = true;
+    var collection = [1.1, 5.9, 3.2, 3.9, 2.1];
+    var iterator = function(value, next) {
+      next(null, value);
+    };
+    async.groupByLimit(collection, 2, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
+      assert.strictEqual(sync, false);
+      done();
+    });
+    sync = false;
+  });
+
   it('should throw error', function(done) {
 
     var order = [];
