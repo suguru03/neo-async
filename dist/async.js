@@ -1791,6 +1791,79 @@
 
   /**
    * @memberof async
+   * @namespace groupBy
+   * @param {Array|Object} collection
+   * @param {Function} iterator
+   * @param {Function} callback
+   * @example
+   *
+   * // array
+   * var order = [];
+   * var array = [4.2, 6.4, 6.1];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, Math.floor(num));
+   *   }, num * 10);
+   * };
+   * async.groupBy(array, iterator, function(err, res) {
+   *   console.log(res); // { '4': [4.2], '6': [6.1, 6.4] }
+   *   console.log(order); // [4.2, 6.1, 6.4]
+   * });
+   *
+   * @example
+   *
+   * // array with index
+   * var order = [];
+   * var array = [4.2, 6.4, 6.1];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(null, Math.floor(num));
+   *   }, num * 10);
+   * };
+   * async.groupBy(array, iterator, function(err, res) {
+   *   console.log(res); // { '4': [4.2], '6': [6.1, 6.4] }
+   *   console.log(order); // [[4.2, 0], [6.1, 2], [6.4, 1]]
+   * });
+   *
+   * @example
+   *
+   * // object
+   * var order = [];
+   * var object = { a: 4.2, b: 6.4, c: 6.1 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, Math.floor(num));
+   *   }, num * 10);
+   * };
+   * async.groupBy(object, iterator, function(err, res) {
+   *   console.log(res); // { '4': [4.2], '6': [6.1, 6.4] }
+   *   console.log(order); // [4.2, 6.1, 6.4]
+   * });
+   *
+   * @example
+   *
+   * // object with key
+   * var order = [];
+   * var object = { a: 4.2, b: 6.4, c: 6.1 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(null, Math.floor(num));
+   *   }, num * 10);
+   * };
+   * async.groupBy(object, iterator, function(err, res) {
+   *   console.log(res); // { '4': [4.2], '6': [6.1, 6.4] }
+   *   console.log(order); // [[4.2, 'a'], [6.1, 'c'], [6.4, 'b']]
+   * });
+   *
+   */
+  var groupBy = createGroupBy(arrayEachValue, baseEachValue, symbolEachValue);
+
+  /**
+   * @memberof async
    * @namespace parallel
    * @param {Array|Object} tasks - functions
    * @param {Function} callback
@@ -1890,11 +1963,11 @@
   var dir = createLogger('dir');
 
   /**
-   * @version 2.0.1
+   * @version 2.1.0
    * @namespace async
    */
   var index = {
-    VERSION: '2.0.1',
+    VERSION: '2.1.0',
 
     // Collections
     each: each,
@@ -1962,6 +2035,9 @@
     concat: concat,
     concatSeries: concatSeries,
     concatLimit: concatLimit,
+    groupBy: groupBy,
+    groupBySeries: groupBySeries,
+    groupByLimit: groupByLimit,
 
     // Control Flow
     parallel: parallel,
@@ -6163,6 +6239,388 @@
         iterate();
       }
       sync = false;
+    }
+  }
+
+  /**
+   * @private
+   * @param {Function} arrayEach
+   * @param {Function} baseEach
+   * @param {Function} symbolEach
+   */
+  function createGroupBy(arrayEach, baseEach, symbolEach) {
+
+    return function groupBy(collection, iterator, callback) {
+      callback = callback || noop;
+      var size;
+      var completed = 0;
+      var result = {};
+
+      if (isArray(collection)) {
+        size = collection.length;
+        arrayEach(collection, iterator, createCallback);
+      } else if (!collection) {
+      } else if (iteratorSymbol && collection[iteratorSymbol]) {
+        size = collection.size;
+        symbolEach(collection, iterator, createCallback);
+      } else if (typeof collection === obj) {
+        var keys = nativeKeys(collection);
+        size = keys.length;
+        baseEach(collection, iterator, createCallback, keys);
+      }
+      if (!size) {
+        callback(null, {});
+      }
+
+      function createCallback(value) {
+        var called = false;
+        return function done(err, key) {
+          if (called) {
+            throwError();
+          }
+          called = true;
+          if (err) {
+            callback = once(callback);
+            callback(err, objectClone(result));
+            return;
+          }
+          var array = result[key];
+          if (!array) {
+            array = result[key] = [value];
+          } else {
+            array.push(value);
+          }
+          if (++completed === size) {
+            callback(null, result);
+          }
+        };
+      }
+    };
+  }
+
+  /**
+   * @memberof async
+   * @namespace groupBySeries
+   * @param {Array|Object} collection
+   * @param {Function} iterator
+   * @param {Function} callback
+   * @example
+   *
+   * // array
+   * var order = [];
+   * var array = [4.2, 6.4, 6.1];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, Math.floor(num));
+   *   }, num * 10);
+   * };
+   * async.groupBySeries(array, iterator, function(err, res) {
+   *   console.log(res); // { '4': [4.2], '6': [6.4, 6.1] }
+   *   console.log(order); // [4.2, 6.4, 6.1]
+   * });
+   *
+   * @example
+   *
+   * // array with index
+   * var order = [];
+   * var array = [4.2, 6.4, 6.1];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(null, Math.floor(num));
+   *   }, num * 10);
+   * };
+   * async.groupBySeries(array, iterator, function(err, res) {
+   *   console.log(res); // { '4': [4.2], '6': [6.4, 6.1] }
+   *   console.log(order); // [[4.2, 0], [6.4, 1], [6.1, 2]]
+   * });
+   *
+   * @example
+   *
+   * // object
+   * var order = [];
+   * var object = { a: 4.2, b: 6.4, c: 6.1 };
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, Math.floor(num));
+   *   }, num * 10);
+   * };
+   * async.groupBySeries(object, iterator, function(err, res) {
+   *   console.log(res); // { '4': [4.2], '6': [6.4, 6.1] }
+   *   console.log(order); // [4.2, 6.4, 6.1]
+   * });
+   *
+   * @example
+   *
+   * // object with key
+   * var order = [];
+   * var object = { a: 4.2, b: 6.4, c: 6.1 };
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(null, Math.floor(num));
+   *   }, num * 10);
+   * };
+   * async.groupBySeries(object, iterator, function(err, res) {
+   *   console.log(res); // { '4': [4.2], '6': [6.4, 6.1] }
+   *   console.log(order); // [[4.2, 'a'], [6.4, 'b'], [6.1, 'c']]
+   * });
+   *
+   */
+  function groupBySeries(collection, iterator, callback) {
+    callback = onlyOnce(callback || noop);
+    var size, key, value, keys, iter, iterate;
+    var sync = false;
+    var completed = 0;
+    var result = {};
+
+    if (isArray(collection)) {
+      size = collection.length;
+      iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
+    } else if (!collection) {
+    } else if (iteratorSymbol && collection[iteratorSymbol]) {
+      size = collection.size;
+      iter = collection[iteratorSymbol]();
+      iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
+    } else if (typeof collection === obj) {
+      keys = nativeKeys(collection);
+      size = keys.length;
+      iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
+    }
+    if (!size) {
+      return callback(null, result);
+    }
+    iterate();
+
+    function arrayIterator() {
+      value = collection[completed];
+      iterator(value, done);
+    }
+
+    function arrayIteratorWithIndex() {
+      value = collection[completed];
+      iterator(value, completed, done);
+    }
+
+    function symbolIterator() {
+      value = iter.next().value;
+      iterator(value, done);
+    }
+
+    function symbolIteratorWithKey() {
+      value = iter.next().value;
+      iterator(value, completed, done);
+    }
+
+    function objectIterator() {
+      value = collection[keys[completed]];
+      iterator(value, done);
+    }
+
+    function objectIteratorWithKey() {
+      key = keys[completed];
+      value = collection[key];
+      iterator(value, key, done);
+    }
+
+    function done(err, key) {
+      if (err) {
+        iterate = throwError;
+        callback = onlyOnce(callback);
+        callback(err, objectClone(result));
+        return;
+      }
+      var array = result[key];
+      if (!array) {
+        array = result[key] = [value];
+      } else {
+        array.push(value);
+      }
+      if (++completed === size) {
+        iterate = throwError;
+        callback(null, result);
+      } else if (sync) {
+        nextTick(iterate);
+      } else {
+        sync = true;
+        iterate();
+      }
+      sync = false;
+    }
+  }
+
+  /**
+   * @memberof async
+   * @namespace groupByLimit
+   * @param {Array|Object} collection
+   * @param {Function} iterator
+   * @param {Function} callback
+   * @example
+   *
+   * // array
+   * var order = [];
+   * var array = [1.1, 5.9, 3.2, 3.9, 2.1];
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, Math.floor(num));
+   *   }, num * 10);
+   * };
+   * async.groupByLimit(array, 2, iterator, function(err, res) {
+   *   console.log(res); // { '1': [1.1], '3': [3.2, 3.9], '5': [5.9], '2': [2.1] }
+   *   console.log(order); // [1.1, 3.2, 5.9, 2.1, 3.9]
+   * });
+   *
+   * @example
+   *
+   * // array with index
+   * var order = [];
+   * var array = [1.1, 5.9, 3.2, 3.9, 2.1];
+   * var iterator = function(num, index, done) {
+   *   setTimeout(function() {
+   *     order.push([num, index]);
+   *     done(null, Math.floor(num));
+   *   }, num * 10);
+   * };
+   * async.groupByLimit(array, 2, iterator, function(err, res) {
+   *   console.log(res); // { '1': [1.1], '3': [3.2, 3.9], '5': [5.9], '2': [2.1] }
+   *   console.log(order); // [[1.1, 0], [3.2, 2], [5.9, 1], [2.1, 4], [3.9, 3]]
+   * });
+   *
+   * @example
+   *
+   * // object
+   * var order = [];
+   * var object = { a: 1.1, b: 5.9, c: 3.2, d: 3.9, e: 2.1 }
+   * var iterator = function(num, done) {
+   *   setTimeout(function() {
+   *     order.push(num);
+   *     done(null, Math.floor(num));
+   *   }, num * 10);
+   * };
+   * async.groupByLimit(object, 2, iterator, function(err, res) {
+   *   console.log(res); // { '1': [1.1], '3': [3.2, 3.9], '5': [5.9], '2': [2.1] }
+   *   console.log(order); // [1.1, 3.2, 5.9, 2.1, 3.9]
+   * });
+   *
+   * @example
+   *
+   * // object with key
+   * var order = [];
+   * var object = { a: 1.1, b: 5.9, c: 3.2, d: 3.9, e: 2.1 }
+   * var iterator = function(num, key, done) {
+   *   setTimeout(function() {
+   *     order.push([num, key]);
+   *     done(null, Math.floor(num));
+   *   }, num * 10);
+   * };
+   * async.groupByLimit(object, 2, iterator, function(err, res) {
+   *   console.log(res); // { '1': [1.1], '3': [3.2, 3.9], '5': [5.9], '2': [2.1] }
+   *   console.log(order); // [[1.1, 'a'], [3.2, 'c'], [5.9, 'b'], [2.1, 'e'], [3.9, 'd']]
+   * });
+   *
+   */
+  function groupByLimit(collection, limit, iterator, callback) {
+    callback = callback || noop;
+    var size, index, key, value, keys, iter, item, iterate;
+    var sync = false;
+    var started = 0;
+    var completed = 0;
+    var result = {};
+
+    if (isArray(collection)) {
+      size = collection.length;
+      iterate = iterator.length === 3 ? arrayIteratorWithIndex : arrayIterator;
+    } else if (!collection) {
+    } else if (iteratorSymbol && collection[iteratorSymbol]) {
+      size = collection.size;
+      iter = collection[iteratorSymbol]();
+      iterate = iterator.length === 3 ? symbolIteratorWithKey : symbolIterator;
+    } else if (typeof collection === obj) {
+      keys = nativeKeys(collection);
+      size = keys.length;
+      iterate = iterator.length === 3 ? objectIteratorWithKey : objectIterator;
+    }
+    if (!size || isNaN(limit) || limit < 1) {
+      return callback(null, result);
+    }
+    timesSync(limit > size ? size : limit, iterate);
+
+    function arrayIterator() {
+      if (started < size) {
+        value = collection[started++];
+        iterator(value, createCallback(value));
+      }
+    }
+
+    function arrayIteratorWithIndex() {
+      index = started++;
+      if (index < size) {
+        value = collection[index];
+        iterator(value, index, createCallback(value));
+      }
+    }
+
+    function symbolIterator() {
+      if ((item = iter.next()).done === false) {
+        value = item.value;
+        iterator(value, createCallback(value));
+      }
+    }
+
+    function symbolIteratorWithKey() {
+      if ((item = iter.next()).done === false) {
+        value = item.value;
+        iterator(value, started++, createCallback(value));
+      }
+    }
+
+    function objectIterator() {
+      if (started < size) {
+        value = collection[keys[started++]];
+        iterator(value, createCallback(value));
+      }
+    }
+
+    function objectIteratorWithKey() {
+      if (started < size) {
+        key = keys[started++];
+        value = collection[key];
+        iterator(value, key, createCallback(value));
+      }
+    }
+
+    function createCallback(value) {
+      var called = false;
+      return function(err, key) {
+        if (called) {
+          throwError();
+        }
+        called = true;
+        if (err) {
+          iterate = noop;
+          callback = once(callback);
+          callback(err, objectClone(result));
+          return;
+        }
+        var array = result[key];
+        if (!array) {
+          result[key] = [value];
+        } else {
+          array.push(value);
+        }
+        if (++completed === size) {
+          callback(null, result);
+        } else if (sync) {
+          nextTick(iterate);
+        } else {
+          sync = true;
+          iterate();
+        }
+        sync = false;
+      };
     }
   }
 
