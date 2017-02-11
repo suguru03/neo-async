@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Namespace: waterfall</title>
+    <title>JSDoc: Namespace: groupByLimit</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Namespace: waterfall</h1>
+    <h1 class="page-title">Namespace: groupByLimit</h1>
 
     
 
@@ -29,7 +29,7 @@
 <header>
     
         <h2>
-            <span class="ancestors"><a href="async.html">async</a>.</span>waterfall</h2>
+            <span class="ancestors"><a href="async.html">async</a>.</span>groupByLimit</h2>
         
     
 </header>
@@ -71,7 +71,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="async.js.html">async.js</a>, <a href="async.js.html#line6959">line 6959</a>
+        <a href="async.js.html">async.js</a>, <a href="async.js.html#line6454">line 6454</a>
     </li></ul></dd>
     
 
@@ -84,37 +84,62 @@
 
 
         
-            <h3>Example</h3>
+            <h3>Examples</h3>
             
-    <pre class="prettyprint"><code>var order = [];
-var tasks = [
-  function(next) {
-    setTimeout(function() {
-      order.push(1);
-      next(null, 1);
-    }, 10);
-  },
-  function(arg1, next) {
-    setTimeout(function() {
-      order.push(2);
-      next(null, 1, 2);
-    }, 30);
-  },
-  function(arg1, arg2, next) {
-    setTimeout(function() {
-      order.push(3);
-      next(null, 3);
-    }, 20);
-  },
-  function(arg1, next) {
-    setTimeout(function() {
-      order.push(4);
-      next(null, 1, 2, 3, 4);
-    }, 40);
-  }
-];
-async.waterfall(tasks, function(err, arg1, arg2, arg3, arg4) {
-  console.log(arg1, arg2, arg3, arg4); // 1 2 3 4
+    <pre class="prettyprint"><code>// array
+var order = [];
+var array = [1.1, 5.9, 3.2, 3.9, 2.1];
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, Math.floor(num));
+  }, num * 10);
+};
+async.groupByLimit(array, 2, iterator, function(err, res) {
+  console.log(res); // { '1': [1.1], '3': [3.2, 3.9], '5': [5.9], '2': [2.1] }
+  console.log(order); // [1.1, 3.2, 5.9, 2.1, 3.9]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// array with index
+var order = [];
+var array = [1.1, 5.9, 3.2, 3.9, 2.1];
+var iterator = function(num, index, done) {
+  setTimeout(function() {
+    order.push([num, index]);
+    done(null, Math.floor(num));
+  }, num * 10);
+};
+async.groupByLimit(array, 2, iterator, function(err, res) {
+  console.log(res); // { '1': [1.1], '3': [3.2, 3.9], '5': [5.9], '2': [2.1] }
+  console.log(order); // [[1.1, 0], [3.2, 2], [5.9, 1], [2.1, 4], [3.9, 3]]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object
+var order = [];
+var object = { a: 1.1, b: 5.9, c: 3.2, d: 3.9, e: 2.1 }
+var iterator = function(num, done) {
+  setTimeout(function() {
+    order.push(num);
+    done(null, Math.floor(num));
+  }, num * 10);
+};
+async.groupByLimit(object, 2, iterator, function(err, res) {
+  console.log(res); // { '1': [1.1], '3': [3.2, 3.9], '5': [5.9], '2': [2.1] }
+  console.log(order); // [1.1, 3.2, 5.9, 2.1, 3.9]
+});</code></pre>
+
+    <pre class="prettyprint"><code>// object with key
+var order = [];
+var object = { a: 1.1, b: 5.9, c: 3.2, d: 3.9, e: 2.1 }
+var iterator = function(num, key, done) {
+  setTimeout(function() {
+    order.push([num, key]);
+    done(null, Math.floor(num));
+  }, num * 10);
+};
+async.groupByLimit(object, 2, iterator, function(err, res) {
+  console.log(res); // { '1': [1.1], '3': [3.2, 3.9], '5': [5.9], '2': [2.1] }
+  console.log(order); // [[1.1, 'a'], [3.2, 'c'], [5.9, 'b'], [2.1, 'e'], [3.9, 'd']]
 });</code></pre>
 
         
