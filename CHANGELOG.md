@@ -1,3 +1,61 @@
+<a name"v2.1.0"></a>
+## v2.1.0 (2017-02-10)
+
+
+#### Features
+
+* **groupBy:** add groupBy ([b1cd9fa6](https://github.com/suguru03/neo-async/commit/b1cd9fa6))
+* **groupByLimit:** add groupByLimit ([004714cb](https://github.com/suguru03/neo-async/commit/004714cb))
+* **groupBySeries:** add groupBySeries ([1b6db005](https://github.com/suguru03/neo-async/commit/1b6db005))
+
+
+#### Breaking Changes
+
+* This module no longer supports Node.js 0.10
+ ([44adae71](https://github.com/suguru03/neo-async/commit/44adae71))
+
+
+#### Other Changes
+
+* drop support for Node.js 0.10 (#44) ([44adae71](https://github.com/suguru03/neo-async/commit/44adae71))
+* **detect:** add test https://github.com/caolan/async/issues/1293 ([07cb01a2](https://github.com/suguru03/neo-async/commit/07cb01a2))
+* **groupByLimit:** add test case ([51805ec0](https://github.com/suguru03/neo-async/commit/51805ec0))
+* **package:**
+  * update mocha.parallel to version 0.15.0 (#48) ([0abf5bd6](https://github.com/suguru03/neo-async/commit/0abf5bd6))
+  * update bluebird to version 3.4.7 (#47) ([10ec29f6](https://github.com/suguru03/neo-async/commit/10ec29f6))
+  * update mocha.parallel to version 0.14.0 (#46) ([2de07850](https://github.com/suguru03/neo-async/commit/2de07850))
+  * update lodash to version 4.16.6 (#45) ([a263355b](https://github.com/suguru03/neo-async/commit/a263355b))
+  * update mocha.parallel to version 0.13.0 (#43) ([54ce156b](https://github.com/suguru03/neo-async/commit/54ce156b))
+  * update mocha to version 3.1.0 (#42) ([b306b865](https://github.com/suguru03/neo-async/commit/b306b865))
+
+<a name"v2.0.1"></a>
+### v2.0.1 (2016-09-06)
+
+
+#### Bug Fixes
+
+* **retry:** fix error filter ([4e867224](https://github.com/suguru03/neo-async/commit/4e867224))
+
+
+#### Features
+
+* **retry:** add `errorFilter` feature ([5d1005f3](https://github.com/suguru03/neo-async/commit/5d1005f3))
+
+
+#### Other Changes
+
+* **CHANGELOG:** v2.0.0 [ci skip] ([539b35f8](https://github.com/suguru03/neo-async/commit/539b35f8))
+* **async:** remove wrong examples [ci skip] #33 ([5d3b3548](https://github.com/suguru03/neo-async/commit/5d3b3548))
+* **gh-pages:** fix to skip ci [ci skip] ([91616866](https://github.com/suguru03/neo-async/commit/91616866))
+* **package:**
+  * update mocha-parallel-executor to version 0.3.0 (#41) ([b85fae74](https://github.com/suguru03/neo-async/commit/b85fae74))
+  * update gulp-mocha to version 3.0.0 (#37) ([e398e5cf](https://github.com/suguru03/neo-async/commit/e398e5cf))
+  * update mocha to version 3.0.0 (#36) ([85ba9e64](https://github.com/suguru03/neo-async/commit/85ba9e64))
+  * update gulp-git to version 1.10.0 (#35) ([a1c1c8f3](https://github.com/suguru03/neo-async/commit/a1c1c8f3))
+  * update lodash to version 4.14.0 (#34) ([42ac663d](https://github.com/suguru03/neo-async/commit/42ac663d))
+  * update mocha-parallel-executor to version 0.2.3 (#32) ([820a59dd](https://github.com/suguru03/neo-async/commit/820a59dd))
+* **transform:** fix documents [ci skip] ([6fee4954](https://github.com/suguru03/neo-async/commit/6fee4954))
+
 <a name"v2.0.0"></a>
 ## v2.0.0 (2016-07-20)
 
@@ -1194,7 +1252,7 @@
 * Modify waterfall function to respond quickly ([2d7af49c](https://github.com/suguru03/neo-async/commit/2d7af49c))
 
 <a name"v0.4.5"></a>
-### v0.4.5 (2016-07-20)
+### v0.4.5 (2017-02-10)
 
 
 #### Bug Fixes
