@@ -38,7 +38,7 @@
     "gulp-git": "^2.1.0",
     "gulp-jsbeautifier": "^2.0.3",
     "gulp-jscs": "^4.0.0",
-    "gulp-mocha": "^3.0.0",
+    "gulp-mocha": "^4.0.0",
     "gulp-util": "^3.0.7",
     "istanbul": "^0.4.3",
     "jsdoc": "^3.4.0",
