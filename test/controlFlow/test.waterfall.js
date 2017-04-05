@@ -239,4 +239,32 @@ parallel('#waterfall', function() {
     });
   });
 
+  it('multiple callback calls (trickier) @nodeonly', function(done) {
+
+    var errorCallCount = 0;
+    setTimeout(function() {
+      assert.strictEqual(errorCallCount, 1);
+      done();
+    }, delay);
+
+    domain.create()
+      .on('error', util.errorChecker)
+      .on('error', function() {
+        errorCallCount++;
+      })
+      .run(function() {
+        async.waterfall([
+          function(callback) {
+            setTimeout(callback, 0, null, 'one', 'two');
+            setTimeout(callback, 10, null, 'one', 'two');
+          },
+          function(arg1, arg2, callback) {
+            setTimeout(callback, 15, null, arg1, arg2, 'three');
+          }
+        ], function () {
+          throw new Error('should not get here');
+        });
+      });
+  });
+
 });
