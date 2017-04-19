@@ -30,7 +30,7 @@
     "benchmark": "^2.1.1",
     "bluebird": "^3.4.7",
     "changelog-generator": "0.0.4",
-    "codecov.io": "^0.1.6",
+    "codecov.io": "^0.1.7",
     "event-stream": "^3.3.3",
     "func-comparator": "^0.7.2",
     "gulp": "^3.9.1",
