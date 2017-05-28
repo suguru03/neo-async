@@ -365,7 +365,7 @@ parallel('#auto', function() {
     } catch(e) {
       err = e;
       assert.ok(e);
-      assert(/^async.auto task `noexist` has non-existent dependency/.test(e.message));
+      assert(/^async.auto task `task1` has non-existent dependency/.test(e.message));
     }
     assert.ok(err);
   });
@@ -439,5 +439,27 @@ parallel('#auto', function() {
       assert.strictEqual(e.message, 'async.auto task has cyclic dependencies');
     }
     assert.ok(err);
+  });
+
+  it('should work even if reserved name is included', function(done) {
+    // var async = require('async');
+    var tasks = {
+      one: function(next) {
+        next(null, 1);
+      },
+      hasOwnProperty: function(next) {
+        next(null, 2);
+      }
+    };
+    async.auto(tasks, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, {
+        one: 1,
+        hasOwnProperty: 2
+      });
+      done();
+    });
   });
 });
