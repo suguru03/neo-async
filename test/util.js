@@ -72,4 +72,13 @@ exports.errorChecker = function(err) {
   assert.strictEqual(err.message, 'Callback was already called.');
 };
 
+exports.uncaughtExceptionHandler = function(func) {
+  var handler = function(err) {
+    func(err);
+    process.removeListener('uncaughtException', handler);
+  };
+  process.removeAllListeners('uncaughtException');
+  process.on('uncaughtException', handler);
+};
+
 exports.Promise = typeof Promise !== 'undefined' ? Promise : require('bluebird');

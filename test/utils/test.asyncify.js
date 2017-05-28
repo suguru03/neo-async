@@ -1,17 +1,15 @@
-/* global it */
+/* global it, describe */
 'use strict';
 
 var assert = require('assert');
-
-var parallel = require('mocha.parallel');
 
 var async = require('../../');
 var delay = require('../config').delay;
 var util = require('../util');
 
-parallel('#asyncify', function() {
+describe('#asyncify', function() {
 
-  it('should convert synchronous function into asynchronous', function(done) {
+  it('should call a synchronous function asynchronously', function(done) {
 
     var test = {
       hoge: true
@@ -28,7 +26,7 @@ parallel('#asyncify', function() {
     });
   });
 
-  it('should convert promise synchronous function', function(done) {
+  it('should call a synchronous function which has a promise as a result', function(done) {
 
     var test = {
       hoge: true
@@ -71,6 +69,23 @@ parallel('#asyncify', function() {
     });
   });
 
+  it('should throw an uncaughtException instead of unhandledRejection', function(done) {
+
+    var error = new Error('callback error');
+    util.uncaughtExceptionHandler(function(err) {
+      assert.ok(err);
+      assert.strictEqual(err, error);
+      done();
+    });
+    var func = function() {
+      return util.Promise.reject(new Error('error'));
+    };
+    async.asyncify(func)(function(err) {
+      assert.ok(err);
+      throw error;
+    });
+  });
+
   it('should avoid TypeError if return object is null', function(done) {
 
     var func = function() {
@@ -101,7 +116,7 @@ parallel('#asyncify', function() {
 
     var count = 0;
     var msg = 'error in callback';
-    process.once('unhandledRejection', function(err) {
+    util.uncaughtExceptionHandler(function(err) {
       assert.ok(err);
       assert.strictEqual(err.message, msg);
     });
@@ -123,5 +138,4 @@ parallel('#asyncify', function() {
       throw new Error(msg);
     });
   });
-
 });
