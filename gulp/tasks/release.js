@@ -1,62 +1,54 @@
 'use strict';
 
 const fs = require('fs');
-const qs = require('querystring');
 const path = require('path');
-const http = require('http');
-const exec = require('child_process').exec;
 
+const _ = require('lodash');
 const gulp = require('gulp');
+const git = require('gulp-git');
+const bump = require('gulp-bump');
 const runSequence = require('run-sequence');
+const tagVersion = require('gulp-tag-version');
 
-const filepath =  path.resolve(__dirname, '../..', 'lib', 'async.js');
-const target = path.resolve(__dirname, '../..', 'lib', 'async.min.js');
+const packagepath = './package.json';
+const types = ['patch', 'minor', 'major'];
 
-gulp.task('release', done => {
-  runSequence(
+_.forEach(types, type => {
+  gulp.task(`release:package:${type}`, updateVersion(type));
+  gulp.task(`release:${type}`, () => runSequence(
+    `release:package:${type}`,
     'minify:local',
-    'test:min',
-    done);
+    'release:commit',
+    'release:tag'
+  ));
 });
 
-gulp.task('minify:local', done => {
-  const compilerPath = path.resolve(__dirname, '..', 'compiler.jar');
-  const command = `java -jar ${compilerPath} --js ${filepath} --js_output_file ${target}`;
-  exec(command, done);
+gulp.task('release:tag', () => {
+  return gulp.src(packagepath)
+    .pipe(tagVersion());
 });
 
-gulp.task('minify', done => {
-  const file = fs.readFileSync(filepath, 'utf8');
-  const body = qs.stringify({
-    js_code: file,
-    compilation_level: 'SIMPLE_OPTIMIZATIONS',
-    // compilation_level: 'ADVANCED_OPTIMIZATIONS',
-    output_format: 'text',
-    output_info: 'compiled_code'
+gulp.task('release:dist', () => {
+  _.forEach(['async.js', 'async.min.js'], file => {
+    const filepath = path.resolve(__dirname, '../..', 'lib', file);
+    const distpath = path.resolve(__dirname, '../..', 'dist', file);
+    fs.createReadStream(filepath)
+      .pipe(fs.createWriteStream(distpath));
   });
-  const opts = {
-    hostname: 'closure-compiler.appspot.com',
-    port: 80,
-    path: '/compile',
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Content_length': Buffer.byteLength(file)
-    }
-  };
-  let data = '';
-  const req = http.request(opts, res => {
-    res.setEncoding('utf8')
-    .on('data', res => {
-      data += res;
-    })
-    .on('error', done)
-    .on('end', () => {
-      fs.writeFile(target, data, 'utf8', done);
-    });
-  })
-  .on('error', done);
-  req.write(body);
-  req.end();
 });
 
+gulp.task('release:commit', () => {
+  const packagepath = path.resolve(__dirname, '../..', 'package.json');
+  delete require.cache[packagepath];
+  const { version } = require(packagepath);
+  return gulp.src(['./dist/*', packagepath])
+    .pipe(git.commit(version));
+});
+
+function updateVersion(type) {
+  return () => {
+    return gulp.src(packagepath)
+        .pipe(bump({ type }))
+        .pipe(gulp.dest('./'));
+  };
+}
