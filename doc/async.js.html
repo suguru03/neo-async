@@ -1991,11 +1991,11 @@
   var dir = createLogger('dir');
 
   /**
-   * @version 2.1.0
+   * @version 2.2.0
    * @namespace async
    */
   var index = {
-    VERSION: '2.1.0',
+    VERSION: '2.2.0',
 
     // Collections
     each: each,
@@ -2071,6 +2071,7 @@
     parallel: parallel,
     series: series,
     parallelLimit: parallelLimit,
+    tryEach: tryEach,
     waterfall: waterfall,
     angelFall: angelFall,
     angelfall: angelFall,
@@ -6966,6 +6967,93 @@
   }
 
   /**
+   * @memberof async
+   * @namespace tryEach
+   * @param {Array|Object} tasks - functions
+   * @param {Function} callback
+   * @example
+   *
+   * var tasks = [
+   *  function(done) {
+   *    setTimeout(function() {
+   *      done(new Error('error'));
+   *    }, 10);
+   *  },
+   *  function(done) {
+   *    setTimeout(function() {
+   *      done(null, 2);
+   *    }, 10);
+   *  }
+   * ];
+   * async.tryEach(tasks, function(err, res) {
+   *   console.log(res); // 2
+   * });
+   *
+   * @example
+   *
+   * var tasks = [
+   *  function(done) {
+   *    setTimeout(function() {
+   *      done(new Error('error1'));
+   *    }, 10);
+   *  },
+   *  function(done) {
+   *    setTimeout(function() {
+   *      done(new Error('error2');
+   *    }, 10);
+   *  }
+   * ];
+   * async.tryEach(tasks, function(err, res) {
+   *   console.log(err); // error2
+   *   console.log(res); // undefined
+   * });
+   *
+   */
+  function tryEach(tasks, callback) {
+    callback = callback || noop;
+    var size, keys, iterate;
+    var sync = false;
+    var completed = 0;
+
+    if (isArray(tasks)) {
+      size = tasks.length;
+      iterate = arrayIterator;
+    } else if (tasks &amp;&amp; typeof tasks === obj) {
+      keys = nativeKeys(tasks);
+      size = keys.length;
+      iterate = objectIterator;
+    }
+    if (!size) {
+      return callback(null);
+    }
+    iterate();
+
+    function arrayIterator() {
+      tasks[completed](done);
+    }
+
+    function objectIterator() {
+      tasks[keys[completed]](done);
+    }
+
+    function done(err, res) {
+      if (!err) {
+        if (arguments.length &lt;= 2) {
+          callback(null, res);
+        } else {
+          callback(null, slice(arguments, 1));
+        }
+      } else if (++completed === size) {
+        callback(err);
+      } else {
+        sync = true;
+        iterate();
+      }
+      sync = false;
+    }
+  }
+
+  /**
    * check for waterfall tasks
    * @private
    * @param {Array} tasks
@@ -6983,6 +7071,37 @@
     }
     return true;
   }
+
+
+  /**
+   * check for waterfall tasks
+   * @private
+   * @param {function} func
+   * @param {Array|Object} args - arguments
+   * @return {function} next
+   */
+  function waterfallIterator(func, args, next) {
+    switch (args.length) {
+      case 0:
+      case 1:
+        return func(next);
+      case 2:
+        return func(args[1], next);
+      case 3:
+        return func(args[1], args[2], next);
+      case 4:
+        return func(args[1], args[2], args[3], next);
+      case 5:
+        return func(args[1], args[2], args[3], args[4], next);
+      case 6:
+        return func(args[1], args[2], args[3], args[4], args[5], next);
+      default:
+        args = slice(args, 1);
+        args.push(next);
+        return func.apply(null, args);
+    }
+  }
+
 
   /**
    * @memberof async
@@ -7028,66 +7147,48 @@
     if (!checkWaterfallTasks(tasks, callback)) {
       return;
     }
-    var done, called, sync;
+    var func, args, done, sync;
     var completed = 0;
     var size = tasks.length;
-    var func = tasks[completed];
-    var args = [];
-    iterate();
+    waterfallIterator(tasks[0], [], createCallback(0));
 
     function iterate() {
-      called = false;
-      switch (args.length) {
-        case 0:
-        case 1:
-          return func(next);
-        case 2:
-          return func(args[1], next);
-        case 3:
-          return func(args[1], args[2], next);
-        case 4:
-          return func(args[1], args[2], args[3], next);
-        case 5:
-          return func(args[1], args[2], args[3], args[4], next);
-        case 6:
-          return func(args[1], args[2], args[3], args[4], args[5], next);
-        default:
-          args = slice(args, 1);
-          args.push(next);
-          return func.apply(null, args);
-      }
+      waterfallIterator(func, args, createCallback(func));
     }
 
-    function next(err, res) {
-      if (called) {
-        throwError();
-      }
-      called = true;
-      if (err) {
-        done = callback;
-        callback = throwError;
-        done(err);
-        return;
-      }
-      if (++completed === size) {
-        done = callback;
-        callback = throwError;
-        if (arguments.length &lt;= 2) {
-          done(err, res);
-        } else {
-          done.apply(null, createArray(arguments));
+    function createCallback(index) {
+      return function next(err, res) {
+        if (index === undefined) {
+          callback = noop;
+          throwError();
         }
-        return;
-      }
-      args = arguments;
-      func = tasks[completed] || throwError;
-      if (sync) {
-        nextTick(iterate);
-      } else {
-        sync = true;
-        iterate();
-      }
-      sync = false;
+        index = undefined;
+        if (err) {
+          done = callback;
+          callback = throwError;
+          done(err);
+          return;
+        }
+        if (++completed === size) {
+          done = callback;
+          callback = throwError;
+          if (arguments.length &lt;= 2) {
+            done(err, res);
+          } else {
+            done.apply(null, createArray(arguments));
+          }
+          return;
+        }
+        if (sync) {
+          args = arguments;
+          func = tasks[completed] || throwError;
+          nextTick(iterate);
+        } else {
+          sync = true;
+          waterfallIterator(tasks[completed] || throwError, arguments, createCallback(completed));
+        }
+        sync = false;
+      };
     }
   }
 
@@ -7929,7 +8030,7 @@
     }
     var runningTasks = 0;
     var readyTasks = [];
-    var listeners = {};
+    var listeners = Object.create(null);
     callback = onlyOnce(callback || noop);
     concurrency = concurrency || rest;
 
@@ -7957,7 +8058,7 @@
       while (++index &lt; dependencySize) {
         var dependencyName = task[index];
         if (notInclude(keys, dependencyName)) {
-          var msg = 'async.auto task `' + dependencyName + '` has non-existent dependency in ' + task.join(', ');
+          var msg = 'async.auto task `' + key + '` has non-existent dependency `' + dependencyName + '` in ' + task.join(', ');
           throw new Error(msg);
         }
         var taskListeners = listeners[dependencyName];
@@ -8716,16 +8817,28 @@
       } catch (e) {
         return callback(e);
       }
-      if (result &amp;&amp; typeof result === obj &amp;&amp; typeof result.then === func) {
+      if (result &amp;&amp; typeof result.then === func) {
         result.then(function(value) {
-          callback(null, value);
+          invokeCallback(callback, null, value);
         }, function(err) {
-          callback(err.message ? err : new Error(err));
+          invokeCallback(callback, err.message ? err : new Error(err));
         });
       } else {
         callback(null, result);
       }
     };
+  }
+
+  function invokeCallback(callback, err, value) {
+    try {
+      callback(err, value);
+    } catch (e) {
+      nextTick(rethrow, e);
+    }
+  }
+
+  function rethrow(error) {
+    throw error;
   }
 
   /**
@@ -8851,13 +8964,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="async.html">async</a></li><li><a href="async.angelFall.html">angelFall</a></li><li><a href="async.apply.html">apply</a></li><li><a href="async.applyEach.html">applyEach</a></li><li><a href="async.applyEachSeries.html">applyEachSeries</a></li><li><a href="async.auto.html">auto</a></li><li><a href="async.autoInject.html">autoInject</a></li><li><a href="async.cargo.html">cargo</a></li><li><a href="async.compose.html">compose</a></li><li><a href="async.concat.html">concat</a></li><li><a href="async.concatLimit.html">concatLimit</a></li><li><a href="async.concatSeries.html">concatSeries</a></li><li><a href="async.constant.html">constant</a></li><li><a href="async.createLogger.html">createLogger</a></li><li><a href="async.detect.html">detect</a></li><li><a href="async.detectLimit.html">detectLimit</a></li><li><a href="async.detectSeries.html">detectSeries</a></li><li><a href="async.dir.html">dir</a></li><li><a href="async.doDuring.html">doDuring</a></li><li><a href="async.doUntil.html">doUntil</a></li><li><a href="async.doWhilst.html">doWhilst</a></li><li><a href="async.during.html">during</a></li><li><a href="async.each.html">each</a></li><li><a href="async.eachLimit.html">eachLimit</a></li><li><a href="async.eachSeries.html">eachSeries</a></li><li><a href="async.ensureAsync.html">ensureAsync</a></li><li><a href="async.every.html">every</a></li><li><a href="async.everyLimit.html">everyLimit</a></li><li><a href="async.everySeries.html">everySeries</a></li><li><a href="async.fast.html">fast</a></li><li><a href="async.filter.html">filter</a></li><li><a href="async.filterLimit.html">filterLimit</a></li><li><a href="async.filterSeries.html">filterSeries</a></li><li><a href="async.forever.html">forever</a></li><li><a href="async.groupBy.html">groupBy</a></li><li><a href="async.groupByLimit.html">groupByLimit</a></li><li><a href="async.groupBySeries.html">groupBySeries</a></li><li><a href="async.iterator.html">iterator</a></li><li><a href="async.log.html">log</a></li><li><a href="async.map.html">map</a></li><li><a href="async.mapLimit.html">mapLimit</a></li><li><a href="async.mapSeries.html">mapSeries</a></li><li><a href="async.mapValues.html">mapValues</a></li><li><a href="async.mapValuesLimit.html">mapValuesLimit</a></li><li><a href="async.mapValuesSeries.html">mapValuesSeries</a></li><li><a href="async.memoize.html">memoize</a></li><li><a href="async.omit.html">omit</a></li><li><a href="async.omitLimit.html">omitLimit</a></li><li><a href="async.omitSeries.html">omitSeries</a></li><li><a href="async.parallel.html">parallel</a></li><li><a href="async.parallelLimit.html">parallelLimit</a></li><li><a href="async.pick.html">pick</a></li><li><a href="async.pickLimit.html">pickLimit</a></li><li><a href="async.pickSeries.html">pickSeries</a></li><li><a href="async.priorityQueue.html">priorityQueue</a></li><li><a href="async.queue.html">queue</a></li><li><a href="async.race.html">race</a></li><li><a href="async.reduce.html">reduce</a></li><li><a href="async.reduceRight.html">reduceRight</a></li><li><a href="async.reflect.html">reflect</a></li><li><a href="async.reflectAll.html">reflectAll</a></li><li><a href="async.reject.html">reject</a></li><li><a href="async.rejectLimit.html">rejectLimit</a></li><li><a href="async.rejectSeries.html">rejectSeries</a></li><li><a href="async.retry.html">retry</a></li><li><a href="async.safe.html">safe</a></li><li><a href="async.seq.html">seq</a></li><li><a href="async.series.html">series</a></li><li><a href="async.some.html">some</a></li><li><a href="async.someLimit.html">someLimit</a></li><li><a href="async.someSeries.html">someSeries</a></li><li><a href="async.sortBy.html">sortBy</a></li><li><a href="async.sortByLimit.html">sortByLimit</a></li><li><a href="async.sortBySeries.html">sortBySeries</a></li><li><a href="async.timeout.html">timeout</a></li><li><a href="async.times.html">times</a></li><li><a href="async.timesLimit.html">timesLimit</a></li><li><a href="async.timesSeries.html">timesSeries</a></li><li><a href="async.transform.html">transform</a></li><li><a href="async.transformLimit.html">transformLimit</a></li><li><a href="async.transformSeries.html">transformSeries</a></li><li><a href="async.unmemoize.html">unmemoize</a></li><li><a href="async.until.html">until</a></li><li><a href="async.waterfall.html">waterfall</a></li><li><a href="async.whilst.html">whilst</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="async.html">async</a></li><li><a href="async.angelFall.html">angelFall</a></li><li><a href="async.apply.html">apply</a></li><li><a href="async.applyEach.html">applyEach</a></li><li><a href="async.applyEachSeries.html">applyEachSeries</a></li><li><a href="async.auto.html">auto</a></li><li><a href="async.autoInject.html">autoInject</a></li><li><a href="async.cargo.html">cargo</a></li><li><a href="async.compose.html">compose</a></li><li><a href="async.concat.html">concat</a></li><li><a href="async.concatLimit.html">concatLimit</a></li><li><a href="async.concatSeries.html">concatSeries</a></li><li><a href="async.constant.html">constant</a></li><li><a href="async.createLogger.html">createLogger</a></li><li><a href="async.detect.html">detect</a></li><li><a href="async.detectLimit.html">detectLimit</a></li><li><a href="async.detectSeries.html">detectSeries</a></li><li><a href="async.dir.html">dir</a></li><li><a href="async.doDuring.html">doDuring</a></li><li><a href="async.doUntil.html">doUntil</a></li><li><a href="async.doWhilst.html">doWhilst</a></li><li><a href="async.during.html">during</a></li><li><a href="async.each.html">each</a></li><li><a href="async.eachLimit.html">eachLimit</a></li><li><a href="async.eachSeries.html">eachSeries</a></li><li><a href="async.ensureAsync.html">ensureAsync</a></li><li><a href="async.every.html">every</a></li><li><a href="async.everyLimit.html">everyLimit</a></li><li><a href="async.everySeries.html">everySeries</a></li><li><a href="async.fast.html">fast</a></li><li><a href="async.filter.html">filter</a></li><li><a href="async.filterLimit.html">filterLimit</a></li><li><a href="async.filterSeries.html">filterSeries</a></li><li><a href="async.forever.html">forever</a></li><li><a href="async.groupBy.html">groupBy</a></li><li><a href="async.groupByLimit.html">groupByLimit</a></li><li><a href="async.groupBySeries.html">groupBySeries</a></li><li><a href="async.iterator.html">iterator</a></li><li><a href="async.log.html">log</a></li><li><a href="async.map.html">map</a></li><li><a href="async.mapLimit.html">mapLimit</a></li><li><a href="async.mapSeries.html">mapSeries</a></li><li><a href="async.mapValues.html">mapValues</a></li><li><a href="async.mapValuesLimit.html">mapValuesLimit</a></li><li><a href="async.mapValuesSeries.html">mapValuesSeries</a></li><li><a href="async.memoize.html">memoize</a></li><li><a href="async.omit.html">omit</a></li><li><a href="async.omitLimit.html">omitLimit</a></li><li><a href="async.omitSeries.html">omitSeries</a></li><li><a href="async.parallel.html">parallel</a></li><li><a href="async.parallelLimit.html">parallelLimit</a></li><li><a href="async.pick.html">pick</a></li><li><a href="async.pickLimit.html">pickLimit</a></li><li><a href="async.pickSeries.html">pickSeries</a></li><li><a href="async.priorityQueue.html">priorityQueue</a></li><li><a href="async.queue.html">queue</a></li><li><a href="async.race.html">race</a></li><li><a href="async.reduce.html">reduce</a></li><li><a href="async.reduceRight.html">reduceRight</a></li><li><a href="async.reflect.html">reflect</a></li><li><a href="async.reflectAll.html">reflectAll</a></li><li><a href="async.reject.html">reject</a></li><li><a href="async.rejectLimit.html">rejectLimit</a></li><li><a href="async.rejectSeries.html">rejectSeries</a></li><li><a href="async.retry.html">retry</a></li><li><a href="async.safe.html">safe</a></li><li><a href="async.seq.html">seq</a></li><li><a href="async.series.html">series</a></li><li><a href="async.some.html">some</a></li><li><a href="async.someLimit.html">someLimit</a></li><li><a href="async.someSeries.html">someSeries</a></li><li><a href="async.sortBy.html">sortBy</a></li><li><a href="async.sortByLimit.html">sortByLimit</a></li><li><a href="async.sortBySeries.html">sortBySeries</a></li><li><a href="async.timeout.html">timeout</a></li><li><a href="async.times.html">times</a></li><li><a href="async.timesLimit.html">timesLimit</a></li><li><a href="async.timesSeries.html">timesSeries</a></li><li><a href="async.transform.html">transform</a></li><li><a href="async.transformLimit.html">transformLimit</a></li><li><a href="async.transformSeries.html">transformSeries</a></li><li><a href="async.tryEach.html">tryEach</a></li><li><a href="async.unmemoize.html">unmemoize</a></li><li><a href="async.until.html">until</a></li><li><a href="async.waterfall.html">waterfall</a></li><li><a href="async.whilst.html">whilst</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Fri Feb 10 2017 21:00:38 GMT-0800 (PST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Mon May 29 2017 23:31:22 GMT-0700 (PDT)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Namespace: timeout</title>
+    <title>JSDoc: Namespace: tryEach</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Namespace: timeout</h1>
+    <h1 class="page-title">Namespace: tryEach</h1>
 
     
 
@@ -29,7 +29,7 @@
 <header>
     
         <h2>
-            <span class="ancestors"><a href="async.html">async</a>.</span>timeout</h2>
+            <span class="ancestors"><a href="async.html">async</a>.</span>tryEach</h2>
         
     
 </header>
@@ -71,7 +71,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="async.js.html">async.js</a>, <a href="async.js.html#line8381">line 8381</a>
+        <a href="async.js.html">async.js</a>, <a href="async.js.html#line6941">line 6941</a>
     </li></ul></dd>
     
 
@@ -82,6 +82,42 @@
     
 </dl>
 
+
+        
+            <h3>Examples</h3>
+            
+    <pre class="prettyprint"><code>var tasks = [
+ function(done) {
+   setTimeout(function() {
+     done(new Error('error'));
+   }, 10);
+ },
+ function(done) {
+   setTimeout(function() {
+     done(null, 2);
+   }, 10);
+ }
+];
+async.tryEach(tasks, function(err, res) {
+  console.log(res); // 2
+});</code></pre>
+
+    <pre class="prettyprint"><code>var tasks = [
+ function(done) {
+   setTimeout(function() {
+     done(new Error('error1'));
+   }, 10);
+ },
+ function(done) {
+   setTimeout(function() {
+     done(new Error('error2');
+   }, 10);
+ }
+];
+async.tryEach(tasks, function(err, res) {
+  console.log(err); // error2
+  console.log(res); // undefined
+});</code></pre>
 
         
     
