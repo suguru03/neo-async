@@ -1963,11 +1963,11 @@
   var dir = createLogger('dir');
 
   /**
-   * @version 2.2.0
+   * @version 2.2.1
    * @namespace async
    */
   var index = {
-    VERSION: '2.2.0',
+    VERSION: '2.2.1',
 
     // Collections
     each: each,
