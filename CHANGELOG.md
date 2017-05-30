@@ -1,3 +1,33 @@
+<a name"v2.2.0"></a>
+## v2.2.0 (2017-05-29)
+
+
+#### Bug Fixes
+
+* **asyncify:** avoid throwing unhandledRejection if callback is caused an error ([9d365b6c](https://github.com/suguru03/neo-async/commit/9d365b6c))
+* **auto:** fix an error message and not to cause TypeError ([71deabb1](https://github.com/suguru03/neo-async/commit/71deabb1))
+* **waterfall:** fix not to allow multiple callbacks ([9a230ce5](https://github.com/suguru03/neo-async/commit/9a230ce5))
+
+
+#### Features
+
+* **tryEach:** add tryEach ([40b4fa14](https://github.com/suguru03/neo-async/commit/40b4fa14))
+
+
+#### Other Changes
+
+* **CHANGELOG:** v2.1.0 [ci skip] ([45ac0fba](https://github.com/suguru03/neo-async/commit/45ac0fba))
+* **package:**
+  * update gulp-mocha to version 4.2.0 (#54) ([034366e6](https://github.com/suguru03/neo-async/commit/034366e6))
+  * update gulp-git to version 2.1.0 (#53) ([c83d0779](https://github.com/suguru03/neo-async/commit/c83d0779))
+  * update gulp-git to version 2.0.0 (#50) ([75370791](https://github.com/suguru03/neo-async/commit/75370791))
+  * update gulp-git to version 1.15.0 (#49) ([3088e42f](https://github.com/suguru03/neo-async/commit/3088e42f))
+* **release:**
+  * fix the release task ([e40d32b8](https://github.com/suguru03/neo-async/commit/e40d32b8))
+  * update the release task [ci skip] ([0a80c17f](https://github.com/suguru03/neo-async/commit/0a80c17f))
+* **tryEach:** clean up and update RAEDME ([3e6e3af4](https://github.com/suguru03/neo-async/commit/3e6e3af4))
+* **waterfall:** improve performance ([804355dc](https://github.com/suguru03/neo-async/commit/804355dc))
+
 <a name"v2.1.0"></a>
 ## v2.1.0 (2017-02-10)
 
@@ -1252,7 +1282,7 @@
 * Modify waterfall function to respond quickly ([2d7af49c](https://github.com/suguru03/neo-async/commit/2d7af49c))
 
 <a name"v0.4.5"></a>
-### v0.4.5 (2017-02-10)
+### v0.4.5 (2017-05-30)
 
 
 #### Bug Fixes
