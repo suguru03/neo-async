@@ -24,7 +24,9 @@ _.forEach(types, type => {
     'minify:local',
     'release:dist',
     'release:commit',
-    'release:tag'
+    'release:tag',
+    'gh-pages',
+    'changelog'
   ));
 });
 
