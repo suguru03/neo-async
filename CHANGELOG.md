@@ -1,3 +1,12 @@
+<a name"v2.2.1"></a>
+### v2.2.1 (2017-05-30)
+
+
+#### Other Changes
+
+* **CHANGELOG:** v2.2.0 [ci skip] ([aa003192](https://github.com/suguru03/neo-async/commit/aa003192))
+* **release:** update the task to make gh-pages and changelog [ci skip] ([76e207d5](https://github.com/suguru03/neo-async/commit/76e207d5))
+
 <a name"v2.2.0"></a>
 ## v2.2.0 (2017-05-29)
 
