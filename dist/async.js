@@ -1963,11 +1963,11 @@
   var dir = createLogger('dir');
 
   /**
-   * @version 2.1.0
+   * @version 2.2.0
    * @namespace async
    */
   var index = {
-    VERSION: '2.1.0',
+    VERSION: '2.2.0',
 
     // Collections
     each: each,
@@ -2043,6 +2043,7 @@
     parallel: parallel,
     series: series,
     parallelLimit: parallelLimit,
+    tryEach: tryEach,
     waterfall: waterfall,
     angelFall: angelFall,
     angelfall: angelFall,
@@ -6938,6 +6939,93 @@
   }
 
   /**
+   * @memberof async
+   * @namespace tryEach
+   * @param {Array|Object} tasks - functions
+   * @param {Function} callback
+   * @example
+   *
+   * var tasks = [
+   *  function(done) {
+   *    setTimeout(function() {
+   *      done(new Error('error'));
+   *    }, 10);
+   *  },
+   *  function(done) {
+   *    setTimeout(function() {
+   *      done(null, 2);
+   *    }, 10);
+   *  }
+   * ];
+   * async.tryEach(tasks, function(err, res) {
+   *   console.log(res); // 2
+   * });
+   *
+   * @example
+   *
+   * var tasks = [
+   *  function(done) {
+   *    setTimeout(function() {
+   *      done(new Error('error1'));
+   *    }, 10);
+   *  },
+   *  function(done) {
+   *    setTimeout(function() {
+   *      done(new Error('error2');
+   *    }, 10);
+   *  }
+   * ];
+   * async.tryEach(tasks, function(err, res) {
+   *   console.log(err); // error2
+   *   console.log(res); // undefined
+   * });
+   *
+   */
+  function tryEach(tasks, callback) {
+    callback = callback || noop;
+    var size, keys, iterate;
+    var sync = false;
+    var completed = 0;
+
+    if (isArray(tasks)) {
+      size = tasks.length;
+      iterate = arrayIterator;
+    } else if (tasks && typeof tasks === obj) {
+      keys = nativeKeys(tasks);
+      size = keys.length;
+      iterate = objectIterator;
+    }
+    if (!size) {
+      return callback(null);
+    }
+    iterate();
+
+    function arrayIterator() {
+      tasks[completed](done);
+    }
+
+    function objectIterator() {
+      tasks[keys[completed]](done);
+    }
+
+    function done(err, res) {
+      if (!err) {
+        if (arguments.length <= 2) {
+          callback(null, res);
+        } else {
+          callback(null, slice(arguments, 1));
+        }
+      } else if (++completed === size) {
+        callback(err);
+      } else {
+        sync = true;
+        iterate();
+      }
+      sync = false;
+    }
+  }
+
+  /**
    * check for waterfall tasks
    * @private
    * @param {Array} tasks
@@ -6955,6 +7043,37 @@
     }
     return true;
   }
+
+
+  /**
+   * check for waterfall tasks
+   * @private
+   * @param {function} func
+   * @param {Array|Object} args - arguments
+   * @return {function} next
+   */
+  function waterfallIterator(func, args, next) {
+    switch (args.length) {
+      case 0:
+      case 1:
+        return func(next);
+      case 2:
+        return func(args[1], next);
+      case 3:
+        return func(args[1], args[2], next);
+      case 4:
+        return func(args[1], args[2], args[3], next);
+      case 5:
+        return func(args[1], args[2], args[3], args[4], next);
+      case 6:
+        return func(args[1], args[2], args[3], args[4], args[5], next);
+      default:
+        args = slice(args, 1);
+        args.push(next);
+        return func.apply(null, args);
+    }
+  }
+
 
   /**
    * @memberof async
@@ -7000,66 +7119,48 @@
     if (!checkWaterfallTasks(tasks, callback)) {
       return;
     }
-    var done, called, sync;
+    var func, args, done, sync;
     var completed = 0;
     var size = tasks.length;
-    var func = tasks[completed];
-    var args = [];
-    iterate();
+    waterfallIterator(tasks[0], [], createCallback(0));
 
     function iterate() {
-      called = false;
-      switch (args.length) {
-        case 0:
-        case 1:
-          return func(next);
-        case 2:
-          return func(args[1], next);
-        case 3:
-          return func(args[1], args[2], next);
-        case 4:
-          return func(args[1], args[2], args[3], next);
-        case 5:
-          return func(args[1], args[2], args[3], args[4], next);
-        case 6:
-          return func(args[1], args[2], args[3], args[4], args[5], next);
-        default:
-          args = slice(args, 1);
-          args.push(next);
-          return func.apply(null, args);
-      }
+      waterfallIterator(func, args, createCallback(func));
     }
 
-    function next(err, res) {
-      if (called) {
-        throwError();
-      }
-      called = true;
-      if (err) {
-        done = callback;
-        callback = throwError;
-        done(err);
-        return;
-      }
-      if (++completed === size) {
-        done = callback;
-        callback = throwError;
-        if (arguments.length <= 2) {
-          done(err, res);
-        } else {
-          done.apply(null, createArray(arguments));
+    function createCallback(index) {
+      return function next(err, res) {
+        if (index === undefined) {
+          callback = noop;
+          throwError();
         }
-        return;
-      }
-      args = arguments;
-      func = tasks[completed] || throwError;
-      if (sync) {
-        nextTick(iterate);
-      } else {
-        sync = true;
-        iterate();
-      }
-      sync = false;
+        index = undefined;
+        if (err) {
+          done = callback;
+          callback = throwError;
+          done(err);
+          return;
+        }
+        if (++completed === size) {
+          done = callback;
+          callback = throwError;
+          if (arguments.length <= 2) {
+            done(err, res);
+          } else {
+            done.apply(null, createArray(arguments));
+          }
+          return;
+        }
+        if (sync) {
+          args = arguments;
+          func = tasks[completed] || throwError;
+          nextTick(iterate);
+        } else {
+          sync = true;
+          waterfallIterator(tasks[completed] || throwError, arguments, createCallback(completed));
+        }
+        sync = false;
+      };
     }
   }
 
@@ -7901,7 +8002,7 @@
     }
     var runningTasks = 0;
     var readyTasks = [];
-    var listeners = {};
+    var listeners = Object.create(null);
     callback = onlyOnce(callback || noop);
     concurrency = concurrency || rest;
 
@@ -7929,7 +8030,7 @@
       while (++index < dependencySize) {
         var dependencyName = task[index];
         if (notInclude(keys, dependencyName)) {
-          var msg = 'async.auto task `' + dependencyName + '` has non-existent dependency in ' + task.join(', ');
+          var msg = 'async.auto task `' + key + '` has non-existent dependency `' + dependencyName + '` in ' + task.join(', ');
           throw new Error(msg);
         }
         var taskListeners = listeners[dependencyName];
@@ -8688,16 +8789,28 @@
       } catch (e) {
         return callback(e);
       }
-      if (result && typeof result === obj && typeof result.then === func) {
+      if (result && typeof result.then === func) {
         result.then(function(value) {
-          callback(null, value);
+          invokeCallback(callback, null, value);
         }, function(err) {
-          callback(err.message ? err : new Error(err));
+          invokeCallback(callback, err.message ? err : new Error(err));
         });
       } else {
         callback(null, result);
       }
     };
+  }
+
+  function invokeCallback(callback, err, value) {
+    try {
+      callback(err, value);
+    } catch (e) {
+      nextTick(rethrow, e);
+    }
+  }
+
+  function rethrow(error) {
+    throw error;
   }
 
   /**
