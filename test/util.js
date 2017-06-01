@@ -78,6 +78,7 @@ exports.uncaughtExceptionHandler = function(func) {
     process.removeListener('uncaughtException', handler);
   };
   process.removeAllListeners('uncaughtException');
+  process.domain = null;
   process.on('uncaughtException', handler);
 };
 
