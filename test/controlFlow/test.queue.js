@@ -1016,4 +1016,28 @@ parallel('#priorityQueue', function() {
     }, 50);
   });
 
+  it('should not be idle when empty is called', function(done) {
+    var calls = [];
+    var worker = function(task, cb) {
+      calls.push('process ' + task);
+      async.setImmediate(cb);
+    };
+    var q = async.queue(worker, 1);
+
+    q.empty = function () {
+      calls.push('empty');
+      assert(q.idle() === false, 'tasks should be running when empty is called')
+      assert.strictEqual(q.running(), 1);
+    };
+
+    q.drain = function() {
+      assert.deepEqual(calls, [
+        'empty',
+        'process 1',
+      ]);
+      done();
+    };
+    q.push(1);
+  });
+
 });
