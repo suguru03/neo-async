@@ -1,3 +1,19 @@
+<a name"v2.2.2"></a>
+### v2.2.2 (2017-06-11)
+
+
+#### Bug Fixes
+
+* **queue:** fix an idle bug ([a0e1f3b2](https://github.com/suguru03/neo-async/commit/a0e1f3b2))
+
+
+#### Other Changes
+
+* **CHANGELOG:** v2.2.0 [ci skip] ([3aafd44e](https://github.com/suguru03/neo-async/commit/3aafd44e))
+* **gulp:** clean up gulp tasks [ci skip] ([36a5aed7](https://github.com/suguru03/neo-async/commit/36a5aed7))
+* **package-lock:** add package-lock and avoid an domain issue ([0a440baa](https://github.com/suguru03/neo-async/commit/0a440baa))
+* **travice:** update node version ([6e4a38a2](https://github.com/suguru03/neo-async/commit/6e4a38a2))
+
 <a name"v2.2.1"></a>
 ### v2.2.1 (2017-05-30)
 
@@ -1291,7 +1307,7 @@
 * Modify waterfall function to respond quickly ([2d7af49c](https://github.com/suguru03/neo-async/commit/2d7af49c))
 
 <a name"v0.4.5"></a>
-### v0.4.5 (2017-05-30)
+### v0.4.5 (2017-06-11)
 
 
 #### Bug Fixes
