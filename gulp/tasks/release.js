@@ -25,8 +25,7 @@ _.forEach(types, type => {
     'release:dist',
     'release:commit',
     'release:tag',
-    'gh-pages',
-    'changelog'
+    'gh-pages'
   ));
 });
 

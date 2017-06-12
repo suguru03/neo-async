@@ -10,8 +10,8 @@ const config = require('../config');
 gulp.task('jsfmt', ['jsbeautifier']);
 
 gulp.task('jsbeautifier', () => {
-  let dirnames = config.jsbeautifier.dirnames;
-  let streams = _.map(dirnames, (task) => {
+  const { dirnames } = config.jsbeautifier;
+  const streams = _.map(dirnames, task => {
     let dirname = task.slice(0, _.lastIndexOf(task, '/'));
     return gulp.src(task)
       .pipe(jsbeautifier({

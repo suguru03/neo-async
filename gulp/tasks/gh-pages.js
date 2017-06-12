@@ -9,13 +9,13 @@ const git = require('gulp-git');
 const async = require('../../');
 const jsdoc = require('./jsdoc');
 
-gulp.task('gh-pages', (done) => {
+gulp.task('gh-pages', done => {
 
-  let filepath = path.resolve(__dirname, '../..', 'lib/async.js');
-  let options = {
+  const filepath = path.resolve(__dirname, '../..', 'lib/async.js');
+  const options = {
     encoding: 'utf8'
   };
-  let asyncFile = fs.readFileSync(filepath, options);
+  const asyncFile = fs.readFileSync(filepath, options);
   async.angelFall([
 
     async.apply(git.fetch, 'origin', ''),

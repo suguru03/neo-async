@@ -6,7 +6,7 @@ const jscs = require('gulp-jscs');
 const config = require('../config');
 
 gulp.task('jscs', () => {
-  let dirnames = config.jscs.dirnames;
+  const { dirnames } = config.jscs;
   return gulp.src(dirnames)
     .pipe(jscs('.jscsrc'));
 });

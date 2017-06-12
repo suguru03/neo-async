@@ -8,13 +8,13 @@ const generator = require('changelog-generator');
 
 const async = require('../../');
 
-gulp.task('changelog', (done) => {
-  let filepath = path.resolve(__dirname, '../..', 'package.json');
-  let url = require(filepath).homepage;
+gulp.task('changelog', done => {
+  const filepath = path.resolve(__dirname, '../..', 'package.json');
+  const { homepage } = require(filepath);
 
   async.angelFall([
 
-    async.apply(generator, url),
+    async.apply(generator, homepage),
 
     async.apply(git.exec, {
       args: 'add ./CHANGELOG.md'

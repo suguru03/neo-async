@@ -11,8 +11,8 @@ const config = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../..', '.jsd
 }));
 
 function createJSDoc(done) {
-  let dirpath = path.resolve(__dirname, '../..', config.opts.destination);
-  exec('rm -rf ' + dirpath);
+  const dirpath = path.resolve(__dirname, '../..', config.opts.destination);
+  exec(`rm -rf ${dirpath}`);
   exec('$(npm bin)/jsdoc -c .jsdocrc ./lib/async.js', done);
 }
 
