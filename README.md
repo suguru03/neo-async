@@ -15,6 +15,8 @@ Neo-Async is thought to be used as a drop-in replacement for [Async](https://git
 
 Benchmark is [here](#benchmark)!
 
+Bluebird's benchmark is [here](https://github.com/suguru03/bluebird/tree/aigle/benchmark)!
+
 ## Code Coverage
 ![coverage](https://raw.githubusercontent.com/wiki/suguru03/neo-async/images/coverage.png)
 
@@ -29,6 +31,12 @@ Benchmark is [here](#benchmark)!
 ```js
 require(['async'], function(async) {});
 ```
+
+### Promise and async/await
+
+I recommend to use [`Aigle`](https://github.com/suguru03/aigle).
+
+It is optimized for Promise handling and has almost the same functionality as `neo-async`.
 
 ### Node.js
 
