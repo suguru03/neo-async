@@ -240,21 +240,6 @@ parallel('#concat', function() {
     }, Math);
   });
 
-  it('should not concatenate with the result if iterator get the falsy value', function(done) {
-
-    var collection = [2, 1, 3];
-    var iterator = function(n, callback) {
-      callback(null, 0);
-    };
-    async.concat(collection, iterator, function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.deepEqual(res, []);
-      done();
-    });
-  });
-
   it('should throw error', function(done) {
 
     var order = [];
@@ -285,6 +270,74 @@ parallel('#concat', function() {
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepEqual(res, []);
       assert.deepEqual(order, []);
+      done();
+    });
+  });
+
+  it('should execute with an array of falthy', function(done) {
+
+    var array = [null, undefined, 0, ''];
+    async.concat(array, function(value, done) {
+      done(null, value);
+    }, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, array);
+      done();
+    });
+  });
+
+  it('should return an empty array if iterator does not pass the second argument', function(done) {
+
+    var array = [1, 2, 3];
+    async.concat(array, function(value, done) {
+      done();
+    }, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      done();
+    });
+  });
+
+  it('should return an array of undefined if iterator passes the second argument', function(done) {
+
+    var array = [1, 2, 3];
+    async.concat(array, function(value, done) {
+      done(null, undefined);
+    }, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [undefined, undefined, undefined]);
+      done();
+    });
+  });
+
+  it('should pass multiple arguments', function(done) {
+
+    async.concat([1], function(value, done) {
+      done(null, 1, 2, 3);
+    }, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [1, 2, 3]);
+      done();
+    });
+  });
+
+  it('should not pass undefined if the second argument is empty', function(done) {
+
+    async.concat([1, 2], function(value, done) {
+      done();
+    }, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
       done();
     });
   });
@@ -551,21 +604,6 @@ parallel('#concatSeries', function() {
     }, Math);
   });
 
-  it('should not concatenate with the result if iterator get the falsy value', function(done) {
-
-    var collection = [2, 1, 3];
-    var iterator = function(n, callback) {
-      callback(null, 0);
-    };
-    async.concatSeries(collection, iterator, function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.deepEqual(res, []);
-      done();
-    });
-  });
-
   it('should execute on asynchronous', function(done) {
 
     var sync = true;
@@ -586,6 +624,61 @@ parallel('#concatSeries', function() {
       done();
     });
     sync = false;
+  });
+
+  it('should execute with an array of falthy', function(done) {
+
+    var array = [null, undefined, 0, ''];
+    async.concatSeries(array, function(value, done) {
+      done(null, value);
+    }, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, array);
+      done();
+    });
+  });
+
+  it('should return an empty array if iterator does not pass the second argument', function(done) {
+
+    var array = [1, 2, 3];
+    async.concatSeries(array, function(value, done) {
+      done();
+    }, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      done();
+    });
+  });
+
+  it('should return an array of undefined if iterator passes the second argument', function(done) {
+
+    var array = [1, 2, 3];
+    async.concatSeries(array, function(value, done) {
+      done(null, undefined);
+    }, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [undefined, undefined, undefined]);
+      done();
+    });
+  });
+
+  it('should pass multiple arguments', function(done) {
+
+    async.concatSeries([1], function(value, done) {
+      done(null, 1, 2, 3);
+    }, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [1, 2, 3]);
+      done();
+    });
   });
 
   it('should throw error', function(done) {
@@ -944,21 +1037,6 @@ parallel('#concatLimit', function() {
     });
   });
 
-  it('should not concatenate with the result if iterator get the falsy value', function(done) {
-
-    var collection = [2, 1, 3];
-    var iterator = function(n, callback) {
-      callback(null, 0);
-    };
-    async.concatLimit(collection, 2, iterator, function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.deepEqual(res, []);
-      done();
-    });
-  });
-
   it('should execute on asynchronous', function(done) {
 
     var sync = true;
@@ -982,6 +1060,62 @@ parallel('#concatLimit', function() {
     });
     sync = false;
   });
+
+  it('should execute with an array of falthy', function(done) {
+
+    var array = [null, undefined, 0, ''];
+    async.concatLimit(array, 2, function(value, done) {
+      done(null, value);
+    }, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, array);
+      done();
+    });
+  });
+
+  it('should return an empty array if iterator does not pass the second argument', function(done) {
+
+    var array = [1, 2, 3];
+    async.concatLimit(array, 2, function(value, done) {
+      done();
+    }, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, []);
+      done();
+    });
+  });
+
+  it('should return an array of undefined if iterator passes the second argument', function(done) {
+
+    var array = [1, 2, 3];
+    async.concatLimit(array, 2, function(value, done) {
+      done(null, undefined);
+    }, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [undefined, undefined, undefined]);
+      done();
+    });
+  });
+
+  it('should pass multiple arguments', function(done) {
+
+    async.concatLimit([1], 2, function(value, done) {
+      done(null, 1, 2, 3);
+    }, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [1, 2, 3]);
+      done();
+    });
+  });
+
 
   it('should throw error', function(done) {
 
