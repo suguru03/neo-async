@@ -69,7 +69,7 @@ parallel('#concat', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [1, 2, 1, 3, 2, 1]);
+      assert.deepEqual(res, [1, 3, 2, 1, 2, 1]);
       assert.deepEqual(order, [1, 2, 3]);
       done();
     });
@@ -84,7 +84,7 @@ parallel('#concat', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [1, 2, 1, 3, 2, 1]);
+      assert.deepEqual(res, [1, 3, 2, 1, 2, 1]);
       assert.deepEqual(order, [
         [1, 0],
         [2, 2],
@@ -107,7 +107,7 @@ parallel('#concat', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [1, 2, 1, 3, 2, 1]);
+      assert.deepEqual(res, [1, 3, 2, 1, 2, 1]);
       assert.deepEqual(order, [1, 2, 3]);
       done();
     });
@@ -126,7 +126,7 @@ parallel('#concat', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [1, 2, 1, 3, 2, 1]);
+      assert.deepEqual(res, [1, 3, 2, 1, 2, 1]);
       assert.deepEqual(order, [
         [1, 'a'],
         [2, 'c'],
@@ -148,7 +148,7 @@ parallel('#concat', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [1, 2, 1, 3, 2, 1]);
+      assert.deepEqual(res, [1, 3, 2, 1, 2, 1]);
       assert.deepEqual(order, [1, 2, 3]);
       done();
     });
@@ -165,7 +165,7 @@ parallel('#concat', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [1, 2, 1, 3, 2, 1]);
+      assert.deepEqual(res, [1, 3, 2, 1, 2, 1]);
       assert.deepEqual(order, [
         [1, 0],
         [2, 2],
@@ -188,7 +188,7 @@ parallel('#concat', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [1, 2, 1, 3, 2, 1]);
+      assert.deepEqual(res, [1, 3, 2, 1, 2, 1]);
       assert.deepEqual(order, [
         ['a', 1],
         ['c', 2],
@@ -210,7 +210,7 @@ parallel('#concat', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [1, 2, 1, 3, 2, 1]);
+      assert.deepEqual(res, [1, 3, 2, 1, 2, 1]);
       assert.deepEqual(order, [
         [['a', 1], 0],
         [['c', 2], 2],
@@ -234,7 +234,7 @@ parallel('#concat', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [1.5, 0.5, 2.5, 1.5, 0.5, 3.5, 2.5, 1.5, 0.5]);
+      assert.deepEqual(res, [1.5, 0.5, 3.5, 2.5, 1.5, 0.5, 2.5, 1.5, 0.5]);
       assert.deepEqual(order, [1.5, 2.5, 3.5]);
       done();
     }, Math);
@@ -253,7 +253,7 @@ parallel('#concat', function() {
     async.concat(collection, iterator, function(err, res) {
       assert.ok(err);
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [1, 2, 3]);
+      assert.deepEqual(res, [1, 2]);
       assert.deepEqual(order, [1, 2, 3]);
       done();
     });
@@ -421,7 +421,6 @@ parallel('#concat', function() {
       done();
     });
   });
-
 });
 
 parallel('#concatSeries', function() {
@@ -831,7 +830,7 @@ parallel('#concatLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [1, 3, 2, 1, 5, 4, 3, 2, 1, 2, 1, 4, 3, 2, 1]);
+      assert.deepEqual(res, [1, 5, 4, 3, 2, 1, 3, 2, 1, 4, 3, 2, 1, 2, 1]);
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
@@ -846,7 +845,7 @@ parallel('#concatLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [1, 3, 2, 1, 5, 4, 3, 2, 1, 2, 1, 4, 3, 2, 1]);
+      assert.deepEqual(res, [1, 5, 4, 3, 2, 1, 3, 2, 1, 4, 3, 2, 1, 2, 1]);
       assert.deepEqual(order, [
         [1, 0],
         [3, 2],
@@ -873,7 +872,7 @@ parallel('#concatLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [1, 3, 2, 1, 5, 4, 3, 2, 1, 2, 1, 4, 3, 2, 1]);
+      assert.deepEqual(res, [1, 5, 4, 3, 2, 1, 3, 2, 1, 4, 3, 2, 1, 2, 1]);
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
@@ -894,7 +893,7 @@ parallel('#concatLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [1, 3, 2, 1, 5, 4, 3, 2, 1, 2, 1, 4, 3, 2, 1]);
+      assert.deepEqual(res, [1, 5, 4, 3, 2, 1, 3, 2, 1, 4, 3, 2, 1, 2, 1]);
       assert.deepEqual(order, [
         [1, 'a'],
         [3, 'c'],
@@ -920,7 +919,7 @@ parallel('#concatLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [1, 3, 2, 1, 5, 4, 3, 2, 1, 2, 1, 4, 3, 2, 1]);
+      assert.deepEqual(res, [1, 5, 4, 3, 2, 1, 3, 2, 1, 4, 3, 2, 1, 2, 1]);
       assert.deepEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
@@ -939,7 +938,7 @@ parallel('#concatLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [1, 3, 2, 1, 5, 4, 3, 2, 1, 2, 1, 4, 3, 2, 1]);
+      assert.deepEqual(res, [1, 5, 4, 3, 2, 1, 3, 2, 1, 4, 3, 2, 1, 2, 1]);
       assert.deepEqual(order, [
         [1, 0],
         [3, 2],
@@ -965,7 +964,7 @@ parallel('#concatLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [1, 3, 2, 1, 5, 4, 3, 2, 1, 2, 1, 4, 3, 2, 1]);
+      assert.deepEqual(res, [1, 5, 4, 3, 2, 1, 3, 2, 1, 4, 3, 2, 1, 2, 1]);
       assert.deepEqual(order, [
         ['a', 1],
         ['c', 3],
@@ -990,7 +989,7 @@ parallel('#concatLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [1, 3, 2, 1, 5, 4, 3, 2, 1, 2, 1, 4, 3, 2, 1]);
+      assert.deepEqual(res, [1, 5, 4, 3, 2, 1, 3, 2, 1, 4, 3, 2, 1, 2, 1]);
       assert.deepEqual(order, [
         [ ['a', 1], 0],
         [ ['c', 3], 2],
@@ -1031,7 +1030,7 @@ parallel('#concatLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [1, 2, 1, 3, 2, 1]);
+      assert.deepEqual(res, [1, 3, 2, 1, 2, 1]);
       assert.deepEqual(order, [1, 2, 3]);
       done();
     });
@@ -1130,7 +1129,7 @@ parallel('#concatLimit', function() {
     async.concatLimit(collection, 5, iterator, function(err, res) {
       assert.ok(err);
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [1, 2, 3]);
+      assert.deepEqual(res, [1, 2]);
       assert.deepEqual(order, [1, 2, 3]);
       done();
     });
