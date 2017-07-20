@@ -1,3 +1,21 @@
+<a name"v2.3.0"></a>
+## v2.3.0 (2017-07-19)
+
+
+#### Bug Fixes
+
+* **concat:**
+  * fix concat to ensure the order ([409ead5a](https://github.com/suguru03/neo-async/commit/409ead5a))
+  * fix concat to allow multiple arguments and to check iterator argument length ([33b342fc](https://github.com/suguru03/neo-async/commit/33b342fc))
+
+
+#### Other Changes
+
+* **CHANGELOG:** v2.2.2 [ci skip] ([737db35f](https://github.com/suguru03/neo-async/commit/737db35f))
+* **README:** udpate RAEDME [ci skip] ([99e732b3](https://github.com/suguru03/neo-async/commit/99e732b3))
+* **concat:** improve performance ([3399d3d1](https://github.com/suguru03/neo-async/commit/3399d3d1))
+* **package:** update package json ([121b7e22](https://github.com/suguru03/neo-async/commit/121b7e22))
+
 <a name"v2.2.2"></a>
 ### v2.2.2 (2017-06-11)
 
@@ -1307,7 +1325,7 @@
 * Modify waterfall function to respond quickly ([2d7af49c](https://github.com/suguru03/neo-async/commit/2d7af49c))
 
 <a name"v0.4.5"></a>
-### v0.4.5 (2017-06-11)
+### v0.4.5 (2017-07-20)
 
 
 #### Bug Fixes
