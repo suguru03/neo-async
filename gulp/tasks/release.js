@@ -13,7 +13,7 @@ const tagVersion = require('gulp-tag-version');
 const basepath = path.resolve(__dirname, '../../');
 const packagepath = path.resolve(basepath, 'package.json');
 const bowerpath = path.resolve(basepath, 'bower.json');
-const types = ['patch', 'minor', 'major'];
+const types = ['patch', 'prepatch', 'minor', 'preminor', 'major', 'premajor'];
 const { version: prevVersion } = require(packagepath);
 
 _.forEach(types, type => {
