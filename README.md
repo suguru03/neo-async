@@ -8,9 +8,6 @@
 [![Dependency Status](https://gemnasium.com/suguru03/neo-async.svg)](https://gemnasium.com/suguru03/neo-async)
 [![npm](https://img.shields.io/npm/dm/neo-async.svg)](https://www.npmjs.com/package/neo-async)
 
-[![nodei](https://nodei.co/npm/neo-async.png?stars=true&downloads=true&downloadRank=true)](http://npm-stat.com/charts.html?package=neo-async)
-
-
 Neo-Async is thought to be used as a drop-in replacement for [Async](https://github.com/caolan/async), it almost fully covers its functionality and runs [faster](#benchmark).
 
 Benchmark is [here](#benchmark)!
