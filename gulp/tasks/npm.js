@@ -22,10 +22,13 @@ async function publish() {
 
   // copy lib
   fs.copySync(path.resolve(rootpath, 'lib', 'async.js'), path.resolve(buildpath, 'async.js'));
+  // copy the minified file
+  fs.copySync(path.resolve(rootpath, 'dist', 'async.min.js'), path.resolve(buildpath, 'async.min.js'));
 
   // copy package.json
-  const json = _.omit(require('../../package'), ['files', 'scripts']);
+  const json = _.omit(require('../../package'), ['files', 'scripts', 'private']);
   json.main = 'async.js';
+  json.browser = 'async.min.js';
   fs.writeFileSync(path.resolve(buildpath, 'package.json'), JSON.stringify(json, null, 2), 'utf8');
 
   // copy README
