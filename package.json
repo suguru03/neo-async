@@ -1,6 +1,6 @@
 {
   "name": "neo-async",
-  "version": "2.4.0-0",
+  "version": "2.4.0",
   "description": "Neo-Async is thought to be used as a drop-in replacement for Async, it almost fully covers its functionality and runs faster ",
   "main": "index.js",
   "scripts": {
