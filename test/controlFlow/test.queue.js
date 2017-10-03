@@ -801,11 +801,7 @@ parallel('#queue', function() {
       async.setImmediate(callback);
     });
 
-    q.push(1);
-    q.push(2);
-    q.push(3);
-    q.push(4);
-    q.push(5);
+    q.push([1, 2, 3, 4, 5]);
 
     q.remove(function (node) {
       return node.data === 3;
