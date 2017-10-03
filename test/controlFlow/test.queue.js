@@ -793,6 +793,30 @@ parallel('#queue', function() {
     }, 1000);
   });
 
+  it('should remove', function(done) {
+
+    var result = [];
+    var q = async.queue(function(data, callback) {
+      result.push(data);
+      async.setImmediate(callback);
+    });
+
+    q.push(1);
+    q.push(2);
+    q.push(3);
+    q.push(4);
+    q.push(5);
+
+    q.remove(function (node) {
+      return node.data === 3;
+    });
+
+    q.drain = function() {
+      assert.deepEqual(result, [1, 2, 4, 5]);
+      done();
+    };
+  });
+
 });
 
 parallel('#priorityQueue', function() {
