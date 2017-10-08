@@ -1964,11 +1964,11 @@
   var dir = createLogger('dir');
 
   /**
-   * @version 2.4.0
+   * @version 2.5.0
    * @namespace async
    */
   var index = {
-    VERSION: '2.4.0',
+    VERSION: '2.5.0',
 
     // Collections
     each: each,
@@ -7719,11 +7719,17 @@
   }
 
   DLL.prototype._removeLink = function(node) {
-     this.head = node.next;
-    if (node.next) {
-      node.next.prev = node.prev;
+    var prev = node.prev;
+    var next = node.next;
+    if (prev) {
+      prev.next = next;
     } else {
-      this.tail = node.prev;
+     this.head = next;
+    }
+    if (next) {
+      next.prev = prev;
+    } else {
+      this.tail = prev;
     }
     node.prev = null;
     node.next = null;
@@ -7783,15 +7789,14 @@
     }
     return tasks;
   };
-  
-  DLL.prototype.remove = function(testFn) {
-    var curr = this.head;
-    while(!!curr) {
-        var next = curr.next;
-        if (testFn(curr)) {
-            this._removeLink(curr);
-        }
-        curr = next;
+
+  DLL.prototype.remove = function(test) {
+    var node = this.head;
+    while(node) {
+      if (test(node)) {
+        this._removeLink(node);
+      }
+      node = node.next;
     }
     return this;
   };
@@ -7825,7 +7830,7 @@
       push: push,
       kill: kill,
       unshift: unshift,
-	  remove: remove,
+      remove: remove,
       process: isQueue ? runQueue : runCargo,
       length: getLength,
       running: running,
@@ -8001,10 +8006,13 @@
       var count = q.concurrency < q._tasks.length ? q.concurrency : q._tasks.length;
       timesSync(count, _resume);
     }
-	
-	function remove(testFn) {
-		q._tasks.remove(testFn);
-	}
+
+    /**
+     * @param {Function} test
+     */
+    function remove(test) {
+      q._tasks.remove(test);
+    }
   }
 
   /**
