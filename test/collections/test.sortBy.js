@@ -231,6 +231,41 @@ parallel('#sortBy', function() {
     }, Math);
   });
 
+  it('should keep the order if criteria are same value', function(done) {
+
+    var collection = [{
+      a: 1, b: 1
+    }, {
+      a: 2, b: 2
+    }, {
+      a: 1, b: 3
+    }, {
+      a: 2, b: 4
+    }, {
+      a: 1, b: 5
+    }];
+    var iterator = function(obj, callback) {
+      callback(null, obj.a);
+    }
+    async.sortBy(collection, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepEqual(res, [{
+        a: 1, b: 1
+      }, {
+        a: 1, b: 3
+      }, {
+        a: 1, b: 5
+      }, {
+        a: 2, b: 2
+      }, {
+        a: 2, b: 4
+      }]);
+      done();
+    });
+  });
+
   it('should throw error', function(done) {
     var order = [];
     var collection = [1, 3, 2];
