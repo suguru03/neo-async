@@ -66,7 +66,7 @@ parallel('#cargo', function() {
     }, 3 * delay);
 
     setTimeout(function() {
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         'process 1 2', 'callback 1', 'callback 2',
         'process 3 4', 'callback 3', 'callback 4',
         'process 5', 'callback 5'
@@ -104,7 +104,7 @@ parallel('#cargo', function() {
     }, 4.5 * delay);
 
     setTimeout(function() {
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         'process 1',
         'process 2',
         'process 3 4',
@@ -135,7 +135,7 @@ parallel('#cargo', function() {
     assert.strictEqual(c.length(), 4);
 
     setTimeout(function() {
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         'process 1 2 3',
         'callback 1 2 3',
         'callback 1 2 3',
@@ -165,7 +165,7 @@ parallel('#cargo', function() {
     assert.strictEqual(c.length(), 10);
 
     setTimeout(function() {
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         [0, 1, 2],
         [3, 4, 5],
         [6, 7, 8],
@@ -207,7 +207,7 @@ parallel('#cargo', function() {
     setTimeout(loadCargo, 5 * delay);
 
     setTimeout(function() {
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         [0, 1, 2],
         [3, 4, 5],
         [6, 7, 8],
@@ -239,7 +239,7 @@ parallel('#cargo', function() {
     var c = async.cargo(worker, payload);
     c.push(tasks);
     c.drain = function() {
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         [0, 1, 2],
         [3, 4]
       ]);
@@ -274,7 +274,7 @@ parallel('#cargo', function() {
         'cargo should be empty now and no more workers should be running'
       );
       calls.push('drain');
-      assert.deepEqual(calls, [
+      assert.deepStrictEqual(calls, [
         'process foo',
         'process bar',
         'saturated',

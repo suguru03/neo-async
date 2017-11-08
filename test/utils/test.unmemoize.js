@@ -26,7 +26,7 @@ parallel('#unmemoize', function() {
 
         fn2(1, function() {
 
-          assert.deepEqual(order, [1, 2, 1]);
+          assert.deepStrictEqual(order, [1, 2, 1]);
           done();
         });
       });

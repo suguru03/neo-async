@@ -75,7 +75,7 @@ parallel('#retryable', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         a: 'a',
         b: 'b',
         c: 'c',

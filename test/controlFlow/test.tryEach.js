@@ -55,7 +55,7 @@ parallel('#tryEach', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, results);
+      assert.deepStrictEqual(res, results);
       done();
     });
   });

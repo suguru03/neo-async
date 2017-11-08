@@ -177,7 +177,7 @@ parallel('#angelFall', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(order, [1, 2, 3, 4, 5]);
+      assert.deepStrictEqual(order, [1, 2, 3, 4, 5]);
       done();
     });
   });
@@ -283,7 +283,7 @@ parallel('#angelFall', function() {
       }
     ], function(err) {
       assert.ok(err);
-      assert.deepEqual(order, [1, 2, 3, 4]);
+      assert.deepStrictEqual(order, [1, 2, 3, 4]);
       done();
     });
   });

@@ -32,8 +32,8 @@ parallel('#until', function() {
         return done(err);
       }
 
-      assert.deepEqual(order.iterator, [0, 1, 2, 3, 4]);
-      assert.deepEqual(order.test, [0, 1, 2, 3, 4, 5]);
+      assert.deepStrictEqual(order.iterator, [0, 1, 2, 3, 4]);
+      assert.deepStrictEqual(order.test, [0, 1, 2, 3, 4, 5]);
       assert.strictEqual(res, 5);
       done();
     });
@@ -63,9 +63,9 @@ parallel('#until', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(order.iterator, [0, 1, 2, 3, 4]);
-      assert.deepEqual(order.test, [0, 1, 2, 3, 4, 5]);
-      assert.deepEqual(result, [0, 1, 4, 9, 16]);
+      assert.deepStrictEqual(order.iterator, [0, 1, 2, 3, 4]);
+      assert.deepStrictEqual(order.test, [0, 1, 2, 3, 4, 5]);
+      assert.deepStrictEqual(result, [0, 1, 4, 9, 16]);
       assert.strictEqual(res, 5);
       done();
     }, Math);
@@ -147,8 +147,8 @@ parallel('#until', function() {
     };
     async.until(test, iterator, function(err) {
       assert.ok(err);
-      assert.deepEqual(order.iterator, [0, 1, 2]);
-      assert.deepEqual(order.test, [0, 1, 2]);
+      assert.deepStrictEqual(order.iterator, [0, 1, 2]);
+      assert.deepStrictEqual(order.test, [0, 1, 2]);
       done();
     });
   });
@@ -178,8 +178,8 @@ parallel('#doUntil', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(order.iterator, [0, 1, 2, 3, 4]);
-      assert.deepEqual(order.test, [1, 2, 3, 4, 5]);
+      assert.deepStrictEqual(order.iterator, [0, 1, 2, 3, 4]);
+      assert.deepStrictEqual(order.test, [1, 2, 3, 4, 5]);
       assert.strictEqual(res, 5);
       done();
     });
@@ -209,9 +209,9 @@ parallel('#doUntil', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(order.iterator, [0, 1, 2, 3, 4]);
-      assert.deepEqual(order.test, [1, 2, 3, 4, 5]);
-      assert.deepEqual(result, [0, 1, 4, 9, 16]);
+      assert.deepStrictEqual(order.iterator, [0, 1, 2, 3, 4]);
+      assert.deepStrictEqual(order.test, [1, 2, 3, 4, 5]);
+      assert.deepStrictEqual(result, [0, 1, 4, 9, 16]);
       assert.strictEqual(res, 5);
       done();
     }, Math);
@@ -238,8 +238,8 @@ parallel('#doUntil', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(order.iterator, [0, 1, 2, 3, 4]);
-      assert.deepEqual(order.test, [1, 2, 3, 4, 5]);
+      assert.deepStrictEqual(order.iterator, [0, 1, 2, 3, 4]);
+      assert.deepStrictEqual(order.test, [1, 2, 3, 4, 5]);
       done();
     });
 
@@ -312,8 +312,8 @@ parallel('#doUntil', function() {
 
     async.doUntil(iterator, test, function(err) {
       assert.ok(err);
-      assert.deepEqual(order.iterator, [0, 1, 2]);
-      assert.deepEqual(order.test, [1, 2]);
+      assert.deepStrictEqual(order.iterator, [0, 1, 2]);
+      assert.deepStrictEqual(order.test, [1, 2]);
       done();
     });
   });

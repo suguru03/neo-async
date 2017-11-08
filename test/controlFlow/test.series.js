@@ -45,8 +45,8 @@ parallel('#series', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [2, 6, 4, 8, [5, 5]]);
-      assert.deepEqual(order, [1, 3, 2, 4, 5]);
+      assert.deepStrictEqual(res, [2, 6, 4, 8, [5, 5]]);
+      assert.deepStrictEqual(order, [1, 3, 2, 4, 5]);
       done();
     });
   });
@@ -66,13 +66,13 @@ parallel('#series', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         a: 8,
         b: 4,
         c: 2,
         d: 6
       });
-      assert.deepEqual(order, [4, 2, 1, 3]);
+      assert.deepStrictEqual(order, [4, 2, 1, 3]);
       done();
     });
   });
@@ -87,8 +87,8 @@ parallel('#series', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [2.4, 4.8, 3, 7.2]);
-      assert.deepEqual(order, [1.2, 2.4, 1.5, 3.6]);
+      assert.deepStrictEqual(res, [2.4, 4.8, 3, 7.2]);
+      assert.deepStrictEqual(order, [1.2, 2.4, 1.5, 3.6]);
       done();
     }, Math);
   });
@@ -108,13 +108,13 @@ parallel('#series', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         a: 2.4,
         b: 4.8,
         c: 3,
         d: 7.2
       });
-      assert.deepEqual(order, [1.2, 2.4, 1.5, 3.6]);
+      assert.deepStrictEqual(order, [1.2, 2.4, 1.5, 3.6]);
       done();
     }, Math);
   });
@@ -133,7 +133,7 @@ parallel('#series', function() {
         return done(err);
       }
       assert.strictEqual(sync, false);
-      assert.deepEqual(res, [1, 3, 2, 4]);
+      assert.deepStrictEqual(res, [1, 3, 2, 4]);
       done();
     });
     sync = false;
@@ -146,7 +146,7 @@ parallel('#series', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, []);
+      assert.deepStrictEqual(res, []);
       done();
     });
   });
@@ -158,7 +158,7 @@ parallel('#series', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, {});
+      assert.deepStrictEqual(res, {});
       done();
     });
   });

@@ -25,7 +25,7 @@ parallel('#memoize', function() {
 
         fn2(1, function() {
 
-          assert.deepEqual(order, [1, 2]);
+          assert.deepStrictEqual(order, [1, 2]);
           done();
         });
       });
@@ -66,7 +66,7 @@ parallel('#memoize', function() {
         // ['cb', 1, 2], memoized
         'tick3'
       ];
-      assert.deepEqual(call_order, order);
+      assert.deepStrictEqual(call_order, order);
       done();
     }
 
@@ -96,7 +96,7 @@ parallel('#memoize', function() {
       assert.strictEqual(res, 1);
     });
     setTimeout(function() {
-      assert.deepEqual(order, [1, 2]);
+      assert.deepStrictEqual(order, [1, 2]);
       done();
     }, 300);
 

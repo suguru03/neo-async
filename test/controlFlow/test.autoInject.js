@@ -56,7 +56,7 @@ parallel('#autoInject', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(result, {
+      assert.deepStrictEqual(result, {
         task1: 1,
         task2: 2,
         task3: 3,
@@ -64,7 +64,7 @@ parallel('#autoInject', function() {
         task5: 5,
         task6: 6
       });
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         'task2',
         'task3',
         'task6',
@@ -97,12 +97,12 @@ parallel('#autoInject', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(result, {
+      assert.deepStrictEqual(result, {
         task1: 1,
         task2: 2,
         task3: 3
       });
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         'task1',
         'task3',
         'task2'
@@ -155,7 +155,7 @@ parallel('#autoInject', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         'task1',
         'task3',
         'task2',
@@ -218,7 +218,7 @@ parallel('#autoInject', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(result, {
+      assert.deepStrictEqual(result, {
         task1: 1,
         task2: 2,
         task3: 3,
@@ -227,7 +227,7 @@ parallel('#autoInject', function() {
         task6: 6,
         task7: 7
       });
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         'task7',
         'task6',
         'task5',
@@ -298,7 +298,7 @@ parallel('#autoInject', function() {
        "      task2: ( task3 , cb ) => cb(null, 2),                 " +
        "      task3: cb             => cb(null, 3)                  " +
        "    }, (err, results) => {                                  " +
-       "      assert.deepEqual(results, {                           " +
+       "      assert.deepStrictEqual(results, {                           " +
        "        task1: 1,                                           " +
        "        task2: 2,                                           " +
        "        task3: 3                                            " +

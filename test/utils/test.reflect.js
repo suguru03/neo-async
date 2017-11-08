@@ -26,7 +26,7 @@ parallel('#reflect', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [
+      assert.deepStrictEqual(res, [
         { error: 'error' },
         { error: 'error2' },
         { value: 3 }
@@ -52,7 +52,7 @@ parallel('#reflect', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [
+      assert.deepStrictEqual(res, [
         { error: 'error' },
         { error: 'error2' },
         { value: [3, 3] }
@@ -70,7 +70,7 @@ parallel('#reflect', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         error: 'error'
       });
       done();
@@ -86,7 +86,7 @@ parallel('#reflect', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         value: [1, 2]
       });
       done();
@@ -102,7 +102,7 @@ parallel('#reflect', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         value: [3, 4, 1]
       });
       done();
@@ -128,7 +128,7 @@ parallel('#reflectAll', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, [
+      assert.deepStrictEqual(res, [
         { error: 'error' },
         { error: 'error2' },
         { value: 3 }
@@ -153,7 +153,7 @@ parallel('#reflectAll', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         a: { error: 'error' },
         b: { error: 'error2' },
         c: { value: [3, 4, 5] }

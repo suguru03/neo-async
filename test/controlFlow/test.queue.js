@@ -58,8 +58,8 @@ parallel('#queue', function() {
     assert.strictEqual(queue.concurrency, concurrency);
 
     queue.drain = function() {
-      assert.deepEqual(order.callback, [2, 1, 4, 3]);
-      assert.deepEqual(order.process, [2, 1, 4, 3]);
+      assert.deepStrictEqual(order.callback, [2, 1, 4, 3]);
+      assert.deepStrictEqual(order.process, [2, 1, 4, 3]);
       assert.strictEqual(queue.length(), 0);
       assert.strictEqual(queue.concurrency, concurrency);
       done();
@@ -90,8 +90,8 @@ parallel('#queue', function() {
       order.callback.push(1);
     });
     queue.drain = function() {
-      assert.deepEqual(order.callback, [0, 1]);
-      assert.deepEqual(order.process, [0, 1]);
+      assert.deepStrictEqual(order.callback, [0, 1]);
+      assert.deepStrictEqual(order.process, [0, 1]);
       assert.strictEqual(queue.length(), 0);
       done();
     };
@@ -142,8 +142,8 @@ parallel('#queue', function() {
     assert.strictEqual(queue.concurrency, 1);
 
     queue.drain = function() {
-      assert.deepEqual(order.callback, [1, 2, 3, 4]);
-      assert.deepEqual(order.process, [1, 2, 3, 4]);
+      assert.deepStrictEqual(order.callback, [1, 2, 3, 4]);
+      assert.deepStrictEqual(order.process, [1, 2, 3, 4]);
       assert.strictEqual(queue.length(), 0);
       assert.strictEqual(queue.concurrency, 1);
       done();
@@ -163,7 +163,7 @@ parallel('#queue', function() {
 
     queue.drain = function() {
 
-      assert.deepEqual(results, ['hoge', 'fugaError', 'piyo']);
+      assert.deepStrictEqual(results, ['hoge', 'fugaError', 'piyo']);
       done();
     };
 
@@ -223,7 +223,7 @@ parallel('#queue', function() {
     };
 
     q.drain = function() {
-      assert.deepEqual(results, ['fooError', 'bar']);
+      assert.deepStrictEqual(results, ['fooError', 'bar']);
       done();
     };
 
@@ -307,8 +307,8 @@ parallel('#queue', function() {
     assert.strictEqual(queue.concurrency, 2);
 
     queue.drain = function() {
-      assert.deepEqual(order.callback, [2, 1, 3, 4]);
-      assert.deepEqual(order.process, [2, 1, 3, 4]);
+      assert.deepStrictEqual(order.callback, [2, 1, 3, 4]);
+      assert.deepStrictEqual(order.process, [2, 1, 3, 4]);
       assert.strictEqual(queue.length(), 0);
       assert.strictEqual(queue.concurrency, 1);
       done();
@@ -366,8 +366,8 @@ parallel('#queue', function() {
     assert.strictEqual(queue.concurrency, 2);
 
     queue.drain = function() {
-      assert.deepEqual(order.callback, [3, 4, 2, 1]);
-      assert.deepEqual(order.process, [3, 4, 2, 1]);
+      assert.deepStrictEqual(order.callback, [3, 4, 2, 1]);
+      assert.deepStrictEqual(order.process, [3, 4, 2, 1]);
       assert.strictEqual(queue.length(), 0);
       assert.strictEqual(queue.concurrency, 1);
       done();
@@ -383,7 +383,7 @@ parallel('#queue', function() {
     };
     var queue = async.queue(worker);
     queue.drain = function() {
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(order, []);
       done();
     };
     queue.push();
@@ -437,7 +437,7 @@ parallel('#queue', function() {
       queue.kill();
     }, 120);
     setTimeout(function() {
-      assert.deepEqual(order, [1]);
+      assert.deepStrictEqual(order, [1]);
       done();
     }, 200);
   });
@@ -485,7 +485,7 @@ parallel('#queue', function() {
       assert.strictEqual(q.length(), 0);
       assert.strictEqual(q.running(), 0);
       calls.push('drain');
-      assert.deepEqual(calls, [
+      assert.deepStrictEqual(calls, [
         'process foo',
         'process bar',
         'saturated',
@@ -552,7 +552,7 @@ parallel('#queue', function() {
     setTimeout(q.resume, 100);
 
     q.drain = function() {
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         ['process', 1],
         ['process', 2],
         ['process', 3],
@@ -607,7 +607,7 @@ parallel('#queue', function() {
     }, 250);
 
     q.drain = function() {
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         ['process', 1],
         ['process', 2],
         ['process', 3],
@@ -788,7 +788,7 @@ parallel('#queue', function() {
     q.push({ id: 5 });
 
     setTimeout(function() {
-      assert.deepEqual(order, [1, 2, 3, 4, 5]);
+      assert.deepStrictEqual(order, [1, 2, 3, 4, 5]);
       done();
     }, 1000);
   });
@@ -808,7 +808,7 @@ parallel('#queue', function() {
     });
 
     q.drain = function() {
-      assert.deepEqual(result, [1, 2, 4, 5]);
+      assert.deepStrictEqual(result, [1, 2, 4, 5]);
       done();
     };
   });
@@ -858,8 +858,8 @@ parallel('#priorityQueue', function() {
     assert.strictEqual(queue.concurrency, 1);
 
     queue.drain = function() {
-      assert.deepEqual(order.process, [2, 1, 4, 3]);
-      assert.deepEqual(order.callback, [2, 1, 4, 3]);
+      assert.deepStrictEqual(order.process, [2, 1, 4, 3]);
+      assert.deepStrictEqual(order.callback, [2, 1, 4, 3]);
       assert.strictEqual(queue.concurrency, 1);
       assert.strictEqual(queue.length(), 0);
       done();
@@ -915,8 +915,8 @@ parallel('#priorityQueue', function() {
     assert.strictEqual(queue.concurrency, 2);
 
     queue.drain = function() {
-      assert.deepEqual(order.process, [1, 2, 3, 4]);
-      assert.deepEqual(order.callback, [1, 2, 3, 4]);
+      assert.deepStrictEqual(order.process, [1, 2, 3, 4]);
+      assert.deepStrictEqual(order.callback, [1, 2, 3, 4]);
       assert.strictEqual(queue.concurrency, 2);
       assert.strictEqual(queue.length(), 0);
       assert.ok(called);
@@ -933,7 +933,7 @@ parallel('#priorityQueue', function() {
     };
     var queue = async.priorityQueue(worker);
     queue.drain = function() {
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(order, []);
       done();
     };
     queue.push();
@@ -963,7 +963,7 @@ parallel('#priorityQueue', function() {
     q.push({ id: 5 });
 
     setTimeout(function() {
-      assert.deepEqual(order, [1, 2, 3, 4, 5]);
+      assert.deepStrictEqual(order, [1, 2, 3, 4, 5]);
       done();
     }, 1000);
   });
@@ -1014,7 +1014,7 @@ parallel('#priorityQueue', function() {
     queue.push('test4', 2, function() { order.push('test4'); });
     queue.push('test5', 1, function() { order.push('test5'); });
     setTimeout(function() {
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         'worker_test5',
         'worker_test4',
         'worker_test3',
@@ -1051,7 +1051,7 @@ parallel('#priorityQueue', function() {
     };
 
     q.drain = function() {
-      assert.deepEqual(calls, [
+      assert.deepStrictEqual(calls, [
         'empty',
         'process 1',
       ]);

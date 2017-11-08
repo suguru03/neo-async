@@ -25,7 +25,7 @@ parallel('#forever', function() {
 
     async.forever(iterator, function(err) {
       assert.ok(err);
-      assert.deepEqual(order, [0, 1, 2, 3, 4]);
+      assert.deepStrictEqual(order, [0, 1, 2, 3, 4]);
       done();
     });
   });
@@ -48,8 +48,8 @@ parallel('#forever', function() {
 
     async.forever(iterator, function(err) {
       assert.ok(err);
-      assert.deepEqual(order, [0, 1, 2, 3, 4]);
-      assert.deepEqual(result, [0, 1, 4, 9, 16]);
+      assert.deepStrictEqual(order, [0, 1, 2, 3, 4]);
+      assert.deepStrictEqual(result, [0, 1, 4, 9, 16]);
       done();
     }, Math);
   });
@@ -88,7 +88,7 @@ parallel('#forever', function() {
     domain.create()
       .on('error', function(err) {
         assert.strictEqual(err.message, 'end');
-        assert.deepEqual(order, [0, 1, 2, 3, 4]);
+        assert.deepStrictEqual(order, [0, 1, 2, 3, 4]);
         done();
       })
       .run(function() {

@@ -30,7 +30,7 @@ parallel('#during', function() {
         return done(err);
       }
       assert.strictEqual(count, 5);
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         ['test', 0],
         ['iterator', 0],
         ['test', 1],
@@ -131,7 +131,7 @@ parallel('#doDuring', function() {
         return done(err);
       }
       assert.strictEqual(count, 5);
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         ['iterator', 0],
         ['test', 1],
         ['iterator', 1],
@@ -170,7 +170,7 @@ parallel('#doDuring', function() {
       }
       assert.strictEqual(count, 5);
       assert.strictEqual(sum, 15);
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         ['iterator', 0],
         ['test', 1],
         ['iterator', 1],
@@ -217,7 +217,7 @@ parallel('#doDuring', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         ['iterator', 0],
         ['test', 1],
         ['iterator', 1],

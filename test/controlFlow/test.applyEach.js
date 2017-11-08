@@ -40,8 +40,8 @@ parallel('#applyEach', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(order, [2, 1, 3]);
-      assert.deepEqual(res, [1, 2, 3]);
+      assert.deepStrictEqual(order, [2, 1, 3]);
+      assert.deepStrictEqual(res, [1, 2, 3]);
       done();
     });
 
@@ -76,8 +76,8 @@ parallel('#applyEach', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(order, [2, 1, 3]);
-      assert.deepEqual(res, [1, 2, 3]);
+      assert.deepStrictEqual(order, [2, 1, 3]);
+      assert.deepStrictEqual(res, [1, 2, 3]);
       done();
     });
   });
@@ -141,8 +141,8 @@ parallel('#applyEachSeries', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(order, [1, 2, 3]);
-      assert.deepEqual(res, [1, 2, 3]);
+      assert.deepStrictEqual(order, [1, 2, 3]);
+      assert.deepStrictEqual(res, [1, 2, 3]);
       done();
     });
   });

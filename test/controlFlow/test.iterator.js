@@ -28,13 +28,13 @@ parallel('#iterator', function() {
     ]);
 
     iterator();
-    assert.deepEqual(order, [1]);
+    assert.deepStrictEqual(order, [1]);
     var iterator2 = iterator();
-    assert.deepEqual(order, [1, 1]);
+    assert.deepStrictEqual(order, [1, 1]);
     var iterator3 = iterator2('arg1');
-    assert.deepEqual(order, [1, 1, 2]);
+    assert.deepStrictEqual(order, [1, 1, 2]);
     var iterator4 = iterator3('arg1', 'arg2');
-    assert.deepEqual(order, [1, 1, 2, 3]);
+    assert.deepStrictEqual(order, [1, 1, 2, 3]);
     assert.strictEqual(iterator4, null);
     done();
   });
@@ -58,13 +58,13 @@ parallel('#iterator', function() {
     });
 
     iterator();
-    assert.deepEqual(order, [1]);
+    assert.deepStrictEqual(order, [1]);
     var iterator2 = iterator();
-    assert.deepEqual(order, [1, 1]);
+    assert.deepStrictEqual(order, [1, 1]);
     var iterator3 = iterator2('arg1');
-    assert.deepEqual(order, [1, 1, 2]);
+    assert.deepStrictEqual(order, [1, 1, 2]);
     var iterator4 = iterator3('arg1', 'arg2');
-    assert.deepEqual(order, [1, 1, 2, 3]);
+    assert.deepStrictEqual(order, [1, 1, 2, 3]);
     assert.strictEqual(iterator4, null);
     done();
 
@@ -73,8 +73,8 @@ parallel('#iterator', function() {
   it('should get undefined if array is empty', function(done) {
 
     var iterator = async.iterator([]);
-    assert.deepEqual(iterator(), null);
-    assert.deepEqual(iterator.next(), null);
+    assert.deepStrictEqual(iterator(), null);
+    assert.deepStrictEqual(iterator.next(), null);
     done();
   });
 
@@ -98,10 +98,10 @@ parallel('#iterator', function() {
 
     var fn = iterator.next();
     var iterator2 = fn('arg1');
-    assert.deepEqual(order, [2]);
+    assert.deepStrictEqual(order, [2]);
     iterator2('arg1', 'arg2');
-    assert.deepEqual(order, [2, 3]);
-    assert.deepEqual(iterator2.next(), null);
+    assert.deepStrictEqual(order, [2, 3]);
+    assert.deepStrictEqual(iterator2.next(), null);
     done();
   });
 

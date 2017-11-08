@@ -58,11 +58,11 @@ parallel('#omit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         '2': 2,
         '3': 4
       });
-      assert.deepEqual(order, [1, 2, 3, 4]);
+      assert.deepStrictEqual(order, [1, 2, 3, 4]);
       done();
     });
   });
@@ -76,11 +76,11 @@ parallel('#omit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         '2': 2,
         '3': 4
       });
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         [1, 0],
         [2, 2],
         [3, 1],
@@ -103,11 +103,11 @@ parallel('#omit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         a: 4,
         c: 2
       });
-      assert.deepEqual(order, [2, 3, 4]);
+      assert.deepStrictEqual(order, [2, 3, 4]);
       done();
     });
   });
@@ -125,11 +125,11 @@ parallel('#omit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         a: 4,
         c: 2
       });
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         [2, 'c'],
         [3, 'b'],
         [4, 'a']
@@ -150,11 +150,11 @@ parallel('#omit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         '0': 4,
         '2': 2
       });
-      assert.deepEqual(order, [2, 3, 4]);
+      assert.deepStrictEqual(order, [2, 3, 4]);
       done();
     });
   });
@@ -171,11 +171,11 @@ parallel('#omit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         '0': 4,
         '2': 2
       });
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         [2, 2],
         [3, 1],
         [4, 0]
@@ -196,11 +196,11 @@ parallel('#omit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         '0': ['a', 4],
         '2': ['c', 2]
       });
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         ['c', 2],
         ['b', 3],
         ['a', 4]
@@ -221,11 +221,11 @@ parallel('#omit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         '0': ['a', 4],
         '2': ['c', 2]
       });
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         [['c', 2], 2],
         [['b', 3], 1],
         [['a', 4], 0]
@@ -248,8 +248,8 @@ parallel('#omit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {});
-      assert.deepEqual(order, [1.1, 2.6, 3.5]);
+      assert.deepStrictEqual(res, {});
+      assert.deepStrictEqual(order, [1.1, 2.6, 3.5]);
       done();
     }, Math);
   });
@@ -268,10 +268,10 @@ parallel('#omit', function() {
     async.omit(collection, iterator, function(err, res) {
       assert.ok(err);
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         '2': 2
       });
-      assert.deepEqual(order, [1, 2, 3]);
+      assert.deepStrictEqual(order, [1, 2, 3]);
       done();
     });
   });
@@ -295,10 +295,10 @@ parallel('#omit', function() {
     async.omit(collection, iterator, function(err, res) {
       assert.ok(err);
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         c: 2
       });
-      assert.deepEqual(order, [1, 2, 3]);
+      assert.deepStrictEqual(order, [1, 2, 3]);
       done();
     });
   });
@@ -350,7 +350,7 @@ parallel('#omit', function() {
             return done(err);
           }
           assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-          assert.deepEqual(res, {
+          assert.deepStrictEqual(res, {
             '0': 2,
             '1': 1,
             '2': 3
@@ -414,7 +414,7 @@ parallel('#omit', function() {
             return done(err);
           }
           assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-          assert.deepEqual(res, {
+          assert.deepStrictEqual(res, {
             a: 4,
             b: 3,
             c: 2
@@ -455,8 +455,8 @@ parallel('#omit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {});
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(res, {});
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -470,8 +470,8 @@ parallel('#omit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {});
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(res, {});
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -484,8 +484,8 @@ parallel('#omit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {});
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(res, {});
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -498,8 +498,8 @@ parallel('#omit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {});
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(res, {});
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -512,8 +512,8 @@ parallel('#omit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {});
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(res, {});
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -531,11 +531,11 @@ parallel('#omitSeries', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         '2': 2,
         '3': 4
       });
-      assert.deepEqual(order, [1, 3, 2, 4]);
+      assert.deepStrictEqual(order, [1, 3, 2, 4]);
       done();
     });
   });
@@ -549,11 +549,11 @@ parallel('#omitSeries', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         '2': 2,
         '3': 4
       });
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         [1, 0],
         [3, 1],
         [2, 2],
@@ -576,11 +576,11 @@ parallel('#omitSeries', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         a: 4,
         c: 2
       });
-      assert.deepEqual(order, [4, 3, 2]);
+      assert.deepStrictEqual(order, [4, 3, 2]);
       done();
     });
   });
@@ -598,11 +598,11 @@ parallel('#omitSeries', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         a: 4,
         c: 2
       });
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         [4, 'a'],
         [3, 'b'],
         [2, 'c']
@@ -623,11 +623,11 @@ parallel('#omitSeries', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         '0': 4,
         '2': 2
       });
-      assert.deepEqual(order, [4, 3, 2]);
+      assert.deepStrictEqual(order, [4, 3, 2]);
       done();
     });
   });
@@ -644,11 +644,11 @@ parallel('#omitSeries', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         '0': 4,
         '2': 2
       });
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         [4, 0],
         [3, 1],
         [2, 2]
@@ -669,11 +669,11 @@ parallel('#omitSeries', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         '0': ['a', 4],
         '2': ['c', 2]
       });
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         ['a', 4],
         ['b', 3],
         ['c', 2]
@@ -694,11 +694,11 @@ parallel('#omitSeries', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         '0': ['a', 4],
         '2': ['c', 2]
       });
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         [['a', 4], 0],
         [['b', 3], 1],
         [['c', 2], 2]
@@ -721,8 +721,8 @@ parallel('#omitSeries', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {});
-      assert.deepEqual(order, [1.1, 3.5, 2.6]);
+      assert.deepStrictEqual(res, {});
+      assert.deepStrictEqual(order, [1.1, 3.5, 2.6]);
       done();
     }, Math);
   });
@@ -743,7 +743,7 @@ parallel('#omitSeries', function() {
         return done(err);
       }
       assert.strictEqual(sync, false);
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         c: 2
       });
       done();
@@ -765,8 +765,8 @@ parallel('#omitSeries', function() {
     async.omitSeries(collection, iterator, function(err, res) {
       assert.ok(err);
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {});
-      assert.deepEqual(order, [1, 3]);
+      assert.deepStrictEqual(res, {});
+      assert.deepStrictEqual(order, [1, 3]);
       done();
     });
   });
@@ -790,8 +790,8 @@ parallel('#omitSeries', function() {
     async.omitSeries(collection, iterator, function(err, res) {
       assert.ok(err);
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {});
-      assert.deepEqual(order, [1, 3]);
+      assert.deepStrictEqual(res, {});
+      assert.deepStrictEqual(order, [1, 3]);
       done();
     });
   });
@@ -843,7 +843,7 @@ parallel('#omitSeries', function() {
             return done(err);
           }
           assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-          assert.deepEqual(res, {
+          assert.deepStrictEqual(res, {
             '0': 2,
             '1': 1,
             '2': 3
@@ -907,7 +907,7 @@ parallel('#omitSeries', function() {
             return done(err);
           }
           assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-          assert.deepEqual(res, {
+          assert.deepStrictEqual(res, {
             a: 4,
             b: 3,
             c: 2
@@ -947,8 +947,8 @@ parallel('#omitSeries', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, []);
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(res, {});
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -962,8 +962,8 @@ parallel('#omitSeries', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {});
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(res, {});
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -976,8 +976,8 @@ parallel('#omitSeries', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {});
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(res, {});
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -990,8 +990,8 @@ parallel('#omitSeries', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {});
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(res, {});
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -1004,8 +1004,8 @@ parallel('#omitSeries', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {});
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(res, {});
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -1024,11 +1024,11 @@ parallel('#omitLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         '3': 2,
         '4': 4
       });
-      assert.deepEqual(order, [1, 3, 5, 2, 4]);
+      assert.deepStrictEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
   });
@@ -1043,11 +1043,11 @@ parallel('#omitLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         '3': 2,
         '4': 4
       });
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         [1, 0],
         [3, 2],
         [5, 1],
@@ -1073,11 +1073,11 @@ parallel('#omitLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         d: 2,
         e: 4
       });
-      assert.deepEqual(order, [1, 3, 5, 2, 4]);
+      assert.deepStrictEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
   });
@@ -1097,11 +1097,11 @@ parallel('#omitLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         d: 2,
         e: 4
       });
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         [1, 'a'],
         [3, 'c'],
         [5, 'b'],
@@ -1126,11 +1126,11 @@ parallel('#omitLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         '3': 2,
         '4': 4
       });
-      assert.deepEqual(order, [1, 3, 5, 2, 4]);
+      assert.deepStrictEqual(order, [1, 3, 5, 2, 4]);
       done();
     });
   });
@@ -1149,11 +1149,11 @@ parallel('#omitLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         '3': 2,
         '4': 4
       });
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         [1, 0],
         [3, 2],
         [5, 1],
@@ -1178,11 +1178,11 @@ parallel('#omitLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         '3': ['d', 2],
         '4': ['e', 4]
       });
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         ['a', 1],
         ['c', 3],
         ['b', 5],
@@ -1207,11 +1207,11 @@ parallel('#omitLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         '3': ['d', 2],
         '4': ['e', 4]
       });
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         [['a', 1], 0],
         [['c', 3], 2],
         [['b', 5], 1],
@@ -1236,8 +1236,8 @@ parallel('#omitLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {});
-      assert.deepEqual(order, [1.1, 3.5, 2.7]);
+      assert.deepStrictEqual(res, {});
+      assert.deepStrictEqual(order, [1.1, 3.5, 2.7]);
       done();
     }, Math);
   });
@@ -1252,11 +1252,11 @@ parallel('#omitLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         '2': 4,
         '3': 2
       });
-      assert.deepEqual(order, [1, 1, 2, 3, 3, 3, 4]);
+      assert.deepStrictEqual(order, [1, 1, 2, 3, 3, 3, 4]);
       done();
     });
   });
@@ -1279,7 +1279,7 @@ parallel('#omitLimit', function() {
         return done(err);
       }
       assert.strictEqual(sync, false);
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         c: 2,
         d: 4
       });
@@ -1305,8 +1305,8 @@ parallel('#omitLimit', function() {
     async.omitLimit(collection, 4, iterator, function(err, res) {
       assert.ok(err);
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {});
-      assert.deepEqual(order, [1, 2]);
+      assert.deepStrictEqual(res, {});
+      assert.deepStrictEqual(order, [1, 2]);
       done();
     });
   });
@@ -1324,8 +1324,8 @@ parallel('#omitLimit', function() {
     async.omitLimit(collection, 4, iterator, function(err, res) {
       assert.ok(err);
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {});
-      assert.deepEqual(order, [1, 2]);
+      assert.deepStrictEqual(res, {});
+      assert.deepStrictEqual(order, [1, 2]);
       done();
     });
   });
@@ -1377,7 +1377,7 @@ parallel('#omitLimit', function() {
             return done(err);
           }
           assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-          assert.deepEqual(res, {
+          assert.deepStrictEqual(res, {
             '0': 2,
             '1': 1,
             '2': 3
@@ -1441,7 +1441,7 @@ parallel('#omitLimit', function() {
             return done(err);
           }
           assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-          assert.deepEqual(res, {
+          assert.deepStrictEqual(res, {
             a: 2,
             b: 1,
             c: 3
@@ -1482,8 +1482,8 @@ parallel('#omitLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {});
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(res, {});
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -1497,8 +1497,8 @@ parallel('#omitLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {});
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(res, {});
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -1511,8 +1511,8 @@ parallel('#omitLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {});
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(res, {});
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -1525,8 +1525,8 @@ parallel('#omitLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {});
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(res, {});
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -1539,8 +1539,8 @@ parallel('#omitLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {});
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(res, {});
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -1554,8 +1554,8 @@ parallel('#omitLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {});
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(res, {});
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -1569,8 +1569,8 @@ parallel('#omitLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Object]');
-      assert.deepEqual(res, {});
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(res, {});
+      assert.deepStrictEqual(order, []);
       done();
     });
   });

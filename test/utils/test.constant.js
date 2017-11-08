@@ -14,9 +14,9 @@ parallel('#constant', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(result1, 1);
-      assert.deepEqual(result2, 2);
-      assert.deepEqual(result3, 3);
+      assert.deepStrictEqual(result1, 1);
+      assert.deepStrictEqual(result2, 2);
+      assert.deepStrictEqual(result3, 3);
       done();
     });
   });
@@ -26,9 +26,9 @@ parallel('#constant', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(result1, 1);
-      assert.deepEqual(result2, 2);
-      assert.deepEqual(result3, 3);
+      assert.deepStrictEqual(result1, 1);
+      assert.deepStrictEqual(result2, 2);
+      assert.deepStrictEqual(result3, 3);
       assert.strictEqual(arguments.length, 4);
       done();
     });

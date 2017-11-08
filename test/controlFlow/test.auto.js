@@ -52,7 +52,7 @@ parallel('#auto', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         'task2',
         'task3',
         'task6',
@@ -88,7 +88,7 @@ parallel('#auto', function() {
         callback();
       }],
       task4: ['task1', 'task2', function(results, callback) {
-        assert.deepEqual(results.task1, ['task1a', 'task1b']);
+        assert.deepStrictEqual(results.task1, ['task1a', 'task1b']);
         assert.strictEqual(results.task2, 'task2');
         order.push('task4');
         callback(null, 'task4');
@@ -97,8 +97,8 @@ parallel('#auto', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(order, ['task2', 'task3', 'task1', 'task4']);
-      assert.deepEqual(results, {
+      assert.deepStrictEqual(order, ['task2', 'task3', 'task1', 'task4']);
+      assert.deepStrictEqual(results, {
         task1: ['task1a', 'task1b'],
         task2: 'task2',
         task3: undefined,
@@ -128,12 +128,12 @@ parallel('#auto', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         'task1',
         'task3',
         'task2'
       ]);
-      assert.deepEqual(results, {
+      assert.deepStrictEqual(results, {
         task1: 'task1',
         task2: 'task2',
         task3: 'task3'
@@ -199,15 +199,15 @@ parallel('#auto', function() {
         callback('error', 'task3');
       }],
       task4: ['task1', 'task2', function(results, callback) {
-        assert.deepEqual(results.task1, ['task1a', 'task1b']);
+        assert.deepStrictEqual(results.task1, ['task1a', 'task1b']);
         assert.strictEqual(results.task2, 'task2');
         order.push('task4');
         callback(null, 'task4');
       }]
     }, function(err, results) {
       assert.ok(err);
-      assert.deepEqual(order, ['task2', 'task3']);
-      assert.deepEqual(results, {
+      assert.deepStrictEqual(order, ['task2', 'task3']);
+      assert.deepStrictEqual(results, {
         task2: 'task2',
         task3: 'task3'
       });
@@ -283,7 +283,7 @@ parallel('#auto', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         'task1',
         'task2',
         'task3',
@@ -455,7 +455,7 @@ parallel('#auto', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         one: 1,
         hasOwnProperty: 2
       });

@@ -58,7 +58,7 @@ parallel('#detect', function() {
         return done(err);
       }
       assert.strictEqual(res, 1);
-      assert.deepEqual(order, [1]);
+      assert.deepStrictEqual(order, [1]);
       done();
     });
   });
@@ -72,7 +72,7 @@ parallel('#detect', function() {
         return done(err);
       }
       assert.strictEqual(res, 1);
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         [1, 0]
       ]);
       done();
@@ -92,7 +92,7 @@ parallel('#detect', function() {
         return done(err);
       }
       assert.strictEqual(res, 3);
-      assert.deepEqual(order, [2, 3]);
+      assert.deepStrictEqual(order, [2, 3]);
       done();
     });
   });
@@ -110,7 +110,7 @@ parallel('#detect', function() {
         return done(err);
       }
       assert.strictEqual(res, 3);
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         [2, 'c'],
         [3, 'b']
       ]);
@@ -130,7 +130,7 @@ parallel('#detect', function() {
         return done(err);
       }
       assert.strictEqual(res, 3);
-      assert.deepEqual(order, [2, 3]);
+      assert.deepStrictEqual(order, [2, 3]);
       done();
     });
   });
@@ -147,7 +147,7 @@ parallel('#detect', function() {
         return done(err);
       }
       assert.strictEqual(res, 3);
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         [2, 2],
         [3, 1]
       ]);
@@ -166,8 +166,8 @@ parallel('#detect', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, ['b', 3]);
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(res, ['b', 3]);
+      assert.deepStrictEqual(order, [
         ['c', 2],
         ['b', 3]
       ]);
@@ -186,8 +186,8 @@ parallel('#detect', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, ['b', 3]);
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(res, ['b', 3]);
+      assert.deepStrictEqual(order, [
         [ ['c', 2], 2],
         [ ['b', 3], 1]
       ]);
@@ -209,7 +209,7 @@ parallel('#detect', function() {
         return done(err);
       }
       assert.strictEqual(res, 1.1);
-      assert.deepEqual(order, [1.1]);
+      assert.deepStrictEqual(order, [1.1]);
       done();
     }, Math);
   });
@@ -224,7 +224,7 @@ parallel('#detect', function() {
         return done(err);
       }
       assert.strictEqual(res, undefined);
-      assert.deepEqual(order, [2, 4, 6]);
+      assert.deepStrictEqual(order, [2, 4, 6]);
       done();
     });
   });
@@ -329,7 +329,7 @@ parallel('#detect', function() {
         return done(err);
       }
       assert.strictEqual(res, undefined);
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -343,7 +343,7 @@ parallel('#detect', function() {
         return done(err);
       }
       assert.strictEqual(res, undefined);
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -356,7 +356,7 @@ parallel('#detect', function() {
         return done(err);
       }
       assert.strictEqual(res, undefined);
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -369,7 +369,7 @@ parallel('#detect', function() {
         return done(err);
       }
       assert.strictEqual(res, undefined);
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -382,7 +382,7 @@ parallel('#detect', function() {
         return done(err);
       }
       assert.strictEqual(res, undefined);
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -400,7 +400,7 @@ parallel('#detectSeries', function() {
         return done(err);
       }
       assert.strictEqual(res, 1);
-      assert.deepEqual(order, [1]);
+      assert.deepStrictEqual(order, [1]);
       done();
     });
   });
@@ -414,7 +414,7 @@ parallel('#detectSeries', function() {
         return done(err);
       }
       assert.strictEqual(res, 1);
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         [1, 0]
       ]);
       done();
@@ -434,7 +434,7 @@ parallel('#detectSeries', function() {
         return done(err);
       }
       assert.strictEqual(res, 5);
-      assert.deepEqual(order, [5]);
+      assert.deepStrictEqual(order, [5]);
       done();
     });
   });
@@ -452,7 +452,7 @@ parallel('#detectSeries', function() {
         return done(err);
       }
       assert.strictEqual(res, 5);
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         [5, 'a']
       ]);
       done();
@@ -471,7 +471,7 @@ parallel('#detectSeries', function() {
         return done(err);
       }
       assert.strictEqual(res, 5);
-      assert.deepEqual(order, [5]);
+      assert.deepStrictEqual(order, [5]);
       done();
     });
   });
@@ -488,7 +488,7 @@ parallel('#detectSeries', function() {
         return done(err);
       }
       assert.strictEqual(res, 5);
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         [5, 0]
       ]);
       done();
@@ -506,8 +506,8 @@ parallel('#detectSeries', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, ['a', 5]);
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(res, ['a', 5]);
+      assert.deepStrictEqual(order, [
         ['a', 5]
       ]);
       done();
@@ -525,8 +525,8 @@ parallel('#detectSeries', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, ['a', 5]);
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(res, ['a', 5]);
+      assert.deepStrictEqual(order, [
         [ ['a', 5], 0]
       ]);
       done();
@@ -547,7 +547,7 @@ parallel('#detectSeries', function() {
         return done(err);
       }
       assert.strictEqual(res, 1.1);
-      assert.deepEqual(order, [1.1]);
+      assert.deepStrictEqual(order, [1.1]);
       done();
     }, Math);
   });
@@ -584,7 +584,7 @@ parallel('#detectSeries', function() {
         return done(err);
       }
       assert.strictEqual(res, undefined);
-      assert.deepEqual(order, [2, 6, 4]);
+      assert.deepStrictEqual(order, [2, 6, 4]);
       done();
     });
   });
@@ -599,7 +599,7 @@ parallel('#detectSeries', function() {
         return done(err);
       }
       assert.strictEqual(res, undefined);
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         [2, 0],
         [6, 1],
         [4, 2]
@@ -708,7 +708,7 @@ parallel('#detectSeries', function() {
         return done(err);
       }
       assert.strictEqual(res, undefined);
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -722,7 +722,7 @@ parallel('#detectSeries', function() {
         return done(err);
       }
       assert.strictEqual(res, undefined);
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -735,7 +735,7 @@ parallel('#detectSeries', function() {
         return done(err);
       }
       assert.strictEqual(res, undefined);
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -748,7 +748,7 @@ parallel('#detectSeries', function() {
         return done(err);
       }
       assert.strictEqual(res, undefined);
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -761,7 +761,7 @@ parallel('#detectSeries', function() {
         return done(err);
       }
       assert.strictEqual(res, undefined);
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -798,7 +798,7 @@ parallel('#detectLimit', function() {
         return done(err);
       }
       assert.strictEqual(res, 3);
-      assert.deepEqual(order, [2, 4, 3]);
+      assert.deepStrictEqual(order, [2, 4, 3]);
       done();
     });
   });
@@ -813,7 +813,7 @@ parallel('#detectLimit', function() {
         return done(err);
       }
       assert.strictEqual(res, 3);
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         [2, 0],
         [4, 1],
         [3, 2]
@@ -836,7 +836,7 @@ parallel('#detectLimit', function() {
         return done(err);
       }
       assert.strictEqual(res, 3);
-      assert.deepEqual(order, [2, 4, 3]);
+      assert.deepStrictEqual(order, [2, 4, 3]);
       done();
     });
   });
@@ -855,7 +855,7 @@ parallel('#detectLimit', function() {
         return done(err);
       }
       assert.strictEqual(res, 3);
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         [2, 'a'],
         [4, 'b'],
         [3, 'c']
@@ -877,7 +877,7 @@ parallel('#detectLimit', function() {
         return done(err);
       }
       assert.strictEqual(res, 3);
-      assert.deepEqual(order, [2, 4, 3]);
+      assert.deepStrictEqual(order, [2, 4, 3]);
       done();
     });
   });
@@ -895,7 +895,7 @@ parallel('#detectLimit', function() {
         return done(err);
       }
       assert.strictEqual(res, 3);
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(order, [
         [2, 0],
         [4, 1],
         [3, 2]
@@ -916,8 +916,8 @@ parallel('#detectLimit', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, ['c', 3]);
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(res, ['c', 3]);
+      assert.deepStrictEqual(order, [
         ['a', 2],
         ['b', 4],
         ['c', 3]
@@ -938,8 +938,8 @@ parallel('#detectLimit', function() {
       if (err) {
         return done(err);
       }
-      assert.deepEqual(res, ['c', 3]);
-      assert.deepEqual(order, [
+      assert.deepStrictEqual(res, ['c', 3]);
+      assert.deepStrictEqual(order, [
         [ ['a', 2], 0],
         [ ['b', 4], 1],
         [ ['c', 3], 2]
@@ -962,7 +962,7 @@ parallel('#detectLimit', function() {
         return done(err);
       }
       assert.strictEqual(res, 2.1);
-      assert.deepEqual(order, [2.1]);
+      assert.deepStrictEqual(order, [2.1]);
       done();
     }, Math);
   });
@@ -977,7 +977,7 @@ parallel('#detectLimit', function() {
         return done(err);
       }
       assert.strictEqual(res, 1);
-      assert.deepEqual(order, [1]);
+      assert.deepStrictEqual(order, [1]);
       done();
     });
   });
@@ -1016,7 +1016,7 @@ parallel('#detectLimit', function() {
         return done(err);
       }
       assert.strictEqual(res, undefined);
-      assert.deepEqual(order, [2, 4, 8]);
+      assert.deepStrictEqual(order, [2, 4, 8]);
       done();
     });
   });
@@ -1034,7 +1034,7 @@ parallel('#detectLimit', function() {
     async.detectLimit(collection, 2, iterator, function(err, res) {
       assert.ok(err);
       assert.strictEqual(res, undefined);
-      assert.deepEqual(order, [1, 2, 4]);
+      assert.deepStrictEqual(order, [1, 2, 4]);
       done();
     });
   });
@@ -1122,7 +1122,7 @@ parallel('#detectLimit', function() {
         return done(err);
       }
       assert.strictEqual(res, undefined);
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -1136,7 +1136,7 @@ parallel('#detectLimit', function() {
         return done(err);
       }
       assert.strictEqual(res, undefined);
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -1149,7 +1149,7 @@ parallel('#detectLimit', function() {
         return done(err);
       }
       assert.strictEqual(res, undefined);
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -1162,7 +1162,7 @@ parallel('#detectLimit', function() {
         return done(err);
       }
       assert.strictEqual(res, undefined);
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -1175,7 +1175,7 @@ parallel('#detectLimit', function() {
         return done(err);
       }
       assert.strictEqual(res, undefined);
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -1189,7 +1189,7 @@ parallel('#detectLimit', function() {
         return done(err);
       }
       assert.strictEqual(res, undefined);
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -1203,7 +1203,7 @@ parallel('#detectLimit', function() {
         return done(err);
       }
       assert.strictEqual(res, undefined);
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -1220,7 +1220,7 @@ parallel('#detectLimit', function() {
       assert.strictEqual(res, 1);
     });
     setTimeout(function() {
-      assert.deepEqual(order, [1, 'callback', 2]);
+      assert.deepStrictEqual(order, [1, 'callback', 2]);
       done();
     }, 10 * delay);
   });

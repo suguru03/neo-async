@@ -39,8 +39,8 @@ parallel('#times', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [0, 1, 2]);
-      assert.deepEqual(order, [0, 2, 1]);
+      assert.deepStrictEqual(res, [0, 1, 2]);
+      assert.deepStrictEqual(order, [0, 2, 1]);
       done();
     });
   });
@@ -54,8 +54,8 @@ parallel('#times', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [0, 1, 2]);
-      assert.deepEqual(order, [0, 2, 1]);
+      assert.deepStrictEqual(res, [0, 1, 2]);
+      assert.deepStrictEqual(order, [0, 2, 1]);
       done();
     });
   });
@@ -69,8 +69,8 @@ parallel('#times', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [0, 1, 2]);
-      assert.deepEqual(order, [0, 2, 1]);
+      assert.deepStrictEqual(res, [0, 1, 2]);
+      assert.deepStrictEqual(order, [0, 2, 1]);
       done();
     }, Math);
   });
@@ -84,8 +84,8 @@ parallel('#times', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, []);
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(res, []);
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -137,8 +137,8 @@ parallel('#timesSeries', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [0, 1, 2]);
-      assert.deepEqual(order, [0, 1, 2]);
+      assert.deepStrictEqual(res, [0, 1, 2]);
+      assert.deepStrictEqual(order, [0, 1, 2]);
       done();
     });
   });
@@ -152,8 +152,8 @@ parallel('#timesSeries', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [0, 1, 2]);
-      assert.deepEqual(order, [0, 1, 2]);
+      assert.deepStrictEqual(res, [0, 1, 2]);
+      assert.deepStrictEqual(order, [0, 1, 2]);
       done();
     });
   });
@@ -167,8 +167,8 @@ parallel('#timesSeries', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [0, 1, 2]);
-      assert.deepEqual(order, [0, 1, 2]);
+      assert.deepStrictEqual(res, [0, 1, 2]);
+      assert.deepStrictEqual(order, [0, 1, 2]);
       done();
     }, Math);
   });
@@ -185,7 +185,7 @@ parallel('#timesSeries', function() {
         return done(err);
       }
       assert.strictEqual(sync, false);
-      assert.deepEqual(result, [0, 1, 2]);
+      assert.deepStrictEqual(result, [0, 1, 2]);
       done();
     });
     sync = false;
@@ -200,8 +200,8 @@ parallel('#timesSeries', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, []);
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(res, []);
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -253,8 +253,8 @@ parallel('#timesLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [0, 1, 2, 3, 4]);
-      assert.deepEqual(order, [0, 2, 1, 4, 3]);
+      assert.deepStrictEqual(res, [0, 1, 2, 3, 4]);
+      assert.deepStrictEqual(order, [0, 2, 1, 4, 3]);
       done();
     });
   });
@@ -268,8 +268,8 @@ parallel('#timesLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [0, 1, 2, 3, 4]);
-      assert.deepEqual(order, [0, 2, 1, 4, 3]);
+      assert.deepStrictEqual(res, [0, 1, 2, 3, 4]);
+      assert.deepStrictEqual(order, [0, 2, 1, 4, 3]);
       done();
     });
   });
@@ -283,8 +283,8 @@ parallel('#timesLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [0, 1, 2, 3, 4, 5, 6]);
-      assert.deepEqual(order, [0, 2, 1, 4, 3, 6, 5]);
+      assert.deepStrictEqual(res, [0, 1, 2, 3, 4, 5, 6]);
+      assert.deepStrictEqual(order, [0, 2, 1, 4, 3, 6, 5]);
       done();
     }, Math);
   });
@@ -304,8 +304,8 @@ parallel('#timesLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, [0, 1, 2, 3, 4]);
-      assert.deepEqual(order, [0, 1, 2, 3, 4]);
+      assert.deepStrictEqual(res, [0, 1, 2, 3, 4]);
+      assert.deepStrictEqual(order, [0, 1, 2, 3, 4]);
       done();
     });
   });
@@ -319,8 +319,8 @@ parallel('#timesLimit', function() {
         return done(err);
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepEqual(res, []);
-      assert.deepEqual(order, []);
+      assert.deepStrictEqual(res, []);
+      assert.deepStrictEqual(order, []);
       done();
     });
   });
@@ -337,7 +337,7 @@ parallel('#timesLimit', function() {
         return done(err);
       }
       assert.strictEqual(sync, false);
-      assert.deepEqual(result, [0, 1, 2, 3, 4]);
+      assert.deepStrictEqual(result, [0, 1, 2, 3, 4]);
       done();
     });
     sync = false;

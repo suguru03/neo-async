@@ -13,7 +13,7 @@ parallel('#apply', function() {
   it('should apply arguments', function() {
 
     var func = function() {
-      assert.deepEqual(Array.prototype.slice.call(arguments), [1, 2, 3, 4]);
+      assert.deepStrictEqual(Array.prototype.slice.call(arguments), [1, 2, 3, 4]);
     };
 
     async.apply(func, 1, 2, 3, 4)();
