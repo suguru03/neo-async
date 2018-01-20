@@ -1,12 +1,15 @@
-# Neo-Async
+<h1 align="center">Neo-Async</h1>
 
-<img src="https://raw.githubusercontent.com/wiki/suguru03/neo-async/images/neo_async_v2.png" width="230px" />
+<p align="center">
+  <img src="https://raw.githubusercontent.com/wiki/suguru03/neo-async/images/neo_async_v2.png" width="250px" />
+</p>
 
-[![npm](https://img.shields.io/npm/v/neo-async.svg)](https://www.npmjs.com/package/neo-async)
-[![Travis](https://img.shields.io/travis/suguru03/neo-async.svg)](https://travis-ci.org/suguru03/neo-async)
-[![Codecov](https://img.shields.io/codecov/c/github/suguru03/neo-async.svg)](https://codecov.io/github/suguru03/neo-async?branch=master)
-[![Dependency Status](https://gemnasium.com/suguru03/neo-async.svg)](https://gemnasium.com/suguru03/neo-async)
-[![npm](https://img.shields.io/npm/dm/neo-async.svg)](https://www.npmjs.com/package/neo-async)
+<p align="center">
+  <a href="https://www.npmjs.com/package/neo-async"><img alt="npm" src="https://img.shields.io/npm/v/neo-async.svg"></a>
+  <a href="https://travis-ci.org/suguru03/neo-async"><img alt="Travis Status" src="https://img.shields.io/codecov/c/github/suguru03/neo-async.svg"></a>
+  <a href="https://codecov.io/gh/suguru03/neo-async"><img alt="Coverage Status" src="https://img.shields.io/codecov/c/github/suguru03/neo-async/master.svg"></a>
+  <a href="https://www.npmjs.com/package/neo-async"><img alt="download" src="https://img.shields.io/npm/dm/neo-async.svg"></a>
+</p>
 
 Neo-Async is thought to be used as a drop-in replacement for [Async](https://github.com/caolan/async), it almost fully covers its functionality and runs [faster](#benchmark).
 
@@ -272,4 +275,3 @@ The value is the ratio (Neo-Async/Async) of the average speed.
 |race|1.45|1.27|
 |auto|3.23|3.50|
 |retry|9.43|6.78|
-
