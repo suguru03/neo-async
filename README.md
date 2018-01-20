@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://www.npmjs.com/package/neo-async"><img alt="npm" src="https://img.shields.io/npm/v/neo-async.svg"></a>
-  <a href="https://travis-ci.org/suguru03/neo-async"><img alt="Travis Status" src="https://img.shields.io/codecov/c/github/suguru03/neo-async.svg"></a>
+  <a href="https://travis-ci.org/suguru03/neo-async"><img alt="Travis Status" src="https://img.shields.io/travis/suguru03/neo-async.svg"></a>
   <a href="https://codecov.io/gh/suguru03/neo-async"><img alt="Coverage Status" src="https://img.shields.io/codecov/c/github/suguru03/neo-async/master.svg"></a>
   <a href="https://www.npmjs.com/package/neo-async"><img alt="download" src="https://img.shields.io/npm/dm/neo-async.svg"></a>
 </p>
