@@ -112,6 +112,18 @@ describe('#asyncify', function() {
     });
   });
 
+  it('should throw an error even if reject is called with null', function(done) {
+    var func = function() {
+      return util.Promise.reject(null);
+    };
+    async.asyncify(func)(function(err) {
+      assert.ok(err);
+      assert.ok(err instanceof Error);
+      assert.strictEqual(err.message, 'null');
+      done();
+    });
+  });
+
   it('should avoid double callback', function(done) {
 
     var count = 0;
