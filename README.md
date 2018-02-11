@@ -199,10 +199,7 @@ bower install neo-async
 ### How to check
 
 ```bash
-$ git clone git@github.com:suguru03/async-benchmark.git
-$ cd async-benchmark
-$ npm install
-$ node . // It might take more than one hour...
+$ node perf
 ```
 
 ### Environment
