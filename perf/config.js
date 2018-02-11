@@ -230,6 +230,80 @@ module.exports = {
       async.mapLimit(collection, limit, iterator, callback);
     }
   },
+  'mapValues:array': {
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, k, callback) {
+        callback(null, n);
+      };
+    },
+    func: function(async, callback) {
+      async.mapValues(collection, iterator, callback);
+    }
+  },
+  'mapValues:object': {
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, k, callback) {
+        callback(null, n);
+      };
+    },
+    func: function(async, callback) {
+      async.mapValues(collection, iterator, callback);
+    }
+  },
+  'mapValuesSeries:array': {
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, k, callback) {
+        process.nextTick(function() {
+          callback(null, n);
+        });
+      };
+    },
+    func: function(async, callback) {
+      async.mapValuesSeries(collection, iterator, callback);
+    }
+  },
+  'mapValuesSeries:object': {
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, k, callback) {
+        process.nextTick(function() {
+          callback(null, n);
+        });
+      };
+    },
+    func: function(async, callback) {
+      async.mapValuesSeries(collection, iterator, callback);
+    }
+  },
+  'mapValuesLimit:array': {
+    setup: function(count) {
+      collection = createArrayCollection(count);
+      iterator = function(n, k, callback) {
+        process.nextTick(function() {
+          callback(null, n);
+        });
+      };
+    },
+    func: function(async, callback) {
+      async.mapValuesLimit(collection, limit, iterator, callback);
+    }
+  },
+  'mapValuesLimit:object': {
+    setup: function(count) {
+      collection = createObjectCollection(count);
+      iterator = function(n, k, callback) {
+        process.nextTick(function() {
+          callback(null, n);
+        });
+      };
+    },
+    func: function(async, callback) {
+      async.mapValuesLimit(collection, limit, iterator, callback);
+    }
+  },
   'filter:array': {
     setup: function(count) {
       collection = createArrayCollection(count);
@@ -308,7 +382,6 @@ module.exports = {
     setup: function(count) {
       collection = createArrayCollection(count);
       iterator = function(n, callback) {
-        callback(null, n % 2);
         callback(null, n % 2);
       };
     },
@@ -680,7 +753,9 @@ module.exports = {
     setup: function(count) {
       collection = createArrayCollection(count);
       iterator = function(n, callback) {
-        callback(null, n);
+        process.nextTick(function() {
+          callback(null, n);
+        });
       };
     },
     func: function(async, callback) {
@@ -691,7 +766,9 @@ module.exports = {
     setup: function(count) {
       collection = createObjectCollection(count);
       iterator = function(n, callback) {
-        callback(null, n);
+        process.nextTick(function() {
+          callback(null, n);
+        });
       };
     },
     func: function(async, callback) {
