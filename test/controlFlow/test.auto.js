@@ -462,4 +462,25 @@ parallel('#auto', function() {
       done();
     });
   });
+
+  /**
+   * @see https://github.com/suguru03/neo-async/issues/57
+   */
+  it('should work without cyclic dependencies error', function(done) {
+    var error = new Error('error');
+    async.auto({
+        task1: function(callback) {
+            setTimeout(callback, delay, error);
+        },
+        task2: function(callback) {
+            setTimeout(callback, delay * 2)
+        },
+        task3: ['task1', 'task2', function(callback) {
+            setTimeout(callback, delay * 2)
+        }]
+    }, function(err) {
+      assert.strictEqual(err, error);
+      setTimeout(done, delay * 3);
+    });
+  });
 });
