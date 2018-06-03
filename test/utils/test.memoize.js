@@ -102,4 +102,26 @@ parallel('#memoize', function() {
 
   });
 
+  it('should not memoize result if error occurs', function(done) {
+
+    var called = 0;
+    var order = [];
+    var error = new Error('error');
+    var fn = function(arg, callback) {
+      called++;
+      callback(error, arg);
+    };
+    var memoized = async.memoize(fn);
+    memoized(1, function(err) {
+      assert.strictEqual(err, error);
+      error = null;
+      memoized(1, function(err, result) {
+        assert.strictEqual(err, null);
+        assert.strictEqual(result, 1);
+        assert.strictEqual(called, 2);
+        done();
+      });
+    })
+  });
+
 });
