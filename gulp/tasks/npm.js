@@ -34,6 +34,9 @@ async function publish() {
   // copy README
   fs.copySync(path.resolve(rootpath, 'README.md'), path.resolve(buildpath, 'README.md'));
 
+  // copy LICENSE
+  fs.copySync(path.resolve(rootpath, 'LICENSE'), path.resolve(buildpath, 'LICENSE'));
+
   // create all function files
   const template = fs.readFileSync(path.resolve(__dirname, '../template'), 'utf8');
   _.forOwn(async, (func, key) => {
