@@ -5,6 +5,7 @@ const path = require('path');
 const _ = require('lodash');
 const gulp = require('gulp');
 const fs = require('fs-extra');
+const argv = require('minimist')(process.argv.slice(2));
 
 const { exec } = require('../util');
 const async = require('../../lib/async');
@@ -12,6 +13,10 @@ const async = require('../../lib/async');
 gulp.task('npm:publish', publish);
 
 async function publish() {
+  const { otp } = argv;
+  if (!otp) {
+    throw new Error('Invalid otp');
+  }
   const rootpath = path.resolve(__dirname, '../..');
   const buildpath = path.resolve(rootpath, 'build');
 
@@ -47,5 +52,5 @@ async function publish() {
     fs.writeFileSync(path.resolve(buildpath, `${key}.js`), file, 'utf8');
   });
 
-  await exec(`cd ${buildpath} && npm publish`);
+  await exec(`cd ${buildpath} && npm publish --otp=${otp}`);
 }
