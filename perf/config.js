@@ -35,6 +35,17 @@ module.exports = {
       async.each(collection, iterator, callback);
     }
   },
+  'each:set': {
+    setup: function(count) {
+      collection = createSetCollection(count);
+      iterator = function(n, callback) {
+        callback();
+      };
+    },
+    func: function(async, callback) {
+      async.each(collection, iterator, callback);
+    }
+  },
   'each:map': {
     setup: function(count) {
       collection = createMapCollection(count);
@@ -1216,6 +1227,14 @@ function createArrayCollection(count) {
 
 function createObjectCollection(count) {
   return _.mapValues(_.shuffle(_.times(count)));
+}
+
+function createSetCollection(count) {
+  var set = new Set();
+  _.forOwn(createArrayCollection(count), function(v) {
+    set.add(v);
+  });
+  return set;
 }
 
 function createMapCollection(count) {
