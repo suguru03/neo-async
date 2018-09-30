@@ -942,6 +942,64 @@ parallel('#eachLimit', function() {
     });
   });
 
+  it('should work properly even if elements are added in callback', function(done) {
+
+    var order = [];
+    var arr = [1, 5, 3, 4, 2];
+    var set = new util.Set(arr);
+    var iterator = function(value, next) {
+      order.push(value);
+      next(null, value);
+    };
+    async.eachLimit(set, 2, iterator, function(err) {
+      if (err) {
+        return done(err);
+      }
+      setTimeout(function() {
+        assert.deepStrictEqual(order, arr);
+        done();
+      }, delay);
+      set.add(6);
+    });
+  });
+
+  it('should work even if the size is changed', function(done) {
+
+    var order = [];
+    var set = new util.Set([1, 2, 3, 4, 5]);
+    var iterator = function(value, next) {
+      order.push(value);
+      set.delete(value + 1);
+      next();
+    };
+    async.eachLimit(set, 2, iterator, function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepStrictEqual(order, [1, 3, 5]);
+      done();
+    });
+  });
+
+  it('should work even if the size is changed', function(done) {
+
+    var order = [];
+    var set = new util.Set([1, 2, 3, 4, 5]);
+    var iterator = function(value, index, next) {
+      order.push([index, value]);
+      set.delete(value + 1);
+      next();
+    };
+    async.eachLimit(set, 2, iterator, function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepStrictEqual(order, [[0, 1], [1, 3], [2, 5]]);
+      done();
+    });
+  });
+
+
   it('should execute iterator in limited by collection of Map', function(done) {
 
     var order = [];
