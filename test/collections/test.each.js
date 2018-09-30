@@ -204,7 +204,6 @@ parallel('#each', function() {
     });
   });
 
-
   it('should execute iterator by collection of Map', function(done) {
 
     var order = [];

@@ -188,6 +188,49 @@ parallel('#transform', function() {
     });
   });
 
+  it('should work properly even if elements are added in callback', function(done) {
+
+    var order = [];
+    var arr = [1, 3, 2];
+    var set = new util.Set(arr);
+    var iterator = function(acc, value, next) {
+      order.push(value);
+      acc.push(value);
+      next();
+    };
+    async.transform(set, [], iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      setTimeout(function() {
+        assert.deepStrictEqual(order, arr);
+        assert.deepStrictEqual(res, arr);
+        done();
+      }, delay);
+      set.add(4);
+    });
+  });
+
+  it('should work even if the size is changed', function(done) {
+
+    var order = [];
+    var set = new util.Set([1, 2, 3, 4]);
+    var iterator = function(acc, value, next) {
+      order.push(value);
+      set.delete(value + 1);
+      acc.push(value);
+      next();
+    };
+    async.transform(set, [], iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepStrictEqual(order, [1, 3]);
+      assert.deepStrictEqual(res, [1, 3]);
+      done();
+    });
+  });
+
   it('should execute iterator in limited by collection of Map', function(done) {
 
     var order = [];
@@ -577,6 +620,49 @@ parallel('#transformSeries', function() {
         [3, 1],
         [2, 2]
       ]);
+      done();
+    });
+  });
+
+  it('should work properly even if elements are added in callback', function(done) {
+
+    var order = [];
+    var arr = [1, 3, 2];
+    var set = new util.Set(arr);
+    var iterator = function(acc, value, next) {
+      order.push(value);
+      acc.push(value);
+      next();
+    };
+    async.transformSeries(set, [], iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      setTimeout(function() {
+        assert.deepStrictEqual(order, arr);
+        assert.deepStrictEqual(res, arr);
+        done();
+      }, delay);
+      set.add(4);
+    });
+  });
+
+  it('should work even if the size is changed', function(done) {
+
+    var order = [];
+    var set = new util.Set([1, 2, 3, 4]);
+    var iterator = function(acc, value, next) {
+      order.push(value);
+      set.delete(value + 1);
+      acc.push(value);
+      next();
+    };
+    async.transformSeries(set, [], iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepStrictEqual(order, [1, 3]);
+      assert.deepStrictEqual(res, [1, 3]);
       done();
     });
   });
@@ -972,6 +1058,50 @@ parallel('#transformLimit', function() {
       done();
     });
   });
+
+  it('should work properly even if elements are added in callback', function(done) {
+
+    var order = [];
+    var arr = [1, 5, 3, 2, 4];
+    var set = new util.Set(arr);
+    var iterator = function(acc, value, next) {
+      order.push(value);
+      acc.push(value);
+      next();
+    };
+    async.transformLimit(set, 2, [], iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      setTimeout(function() {
+        assert.deepStrictEqual(order, arr);
+        assert.deepStrictEqual(res, arr);
+        done();
+      }, delay);
+      set.add(6);
+    });
+  });
+
+  it('should work even if the size is changed', function(done) {
+
+    var order = [];
+    var set = new util.Set([1, 2, 3, 4, 5]);
+    var iterator = function(acc, value, next) {
+      order.push(value);
+      set.delete(value + 1);
+      acc.push(value);
+      next();
+    };
+    async.transformLimit(set, 2, [], iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepStrictEqual(order, [1, 3, 5]);
+      assert.deepStrictEqual(res, [1, 3, 5]);
+      done();
+    });
+  });
+
 
   it('should execute iterator in limited by collection of Map', function(done) {
 
