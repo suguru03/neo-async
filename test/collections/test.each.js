@@ -60,6 +60,21 @@ parallel('#each', function() {
     });
   });
 
+  it('should execute with synchronous iterator', function(done) {
+    var collection = [1, 3, 2];
+    var iterator = function(value, done) {
+      done();
+    }
+    var called = 0;
+    async.each(collection, iterator, function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(++called, 1);
+      setTimeout(done, delay);
+    });
+  });
+
   it('should execute iterator by collection of array with passing index', function(done) {
 
     var order = [];
@@ -149,6 +164,46 @@ parallel('#each', function() {
       done();
     });
   });
+
+  it('should work properly even if elements are added in callback', function(done) {
+
+    var order = [];
+    var arr = [1, 3, 2];
+    var set = new util.Set(arr);
+    var iterator = function(value, next) {
+      order.push(value);
+      next(null, value);
+    };
+    async.each(set, iterator, function(err) {
+      if (err) {
+        return done(err);
+      }
+      setTimeout(function() {
+        assert.deepStrictEqual(order, arr);
+        done();
+      }, delay);
+      set.add(4);
+    });
+  });
+
+  it('should work even if the size is changed', function(done) {
+
+    var order = [];
+    var set = new util.Set([1, 2, 3, 4]);
+    var iterator = function(value, next) {
+      order.push(value);
+      set.delete(value + 1);
+      next();
+    };
+    async.each(set, iterator, function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepStrictEqual(order, [1, 3]);
+      done();
+    });
+  });
+
 
   it('should execute iterator by collection of Map', function(done) {
 
@@ -336,6 +391,19 @@ parallel('#each', function() {
     var order = [];
     var object = {};
     async.each(object, eachIterator(order), function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepStrictEqual(order, []);
+      done();
+    });
+  });
+
+  it('should return response immediately if a set instance is empty', function(done) {
+
+    var order = [];
+    var set = new util.Set();
+    async.each(set, eachIterator(order), function(err) {
       if (err) {
         return done(err);
       }

@@ -14,8 +14,8 @@ exports.it = _it;
  * for v0.10.x
  */
 exports.Map = typeof Map === 'function' ? Map : (function() {
-  function Map() {
-    this._data = [];
+  function Map(arr) {
+    this._data = arr || [];
   }
   Map.prototype.set = function(key, value) {
     this._data.push([key, value]);
@@ -41,8 +41,8 @@ exports.Map = typeof Map === 'function' ? Map : (function() {
 })();
 
 exports.Set = typeof Set === 'function' ? Set : (function() {
-  function Set() {
-    this._data = [];
+  function Set(arr) {
+    this._data = arr || [];
   }
   Set.prototype.add = function(value) {
     this._data.push(value);
