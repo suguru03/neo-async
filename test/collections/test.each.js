@@ -557,6 +557,45 @@ parallel('#eachSeries', function() {
     });
   });
 
+  it('should work properly even if elements are added in callback', function(done) {
+
+    var order = [];
+    var arr = [1, 3, 2];
+    var set = new util.Set(arr);
+    var iterator = function(value, next) {
+      order.push(value);
+      next(null, value);
+    };
+    async.eachSeries(set, iterator, function(err) {
+      if (err) {
+        return done(err);
+      }
+      setTimeout(function() {
+        assert.deepStrictEqual(order, arr);
+        done();
+      }, delay);
+      set.add(4);
+    });
+  });
+
+  it('should work even if the size is changed', function(done) {
+
+    var order = [];
+    var set = new util.Set([1, 2, 3, 4]);
+    var iterator = function(value, next) {
+      order.push(value);
+      set.delete(value + 1);
+      next();
+    };
+    async.eachSeries(set, iterator, function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepStrictEqual(order, [1, 3]);
+      done();
+    });
+  });
+
   it('should execute iterator to series by collection of Map', function(done) {
 
     var order = [];
