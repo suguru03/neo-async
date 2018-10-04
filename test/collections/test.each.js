@@ -64,7 +64,7 @@ parallel('#each', function() {
     var collection = [1, 3, 2];
     var iterator = function(value, done) {
       done();
-    }
+    };
     var called = 0;
     async.each(collection, iterator, function(err) {
       if (err) {
@@ -186,7 +186,7 @@ parallel('#each', function() {
     });
   });
 
-  it('should work even if the size is changed', function(done) {
+  it('should work even if the size is decreased', function(done) {
 
     var order = [];
     var set = new util.Set([1, 2, 3, 4]);
@@ -200,6 +200,25 @@ parallel('#each', function() {
         return done(err);
       }
       assert.deepStrictEqual(order, [1, 3]);
+      done();
+    });
+  });
+
+  it('should work even if the size is increased', function(done) {
+
+    var order = [];
+    var size = 4;
+    var set = new util.Set([1, 2, 3, 4]);
+    var iterator = function(value, next) {
+      order.push(value);
+      value % 2 === 0 && set.add(++size);
+      next();
+    };
+    async.each(set, iterator, function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepStrictEqual(order, [1, 2, 3, 4, 5, 6, 7]);
       done();
     });
   });
@@ -577,7 +596,7 @@ parallel('#eachSeries', function() {
     });
   });
 
-  it('should work even if the size is changed', function(done) {
+  it('should work even if the size is decreased', function(done) {
 
     var order = [];
     var set = new util.Set([1, 2, 3, 4]);
@@ -591,6 +610,25 @@ parallel('#eachSeries', function() {
         return done(err);
       }
       assert.deepStrictEqual(order, [1, 3]);
+      done();
+    });
+  });
+
+  it('should work even if the size is increased', function(done) {
+
+    var order = [];
+    var size = 4;
+    var set = new util.Set([1, 2, 3, 4]);
+    var iterator = function(value, next) {
+      order.push(value);
+      value % 2 === 0 && set.add(++size);
+      next();
+    };
+    async.eachSeries(set, iterator, function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepStrictEqual(order, [1, 2, 3, 4, 5, 6, 7]);
       done();
     });
   });
@@ -962,7 +1000,7 @@ parallel('#eachLimit', function() {
     });
   });
 
-  it('should work with odd number of elements even if the size is changed', function(done) {
+  it('should work with odd number of elements even if the size is decreased', function(done) {
 
     var called = 0;
     var order = [];
@@ -982,7 +1020,7 @@ parallel('#eachLimit', function() {
     });
   });
 
-  it('should work with even number of elements even if the size is changed', function(done) {
+  it('should work with even number of elements even if the size is decreased', function(done) {
 
     var called = 0;
     var order = [];
@@ -1002,10 +1040,28 @@ parallel('#eachLimit', function() {
     });
   });
 
+  it('should work even if the size is increased', function(done) {
+
+    var order = [];
+    var size = 4;
+    var set = new util.Set([1, 2, 3, 4]);
+    var iterator = function(value, next) {
+      order.push(value);
+      value % 2 === 0 && set.add(++size);
+      next();
+    };
+    async.eachLimit(set, 2, iterator, function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepStrictEqual(order, [1, 2, 3, 4, 5, 6, 7]);
+      done();
+    });
+  });
+
   it('should work with odd number of elements even if the size is changed', function(done) {
 
     var called = 0;
-    var order = [];
     var order = [];
     var set = new util.Set([1, 2, 3, 4, 5]);
     var iterator = function(value, index, next) {
@@ -1039,6 +1095,24 @@ parallel('#eachLimit', function() {
       }
       assert.strictEqual(++called, 1);
       assert.deepStrictEqual(order, [[0, 1], [1, 3], [2, 5]]);
+      done();
+    });
+  });
+
+  it('should work even if limit is less than set size', function(done) {
+    var called = 0;
+    var order = [];
+    var set = new util.Set([1, 2]);
+    var iterator = function(value, next) {
+      order.push(value);
+      next();
+    };
+    async.eachLimit(set, 10, iterator, function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(++called, 1);
+      assert.deepStrictEqual(order, [1, 2]);
       done();
     });
   });
