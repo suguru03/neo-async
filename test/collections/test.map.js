@@ -166,6 +166,67 @@ parallel('#map', function() {
     });
   });
 
+  it('should work properly even if elements are added in callback', function(done) {
+
+    var order = [];
+    var arr = [1, 3, 2];
+    var set = new util.Set(arr);
+    var iterator = function(value, next) {
+      order.push(value);
+      next(null, value);
+    };
+    async.map(set, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      setTimeout(function() {
+        assert.deepStrictEqual(order, arr);
+        assert.deepStrictEqual(res, arr);
+        done();
+      }, delay);
+      set.add(4);
+    });
+  });
+
+  it('shoult work even if the size is decreased', function(done) {
+
+    var order = [];
+    var set = new util.Set([1, 2, 3, 4]);
+    var iterator = function(value, next) {
+      order.push(value);
+      set.delete(value + 1);
+      next(null, value);
+    };
+    async.map(set, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepStrictEqual(order, [1, 3]);
+      assert.deepStrictEqual(res, [1, 3]);
+      done();
+    });
+  });
+
+  it('should work even if the size is increased', function(done) {
+
+    var order = [];
+    var size = 4;
+    var set = new util.Set([1, 2, 3, 4]);
+    var iterator = function(value, next) {
+      order.push(value);
+      value % 2 === 0 && set.add(++size);
+      next(null, value);
+    };
+    async.map(set, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepStrictEqual(res, [1, 2, 3, 4, 5, 6, 7]);
+      assert.deepStrictEqual(order, [1, 2, 3, 4, 5, 6, 7]);
+      done();
+    });
+  });
+
   it('should execute iterator by collection of Map', function(done) {
 
     var order = [];
@@ -496,6 +557,67 @@ parallel('#mapSeries', function() {
     });
   });
 
+  it('should work properly even if elements are added in callback', function(done) {
+
+    var order = [];
+    var arr = [1, 3, 2];
+    var set = new util.Set(arr);
+    var iterator = function(value, next) {
+      order.push(value);
+      next(null, value);
+    };
+    async.mapSeries(set, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      setTimeout(function() {
+        assert.deepStrictEqual(order, arr);
+        assert.deepStrictEqual(res, arr);
+        done();
+      }, delay);
+      set.add(4);
+    });
+  });
+
+  it('shoult work even if the size is decreased', function(done) {
+
+    var order = [];
+    var set = new util.Set([1, 2, 3, 4]);
+    var iterator = function(value, next) {
+      order.push(value);
+      set.delete(value + 1);
+      next(null, value);
+    };
+    async.mapSeries(set, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepStrictEqual(order, [1, 3]);
+      assert.deepStrictEqual(res, [1, 3]);
+      done();
+    });
+  });
+
+  it('should work even if the size is increased', function(done) {
+
+    var order = [];
+    var size = 4;
+    var set = new util.Set([1, 2, 3, 4]);
+    var iterator = function(value, next) {
+      order.push(value);
+      value % 2 === 0 && set.add(++size);
+      next(null, value);
+    };
+    async.mapSeries(set, iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepStrictEqual(res, [1, 2, 3, 4, 5, 6, 7]);
+      assert.deepStrictEqual(order, [1, 2, 3, 4, 5, 6, 7]);
+      done();
+    });
+  });
+
   it('should execute iterator to series by collection of Map', function(done) {
 
     var order = [];
@@ -806,6 +928,65 @@ parallel('#mapLimit', function() {
         [2, 4],
         [4, 3]
       ]);
+      done();
+    });
+  });
+
+  it('should work even if the size is increased', function(done) {
+
+    var order = [];
+    var size = 4;
+    var set = new util.Set([1, 2, 3, 4]);
+    var iterator = function(value, next) {
+      order.push(value);
+      value % 2 === 0 && set.add(++size);
+      next();
+    };
+    async.mapLimit(set, 2, iterator, function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.deepStrictEqual(order, [1, 2, 3, 4, 5, 6, 7]);
+      done();
+    });
+  });
+
+  it('should work with odd number of elements even if the size is decreased', function(done) {
+
+    var called = 0;
+    var order = [];
+    var set = new util.Set([1, 2, 3, 4, 5]);
+    var iterator = function(value, index, next) {
+      order.push([index, value]);
+      set.delete(value + 1);
+      next();
+    };
+    async.mapLimit(set, 2, iterator, function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(++called, 1);
+      assert.deepStrictEqual(order, [[0, 1], [1, 3], [2, 5]]);
+      done();
+    });
+  });
+
+  it('should work with even number of elements even if the size is decreased', function(done) {
+
+    var called = 0;
+    var order = [];
+    var set = new util.Set([1, 2, 3, 4, 5, 6]);
+    var iterator = function(value, index, next) {
+      order.push([index, value]);
+      set.delete(value + 1);
+      next();
+    };
+    async.mapLimit(set, 2, iterator, function(err) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(++called, 1);
+      assert.deepStrictEqual(order, [[0, 1], [1, 3], [2, 5]]);
       done();
     });
   });

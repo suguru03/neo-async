@@ -36,7 +36,7 @@
   "eqnull": true,
   "esnext": true,
   "evil": true,
-  "expr": false,
+  "expr": true,
   "funcscope": false,
   "globalstrict": false,
   "lastsemic": false,

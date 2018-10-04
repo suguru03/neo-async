@@ -1059,7 +1059,7 @@ parallel('#eachLimit', function() {
     });
   });
 
-  it('should work with odd number of elements even if the size is changed', function(done) {
+  it('should work with odd number of elements even if the size is decreased', function(done) {
 
     var called = 0;
     var order = [];
@@ -1079,7 +1079,7 @@ parallel('#eachLimit', function() {
     });
   });
 
-  it('should work with even number of elements even if the size is changed', function(done) {
+  it('should work with even number of elements even if the size is decreased', function(done) {
 
     var called = 0;
     var order = [];
