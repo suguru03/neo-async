@@ -1082,8 +1082,9 @@ parallel('#transformLimit', function() {
     });
   });
 
-  it('should work even if the size is changed', function(done) {
+  it('should work with odd number of elements even if the size is changed', function(done) {
 
+    var called = 0;
     var order = [];
     var set = new util.Set([1, 2, 3, 4, 5]);
     var iterator = function(acc, value, next) {
@@ -1096,12 +1097,78 @@ parallel('#transformLimit', function() {
       if (err) {
         return done(err);
       }
+      assert.strictEqual(++called, 1);
       assert.deepStrictEqual(order, [1, 3, 5]);
       assert.deepStrictEqual(res, [1, 3, 5]);
       done();
     });
   });
 
+  it('should work with even number of elements even if the size is changed', function(done) {
+
+    var called = 0;
+    var order = [];
+    var set = new util.Set([1, 2, 3, 4, 5, 6]);
+    var iterator = function(acc, value, next) {
+      order.push(value);
+      set.delete(value + 1);
+      acc.push(value);
+      next();
+    };
+    async.transformLimit(set, 2, [], iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(++called, 1);
+      assert.deepStrictEqual(order, [1, 3, 5]);
+      assert.deepStrictEqual(res, [1, 3, 5]);
+      done();
+    });
+  });
+
+  it('should work with odd number of elements even if the size is changed', function(done) {
+
+    var called = 0;
+    var order = [];
+    var set = new util.Set([1, 2, 3, 4, 5]);
+    var iterator = function(acc, value, index, next) {
+      order.push([index, value]);
+      set.delete(value + 1);
+      acc.push(value);
+      next();
+    };
+    async.transformLimit(set, 2, [], iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(++called, 1);
+      assert.deepStrictEqual(order, [[0, 1], [1, 3], [2, 5]]);
+      assert.deepStrictEqual(res, [1, 3, 5]);
+      done();
+    });
+  });
+
+  it('should work with even number of elements even if the size is changed', function(done) {
+
+    var called = 0;
+    var order = [];
+    var set = new util.Set([1, 2, 3, 4, 5, 6]);
+    var iterator = function(acc, value, index, next) {
+      order.push([index, value]);
+      set.delete(value + 1);
+      acc.push(value);
+      next();
+    };
+    async.transformLimit(set, 2, [], iterator, function(err, res) {
+      if (err) {
+        return done(err);
+      }
+      assert.strictEqual(++called, 1);
+      assert.deepStrictEqual(order, [[0, 1], [1, 3], [2, 5]]);
+      assert.deepStrictEqual(res, [1, 3, 5]);
+      done();
+    });
+  });
 
   it('should execute iterator in limited by collection of Map', function(done) {
 
