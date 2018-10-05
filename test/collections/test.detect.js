@@ -983,7 +983,7 @@ parallel('#detectLimit', function() {
     var called = 0;
     var order = [];
     var set = new util.Set([1, 2, 3, 4, 5]);
-    var iterator = function(value, next) {
+    var iterator = function(value, index, next) {
       order.push(value);
       set.delete(value + 1);
       next();
@@ -1003,7 +1003,7 @@ parallel('#detectLimit', function() {
     var called = 0;
     var order = [];
     var set = new util.Set([1, 2, 3, 4, 5, 6]);
-    var iterator = function(value, next) {
+    var iterator = function(value, index, next) {
       order.push(value);
       set.delete(value + 1);
       next();
