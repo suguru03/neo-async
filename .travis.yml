@@ -2,8 +2,10 @@ language: node_js
 
 after_success: 'make test-codecov; make clean'
 
+install: npm install
+
 node_js:
+  - 'node'
   - '10'
   - '8'
   - '6'
-  - '4'
