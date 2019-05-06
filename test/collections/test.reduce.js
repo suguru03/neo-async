@@ -433,6 +433,24 @@ parallel('#reduce', function() {
     });
   });
 
+  it('should work with generator', function(done) {
+    var order = [];
+    var collection = [1, 3, 2, 4];
+    var gen = util.makeGenerator(collection);
+
+    async.reduce(
+      gen,
+      0,
+      reduceIterator(order),
+      function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        assert.deepStrictEqual(res, 10);
+        done();
+      }
+    );
+  });
 });
 
 parallel('#reduceRight', function() {
@@ -802,5 +820,4 @@ parallel('#reduceRight', function() {
       done();
     });
   });
-
 });

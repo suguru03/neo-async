@@ -12,14 +12,11 @@ var delay = require('../config').delay;
 var util = require('../util');
 
 function mapIterator(order) {
-
   return function(value, callback) {
-
     var self = this;
     var num = _.isArray(value) ? _.last(value) : value;
 
     setTimeout(function() {
-
       if (self && self.round) {
         num = self.round(num);
       }
@@ -31,14 +28,11 @@ function mapIterator(order) {
 }
 
 function mapIteratorWithKey(order) {
-
   return function(value, key, callback) {
-
     var self = this;
     var num = _.isArray(value) ? _.last(value) : value;
 
     setTimeout(function() {
-
       if (self && self.round) {
         num = self.round(num);
       }
@@ -50,9 +44,7 @@ function mapIteratorWithKey(order) {
 }
 
 parallel('#map', function() {
-
   it('should execute iterator by collection of array', function(done) {
-
     var order = [];
     var collection = [1, 3, 2];
     async.map(collection, mapIterator(order), function(err, res) {
@@ -67,7 +59,6 @@ parallel('#map', function() {
   });
 
   it('should execute iterator by collection of array with passing index', function(done) {
-
     var order = [];
     var collection = [1, 3, 2];
     async.map(collection, mapIteratorWithKey(order), function(err, res) {
@@ -76,17 +67,12 @@ parallel('#map', function() {
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepStrictEqual(res, [2, 6, 4]);
-      assert.deepStrictEqual(order, [
-        [1, 0],
-        [2, 2],
-        [3, 1]
-      ]);
+      assert.deepStrictEqual(order, [[1, 0], [2, 2], [3, 1]]);
       done();
     });
   });
 
   it('should execute iterator by collection of object', function(done) {
-
     var order = [];
     var collection = {
       a: 1,
@@ -105,7 +91,6 @@ parallel('#map', function() {
   });
 
   it('should execute iterator by collection of object with passing key', function(done) {
-
     var order = [];
     var collection = {
       a: 1,
@@ -118,17 +103,12 @@ parallel('#map', function() {
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepStrictEqual(res, [2, 6, 4]);
-      assert.deepStrictEqual(order, [
-        [1, 'a'],
-        [2, 'c'],
-        [3, 'b']
-      ]);
+      assert.deepStrictEqual(order, [[1, 'a'], [2, 'c'], [3, 'b']]);
       done();
     });
   });
 
   it('should execute iterator by collection of Set', function(done) {
-
     var order = [];
     var set = new util.Set();
     set.add(1);
@@ -157,17 +137,12 @@ parallel('#map', function() {
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepStrictEqual(res, [2, 6, 4]);
-      assert.deepStrictEqual(order, [
-        [1, 0],
-        [2, 2],
-        [3, 1]
-      ]);
+      assert.deepStrictEqual(order, [[1, 0], [2, 2], [3, 1]]);
       done();
     });
   });
 
   it('should work properly even if elements are added in callback', function(done) {
-
     var order = [];
     var arr = [1, 3, 2];
     var set = new util.Set(arr);
@@ -189,7 +164,6 @@ parallel('#map', function() {
   });
 
   it('shoult work even if the size is decreased', function(done) {
-
     var order = [];
     var set = new util.Set([1, 2, 3, 4]);
     var iterator = function(value, next) {
@@ -208,7 +182,6 @@ parallel('#map', function() {
   });
 
   it('should work even if the size is increased', function(done) {
-
     var order = [];
     var size = 4;
     var set = new util.Set([1, 2, 3, 4]);
@@ -228,7 +201,6 @@ parallel('#map', function() {
   });
 
   it('should execute iterator by collection of Map', function(done) {
-
     var order = [];
     var collection = new util.Map();
     collection.set('a', 1);
@@ -240,17 +212,12 @@ parallel('#map', function() {
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepStrictEqual(res, [2, 6, 4]);
-      assert.deepStrictEqual(order, [
-        ['a', 1],
-        ['c', 2],
-        ['b', 3]
-      ]);
+      assert.deepStrictEqual(order, [['a', 1], ['c', 2], ['b', 3]]);
       done();
     });
   });
 
   it('should execute iterator by collection of Map with passing key', function(done) {
-
     var order = [];
     var collection = new util.Map();
     collection.set('a', 1);
@@ -262,17 +229,12 @@ parallel('#map', function() {
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepStrictEqual(res, [2, 6, 4]);
-      assert.deepStrictEqual(order, [
-        [['a', 1], 0],
-        [['c', 2], 2],
-        [['b', 3], 1]
-      ]);
+      assert.deepStrictEqual(order, [[['a', 1], 0], [['c', 2], 2], [['b', 3], 1]]);
       done();
     });
   });
 
   it('should execute iterator without binding', function(done) {
-
     var order = [];
     var collection = {
       a: 1.1,
@@ -280,19 +242,23 @@ parallel('#map', function() {
       c: 2.7
     };
 
-    async.map(collection, mapIterator(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepStrictEqual(res, [2.2, 7, 5.4]);
-      assert.deepStrictEqual(order, [1.1, 2.7, 3.5]);
-      done();
-    }, Math);
+    async.map(
+      collection,
+      mapIterator(order),
+      function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+        assert.deepStrictEqual(res, [2.2, 7, 5.4]);
+        assert.deepStrictEqual(order, [1.1, 2.7, 3.5]);
+        done();
+      },
+      Math
+    );
   });
 
   it('should throw error', function(done) {
-
     var order = [];
     var collection = [1, 3, 2, 4];
     var iterator = function(num, callback) {
@@ -312,14 +278,14 @@ parallel('#map', function() {
   });
 
   it('should throw error if double callback', function(done) {
-
     var errorCallCount = 0;
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 2);
       done();
     }, delay);
 
-    domain.create()
+    domain
+      .create()
       .on('error', util.errorChecker)
       .on('error', function() {
         errorCallCount++;
@@ -339,35 +305,37 @@ parallel('#map', function() {
   });
 
   it('should avoid double callback', function(done) {
-
     var called = {
       iterator: false,
       callback: false
     };
-    async.map([1, 2], function(item, callback) {
-      try {
-        callback(item);
-      } catch (exception) {
+    async.map(
+      [1, 2],
+      function(item, callback) {
         try {
-          callback(exception);
-        } catch(e) {
-          assert.ok(e);
-          assert.strictEqual(called.iterator, false);
-          util.errorChecker(e);
-          called.iterator = true;
+          callback(item);
+        } catch (exception) {
+          try {
+            callback(exception);
+          } catch (e) {
+            assert.ok(e);
+            assert.strictEqual(called.iterator, false);
+            util.errorChecker(e);
+            called.iterator = true;
+          }
         }
+      },
+      function(err) {
+        assert.ok(err);
+        assert.strictEqual(called.callback, false);
+        called.callback = true;
+        async.nothing();
       }
-    }, function(err) {
-      assert.ok(err);
-      assert.strictEqual(called.callback, false);
-      called.callback = true;
-      async.nothing();
-    });
+    );
     setTimeout(done, delay);
   });
 
   it('should return response immediately if array is empty', function(done) {
-
     var order = [];
     var array = [];
     async.map(array, mapIterator(order), function(err, res) {
@@ -382,7 +350,6 @@ parallel('#map', function() {
   });
 
   it('should return response immediately if object is empty', function(done) {
-
     var order = [];
     var object = {};
     async.map(object, mapIterator(order), function(err, res) {
@@ -397,7 +364,6 @@ parallel('#map', function() {
   });
 
   it('should return response immediately if collection is function', function(done) {
-
     var order = [];
     async.map(function() {}, mapIterator(order), function(err, res) {
       if (err) {
@@ -411,7 +377,6 @@ parallel('#map', function() {
   });
 
   it('should return response immediately if collection is undefined', function(done) {
-
     var order = [];
     async.map(undefined, mapIterator(order), function(err, res) {
       if (err) {
@@ -425,7 +390,6 @@ parallel('#map', function() {
   });
 
   it('should return response immediately if collection is null', function(done) {
-
     var order = [];
     async.map(null, mapIterator(order), function(err, res) {
       if (err) {
@@ -437,13 +401,10 @@ parallel('#map', function() {
       done();
     });
   });
-
 });
 
 parallel('#mapSeries', function() {
-
   it('should execute iterator to series by collection of array', function(done) {
-
     var order = [];
     var collection = [1, 3, 2];
     async.mapSeries(collection, mapIterator(order), function(err, res) {
@@ -458,7 +419,6 @@ parallel('#mapSeries', function() {
   });
 
   it('should execute iterator to series by collection of array with passing index', function(done) {
-
     var order = [];
     var collection = [1, 3, 2];
     async.mapSeries(collection, mapIteratorWithKey(order), function(err, res) {
@@ -467,17 +427,12 @@ parallel('#mapSeries', function() {
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepStrictEqual(res, [2, 6, 4]);
-      assert.deepStrictEqual(order, [
-        [1, 0],
-        [3, 1],
-        [2, 2]
-      ]);
+      assert.deepStrictEqual(order, [[1, 0], [3, 1], [2, 2]]);
       done();
     });
   });
 
   it('should execute iterator to series by collection of object', function(done) {
-
     var order = [];
     var collection = {
       a: 1,
@@ -496,7 +451,6 @@ parallel('#mapSeries', function() {
   });
 
   it('should execute iterator to series by collection of object with passing key', function(done) {
-
     var order = [];
     var collection = {
       a: 1,
@@ -509,17 +463,12 @@ parallel('#mapSeries', function() {
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepStrictEqual(res, [2, 6, 4]);
-      assert.deepStrictEqual(order, [
-        [1, 'a'],
-        [3, 'b'],
-        [2, 'c']
-      ]);
+      assert.deepStrictEqual(order, [[1, 'a'], [3, 'b'], [2, 'c']]);
       done();
     });
   });
 
   it('should execute iterator to series by collection of Set', function(done) {
-
     var order = [];
     var set = new util.Set();
     set.add(1);
@@ -548,17 +497,12 @@ parallel('#mapSeries', function() {
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepStrictEqual(res, [2, 6, 4]);
-      assert.deepStrictEqual(order, [
-        [1, 0],
-        [3, 1],
-        [2, 2]
-      ]);
+      assert.deepStrictEqual(order, [[1, 0], [3, 1], [2, 2]]);
       done();
     });
   });
 
   it('should work properly even if elements are added in callback', function(done) {
-
     var order = [];
     var arr = [1, 3, 2];
     var set = new util.Set(arr);
@@ -580,7 +524,6 @@ parallel('#mapSeries', function() {
   });
 
   it('shoult work even if the size is decreased', function(done) {
-
     var order = [];
     var set = new util.Set([1, 2, 3, 4]);
     var iterator = function(value, next) {
@@ -599,7 +542,6 @@ parallel('#mapSeries', function() {
   });
 
   it('should work even if the size is increased', function(done) {
-
     var order = [];
     var size = 4;
     var set = new util.Set([1, 2, 3, 4]);
@@ -619,7 +561,6 @@ parallel('#mapSeries', function() {
   });
 
   it('should execute iterator to series by collection of Map', function(done) {
-
     var order = [];
     var map = new util.Map();
     map.set('a', 1);
@@ -631,11 +572,7 @@ parallel('#mapSeries', function() {
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepStrictEqual(res, [2, 6, 4]);
-      assert.deepStrictEqual(order, [
-        ['a', 1],
-        ['b', 3],
-        ['c', 2]
-      ]);
+      assert.deepStrictEqual(order, [['a', 1], ['b', 3], ['c', 2]]);
       done();
     });
   });
@@ -652,36 +589,35 @@ parallel('#mapSeries', function() {
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepStrictEqual(res, [2, 6, 4]);
-      assert.deepStrictEqual(order, [
-        [['a', 1], 0],
-        [['b', 3], 1],
-        [['c', 2], 2]
-      ]);
+      assert.deepStrictEqual(order, [[['a', 1], 0], [['b', 3], 1], [['c', 2], 2]]);
       done();
     });
   });
 
   it('should execute iterator to series without binding', function(done) {
-
     var order = [];
     var collection = {
       a: 1.1,
       b: 3.5,
       c: 2.7
     };
-    async.mapSeries(collection, mapIterator(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepStrictEqual(res, [2.2, 7, 5.4]);
-      assert.deepStrictEqual(order, [1.1, 3.5, 2.7]);
-      done();
-    }, Math);
+    async.mapSeries(
+      collection,
+      mapIterator(order),
+      function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+        assert.deepStrictEqual(res, [2.2, 7, 5.4]);
+        assert.deepStrictEqual(order, [1.1, 3.5, 2.7]);
+        done();
+      },
+      Math
+    );
   });
 
   it('should execute on asynchronous', function(done) {
-
     var sync = true;
     var collection = {
       a: 1,
@@ -704,7 +640,6 @@ parallel('#mapSeries', function() {
   });
 
   it('should throw error', function(done) {
-
     var order = [];
     var collection = [1, 3, 2, 4];
     var iterator = function(num, callback) {
@@ -724,14 +659,14 @@ parallel('#mapSeries', function() {
   });
 
   it('should throw error if double callback', function(done) {
-
     var errorCallCount = 0;
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 2);
       done();
     }, delay);
 
-    domain.create()
+    domain
+      .create()
       .on('error', util.errorChecker)
       .on('error', function() {
         errorCallCount++;
@@ -751,30 +686,32 @@ parallel('#mapSeries', function() {
   });
 
   it('should avoid double callback', function(done) {
-
     var called = false;
-    async.mapSeries([1, 2], function(item, callback) {
-      try {
-        callback(item);
-      } catch (exception) {
+    async.mapSeries(
+      [1, 2],
+      function(item, callback) {
         try {
-          callback(exception);
-        } catch(e) {
-          assert.ok(e);
-          util.errorChecker(e);
-          done();
+          callback(item);
+        } catch (exception) {
+          try {
+            callback(exception);
+          } catch (e) {
+            assert.ok(e);
+            util.errorChecker(e);
+            done();
+          }
         }
+      },
+      function(err) {
+        assert.ok(err);
+        assert.strictEqual(called, false);
+        called = true;
+        async.nothing();
       }
-    }, function(err) {
-      assert.ok(err);
-      assert.strictEqual(called, false);
-      called = true;
-      async.nothing();
-    });
+    );
   });
 
   it('should return response immediately if array is empty', function(done) {
-
     var order = [];
     var array = [];
     async.mapSeries(array, mapIterator(order), function(err, res) {
@@ -789,7 +726,6 @@ parallel('#mapSeries', function() {
   });
 
   it('should return response immediately if object is empty', function(done) {
-
     var order = [];
     var object = {};
     async.mapSeries(object, mapIterator(order), function(err, res) {
@@ -804,7 +740,6 @@ parallel('#mapSeries', function() {
   });
 
   it('should return response immediately if collection is function', function(done) {
-
     var order = [];
     async.mapSeries(function() {}, mapIterator(order), function(err, res) {
       if (err) {
@@ -818,7 +753,6 @@ parallel('#mapSeries', function() {
   });
 
   it('should return response immediately if collection is undefined', function(done) {
-
     var order = [];
     async.mapSeries(undefined, mapIterator(order), function(err, res) {
       if (err) {
@@ -832,7 +766,6 @@ parallel('#mapSeries', function() {
   });
 
   it('should return response immediately if collection is null', function(done) {
-
     var order = [];
     async.mapSeries(null, mapIterator(order), function(err, res) {
       if (err) {
@@ -844,13 +777,10 @@ parallel('#mapSeries', function() {
       done();
     });
   });
-
 });
 
 parallel('#mapLimit', function() {
-
   it('should execute iterator in limited by collection of array', function(done) {
-
     var order = [];
     var collection = [1, 5, 3, 4, 2];
 
@@ -866,7 +796,6 @@ parallel('#mapLimit', function() {
   });
 
   it('should execute iterator in limited by collection of array with passing index', function(done) {
-
     var order = [];
     var collection = [1, 5, 3, 4, 2];
 
@@ -876,19 +805,12 @@ parallel('#mapLimit', function() {
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepStrictEqual(res, [2, 10, 6, 8, 4]);
-      assert.deepStrictEqual(order, [
-        [1, 0],
-        [3, 2],
-        [5, 1],
-        [2, 4],
-        [4, 3]
-      ]);
+      assert.deepStrictEqual(order, [[1, 0], [3, 2], [5, 1], [2, 4], [4, 3]]);
       done();
     });
   });
 
   it('should execute iterator in limited by collection of Set', function(done) {
-
     var order = [];
     var set = new util.Set();
     set.add(1);
@@ -921,19 +843,12 @@ parallel('#mapLimit', function() {
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepStrictEqual(res, [2, 10, 6, 8, 4]);
-      assert.deepStrictEqual(order, [
-        [1, 0],
-        [3, 2],
-        [5, 1],
-        [2, 4],
-        [4, 3]
-      ]);
+      assert.deepStrictEqual(order, [[1, 0], [3, 2], [5, 1], [2, 4], [4, 3]]);
       done();
     });
   });
 
   it('should work even if the size is increased', function(done) {
-
     var order = [];
     var size = 4;
     var set = new util.Set([1, 2, 3, 4]);
@@ -952,7 +867,6 @@ parallel('#mapLimit', function() {
   });
 
   it('should work with odd number of elements even if the size is decreased', function(done) {
-
     var called = 0;
     var order = [];
     var set = new util.Set([1, 2, 3, 4, 5]);
@@ -972,7 +886,6 @@ parallel('#mapLimit', function() {
   });
 
   it('should work with even number of elements even if the size is decreased', function(done) {
-
     var called = 0;
     var order = [];
     var set = new util.Set([1, 2, 3, 4, 5, 6]);
@@ -992,7 +905,6 @@ parallel('#mapLimit', function() {
   });
 
   it('should execute iterator in limited by collection of Map', function(done) {
-
     var order = [];
     var map = new util.Map();
     map.set('a', 1);
@@ -1006,13 +918,7 @@ parallel('#mapLimit', function() {
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepStrictEqual(res, [2, 10, 6, 8, 4]);
-      assert.deepStrictEqual(order, [
-        ['a', 1],
-        ['c', 3],
-        ['b', 5],
-        ['e', 2],
-        ['d', 4]
-      ]);
+      assert.deepStrictEqual(order, [['a', 1], ['c', 3], ['b', 5], ['e', 2], ['d', 4]]);
       done();
     });
   });
@@ -1043,7 +949,6 @@ parallel('#mapLimit', function() {
   });
 
   it('should execute iterator in limited by collection of object', function(done) {
-
     var order = [];
     var collection = {
       a: 1,
@@ -1064,7 +969,6 @@ parallel('#mapLimit', function() {
   });
 
   it('should execute iterator in limited by collection of object with passing key', function(done) {
-
     var order = [];
     var collection = {
       a: 1,
@@ -1079,19 +983,12 @@ parallel('#mapLimit', function() {
       }
       assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
       assert.deepStrictEqual(res, [2, 10, 6, 8, 4]);
-      assert.deepStrictEqual(order, [
-        [1, 'a'],
-        [3, 'c'],
-        [5, 'b'],
-        [2, 'e'],
-        [4, 'd']
-      ]);
+      assert.deepStrictEqual(order, [[1, 'a'], [3, 'c'], [5, 'b'], [2, 'e'], [4, 'd']]);
       done();
     });
   });
 
   it('should execute iterator in limited without binding', function(done) {
-
     var order = [];
     var collection = {
       a: 1.1,
@@ -1099,19 +996,24 @@ parallel('#mapLimit', function() {
       c: 2.7
     };
 
-    async.mapLimit(collection, 2, mapIterator(order), function(err, res) {
-      if (err) {
-        return done(err);
-      }
-      assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
-      assert.deepStrictEqual(res, [2.2, 7, 5.4]);
-      assert.deepStrictEqual(order, [1.1, 3.5, 2.7]);
-      done();
-    }, Math);
+    async.mapLimit(
+      collection,
+      2,
+      mapIterator(order),
+      function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        assert.strictEqual(Object.prototype.toString.call(res), '[object Array]');
+        assert.deepStrictEqual(res, [2.2, 7, 5.4]);
+        assert.deepStrictEqual(order, [1.1, 3.5, 2.7]);
+        done();
+      },
+      Math
+    );
   });
 
   it('should execute like parallel if limit is Infinity', function(done) {
-
     var order = [];
     var collection = [1, 3, 4, 2, 3];
 
@@ -1127,7 +1029,6 @@ parallel('#mapLimit', function() {
   });
 
   it('should execute on asynchronous', function(done) {
-
     var sync = true;
     var collection = {
       a: 1,
@@ -1152,7 +1053,6 @@ parallel('#mapLimit', function() {
   });
 
   it('should throw error', function(done) {
-
     var order = [];
     var collection = [1, 3, 5, 2, 4, 2];
     var iterator = function(num, callback) {
@@ -1172,14 +1072,14 @@ parallel('#mapLimit', function() {
   });
 
   it('should throw error if double callback', function(done) {
-
     var errorCallCount = 0;
     setTimeout(function() {
       assert.strictEqual(errorCallCount, 3);
       done();
     }, delay);
 
-    domain.create()
+    domain
+      .create()
       .on('error', util.errorChecker)
       .on('error', function() {
         errorCallCount++;
@@ -1199,30 +1099,33 @@ parallel('#mapLimit', function() {
   });
 
   it('should avoid double callback', function(done) {
-
     var called = false;
-    async.mapLimit([1, 2], 2, function(item, callback) {
-      try {
-        callback(item);
-      } catch (exception) {
+    async.mapLimit(
+      [1, 2],
+      2,
+      function(item, callback) {
         try {
-          callback(exception);
-        } catch(e) {
-          assert.ok(e);
-          util.errorChecker(e);
-          done();
+          callback(item);
+        } catch (exception) {
+          try {
+            callback(exception);
+          } catch (e) {
+            assert.ok(e);
+            util.errorChecker(e);
+            done();
+          }
         }
+      },
+      function(err) {
+        assert.ok(err);
+        assert.strictEqual(called, false);
+        called = true;
+        async.nothing();
       }
-    }, function(err) {
-      assert.ok(err);
-      assert.strictEqual(called, false);
-      called = true;
-      async.nothing();
-    });
+    );
   });
 
   it('should return response immediately if array is empty', function(done) {
-
     var order = [];
     var array = [];
     async.mapLimit(array, 3, mapIterator(order), function(err, res) {
@@ -1237,7 +1140,6 @@ parallel('#mapLimit', function() {
   });
 
   it('should return response immediately if object is empty', function(done) {
-
     var order = [];
     var object = {};
     async.mapLimit(object, 2, mapIterator(order), function(err, res) {
@@ -1252,7 +1154,6 @@ parallel('#mapLimit', function() {
   });
 
   it('should return response immediately if collection is function', function(done) {
-
     var order = [];
     async.mapLimit(function() {}, 3, mapIterator(order), function(err, res) {
       if (err) {
@@ -1266,7 +1167,6 @@ parallel('#mapLimit', function() {
   });
 
   it('should return response immediately if collection is undefined', function(done) {
-
     var order = [];
     async.mapLimit(undefined, 3, mapIterator(order), function(err, res) {
       if (err) {
@@ -1280,7 +1180,6 @@ parallel('#mapLimit', function() {
   });
 
   it('should return response immediately if collection is null', function(done) {
-
     var order = [];
     async.mapLimit(null, 3, mapIterator(order), function(err, res) {
       if (err) {
@@ -1294,7 +1193,6 @@ parallel('#mapLimit', function() {
   });
 
   it('should return response immediately if limit is zero', function(done) {
-
     var order = [];
     var collection = [1, 3, 2];
     async.mapLimit(collection, 0, mapIterator(order), function(err, res) {
@@ -1309,7 +1207,6 @@ parallel('#mapLimit', function() {
   });
 
   it('should return response immediately if limit is undefined', function(done) {
-
     var order = [];
     var collection = [1, 3, 2];
     async.mapLimit(collection, undefined, mapIterator(order), function(err, res) {
@@ -1323,4 +1220,27 @@ parallel('#mapLimit', function() {
     });
   });
 
+  /**
+   * @see https://github.com/suguru03/neo-async/issues/69
+   */
+  it('should work with generator', function(done) {
+    var limit = 2;
+    var collection = ['abc', 'def', 'ghi', 'jkl'];
+    var gen = util.makeGenerator(collection);
+
+    async.mapLimit(
+      gen,
+      limit,
+      function(v, cb) {
+        setTimeout(cb, Math.random() * delay, null, v);
+      },
+      function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        assert.deepStrictEqual(res, collection);
+        done();
+      }
+    );
+  });
 });
