@@ -4,3 +4,5 @@ coverage
 doc
 build
 compiler.jar
+
+.idea
