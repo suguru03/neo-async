@@ -1363,4 +1363,27 @@ parallel('#eachLimit', function() {
     });
   });
 
+  it('should work with generator', function(done) {
+    var limit = 2;
+    var collection = ['abc', 'def', 'ghi', 'jkl'];
+    var order = [];
+    var gen = util.makeGenerator(collection);
+
+    async.eachLimit(
+      gen,
+      limit,
+      function(v, i, cb) {
+        order.push(i);
+        setTimeout(cb, Math.random() * delay, null, v);
+      },
+      function(err) {
+        if (err) {
+          return done();
+        }
+        assert.deepStrictEqual(order, [0, 1, 2, 3]);
+        done();
+      }
+    );
+  });
+
 });
