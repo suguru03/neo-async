@@ -1,15 +1,15 @@
 {
   "name": "neo-async",
   "version": "2.6.1",
-  "description": "Neo-Async is thought to be used as a drop-in replacement for Async, it almost fully covers its functionality and runs faster ",
-  "main": "index.js",
+  "description": "Neo-Async is a drop-in replacement for Async, it almost fully covers its functionality and runs faster ",
+  "main": "lib/async.js",
   "scripts": {
     "test": "istanbul cover ./node_modules/.bin/_mocha --report lcovonly -- -R spec ./test --recursive",
     "clean": "rm -rf coverage",
     "cov:100": "grep Lines | perl -nle 'my ($l, $c, $p, @d) = split(/[\\s%]+/); exit(($p == 100) == 0)'"
   },
   "license": "MIT",
-  "keywords": "async, util",
+  "keywords": ["async, util"],
   "private": true,
   "repository": {
     "type": "git",
