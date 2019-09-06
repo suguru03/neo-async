@@ -21,6 +21,7 @@ Bluebird's benchmark is [here](https://github.com/suguru03/bluebird/tree/aigle/b
 
 ## Code Coverage
 ![coverage](https://raw.githubusercontent.com/wiki/suguru03/neo-async/images/coverage.png)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fsuguru03%2Fneo-async.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fsuguru03%2Fneo-async?ref=badge_shield)
 
 ## Installation
 
@@ -266,3 +267,7 @@ The value is the ratio (Neo-Async/Async) of the average speed.
 |doDuring|2.42|
 |times|4.25|
 |auto|1.97|
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fsuguru03%2Fneo-async.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fsuguru03%2Fneo-async?ref=badge_large)
