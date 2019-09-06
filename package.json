@@ -9,7 +9,7 @@
     "cov:100": "grep Lines | perl -nle 'my ($l, $c, $p, @d) = split(/[\\s%]+/); exit(($p == 100) == 0)'"
   },
   "license": "MIT",
-  "keywords": ["async, util"],
+  "keywords": ["async", "util"],
   "private": true,
   "repository": {
     "type": "git",
