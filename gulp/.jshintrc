@@ -1,9 +1,5 @@
 {
-
-  "predef": [
-    "define",
-    "Symbol"
-  ],
+  "predef": ["define", "Symbol"],
 
   "indent": 2,
 
@@ -42,7 +38,7 @@
   "laxbreak": false,
   "laxcomma": true,
   "loopfunc": false,
-  "multistr":  false,
+  "multistr": false,
   "onecase": false,
   "proto": true,
   "regexdash": false,
@@ -64,5 +60,5 @@
 
   "-W018": true,
 
-  "esversion":6
+  "esversion": 6
 }

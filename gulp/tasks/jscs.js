@@ -7,6 +7,5 @@ const config = require('../config');
 
 gulp.task('jscs', () => {
   const { dirnames } = config.jscs;
-  return gulp.src(dirnames)
-    .pipe(jscs('.jscsrc'));
+  return gulp.src(dirnames).pipe(jscs('.jscsrc'));
 });

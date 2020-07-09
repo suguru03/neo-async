@@ -20,8 +20,8 @@ function execute(func, command, args) {
   return new Aigle((resolve, reject) => {
     let result = '';
     const task = func(command, args);
-    task.on('close', err => err ? reject(err) : resolve(result));
+    task.on('close', (err) => (err ? reject(err) : resolve(result)));
     task.on('error', reject);
-    task.stdout.on('data', data => result += `${data}`);
+    task.stdout.on('data', (data) => (result += `${data}`));
   });
 }

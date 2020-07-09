@@ -6,9 +6,11 @@ const path = require('path');
 
 const gulp = require('gulp');
 
-const config = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../..', '.jsdocrc'), {
-  encoding: 'utf8'
-}));
+const config = JSON.parse(
+  fs.readFileSync(path.resolve(__dirname, '../..', '.jsdocrc'), {
+    encoding: 'utf8',
+  })
+);
 
 function createJSDoc(done) {
   const dirpath = path.resolve(__dirname, '../..', config.opts.destination);

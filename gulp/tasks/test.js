@@ -18,15 +18,16 @@ function test() {
   if (delay) {
     config.delay = delay;
   }
-  gulp.src([
-    `./test/**/test.${filename}*`
-  ])
-  .pipe(mocha({
-    reporter: 'spec',
-    report: 'lcovonly',
-    timeout: 2000
-  }))
-  .pipe(exit());
+  gulp
+    .src([`./test/**/test.${filename}*`])
+    .pipe(
+      mocha({
+        reporter: 'spec',
+        report: 'lcovonly',
+        timeout: 2000,
+      })
+    )
+    .pipe(exit());
 }
 
 function exec(name, func) {
@@ -36,7 +37,7 @@ function exec(name, func) {
   if (filename) {
     files = _.transform(['collections', 'controlFlow', 'other', 'utils'], (result, dir) => {
       const p = path.resolve(__dirname, '../../', 'test', dir, `test.${filename}.js`);
-      if(fs.existsSync(p)) {
+      if (fs.existsSync(p)) {
         result.push(p);
       }
     });
@@ -61,4 +62,3 @@ gulp.task('test:fast', () => {
 gulp.task('test:fast:min', () => {
   exec('async.min.js', executor);
 });
-

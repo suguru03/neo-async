@@ -24,44 +24,41 @@ gulp.task('release:async', async () => {
 });
 
 gulp.task('release:tag', () => {
-  return gulp.src(packagepath)
-    .pipe(tagVersion());
+  return gulp.src(packagepath).pipe(tagVersion());
 });
 
 gulp.task('release:dist', async () => {
-  _.forEach(['async.js', 'async.min.js'], file => {
+  _.forEach(['async.js', 'async.min.js'], (file) => {
     const filepath = path.resolve(basepath, 'lib', file);
     const distpath = path.resolve(basepath, 'dist', file);
-    fs.createReadStream(filepath)
-      .pipe(fs.createWriteStream(distpath));
+    fs.createReadStream(filepath).pipe(fs.createWriteStream(distpath));
   });
 });
 
 gulp.task('release:commit', () => {
   delete require.cache[packagepath];
   const { version } = require(packagepath);
-  return gulp.src(['./dist/*', './lib/*', packagepath, bowerpath])
-    .pipe(git.commit(version));
+  return gulp.src(['./dist/*', './lib/*', packagepath, bowerpath]).pipe(git.commit(version));
 });
 
 function updatePackageVersion(type) {
   return () => {
-    return gulp.src([packagepath, bowerpath])
-        .pipe(bump({ type }))
-        .pipe(gulp.dest('./'));
+    return gulp.src([packagepath, bowerpath]).pipe(bump({ type })).pipe(gulp.dest('./'));
   };
 }
 
-_.forEach(types, type => {
+_.forEach(types, (type) => {
   gulp.task(`release:package:${type}`, updatePackageVersion(type));
-  gulp.task(`release:${type}`, gulp.series(
-    `release:package:${type}`,
-    'release:async',
-    'minify:local',
-    'release:dist',
-    'release:commit',
-    'release:tag',
-    'gh-pages'
-  ));
+  gulp.task(
+    `release:${type}`,
+    gulp.series(
+      `release:package:${type}`,
+      'release:async',
+      'minify:local',
+      'release:dist',
+      'release:commit',
+      'release:tag',
+      'gh-pages'
+    )
+  );
 });
-
