@@ -36,7 +36,7 @@
     "codecov.io": "^0.1.6",
     "fs-extra": "^4.0.2",
     "func-comparator": "^0.7.2",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.2",
     "gulp-bump": "^2.8.0",
     "gulp-exit": "0.0.2",
     "gulp-git": "^2.4.2",
@@ -55,8 +55,7 @@
     "mocha-parallel-executor": "^0.3.0",
     "mocha.parallel": "^0.15.3",
     "prettier": "^1.15.2",
-    "require-dir": "^0.3.0",
-    "run-sequence": "^1.2.2"
+    "require-dir": "^0.3.0"
   },
   "lint-staged": {
     "*.{js,ts}": [

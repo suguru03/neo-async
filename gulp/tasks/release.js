@@ -7,7 +7,6 @@ const _ = require('lodash');
 const gulp = require('gulp');
 const git = require('gulp-git');
 const bump = require('gulp-bump');
-const runSequence = require('run-sequence');
 const tagVersion = require('gulp-tag-version');
 
 const basepath = path.resolve(__dirname, '../../');
@@ -16,20 +15,7 @@ const bowerpath = path.resolve(basepath, 'bower.json');
 const types = ['patch', 'prepatch', 'minor', 'preminor', 'major', 'premajor'];
 const { version: prevVersion } = require(packagepath);
 
-_.forEach(types, type => {
-  gulp.task(`release:package:${type}`, updatePackageVersion(type));
-  gulp.task(`release:${type}`, () => runSequence(
-    `release:package:${type}`,
-    'release:async',
-    'minify:local',
-    'release:dist',
-    'release:commit',
-    'release:tag',
-    'gh-pages'
-  ));
-});
-
-gulp.task('release:async', () => {
+gulp.task('release:async', async () => {
   delete require.cache[packagepath];
   const { version } = require(packagepath);
   const asyncpath = path.resolve(basepath, 'lib', 'async.js');
@@ -42,7 +28,7 @@ gulp.task('release:tag', () => {
     .pipe(tagVersion());
 });
 
-gulp.task('release:dist', () => {
+gulp.task('release:dist', async () => {
   _.forEach(['async.js', 'async.min.js'], file => {
     const filepath = path.resolve(basepath, 'lib', file);
     const distpath = path.resolve(basepath, 'dist', file);
@@ -65,3 +51,17 @@ function updatePackageVersion(type) {
         .pipe(gulp.dest('./'));
   };
 }
+
+_.forEach(types, type => {
+  gulp.task(`release:package:${type}`, updatePackageVersion(type));
+  gulp.task(`release:${type}`, gulp.series(
+    `release:package:${type}`,
+    'release:async',
+    'minify:local',
+    'release:dist',
+    'release:commit',
+    'release:tag',
+    'gh-pages'
+  ));
+});
+
