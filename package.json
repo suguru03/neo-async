@@ -50,7 +50,7 @@
     "jshint": "^2.9.5",
     "lint-staged": "^10.2.11",
     "lodash": "^4.17.19",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.3",
     "mocha": "^3.5.3",
     "mocha-parallel-executor": "^0.3.0",
     "mocha.parallel": "^0.15.3",
