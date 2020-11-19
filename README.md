@@ -145,7 +145,7 @@ bower install neo-async
 
 - [`parallel`](http://suguru03.github.io/neo-async/doc/async.parallel.html)
 - [`series`](http://suguru03.github.io/neo-async/doc/async.series.html)
-- [`parallelLimit`](http://suguru03.github.io/neo-async/doc/async.series.html)
+- [`parallelLimit`](http://suguru03.github.io/neo-async/doc/async.parallelLimit.html)
 - [`tryEach`](http://suguru03.github.io/neo-async/doc/async.tryEach.html)
 - [`waterfall`](http://suguru03.github.io/neo-async/doc/async.waterfall.html)
 - [`angelFall`](http://suguru03.github.io/neo-async/doc/async.angelFall.html) *
