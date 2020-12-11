@@ -1,3 +1,6 @@
+arch:
+    - amd64
+    - ppc64le
 language: node_js
 
 after_success: 'make test-codecov; make clean'
