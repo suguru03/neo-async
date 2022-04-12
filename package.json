@@ -30,7 +30,7 @@
   "dependencies": {},
   "devDependencies": {
     "aigle": "^1.14.0",
-    "async": "^2.6.0",
+    "async": "^3.2.2",
     "benchmark": "^2.1.1",
     "bluebird": "^3.5.1",
     "codecov.io": "^0.1.6",
