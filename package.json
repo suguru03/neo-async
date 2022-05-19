@@ -49,7 +49,7 @@
     "jsdoc": "^3.5.5",
     "jshint": "^2.9.5",
     "lint-staged": "^10.2.11",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "minimist": "^1.2.3",
     "mocha": "^3.5.3",
     "mocha-parallel-executor": "^0.3.0",
